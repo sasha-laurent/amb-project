@@ -1,0 +1,11 @@
+vmb_presentation:
+    resource: "@VMBPresentationBundle/Resources/config/routing.yml"
+    prefix:   /
+
+vmb_file:
+    resource: "@VMBFileBundle/Resources/config/routing.yml"
+    prefix:   /
+
+vmb_user:
+    resource: "@VMBUserBundle/Resources/config/routing.yml"
+    prefix:   /
