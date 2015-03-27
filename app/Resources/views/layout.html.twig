@@ -26,65 +26,82 @@
         {% endblock %}
     </head>
     <body itemscope itemtype="http://schema.org/WebPage">
+		<header>
+			<div class="header row container">
+				<div class="header-actions" role="navigation">
+					<div class="pull-right">
+						{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+							<div class="btn-group">
+								<a class="btn btn-default">
+									<span class="header-user">{{ app.user.username }}</span> 
+								</a>
+								<a class="btn btn-default" href="{{ path('fos_user_security_logout') }}">
+									<span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+								</a>
+							</div>
+						{% else %}
+							<a class="btn btn-success" href="{{ path("fos_user_registration_register")  }}">S'inscrire</a>
+							<a class="btn btn-default" href="{{ path('fos_user_security_login') }}">Connexion</a>
+						{% endif %}
+					</div>
+				</div>
+				<h3><a href="{{ path('vmb_homepage') }}">VMB</a></h3>
+				<form class="top-search-form" accept-charset="UTF-8" action="/search" method="get">
+					<input class="form-control search-input" name="q" placeholder="Recherche" type="text">
+				</form>
+				<ul class="header-nav left" role="navigation">
+					<li class="header-nav-item">
+						<a class="header-nav-link" href="#">Présentations</a>
+					</li>
+					<li class="header-nav-item">
+						<a class="header-nav-link" href="#">Outils</a>
+					</li>
+					<li class="header-nav-item">
+						<a class="header-nav-link" href="#">À propos</a>
+					</li>
+				</ul>
+			</div>
+		</header>
+      
 		<div class="container">
-      <div class="header">
-        <nav>
-          <ul class="nav nav-pills pull-right">
-            <li role="presentation" class="active"><a href="#">Home</a></li>
-            <li role="presentation"><a href="#">About</a></li>
-            <li role="presentation"><a href="#">Contact</a></li>
-          </ul>
-        </nav>
-        <h3 class="text-muted">VMB</h3>
-      </div>
-      <div>
-		{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-			Connecté en tant que {{ app.user.username }} - <a href="{{ path('fos_user_security_logout') }}">Déconnexion</a>
-		{% else %}
-			<a href="{{ path('fos_user_security_login') }}">Connexion</a>
-		{% endif %}
-      </div>
-		
-	  {% block body %}{% endblock %}
-	  
-	  <!--
-      <div class="jumbotron">
-        <h1>Jumbotron heading</h1>
-        <p class="lead">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-        <p><a class="btn btn-lg btn-success" href="#" role="button">Sign up today</a></p>
-      </div>
+			{% block body %}{% endblock %}
 
-      <div class="row marketing">
-        <div class="col-lg-6">
-          <h4>Subheading</h4>
-          <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
+			<!--
+			<div class="jumbotron">
+			<h1>Jumbotron heading</h1>
+			<p class="lead">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+			<p><a class="btn btn-lg btn-success" href="#" role="button">Sign up today</a></p>
+			</div>
 
-          <h4>Subheading</h4>
-          <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.</p>
+			<div class="row marketing">
+			<div class="col-lg-6">
+			<h4>Subheading</h4>
+			<p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
 
-          <h4>Subheading</h4>
-          <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
-        </div>
+			<h4>Subheading</h4>
+			<p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.</p>
 
-        <div class="col-lg-6">
-          <h4>Subheading</h4>
-          <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
+			<h4>Subheading</h4>
+			<p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
+			</div>
 
-          <h4>Subheading</h4>
-          <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.</p>
+			<div class="col-lg-6">
+			<h4>Subheading</h4>
+			<p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
 
-          <h4>Subheading</h4>
-          <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
-        </div>
-      </div>
-	  -->
-	  
-      <footer class="footer">
-        <p>&copy; Company 2014</p>
-      </footer>
+			<h4>Subheading</h4>
+			<p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.</p>
 
-    </div> <!-- /container -->
+			<h4>Subheading</h4>
+			<p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
+			</div>
+			</div>
+			-->
 
+			<footer class="footer">
+				<p>&copy; VMB 2015</p>
+			</footer>
+		</div> <!-- /container -->
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 		{% block script %}

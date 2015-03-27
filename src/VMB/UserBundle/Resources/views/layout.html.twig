@@ -1,14 +1,20 @@
 {% extends "::layout.html.twig" %}
+{% if form is defined %}
+	{% form_theme form 'bootstrap_3_layout.html.twig' %}
+{% endif %}
 
 {% block body %}
 
-  {% for key, message in app.session.flashbag.all() %}
+{% if form is defined %}<div class="well">{% endif %}
+  {% for key, messages in app.session.flashbag.all() %}
     <div class="alert alert-{{ key }}">
-      {{ message|trans({}, 'FOSUserBundle') }}
+		{% for message in messages %}
+			{{ message|trans({}, 'FOSUserBundle') }}
+		{% endfor %}
     </div>
   {% endfor %}
 
   {% block fos_user_content %}
   {% endblock fos_user_content %}
-
+{% if form is defined %}</div>{% endif %}
 {% endblock %}
