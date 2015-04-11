@@ -21,6 +21,8 @@ class AppKernel extends Kernel
             new VMB\FileBundle\VMBFileBundle(),
             new VMB\PresentationBundle\VMBPresentationBundle(),
             new FOS\UserBundle\FOSUserBundle(),
+            new Vich\UploaderBundle\VichUploaderBundle(),
+            new VMB\ResourceBundle\VMBResourceBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

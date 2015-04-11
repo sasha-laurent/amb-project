@@ -78,3 +78,6 @@ fos_user:
     db_driver:     orm                       # Le type de BDD à utiliser, nous utilisons l'ORM Doctrine depuis le début
     firewall_name: main                      # Le nom du firewall derrière lequel on utilisera ces utilisateurs
     user_class:    VMB\UserBundle\Entity\User # La classe de l'entité User que nous utilisons
+#entrée pour indiquer au bundle vich_uploader d'utiliser orm
+vich_uploader:
+    db_driver: orm # or mongodb or propel or phpcr
