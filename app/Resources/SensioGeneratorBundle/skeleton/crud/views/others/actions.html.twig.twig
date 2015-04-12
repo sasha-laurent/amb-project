@@ -1,0 +1,10 @@
+				
+					<div class="btn-group" role="group" aria-label="...">
+						
+					{%- for action in record_actions %}
+					
+						<a href="{{ "{{ path('" ~ route_name_prefix ~ "_" ~ action ~ "', { 'id': entity."~ identifier ~" }) }}" }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true">{{ action }}</span></a>
+						
+					{%- endfor %}
+					
+					</div>

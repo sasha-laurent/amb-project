@@ -1,0 +1,42 @@
+
+    /**
+{% block phpdoc_method_header %}
+     * Finds and displays a {{ entity }} entity.
+{% endblock phpdoc_method_header %}
+     */
+{% block method_definition %}
+    protected function renderForm(${{ entity|lower }})
+{% endblock method_definition %}
+    {
+{% block method_body %}
+		$request = $this->get('request');
+		
+		$form = $this
+			->get('form.factory')
+			->create(new {{entity}}Type(), ${{entity|lower}});
+			
+		if ($request->isMethod('POST')) 
+		{
+			$form->handleRequest($request);
+			if ($form->isValid()) 
+			{
+				$em = $this->getDoctrine()->getManager();
+				$em->persist(${{entity|lower}});
+				$em->flush();
+
+				$flashMessage = !${{entity|lower}}->toString() ? '{{entity}} added' : '{{entity}} modified';
+				$request->getSession()->getFlashBag()->add('success', $flashMessage);
+				return $this->redirect($this->generateUrl('{{ route_name_prefix }}'));
+			}
+		}
+{% endblock method_body %}
+
+{% block method_return %}
+		return $this->render('::Backend/form.html.twig', 
+			array(
+				'form' => $form->createView(),
+				'mainTitle' => ((!(${{entity|lower}}->toString())) ? 'Ajout d\'un {{entity|lower}}' : 'Modification du {{entity|lower}} '.${{entity|lower}}->toString()),
+				'backButtonUrl' => $this->generateUrl('{{ route_name_prefix }}')
+			));
+{% endblock method_return %}
+    }

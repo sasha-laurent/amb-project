@@ -1,0 +1,35 @@
+{% if 'index' in actions %}
+{{ route_name_prefix }}:
+    path:     /
+    defaults: { _controller: "{{ bundle }}:{{ entity }}:index" }
+{% endif %}
+
+{% if 'show' in actions %}
+{{ route_name_prefix }}_show:
+    path:     /show/{id}
+    defaults: { _controller: "{{ bundle }}:{{ entity }}:show" }
+    requirements:
+        id:   \d{1,}
+{% endif %}
+
+{% if 'new' in actions %}
+{{ route_name_prefix }}_new:
+    path:     /new
+    defaults: { _controller: "{{ bundle }}:{{ entity }}:new" }
+{% endif %}
+
+{% if 'edit' in actions %}
+{{ route_name_prefix }}_edit:
+    path:     /edit/{id}
+    defaults: { _controller: "{{ bundle }}:{{ entity }}:edit" }
+    requirements:
+        id:   \d{1,}
+{% endif %}      
+
+{% if 'delete' in actions %}
+{{ route_name_prefix }}_delete:
+    path:     /delete/{id}
+    defaults: { _controller: "{{ bundle }}:{{ entity }}:delete" }
+    requirements:
+        id:   \d{1,}
+{% endif %}

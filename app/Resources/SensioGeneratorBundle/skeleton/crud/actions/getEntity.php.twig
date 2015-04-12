@@ -1,0 +1,22 @@
+
+    /**
+{% block phpdoc_method_header %}
+     * Retrieve an existing {{ entity }} entity.
+{% endblock phpdoc_method_header %}
+     */
+{% block method_definition %}
+    protected function get{{ entity }}($id)
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        ${{ entity|lower }} = $this->getDoctrine()->getManager()->getRepository('{{ bundle }}:{{ entity }}')->find($id);
+
+		if (${{ entity|lower }} == null) {
+			throw $this->createNotFoundException('Unable to find {{ entity }} entity.');
+		}
+{% endblock method_body %}
+
+{% block method_return %}
+		return ${{ entity|lower }};
+{% endblock method_return %}
+    }

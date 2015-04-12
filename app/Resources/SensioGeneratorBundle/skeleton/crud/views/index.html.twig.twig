@@ -1,0 +1,58 @@
+{% block extends %}
+{{ "{% extends '::Backend/subPage.html.twig' %}" }}
+{% endblock extends %}
+
+{% block body %}
+{{ "{% block content %}" }}
+    <div class="panel panel-default">
+		<div class="panel-heading">
+			<div class="row">
+				{%- for field, metadata in fields %}
+				
+				<div class="col-md-1">{{ field|capitalize }}</div>
+				
+				{%- endfor %}
+				
+				<div class="col-md-2 text-center">Action</div>
+        	</div>
+		</div>
+	</div>
+	
+	<ul class="list-group" id="sortable">
+        {{ '{% for entity in entities %}' }}
+
+        {%- for field, metadata in fields %}
+            {%- if loop.first %}
+
+			<li class="list-group-item row">
+				{% if ('show' in actions) %}
+				
+				<div class="col-md-1"><a href="{{ "{{ path('" ~ route_name_prefix ~ "_show', { 'id': entity."~ identifier ~" }) }}" }}">{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</a></div>
+				
+				{% endif %}
+            {%- elseif metadata.type in ['date', 'datetime'] %}
+
+                <div class="col-md-1">{{ '{% if entity.' ~ field|replace({'_': ''}) ~ ' %}{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'Y-m-d H:i:s\') }}{% endif %}' }}</div>
+
+            {%- else %}
+
+                <div class="col-md-1">{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</div>
+
+            {%- endif %}
+
+            {%- if loop.last %}
+
+                <div class="col-md-2 text-center">
+					
+                    {%- include "crud/views/others/actions.html.twig.twig" %}
+				</div>
+
+            {%- endif %}
+        {%- endfor %}
+
+            </li>
+        {{ '{% endfor %}' }}
+    </ul>
+    
+{{ "{% endblock %}" }}
+{% endblock body %}
