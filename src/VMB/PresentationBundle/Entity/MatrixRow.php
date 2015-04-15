@@ -2,6 +2,7 @@
 
 namespace VMB\PresentationBundle\Entity;
 
+use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -31,6 +32,7 @@ class MatrixRow
     /**
      * @var integer
      *
+     * @Gedmo\SortablePosition
      * @ORM\Column(name="sort", type="integer")
      */
     private $sort;
@@ -38,9 +40,17 @@ class MatrixRow
     /**
      * @var integer
      *
+     * @Gedmo\SortableGroup
      * @ORM\Column(name="dimension", type="integer")
      */
     private $dimension;
+    
+    /**
+	* @Gedmo\SortableGroup
+	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Matrix", inversedBy="rows")
+	* @ORM\JoinColumn(nullable=false) 
+	*/
+	private $matrix;
 
 
     /**

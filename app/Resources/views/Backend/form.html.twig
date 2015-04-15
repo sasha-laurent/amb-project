@@ -1,0 +1,10 @@
+{% extends "::Backend/subPage.html.twig" %}
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block body %}
+
+<div class="well">
+	{{ form(form) }}
+</div>
+
+{% endblock %}

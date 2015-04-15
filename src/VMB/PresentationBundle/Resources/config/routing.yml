@@ -1,3 +1,7 @@
+vmb_presentation_matrix:
+    resource: "@VMBPresentationBundle/Resources/config/routing/matrix.yml"
+    prefix:   /matrix
+
 vmb_presentation_homepage:
     path:     /hello/{name}
     defaults: { _controller: VMBPresentationBundle:Default:index }

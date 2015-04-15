@@ -1,0 +1,25 @@
+{% extends "::layout.html.twig" %}
+
+{% block title %}
+  {{ mainTitle }} - {{ parent() }}
+{% endblock %}
+
+{% block h1_title %}
+	<div class="row">
+		<div class="col-md-11">
+			{% if backButtonUrl is defined %}
+				<a class="btn btn-default" href="{{ backButtonUrl }}" >
+					<span class="left glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+				</a>
+			{% endif %}
+			{{ mainTitle }}
+		</div>
+		<div class="col-md-1 text-right">
+			{% if addButtonUrl is defined %}
+				<a class="btn btn-default" href="{{ addButtonUrl }}" >
+					<span class="left glyphicon glyphicon-plus" aria-hidden="true"></span>
+				</a>
+			{% endif %}
+		</div>
+	</div>	
+{% endblock %}

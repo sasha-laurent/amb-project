@@ -50,6 +50,11 @@ class Matrix
     private $dateUpdate;
 
 
+	/**
+	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\MatrixRow", mappedBy="matrix", cascade={"remove"})
+	*/
+	private $rows;
+
     /**
      * Get id
      *
@@ -151,4 +156,9 @@ class Matrix
     {
         return $this->dateUpdate;
     }
+    
+    public function toString()
+    {
+		return $this->title;
+	}
 }

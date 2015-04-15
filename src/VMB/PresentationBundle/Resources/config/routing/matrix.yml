@@ -1,0 +1,26 @@
+matrix:
+    path:     /
+    defaults: { _controller: "VMBPresentationBundle:Matrix:index" }
+
+matrix_show:
+    path:     /show/{id}
+    defaults: { _controller: "VMBPresentationBundle:Matrix:show" }
+    requirements:
+        id:   \d{1,}
+
+matrix_new:
+    path:     /new
+    defaults: { _controller: "VMBPresentationBundle:Matrix:new" }
+
+matrix_edit:
+    path:     /edit/{id}
+    defaults: { _controller: "VMBPresentationBundle:Matrix:edit" }
+    requirements:
+        id:   \d{1,}
+      
+
+matrix_delete:
+    path:     /delete/{id}
+    defaults: { _controller: "VMBPresentationBundle:Matrix:delete" }
+    requirements:
+        id:   \d{1,}
