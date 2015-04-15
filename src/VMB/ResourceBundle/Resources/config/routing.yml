@@ -1,0 +1,3 @@
+vmb_resource_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: VMBResourceBundle:Default:index }
