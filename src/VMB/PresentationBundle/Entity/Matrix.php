@@ -2,6 +2,7 @@
 
 namespace VMB\PresentationBundle\Entity;
 
+use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -38,6 +39,7 @@ class Matrix
     /**
      * @var \DateTime
      *
+     * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="dateCreation", type="date")
      */
     private $dateCreation;
@@ -45,18 +47,19 @@ class Matrix
     /**
      * @var \DateTime
      *
+     * @Gedmo\Timestampable(on="update")
      * @ORM\Column(name="dateUpdate", type="date")
      */
     private $dateUpdate;
 
 	/**
-	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Pov", mappedBy="matrix", cascade={"remove"})
+	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Pov", mappedBy="matrix", cascade={"remove", "persist"})
 	*/
 	private $povs;
 	
 	
 	/**
-	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Level", mappedBy="matrix", cascade={"remove"})
+	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Level", mappedBy="matrix", cascade={"remove", "persist"})
 	*/
 	private $levels;
 
@@ -178,11 +181,12 @@ class Matrix
     /**
      * Add povs
      *
-     * @param \VMB\PresentationBundle\Entity\MatrixRow $povs
+     * @param \VMB\PresentationBundle\Entity\Pov $povs
      * @return Matrix
      */
-    public function addPov(\VMB\PresentationBundle\Entity\MatrixRow $povs)
+    public function addPov(\VMB\PresentationBundle\Entity\Pov $povs)
     {
+		$povs->setMatrix($this);
         $this->povs[] = $povs;
 
         return $this;
@@ -191,9 +195,9 @@ class Matrix
     /**
      * Remove povs
      *
-     * @param \VMB\PresentationBundle\Entity\MatrixRow $povs
+     * @param \VMB\PresentationBundle\Entity\Pov $povs
      */
-    public function removePov(\VMB\PresentationBundle\Entity\MatrixRow $povs)
+    public function removePov(\VMB\PresentationBundle\Entity\Pov $povs)
     {
         $this->povs->removeElement($povs);
     }
@@ -211,11 +215,12 @@ class Matrix
     /**
      * Add levels
      *
-     * @param \VMB\PresentationBundle\Entity\MatrixRow $levels
+     * @param \VMB\PresentationBundle\Entity\Level $levels
      * @return Matrix
      */
-    public function addLevel(\VMB\PresentationBundle\Entity\MatrixRow $levels)
+    public function addLevel(\VMB\PresentationBundle\Entity\Level $levels)
     {
+		$levels->setMatrix($this);
         $this->levels[] = $levels;
 
         return $this;
@@ -224,9 +229,9 @@ class Matrix
     /**
      * Remove levels
      *
-     * @param \VMB\PresentationBundle\Entity\MatrixRow $levels
+     * @param \VMB\PresentationBundle\Entity\Level $levels
      */
-    public function removeLevel(\VMB\PresentationBundle\Entity\MatrixRow $levels)
+    public function removeLevel(\VMB\PresentationBundle\Entity\Level $levels)
     {
         $this->levels->removeElement($levels);
     }

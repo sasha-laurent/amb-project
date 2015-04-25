@@ -20,4 +20,27 @@ class Level extends MatrixRow
 	* @ORM\JoinColumn(nullable=false) 
 	*/
 	protected $matrix;
+
+    /**
+     * Set matrix
+     *
+     * @param \VMB\PresentationBundle\Entity\Matrix $matrix
+     * @return Level
+     */
+    public function setMatrix(\VMB\PresentationBundle\Entity\Matrix $matrix)
+    {
+        $this->matrix = $matrix;
+
+        return $this;
+    }
+
+    /**
+     * Get matrix
+     *
+     * @return \VMB\PresentationBundle\Entity\Matrix 
+     */
+    public function getMatrix()
+    {
+        return $this->matrix;
+    }
 }

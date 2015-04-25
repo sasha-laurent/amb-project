@@ -81,3 +81,11 @@ fos_user:
 #entrée pour indiquer au bundle vich_uploader d'utiliser orm
 vich_uploader:
     db_driver: orm # or mongodb or propel or phpcr
+    
+# Stof\DoctrineExtensionBundle configuration
+stof_doctrine_extensions:
+    orm:
+        default:
+            sluggable: true
+            sortable: true
+            timestampable: true

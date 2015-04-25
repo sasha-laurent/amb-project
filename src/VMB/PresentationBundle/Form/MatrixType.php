@@ -18,17 +18,20 @@ class MatrixType extends AbstractType
             ->add('title', null, array('label' => 'Titre'))
             ->add('description', null, array('label' => 'Description'))
             ->add('povs', 'collection', array(
+				'by_reference' => false,
 				'label'		   => 'Points de vues',
-				'type'         => new MatrixRowType(),
+				'type'         => new PovType(),
 				'allow_add'    => true,
-				'allow_delete' => true
+				'allow_delete' => false
 			  ))
 			->add('levels', 'collection', array(
+				'by_reference' => false,
 				'label'		   => 'Niveaux',
-				'type'         => new MatrixRowType(),
+				'type'         => new LevelType(),
 				'allow_add'    => true,
-				'allow_delete' => true
+				'allow_delete' => false
 			  ))
+			->add('save', 'submit')
         ;
     }
     

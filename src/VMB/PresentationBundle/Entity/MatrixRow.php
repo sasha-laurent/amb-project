@@ -5,7 +5,8 @@ namespace VMB\PresentationBundle\Entity;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 
-/** @ORM\MappedSuperclass 
+/** 
+ * @ORM\MappedSuperclass 
  * */
 abstract class MatrixRow
 {
@@ -32,14 +33,6 @@ abstract class MatrixRow
      * @ORM\Column(name="sort", type="integer")
      */
     private $sort;
-
-    /**
-     * @var integer
-     *
-     * @Gedmo\SortableGroup
-     * @ORM\Column(name="dimension", type="integer")
-     */
-    private $dimension;
     
     protected $matrix;
 
@@ -98,28 +91,5 @@ abstract class MatrixRow
     public function getSort()
     {
         return $this->sort;
-    }
-
-    /**
-     * Set dimension
-     *
-     * @param integer $dimension
-     * @return MatrixRow
-     */
-    public function setDimension($dimension)
-    {
-        $this->dimension = $dimension;
-
-        return $this;
-    }
-
-    /**
-     * Get dimension
-     *
-     * @return integer 
-     */
-    public function getDimension()
-    {
-        return $this->dimension;
     }
 }
