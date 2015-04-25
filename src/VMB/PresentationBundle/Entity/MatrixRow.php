@@ -5,15 +5,11 @@ namespace VMB\PresentationBundle\Entity;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * MatrixRow
- *
- * @ORM\Table()
- * @ORM\Entity(repositoryClass="VMB\PresentationBundle\Entity\MatrixRowRepository")
- */
-class MatrixRow
+/** @ORM\MappedSuperclass 
+ * */
+abstract class MatrixRow
 {
-    /**
+	/**
      * @var integer
      *
      * @ORM\Column(name="id", type="integer")
@@ -21,7 +17,7 @@ class MatrixRow
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-
+	
     /**
      * @var string
      *
@@ -45,12 +41,7 @@ class MatrixRow
      */
     private $dimension;
     
-    /**
-	* @Gedmo\SortableGroup
-	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Matrix", inversedBy="rows")
-	* @ORM\JoinColumn(nullable=false) 
-	*/
-	private $matrix;
+    protected $matrix;
 
 
     /**

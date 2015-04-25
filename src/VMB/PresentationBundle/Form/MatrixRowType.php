@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class MatrixType extends AbstractType
+class MatrixRowType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -16,19 +16,6 @@ class MatrixType extends AbstractType
     {
         $builder
             ->add('title', null, array('label' => 'Titre'))
-            ->add('description', null, array('label' => 'Description'))
-            ->add('povs', 'collection', array(
-				'label'		   => 'Points de vues',
-				'type'         => new MatrixRowType(),
-				'allow_add'    => true,
-				'allow_delete' => true
-			  ))
-			->add('levels', 'collection', array(
-				'label'		   => 'Niveaux',
-				'type'         => new MatrixRowType(),
-				'allow_add'    => true,
-				'allow_delete' => true
-			  ))
         ;
     }
     
@@ -38,7 +25,7 @@ class MatrixType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'VMB\PresentationBundle\Entity\Matrix'
+            'data_class' => 'VMB\PresentationBundle\Entity\MatrixRow'
         ));
     }
 
@@ -47,6 +34,6 @@ class MatrixType extends AbstractType
      */
     public function getName()
     {
-        return 'vmb_presentationbundle_matrix';
+        return 'vmb_presentationbundle_matrixrow';
     }
 }

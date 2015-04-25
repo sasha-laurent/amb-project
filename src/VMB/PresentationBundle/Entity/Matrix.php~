@@ -49,14 +49,14 @@ class Matrix
      */
     private $dateUpdate;
 
+
 	/**
-	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Pov", mappedBy="matrix", cascade={"remove"})
+	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\MatrixRow", mappedBy="matrix", cascade={"remove"})
 	*/
 	private $povs;
 	
-	
 	/**
-	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Level", mappedBy="matrix", cascade={"remove"})
+	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\MatrixRow", mappedBy="matrix", cascade={"remove"})
 	*/
 	private $levels;
 
@@ -166,78 +166,4 @@ class Matrix
     {
 		return $this->title;
 	}
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->povs = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->levels = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    /**
-     * Add povs
-     *
-     * @param \VMB\PresentationBundle\Entity\MatrixRow $povs
-     * @return Matrix
-     */
-    public function addPov(\VMB\PresentationBundle\Entity\MatrixRow $povs)
-    {
-        $this->povs[] = $povs;
-
-        return $this;
-    }
-
-    /**
-     * Remove povs
-     *
-     * @param \VMB\PresentationBundle\Entity\MatrixRow $povs
-     */
-    public function removePov(\VMB\PresentationBundle\Entity\MatrixRow $povs)
-    {
-        $this->povs->removeElement($povs);
-    }
-
-    /**
-     * Get povs
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getPovs()
-    {
-        return $this->povs;
-    }
-
-    /**
-     * Add levels
-     *
-     * @param \VMB\PresentationBundle\Entity\MatrixRow $levels
-     * @return Matrix
-     */
-    public function addLevel(\VMB\PresentationBundle\Entity\MatrixRow $levels)
-    {
-        $this->levels[] = $levels;
-
-        return $this;
-    }
-
-    /**
-     * Remove levels
-     *
-     * @param \VMB\PresentationBundle\Entity\MatrixRow $levels
-     */
-    public function removeLevel(\VMB\PresentationBundle\Entity\MatrixRow $levels)
-    {
-        $this->levels->removeElement($levels);
-    }
-
-    /**
-     * Get levels
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getLevels()
-    {
-        return $this->levels;
-    }
 }
