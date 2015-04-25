@@ -46,12 +46,13 @@ class MatrixController extends Controller
             throw $this->createNotFoundException('Unable to find Matrix entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-
         return $this->render('VMBPresentationBundle:Matrix:show.html.twig', array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
-        ));
+            'mainTitle' => 'Matrice "'.$entity->getTitle().'"',
+			'backButtonUrl' => $this->generateUrl('matrix'),
+			'editButtonUrl' => $this->generateUrl('matrix_edit', array('id' => $entity->getId())),
+			'delButtonUrl' => $this->generateUrl('matrix_delete', array('id' => $entity->getId())),
+			'entity' => $entity
+		));
     }
 
     /**
