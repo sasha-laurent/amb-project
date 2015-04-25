@@ -17,10 +17,12 @@
 	  $(document).ready(function() {
 		// On récupère la balise <div> en question qui contient l'attribut « data-prototype » qui nous intéresse.
 		var $container = $('div#vmb_presentationbundle_matrix_povs');
+		var newContent = $container.html().replace(/col-sm-2/g, 'col-sm-1');
+		$container.html(newContent);
 
 		// On ajoute un lien pour ajouter une nouvelle catégorie
 		var $addLink = $('<a href="#" id="add_category" class="btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>');
-		$container.append($addLink);
+		$container.prepend($addLink);
 
 		// On ajoute un nouveau champ à chaque clic sur le lien d'ajout.
 		$addLink.click(function(e) {
@@ -42,6 +44,8 @@
 		  });
 		}
 		
+		reattributePositions($container);
+		
 		function reattributePositions($container) {
 			var i = 0;
 			var path = 'vmb_presentationbundle_matrix_povs';
@@ -57,7 +61,7 @@
 		  // - le texte "__name__label__" qu'il contient par le label du champ
 		  // - le texte "__name__" qu'il contient par le numéro du champ
 		  var $prototype = $($container.attr('data-prototype').replace(/__name__label__/g, '#' + (index+1))
-			  .replace(/__name__/g, index).replace('col-sm-2', 'col-sm-1'));
+			  .replace(/__name__/g, index).replace(/col-sm-2/g, 'col-sm-1'));
 
 		  // On ajoute au prototype un lien pour pouvoir supprimer la catégorie
 		  addDeleteLink($prototype, $container);
