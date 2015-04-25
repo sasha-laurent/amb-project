@@ -1,6 +1,7 @@
 /* Space out content a bit */
 body {
 	padding-bottom: 20px;
+	font-family: 'Open Sans';
 }
 
 /* Everything but the jumbotron gets side spacing for mobile first views */
@@ -88,23 +89,37 @@ header {
 	margin: 30px 0;
 }
 
-/* Main marketing message and sign up button */
-.jumbotron {
-	text-align: center;
-	border-bottom: 1px solid #e5e5e5;
-}
-.jumbotron .btn {
-	padding: 14px 24px;
-	font-size: 21px;
+
+.panel-heading .row, .list-group-item.row {
+	padding: 0px 12px;
 }
 
-/* Supporting marketing content */
-.marketing {
-	margin: 40px 0;
+.list-group-item.row {
+    background-color: #FFF;
+    margin: 0px 0px -1px;
 }
-.marketing p + h4 {
-	margin-top: 28px;
+
+.list-group-item.row [class^="col-"] {
+    box-sizing: border-box;
+    height: 50px;
+    padding: 6px;
+    line-height: 38px;
+    font-size: 16px;
 }
+
+.list-group-item.row [class^="col-"] a {
+    color: black;
+    display: inline-block;
+    width: 100%;
+}
+.list-group-item.row [class^="col-"] a[type="button"] {
+    display: inline;
+    width: auto;
+}
+.list-group-item.row [class^="col-"] a:hover {
+    text-decoration: none;    
+}
+
 
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
