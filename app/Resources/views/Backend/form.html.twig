@@ -15,40 +15,44 @@
 	{# Voici le script en question : #}
 	<script type="text/javascript">
 	  $(document).ready(function() {
-		// On récupère la balise <div> en question qui contient l'attribut « data-prototype » qui nous intéresse.
-		var $container = $('div#vmb_presentationbundle_matrix_povs');
-		var newContent = $container.html().replace(/col-sm-2/g, 'col-sm-1');
-		$container.html(newContent);
-
-		// On ajoute un lien pour ajouter une nouvelle catégorie
-		var $addLink = $('<a href="#" id="add_category" class="btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>');
-		$container.prepend($addLink);
-
-		// On ajoute un nouveau champ à chaque clic sur le lien d'ajout.
-		$addLink.click(function(e) {
-		  addCategory($container);
-		  e.preventDefault(); // évite qu'un # apparaisse dans l'URL
-		  return false;
-		});
-
-		// On définit un compteur unique pour nommer les champs qu'on va ajouter dynamiquement
-		var index = $container.find(':input').length;
-
-		// On ajoute un premier champ automatiquement s'il n'en existe pas déjà un (cas d'une nouvelle annonce par exemple).
-		if (index == 0) {
-		  addCategory($container);
-		} else {
-		  // Pour chaque catégorie déjà existante, on ajoute un lien de suppression
-		  $container.children('div').each(function() {
-			addDeleteLink($(this));
-		  });
-		}
+		indexes = new Array($("div#{{form.vars.name}}").find('div > .form-group > .col-sm-10 > div').length);
 		
-		reattributePositions($container);
+		$("form > div > .form-group > .col-sm-10 > div").each(function(pos) {
+			if($(this).attr('data-prototype')) {
+				var $container = $(this);
+				var newContent = $container.html().replace(/col-sm-2/g, 'col-sm-1');
+				$container.html(newContent);
+
+				// On ajoute un lien pour ajouter une nouvelle catégorie
+				var $addLink = $('<a href="#" id="add_category" class="btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>');
+				$container.prepend($addLink);
+
+				// On définit un compteur unique pour nommer les champs qu'on va ajouter dynamiquement
+				indexes[pos] = $container.find(':input').length;
+
+				// On ajoute un nouveau champ à chaque clic sur le lien d'ajout.
+				$addLink.click(function(e) {
+				  addCategory($container,  pos);
+				  e.preventDefault(); // évite qu'un # apparaisse dans l'URL
+				  return false;
+				});
+
+				// On ajoute un premier champ automatiquement s'il n'en existe pas déjà un (cas d'une nouvelle annonce par exemple).
+				if (indexes[pos] == 0) {
+				  addCategory($container, pos);
+				} else {
+				  // Pour chaque catégorie déjà existante, on ajoute un lien de suppression
+				  $container.children('div').each(function() {
+					addDeleteLink($(this), $container, false);
+				  });
+				}
+				
+				reattributePositions($container);
+			}
+		});
 		
 		function reattributePositions($container) {
 			var i = 0;
-			var path = 'vmb_presentationbundle_matrix_povs';
 			$('> .form-group', $container).each(function() {
 				$('> label', this).html("#" + (i+1));
 				i++;
@@ -56,40 +60,46 @@
 		}
 
 		// La fonction qui ajoute un formulaire Categorie
-		function addCategory($container) {
+		function addCategory($container, indexPos) {
 		  // Dans le contenu de l'attribut « data-prototype », on remplace :
 		  // - le texte "__name__label__" qu'il contient par le label du champ
 		  // - le texte "__name__" qu'il contient par le numéro du champ
-		  var $prototype = $($container.attr('data-prototype').replace(/__name__label__/g, '#' + (index+1))
-			  .replace(/__name__/g, index).replace(/col-sm-2/g, 'col-sm-1'));
+		  var $prototype = $($container.attr('data-prototype').replace(/__name__label__/g, '#' + (indexes[indexPos]+1))
+			  .replace(/__name__/g, indexes[indexPos]).replace(/col-sm-2/g, 'col-sm-1'));
 
 		  // On ajoute au prototype un lien pour pouvoir supprimer la catégorie
-		  addDeleteLink($prototype, $container);
+		  addDeleteLink($prototype, $container, true);
 
 		  // On ajoute le prototype modifié à la fin de la balise <div>
 		  $container.append($prototype);
-		  
 		  reattributePositions($container);
 
 		  // Enfin, on incrémente le compteur pour que le prochain ajout se fasse avec un autre numéro
-		  index++;
+		  indexes[indexPos]++;
 		}
 
 		// La fonction qui ajoute un lien de suppression d'une catégorie
-		function addDeleteLink($prototype) {
-		  // Création du lien
-		  $deleteLink = $('<div class="col-sm-1"><a href="#" class="btn btn-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>');
+		function addDeleteLink($prototype, $container, deleteAllowed) {
+			if(deleteAllowed)
+			{
+				// Création du lien
+				$deleteLink = $('<div class="col-sm-1"><a href="#" class="btn btn-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>');
 
-		  // Ajout du lien
-		  $prototype.append($deleteLink);
+				// Ajout du lien
+				$prototype.append($deleteLink);
 
-		  // Ajout du listener sur le clic du lien
-		  $deleteLink.click(function(e) {
-			$prototype.remove();
-			e.preventDefault(); // évite qu'un # apparaisse dans l'URL
-			reattributePositions($container);
-			return false;
-		  });
+				// Ajout du listener sur le clic du lien
+				$deleteLink.click(function(e) {
+					$prototype.remove();
+					e.preventDefault(); // évite qu'un # apparaisse dans l'URL
+					reattributePositions($container);
+					return false;
+				});
+			}
+			else
+			{
+				$prototype.append('<div class="col-sm-1"></div>');
+			}
 		}
 	  });
 	</script>

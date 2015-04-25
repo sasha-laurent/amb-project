@@ -51,6 +51,11 @@ class Matrix
      * @ORM\Column(name="dateUpdate", type="date")
      */
     private $dateUpdate;
+    
+    /**
+	* @ORM\ManyToOne(targetEntity="VMB\UserBundle\Entity\User")
+	*/
+	private $owner;
 
 	/**
 	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Pov", mappedBy="matrix", cascade={"remove", "persist"})
@@ -176,5 +181,73 @@ class Matrix
     {
         $this->povs = new \Doctrine\Common\Collections\ArrayCollection();
         $this->levels = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add povs
+     *
+     * @param \VMB\PresentationBundle\Entity\Pov $povs
+     * @return Matrix
+     */
+    public function addPov(\VMB\PresentationBundle\Entity\Pov $povs)
+    {
+		$povs->setMatrix($this);
+        $this->povs[] = $povs;
+
+        return $this;
+    }
+
+    /**
+     * Remove povs
+     *
+     * @param \VMB\PresentationBundle\Entity\Pov $povs
+     */
+    public function removePov(\VMB\PresentationBundle\Entity\Pov $povs)
+    {
+        $this->povs->removeElement($povs);
+    }
+
+    /**
+     * Get povs
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPovs()
+    {
+        return $this->povs;
+    }
+
+    /**
+     * Add levels
+     *
+     * @param \VMB\PresentationBundle\Entity\Level $levels
+     * @return Matrix
+     */
+    public function addLevel(\VMB\PresentationBundle\Entity\Level $levels)
+    {
+		$levels->setMatrix($this);
+        $this->levels[] = $levels;
+
+        return $this;
+    }
+
+    /**
+     * Remove levels
+     *
+     * @param \VMB\PresentationBundle\Entity\Level $levels
+     */
+    public function removeLevel(\VMB\PresentationBundle\Entity\Level $levels)
+    {
+        $this->levels->removeElement($levels);
+    }
+
+    /**
+     * Get levels
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getLevels()
+    {
+        return $this->levels;
     }
 }

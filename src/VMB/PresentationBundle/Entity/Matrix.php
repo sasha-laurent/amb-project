@@ -51,6 +51,11 @@ class Matrix
      * @ORM\Column(name="dateUpdate", type="date")
      */
     private $dateUpdate;
+    
+    /**
+	* @ORM\ManyToOne(targetEntity="VMB\UserBundle\Entity\User")
+	*/
+	private $owner;
 
 	/**
 	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Pov", mappedBy="matrix", cascade={"remove", "persist"})
@@ -245,4 +250,32 @@ class Matrix
     {
         return $this->levels;
     }
+
+    /**
+     * Set owner
+     *
+     * @param \VMB\UserBundle\Entity\User $owner
+     * @return Matrix
+     */
+    public function setOwner(\VMB\UserBundle\Entity\User $owner = null)
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * Get owner
+     *
+     * @return \VMB\UserBundle\Entity\User 
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+    
+    public function getDimension()
+    {
+		return $this->povs->count().'x'.$this->levels->count();
+	}
 }
