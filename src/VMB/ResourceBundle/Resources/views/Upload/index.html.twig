@@ -1,0 +1,16 @@
+{% extends '::layout.html.twig' %}
+{% block body %}
+<h1>Upload File</h1>
+
+<form action="#" method="post" {{ form_enctype(form) }}>
+    {{ form_widget(form) }}
+
+    <input type="submit" value="Upload Ressource" />
+</form>
+{% endblock %}
+
+{% block customStyles %}
+	<!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+	<link rel="stylesheet" href="{{ asset('web/css/css/jquery.fileupload.css') }}">
+
+{% endblock %}

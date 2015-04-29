@@ -3,12 +3,15 @@
 namespace VMB\ResourceBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Resource
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="VMB\ResourceBundle\Entity\ResourceRepository")
+ * @ORM\HasLifecycleCallbacks
  */
 class Resource
 {
@@ -112,6 +115,10 @@ class Resource
      */
     private $encodage;
 
+    /**
+     * @Assert\File(maxSize="60000000")
+     */
+    public $file;
 
     /**
      * Get id
@@ -420,5 +427,87 @@ class Resource
     public function getEncodage()
     {
         return $this->encodage;
+    }
+    
+    /**
+     * @ORM\PrePersist()
+     */
+    public function preUpload()
+    {
+       // if (null !== $this->file)
+         //   {
+            $this->setExtension($this->file->guessExtension());
+            $name = preg_replace('/[^a-zA-Z0-9]/', '-', $this->getTitle());
+            $this->filename = $name.sha1(uniqid(mt_rand(), false));
+            $this->setDateCreation("2011-06-0");
+            $this->setDateUpload("01");
+                //$this->set
+                //s$this->set
+            $this->path = $this->getPath().$this->filename.".".$this->getExtension();
+
+           // }
+    }
+
+    public function getExt()
+    {
+      //  if (null != $this->file)
+        //    {
+            $this->ext = $this->file->guessExtension();
+            return $this->ext;
+
+          //  }
+    }
+    
+    /**
+     * @ORM\PostPersist()
+     */
+    public function upload()
+    {
+        if (null === $this->file) {
+            return;
+        }
+        // vous devez lancer une exception ici si le fichier ne peut pas
+        // être déplacé afin que l'entité ne soit pas persistée dans la
+        // base de données comme le fait la méthode move() de UploadedFile
+        $this->file->move($this->getUploadRootDir(), $this->path);
+        $this->
+
+        unset($this->file);
+    }
+
+    /**
+     * @ORM\PreRemove()
+     */
+    public function storeFilenameForRemove()
+    {
+        $this->filenameForRemove = $this->getAbsolutePath();
+    }
+
+    /**
+     * @ORM\PostRemove()
+     */
+    public function removeUpload()
+    {
+        if ($this->filenameForRemove) {
+            unlink($this->filenameForRemove);
+        }
+    }
+
+    public function getWebPath()
+    {
+        return null === $this->path ? null : $this->getUploadDir().'/'.$this->path;
+    }
+
+    protected function getUploadRootDir()
+    {
+        // le chemin absolu du répertoire où les documents uploadés doivent être sauvegardés
+        return __DIR__.'/../../../../../'.$this->getUploadDir();
+    }
+
+    protected function getUploadDir()
+    {
+        // on se débarrasse de « __DIR__ » afin de ne pas avoir de problème lorsqu'on affiche
+        // le document/image dans la vue.
+        return 'uploads/documents';
     }
 }
