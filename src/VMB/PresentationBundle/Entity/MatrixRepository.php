@@ -12,4 +12,24 @@ use Doctrine\ORM\EntityRepository;
  */
 class MatrixRepository extends EntityRepository
 {
+	public function getMatrixWithResources($id)
+	{
+		$qb = $this
+			->createQueryBuilder('m')
+			->leftJoin('m.povs', 'pov')
+			->addSelect('pov')
+			->leftJoin('m.levels', 'lvl')
+			->addSelect('lvl')
+			->leftJoin('m.resources', 'usedR')
+			->addSelect('usedR')
+			->leftJoin('usedR.resource', 'r')
+			->addSelect('r')
+			->where('m.id = :id')
+			->setParameter('id', $id)
+		;
+
+		return $qb
+		->getQuery()
+		->getSingleResult();
+	}
 }

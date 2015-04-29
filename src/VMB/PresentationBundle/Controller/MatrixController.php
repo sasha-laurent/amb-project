@@ -41,7 +41,7 @@ class MatrixController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('VMBPresentationBundle:Matrix')->find($id);
+        $entity = $em->getRepository('VMBPresentationBundle:Matrix')->getMatrixWithResources($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Matrix entity.');

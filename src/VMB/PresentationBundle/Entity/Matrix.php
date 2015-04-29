@@ -71,6 +71,8 @@ class Matrix
 	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\UsedResource", mappedBy="matrix", cascade={"remove"})
 	*/
 	private $resources;
+	
+	private $sortedResources = null;
 
     /**
      * Get id
@@ -315,4 +317,20 @@ class Matrix
     {
         return $this->resources;
     }
+    
+    public function getSortedResources()
+    {
+		if(!is_array($this->sortedResources)) {
+			$this->sortResources();
+		}
+        return $this->sortedResources;
+    }
+    
+    private function sortResources()
+    {
+		$this->sortedResources = array();
+		foreach($this->resources as $resource) {
+			$this->sortedResources[$resource->getPov()->getId()][$resource->getLevel()->getId()] = $resource->getResource();
+		}
+	}
 }

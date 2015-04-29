@@ -37,7 +37,7 @@ class UsedResource
 	private $pov;
 	
 	/**
-	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Matrix")
+	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Matrix", inversedBy="resources")
 	*/
 	private $matrix;
 	

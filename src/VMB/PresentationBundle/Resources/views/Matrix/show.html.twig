@@ -32,7 +32,11 @@
 			<tr>
 				<th class="text-center">{{ pov.title }}</th>
 				{% for level in entity.levels %}
-				<td class="text-center"></td>
+				<td class="text-center">
+					{% if entity.sortedResources[pov.id][level.id] is defined %}
+						{{ entity.sortedResources[pov.id][level.id].title }}
+					{% endif %}
+				</td>
 				{% endfor %}
 			</tr>
 			{% endfor %}
