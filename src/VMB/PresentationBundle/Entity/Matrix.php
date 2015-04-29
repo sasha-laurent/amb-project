@@ -62,11 +62,15 @@ class Matrix
 	*/
 	private $povs;
 	
-	
 	/**
 	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Level", mappedBy="matrix", cascade={"remove", "persist"})
 	*/
 	private $levels;
+	
+	/**
+	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\UsedResource", mappedBy="matrix", cascade={"remove"})
+	*/
+	private $resources;
 
     /**
      * Get id
@@ -278,4 +282,37 @@ class Matrix
     {
 		return $this->povs->count().'x'.$this->levels->count();
 	}
+
+    /**
+     * Add resources
+     *
+     * @param \VMB\PresentationBundle\Entity\UsedResource $resources
+     * @return Matrix
+     */
+    public function addResource(\VMB\PresentationBundle\Entity\UsedResource $resources)
+    {
+        $this->resources[] = $resources;
+
+        return $this;
+    }
+
+    /**
+     * Remove resources
+     *
+     * @param \VMB\PresentationBundle\Entity\UsedResource $resources
+     */
+    public function removeResource(\VMB\PresentationBundle\Entity\UsedResource $resources)
+    {
+        $this->resources->removeElement($resources);
+    }
+
+    /**
+     * Get resources
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getResources()
+    {
+        return $this->resources;
+    }
 }

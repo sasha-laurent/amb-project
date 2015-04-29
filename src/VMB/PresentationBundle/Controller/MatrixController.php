@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use VMB\PresentationBundle\Entity\Matrix;
+use VMB\PresentationBundle\Entity\UsedResource;
 use VMB\PresentationBundle\Form\MatrixType;
 
 /**
@@ -26,7 +27,7 @@ class MatrixController extends Controller
         $entities = $em->getRepository('VMBPresentationBundle:Matrix')->findAll();
 
         return $this->render('VMBPresentationBundle:Matrix:index.html.twig', array(
-            'mainTitle' => 'Affichage Matrix',
+            'mainTitle' => 'Affichage des matrices',
 			'addButtonUrl' => $this->generateUrl('matrix_new'),
             'entities' => $entities
         ));
@@ -36,7 +37,7 @@ class MatrixController extends Controller
      * Finds and displays a Matrix entity.
      *
      */
-    public function showAction($id)
+    public function showAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -45,13 +46,46 @@ class MatrixController extends Controller
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Matrix entity.');
         }
+        
+        $usedResource = new UsedResource($entity);
+        $formBuilder = $this->get('form.factory')->createBuilder('form', $usedResource);
+        $formBuilder
+            ->add('pov', 'entity', array(
+				'label' => 'Point de vue',
+				'class' => 'VMB\PresentationBundle\Entity\Pov',
+				'property' => 'title',
+				'choices' => $entity->getPovs()))
+			->add('level', 'entity', array(
+				'label' => 'Niveau',
+				'class' => 'VMB\PresentationBundle\Entity\Level',
+				'property' => 'title',
+				'choices' => $entity->getLevels()))
+			->add('resource', 'entity', array(
+				'label' => 'Ressource',
+				'class' => 'VMB\ResourceBundle\Entity\Resource',
+				'property' => 'title'))
+			->add('ajouter', 'submit')
+        ;
+        
+        $form = $formBuilder->getForm();
+        
+        $form->handleRequest($request);
+		if ($form->isValid()) {
+			$em->persist($usedResource);
+			$em->flush();
+			
+			$entity->addResource($usedResource);
+
+			$request->getSession()->getFlashBag()->add('success', 'Ressource ajoutée');
+		}
 
         return $this->render('VMBPresentationBundle:Matrix:show.html.twig', array(
             'mainTitle' => 'Matrice "'.$entity->getTitle().'"',
 			'backButtonUrl' => $this->generateUrl('matrix'),
 			'editButtonUrl' => $this->generateUrl('matrix_edit', array('id' => $entity->getId())),
 			'delButtonUrl' => $this->generateUrl('matrix_delete', array('id' => $entity->getId())),
-			'entity' => $entity
+			'entity' => $entity,
+			'resourceForm' => $form->createView()
 		));
     }
 
@@ -97,7 +131,7 @@ class MatrixController extends Controller
 				$em->persist($matrix);
 				$em->flush();
 
-				$flashMessage = !$matrix->toString() ? 'Matrix added' : 'Matrix modified';
+				$flashMessage = !$matrix->toString() ? 'Matrice ajoutée' : 'Matrice modifiée';
 				$request->getSession()->getFlashBag()->add('success', $flashMessage);
 				return $this->redirect($this->generateUrl('matrix'));
 			}
@@ -106,7 +140,7 @@ class MatrixController extends Controller
 		return $this->render('::Backend/form.html.twig', 
 			array(
 				'form' => $form->createView(),
-				'mainTitle' => ((!($matrix->toString())) ? 'Ajout d\'un matrix' : 'Modification du matrix '.$matrix->toString()),
+				'mainTitle' => ((!($matrix->toString())) ? 'Ajout d\'une matrice' : 'Modification d\'une matrice '.$matrix->toString()),
 				'backButtonUrl' => $this->generateUrl('matrix')
 			));
     }
@@ -124,7 +158,7 @@ class MatrixController extends Controller
 				$em->remove($matrix);
 				$em->flush();
 				
-				$request->getSession()->getFlashBag()->add('success', 'Matrix deleted');
+				$request->getSession()->getFlashBag()->add('success', 'Matrice supprimée');
 			} catch (\Exception $e) {
 				$request->getSession()->getFlashBag()->add('danger',"An error occured");
 			}
@@ -133,8 +167,8 @@ class MatrixController extends Controller
 
 		// Si la requête est en GET, on affiche une page de confirmation avant de delete
 		return $this->render('::Backend/delete.html.twig', array(
-			'entityTitle' => 'le matrix "'.$matrix->toString().'"',
-			'mainTitle' => 'Suppression du matrix '.$matrix->toString(),
+			'entityTitle' => 'la matrice "'.$matrix->toString().'"',
+			'mainTitle' => 'Suppression de la matrice '.$matrix->toString(),
 			'backButtonUrl' => $this->generateUrl('matrix')
 		));
     }

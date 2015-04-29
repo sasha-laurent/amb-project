@@ -127,27 +127,4 @@ class UsedResource
     {
         return $this->matrix;
     }
-
-    /**
-     * Set resource
-     *
-     * @param \VMB\ResourceBundle\Entity\Resource $resource
-     * @return UsedResource
-     */
-    public function setResource(\VMB\ResourceBundle\Entity\Resource $resource = null)
-    {
-        $this->resource = $resource;
-
-        return $this;
-    }
-
-    /**
-     * Get resource
-     *
-     * @return \VMB\ResourceBundle\Entity\Resource 
-     */
-    public function getResource()
-    {
-        return $this->resource;
-    }
 }

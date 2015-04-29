@@ -1,0 +1,42 @@
+{% extends '::Backend/subPage.html.twig' %}
+
+{% block content %}
+    <div class="panel panel-default">
+		<div class="panel-heading">
+			<div class="row">				
+				<div class="col-md-1">Id</div>				
+				<div class="col-md-1">Title</div>				
+				<div class="col-md-1">Description</div>				
+				<div class="col-md-1">Datecreation</div>				
+				<div class="col-md-1">Dateupdate</div>				
+				<div class="col-md-1">Duration</div>				
+				<div class="col-md-1">Updatemessage</div>				
+				<div class="col-md-2 text-center">Action</div>
+        	</div>
+		</div>
+	</div>
+	
+	<ul class="list-group" id="sortable">
+        {% for entity in entities %}
+			<li class="list-group-item row">
+								
+				<div class="col-md-1"><a href="{{ path('presentation_show', { 'id': entity.id }) }}">{{ entity.id }}</a></div>
+				
+				
+                <div class="col-md-1">{{ entity.title }}</div>
+                <div class="col-md-1">{{ entity.description }}</div>
+                <div class="col-md-1">{% if entity.dateCreation %}{{ entity.dateCreation|date('Y-m-d H:i:s') }}{% endif %}</div>
+                <div class="col-md-1">{% if entity.dateUpdate %}{{ entity.dateUpdate|date('Y-m-d H:i:s') }}{% endif %}</div>
+                <div class="col-md-1">{{ entity.duration }}</div>
+                <div class="col-md-1">{{ entity.updateMessage }}</div>
+                <div class="col-md-2 text-center">				
+					<div class="btn-group" role="group" aria-label="...">					
+						<a href="{{ path('presentation_show', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true">show</span></a>					
+						<a href="{{ path('presentation_edit', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true">edit</span></a>					
+					</div>
+				</div>
+            </li>
+        {% endfor %}
+    </ul>
+    
+{% endblock %}

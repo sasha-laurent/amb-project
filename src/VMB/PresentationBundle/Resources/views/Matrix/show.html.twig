@@ -1,42 +1,62 @@
 {% extends '::Backend/subPage.html.twig' %}
+{% form_theme resourceForm 'bootstrap_3_horizontal_layout.html.twig' %}
 
 {% block body %}
-	<div class="row">
-		<div class="col-sm-9">
-			<table id="sort" class="table table-bordered">
+	<div class="col-sm-4 pull-right">
+		<table class="table">
+			<tbody>
 				<tr>
-					<th width="15%"></th>
-					{% for level in entity.levels %}
-					<th class="text-center">{{ level.title }}</th>
-					{% endfor %}
+					<th>Description</th>
+					<td>{{ entity.description[:50] }} <span data-prototype="{{entity.description[50:]}}" class="showAll collapsed">...</span></td>
 				</tr>
-				{% for pov in entity.povs %}
 				<tr>
-					<th class="text-center">{{ pov.title }}</th>
-					{% for level in entity.levels %}
-					<td class="text-center"></td>
-					{% endfor %}
+					<th>Création</th>
+					<td>{{ entity.dateCreation|date('d/m/y') }}</td>
 				</tr>
-				{% endfor %}
-			</table>
-		</div>
-		<div class="col-sm-3">
-			<table class="table">
-				<tbody>
-					<tr>
-						<th>Description</th>
-						<td>{{ entity.description }}</td>
-					</tr>
-					<tr>
-						<th>Création</th>
-						<td>{{ entity.dateCreation|date('Y-m-d H:i:s') }}</td>
-					</tr>
-					<tr>
-						<th>Mise à jour</th>
-						<td>{{ entity.dateUpdate|date('Y-m-d H:i:s') }}</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+				<tr>
+					<th>Mise à jour</th>
+					<td>{{ entity.dateUpdate|date('d/m/y') }}</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
+	<div class="col-sm-8">
+		<table class="table table-bordered">
+			<tr>
+				<th width="15%"></th>
+				{% for level in entity.levels %}
+				<th class="text-center">{{ level.title }}</th>
+				{% endfor %}
+			</tr>
+			{% for pov in entity.povs %}
+			<tr>
+				<th class="text-center">{{ pov.title }}</th>
+				{% for level in entity.levels %}
+				<td class="text-center"></td>
+				{% endfor %}
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+	<div class="clearfix"></div>
+	<h2>Ajouter une ressource</h2>
+	<div class="well">
+		{{ form(resourceForm) }}
+	</div>
+{% endblock %}
+
+{% block script %}
+	{{ parent() }}
+	<script>
+	$( ".showAll" ).click(function() {
+		if($(this).hasClass('collapsed')) {
+			$(this).removeClass('collapsed');
+			$(this).html($(this).attr('data-prototype'));
+		}
+		else {
+			$(this).addClass('collapsed');
+			$(this).html('...');
+		}
+	});
+	</script>
 {% endblock %}

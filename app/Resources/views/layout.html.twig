@@ -65,6 +65,13 @@
       
 		<div class="container">
 			<h1 class="page-header">{% block h1_title %}{% endblock %}</h1>
+			{% for label, flashes in app.session.flashbag.all %}
+				{% for flash in flashes %}
+					<div class="alert alert-{{ label }}">
+						{{ flash }}
+					</div>
+				{% endfor %}
+			{% endfor %}
 			{% block body %}{% endblock %}
 
 			<!--
