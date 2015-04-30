@@ -22,6 +22,7 @@ matrix_update:
     path:	  /update/{id}
     defaults: { _controller: "VMBPresentationBundle:Matrix:update" }
     requirements:
+        _method: POST
         id:   \d{1,}
 
 matrix_delete:

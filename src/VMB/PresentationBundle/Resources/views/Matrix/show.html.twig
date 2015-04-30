@@ -144,31 +144,32 @@
 		$('#indicator').hide();
 	});
 	
-	$('#save-btn').click(function() {
+	$('#save-btn').click(function(event) {
 		if($("#save-btn").hasClass('btn-info')) {
 			$(".loading_indicator").show();
-			var DATA = "";
+			alert("test");
+			event.preventDefault();
+			var newForm = $('<form>', {
+				'action': '{{ path('matrix_update', {'id': entity.id})}}',
+				'target': '_top',
+				'method': 'post'
+			});
+			
+			alert("test2");
+			
+			// On ajoute les valeurs
 			for (var k in ajaxActions){
 				if (ajaxActions.hasOwnProperty(k)) {
-					 DATA += "&" + k + "=" + ajaxActions[k];
+					 newForm.append($('<input>', {
+						'name': k,
+						'value': ajaxActions[k],
+						'type': 'hidden'
+					}));
 				}
 			}
-			DATA = DATA.replace('&', ''); // replace first iteration of &
-			alert(DATA);
-			$.ajax({
-				type: "POST",
-				url: "{{ path('matrix_update', {'id': entity.id})}}",
-				data: DATA,
-				cache: false,
-				success: function(data){
-					alert(data);
-					$(".loading_indicator").hide();
-					ajaxActions = [];
-					$("#save-btn").addClass('btn-default');
-					$("#save-btn").removeClass('btn-info');
-				}
-			});    
-			return false;
+			alert("here");
+			newForm.hide().appendTo("body").submit();
+			alert("there");
 		}
 	});
 	</script>
