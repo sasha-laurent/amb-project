@@ -2,6 +2,7 @@
 body {
 	padding-bottom: 20px;
 	font-family: 'Open Sans';
+	background-color: #F2F2F2;
 }
 
 /* Everything but the jumbotron gets side spacing for mobile first views */
@@ -14,10 +15,10 @@ body {
 
 /* Custom page header */
 header {
-	background-color: #F5F5F5;
+	background-color: #fff;
 	padding-top: 14px;
-	padding-bottom: 8px;
 	border-bottom: 1px solid #e5e5e5;
+	box-shadow: 0px 5px 5px 0px #F2F2F2;
 }
 
 .header {
@@ -65,18 +66,37 @@ header {
 
 .header-nav-link {
 	display: block;
-	padding: 4px 8px;
+	padding: 4px 8px 12px 8px;
 	font-size: 13px;
 	font-weight: bold;
 	line-height: 26px;
 	color: #333;
 }
 
+.dropdown:hover .dropdown-menu {
+    display: block;
+ }
+ 
+ .dropdown-menu {
+    margin: 0px 0px 0px;
+    border-radius: 0px;
+}
+
 /* Custom page footer */
-.footer {
+.footer .container {
 	padding-top: 19px;
 	color: #777;
 	border-top: 1px solid #e5e5e5;
+}
+
+.main_body {
+	background-color: #fff;
+	margin-top: 16px;
+	margin-bottom: 16px;
+}
+
+.main_body h1.page-header {
+	margin-top: 16px;
 }
 
 /* Customize container */
@@ -127,22 +147,24 @@ header {
 	color: #337AB7;
 }
 
+#matrix td ul {
+	padding: 0px;
+	margin: 0px;
+	width: 100%;
+	height: 100%;
+}
 
-/* Responsive: Portrait tablets and up */
-@media screen and (min-width: 768px) {
-	/* Remove the padding we set earlier */
-	.header,
-	.marketing,
-	.footer {
-		padding-right: 0;
-		padding-left: 0;
-	}
-	/* Space out the masthead */
-	header {
-		margin-bottom: 30px;
-	}
-	/* Remove the bottom border on the jumbotron for visual effect */
-	.jumbotron {
-		border-bottom: 0;
-	}
+.modal-backdrop {
+	position: fixed;
+	top: 0px;
+}
+
+.loading_indicator {
+	width:36px;
+	height:36px;
+	display: none;
+	position: absolute;
+	top: 49%;
+	left: 49%;
+	background-image: url('../img/loading.gif');
 }

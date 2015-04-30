@@ -17,7 +17,12 @@ matrix_edit:
     defaults: { _controller: "VMBPresentationBundle:Matrix:edit" }
     requirements:
         id:   \d{1,}
-      
+
+matrix_update:
+    path:	  /update/{id}
+    defaults: { _controller: "VMBPresentationBundle:Matrix:update" }
+    requirements:
+        id:   \d{1,}
 
 matrix_delete:
     path:     /delete/{id}

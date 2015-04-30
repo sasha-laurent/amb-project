@@ -4,6 +4,7 @@ namespace VMB\PresentationBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
 use VMB\PresentationBundle\Entity\Matrix;
 use VMB\PresentationBundle\Entity\UsedResource;
@@ -23,7 +24,7 @@ class MatrixController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-
+		
         $entities = $em->getRepository('VMBPresentationBundle:Matrix')->findAll();
 
         return $this->render('VMBPresentationBundle:Matrix:index.html.twig', array(
@@ -47,37 +48,7 @@ class MatrixController extends Controller
             throw $this->createNotFoundException('Unable to find Matrix entity.');
         }
         
-        $usedResource = new UsedResource($entity);
-        $formBuilder = $this->get('form.factory')->createBuilder('form', $usedResource);
-        $formBuilder
-            ->add('pov', 'entity', array(
-				'label' => 'Point de vue',
-				'class' => 'VMB\PresentationBundle\Entity\Pov',
-				'property' => 'title',
-				'choices' => $entity->getPovs()))
-			->add('level', 'entity', array(
-				'label' => 'Niveau',
-				'class' => 'VMB\PresentationBundle\Entity\Level',
-				'property' => 'title',
-				'choices' => $entity->getLevels()))
-			->add('resource', 'entity', array(
-				'label' => 'Ressource',
-				'class' => 'VMB\ResourceBundle\Entity\Resource',
-				'property' => 'title'))
-			->add('ajouter', 'submit')
-        ;
-        
-        $form = $formBuilder->getForm();
-        
-        $form->handleRequest($request);
-		if ($form->isValid()) {
-			$em->persist($usedResource);
-			$em->flush();
-			
-			$entity->addResource($usedResource);
-
-			$request->getSession()->getFlashBag()->add('success', 'Ressource ajoutée');
-		}
+        $resources = $em->getRepository('VMBResourceBundle:Resource')->findAll();
 
         return $this->render('VMBPresentationBundle:Matrix:show.html.twig', array(
             'mainTitle' => 'Matrice "'.$entity->getTitle().'"',
@@ -85,8 +56,73 @@ class MatrixController extends Controller
 			'editButtonUrl' => $this->generateUrl('matrix_edit', array('id' => $entity->getId())),
 			'delButtonUrl' => $this->generateUrl('matrix_delete', array('id' => $entity->getId())),
 			'entity' => $entity,
-			'resourceForm' => $form->createView()
+			'resources' => $resources
 		));
+    }
+    
+    /**
+     * Update a matrix resources [AJAX only]
+     *
+     */
+    public function updateAction(Request $request, $id)
+    {
+		if($request->isXmlHttpRequest() || true)
+		{
+			$em = $this->getDoctrine()->getManager();
+			
+			$toBeAdded = array();
+			$toBeDeleted = array();
+			$resourceUpdates = $request->request->all();
+			
+			$nbRm = $nbAdd = 0;
+			
+			// We go through all data received and we part them into two lists
+			foreach($resourceUpdates as $info => $action) {
+				if(preg_match('`^([0-9]+)_([0-9]+)_([0-9]+)$`', $info, $matches)) {
+					$pov = $matches[1];
+					$lvl = $matches[2];
+					$res = $matches[3];
+					
+					if($action == 'rm') {
+						if(isset($toBeDeleted[$pov]) && !is_array($toBeDeleted[$pov])) {
+							$toBeDeleted[$pov] = array();
+						}
+						$toBeDeleted[$pov][$lvl] = $res;
+					}
+					elseif($action == 'add') {
+						if(isset($toBeAdded[$pov]) && !is_array($toBeAdded[$pov])) {
+							$toBeAdded[$pov] = array();
+						}
+						$toBeAdded[$pov][$lvl] = $res;
+					}
+				}
+			}
+			
+			// We delete the usedResource meant to be removed
+			foreach($toBeDeleted as $pov => $subArr) {
+				foreach($subArr as $lvl => $res) {
+					$usedResource = $em->getRepository('VMBPresentationBundle:UsedResource')->findByCoordinates($id, $pov, $lvl, $res);
+					$em->remove($usedResource);
+					$nbRm++;
+				}
+			}
+			
+			// We add the new resources
+			foreach($toBeAdded as $pov => $subArr) {
+				foreach($subArr as $lvl => $res) {
+					$usedResource = new UsedResource($em->getRepository('VMBPresentationBundle:Matrix')->find($id));
+					$usedResource->setPov($em->getRepository('VMBPresentationBundle:Pov')->find($pov));
+					$usedResource->setLevel($em->getRepository('VMBPresentationBundle:Level')->find($lvl));
+					$usedResource->setResource($em->getRepository('VMBResourceBundle:Resource')->find($res));
+					
+					$em->persist($usedResource);
+					$nbAdd++;
+				}
+			}
+			$em->flush();
+			
+			return new Response('Remove : '.$nbRm.' - Add : '. $nbAdd.'<br/>'.print_r($toBeAdded, true).'<hr/>'.print_r($toBeDeleted, true));
+		}
     }
 
     /**
@@ -140,7 +176,7 @@ class MatrixController extends Controller
 		return $this->render('::Backend/form.html.twig', 
 			array(
 				'form' => $form->createView(),
-				'mainTitle' => ((!($matrix->toString())) ? 'Ajout d\'une matrice' : 'Modification d\'une matrice '.$matrix->toString()),
+				'mainTitle' => ((!($matrix->toString())) ? 'Ajout d\'une matrice' : 'Modification d\'une matrice'),
 				'backButtonUrl' => $this->generateUrl('matrix')
 			));
     }
@@ -168,7 +204,7 @@ class MatrixController extends Controller
 		// Si la requête est en GET, on affiche une page de confirmation avant de delete
 		return $this->render('::Backend/delete.html.twig', array(
 			'entityTitle' => 'la matrice "'.$matrix->toString().'"',
-			'mainTitle' => 'Suppression de la matrice '.$matrix->toString(),
+			'mainTitle' => 'Suppression d\'une matrice',
 			'backButtonUrl' => $this->generateUrl('matrix')
 		));
     }

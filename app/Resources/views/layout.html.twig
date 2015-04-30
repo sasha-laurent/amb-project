@@ -23,6 +23,7 @@
 			<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,700' rel='stylesheet' type='text/css'>
 			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 			<link rel='stylesheet' id='stylesheet-css'  href='{{ asset('css/style.css') }}' type='text/css' media='all' />
+			<link rel='stylesheet' id='stylesheet-css'  href='{{ asset('css/flag-icon-css-master/css/flag-icon.min.css') }}' type='text/css' media='all' />
         {% endblock %}
     </head>
     <body itemscope itemtype="http://schema.org/WebPage">
@@ -40,9 +41,21 @@
 								</a>
 							</div>
 						{% else %}
-							<a class="btn btn-success" href="{{ path("fos_user_registration_register")  }}">S'inscrire</a>
-							<a class="btn btn-default" href="{{ path('fos_user_security_login') }}">Connexion</a>
+							<a class="btn btn-success" href="{{ path('fos_user_security_login') }}">Connexion</a>
 						{% endif %}
+						
+						<div class="btn-group">
+							<button type="button" class="btn btn-default">FR</button>
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+								<span class="caret"></span>
+								<span class="sr-only">Toggle Dropdown</span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="#"><span class="flag flag-icon flag-icon-gb"></span> English</a></li>
+								<li><a href="#"><span class="flag flag-icon flag-icon-es"></span> Español</a></li>
+								<li><a href="#"><span class="flag flag-icon flag-icon-jp"></span> 日本語</a></li>
+							</ul>
+						</div>
 					</div>
 				</div>
 				<h3><a href="{{ path('vmb_homepage') }}">VMB</a></h3>
@@ -50,11 +63,20 @@
 					<input class="form-control search-input" name="q" placeholder="Recherche" type="text">
 				</form>
 				<ul class="header-nav left" role="navigation">
-					<li class="header-nav-item">
-						<a class="header-nav-link" href="#">Présentations</a>
+					<li class="dropdown header-nav-item">
+						<a data-toggle="dropdown" class="dropdown-toggle header-nav-link" href="#">Présentations <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Toutes les présentations</a></li>
+                            <li><a href="#">Mes présentations</a></li>
+                        </ul>
 					</li>
-					<li class="header-nav-item">
-						<a class="header-nav-link" href="#">Outils</a>
+					<li class="dropdown header-nav-item">
+						<a data-toggle="dropdown" class="dropdown-toggle header-nav-link" href="#">Outils <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Gestion des fichiers</a></li>
+                            <li><a href="{{ path('matrix') }}">Gestion des matrices</a></li>
+                            <li><a href="#">Traduction</a></li>
+                        </ul>
 					</li>
 					<li class="header-nav-item">
 						<a class="header-nav-link" href="#">À propos</a>
@@ -63,7 +85,7 @@
 			</div>
 		</header>
       
-		<div class="container">
+		<div class="container main_body">
 			<h1 class="page-header">{% block h1_title %}{% endblock %}</h1>
 			{% for label, flashes in app.session.flashbag.all %}
 				{% for flash in flashes %}
@@ -73,43 +95,10 @@
 				{% endfor %}
 			{% endfor %}
 			{% block body %}{% endblock %}
-
-			<!--
-			<div class="jumbotron">
-			<h1>Jumbotron heading</h1>
-			<p class="lead">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-			<p><a class="btn btn-lg btn-success" href="#" role="button">Sign up today</a></p>
-			</div>
-
-			<div class="row marketing">
-			<div class="col-lg-6">
-			<h4>Subheading</h4>
-			<p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
-
-			<h4>Subheading</h4>
-			<p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.</p>
-
-			<h4>Subheading</h4>
-			<p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
-			</div>
-
-			<div class="col-lg-6">
-			<h4>Subheading</h4>
-			<p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
-
-			<h4>Subheading</h4>
-			<p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.</p>
-
-			<h4>Subheading</h4>
-			<p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
-			</div>
-			</div>
-			-->
-
-			<footer class="footer">
-				<p>&copy; VMB 2015</p>
-			</footer>
-		</div> <!-- /container -->
+		</div>
+		<footer class="footer">
+			<div class="container"><p>&copy; VMB 2015</p></div>
+		</footer>
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 		{% block script %}

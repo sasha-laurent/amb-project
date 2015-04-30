@@ -1,41 +1,36 @@
+{% set editModal = '.bs-example-modal-lg' %}
+{% set saveButton = 'true' %}
 {% extends '::Backend/subPage.html.twig' %}
-{% form_theme resourceForm 'bootstrap_3_horizontal_layout.html.twig' %}
 
 {% block body %}
-	<div class="col-sm-4 pull-right">
-		<table class="table">
-			<tbody>
-				<tr>
-					<th>Description</th>
-					<td>{{ entity.description[:50] }} <span data-prototype="{{entity.description[50:]}}" class="showAll collapsed">...</span></td>
-				</tr>
-				<tr>
-					<th>Création</th>
-					<td>{{ entity.dateCreation|date('d/m/y') }}</td>
-				</tr>
-				<tr>
-					<th>Mise à jour</th>
-					<td>{{ entity.dateUpdate|date('d/m/y') }}</td>
-				</tr>
-			</tbody>
-		</table>
+	<div class="col-sm-5 pull-right">
+		<h4>Ajouter une ressource</h4>
+		<div class="well">
+			<ul id="file_list">
+				{% for elt in resources %}
+				<li data-prototype="{{ elt.id }}" class="addable-resource">{{ elt.title }}</li>
+				{% endfor %}
+			</ul>
+		</div>
 	</div>
-	<div class="col-sm-8">
-		<table class="table table-bordered">
+	<div class="col-sm-7">
+		<table id="matrix" class="table table-bordered">
 			<tr>
 				<th width="15%"></th>
 				{% for level in entity.levels %}
-				<th class="text-center">{{ level.title }}</th>
+				<th style="width:{{ 85 / (entity.levels|length) }}%;" class="text-center">{{ level.title }}</th>
 				{% endfor %}
 			</tr>
 			{% for pov in entity.povs %}
 			<tr>
 				<th class="text-center">{{ pov.title }}</th>
 				{% for level in entity.levels %}
-				<td class="text-center">
-					{% if entity.sortedResources[pov.id][level.id] is defined %}
-						{{ entity.sortedResources[pov.id][level.id].title }}
-					{% endif %}
+				<td data-prototype="{{ pov.id ~ "_" ~ level.id }}" class="text-center">
+					<ul>
+						{% if entity.sortedResources[pov.id][level.id] is defined %}
+							<li data-prototype="{{ entity.sortedResources[pov.id][level.id].id }}" class="added-resource">{{ entity.sortedResources[pov.id][level.id].title }}</li>
+						{% endif %}
+					</ul>
 				</td>
 				{% endfor %}
 			</tr>
@@ -43,15 +38,38 @@
 		</table>
 	</div>
 	<div class="clearfix"></div>
-	<h2>Ajouter une ressource</h2>
-	<div class="well">
-		{{ form(resourceForm) }}
+	<table class="table">
+		<tbody>
+			<tr>
+				<th>Description</th>
+				<td>{{ entity.description[:300] }} <span data-prototype="{{entity.description[300:]}}" class="showAll collapsed">...</span></td>
+			</tr>
+			<tr>
+				<th>Création</th>
+				<td>{{ entity.dateCreation|date('d/m/y') }}</td>
+			</tr>
+			<tr>
+				<th>Mise à jour</th>
+				<td>{{ entity.dateUpdate|date('d/m/y') }}</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<div id="indicator" class="loading_indicator"></div>
+
+	<div id="myModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	  <div class="modal-dialog modal-lg">
+		<div class="modal-content container">
+		</div>
+	  </div>
 	</div>
 {% endblock %}
 
 {% block script %}
 	{{ parent() }}
 	<script>
+	var ajaxActions = [];
+	
 	$( ".showAll" ).click(function() {
 		if($(this).hasClass('collapsed')) {
 			$(this).removeClass('collapsed');
@@ -60,6 +78,97 @@
 		else {
 			$(this).addClass('collapsed');
 			$(this).html('...');
+		}
+	});
+	
+	$(function() {
+		$( ".added-resource" ).draggable({
+			appendTo: "body",
+			revert: "invalid"
+		});
+		$( "#file_list" ).droppable({
+			activeClass: "ui-state-default",
+			hoverClass: "ui-state-hover",
+			accept: ".added-resource",
+			drop: function( event, ui ) {
+				$( this ).find( ".placeholder" ).remove();
+				var key = $(ui.draggable).closest("td").attr('data-prototype') + "_" + ui.draggable.attr('data-prototype');
+				if(ajaxActions.hasOwnProperty(key) && ajaxActions[key] == 'add') {
+					ajaxActions[key] = 'none';
+				}
+				else {
+					ajaxActions[key] = 'rm';
+				}
+				$(ui.helper).remove(); //destroy clone
+				$(ui.draggable).remove(); //remove from list
+				$("#save-btn").addClass('btn-info');
+				$("#save-btn").removeClass('btn-default');
+			}
+		});
+		
+		$( ".addable-resource" ).draggable({
+			appendTo: "body",
+			helper: "clone"
+		});
+		$( "#matrix td" ).droppable({
+			activeClass: "ui-state-default",
+			hoverClass: "ui-state-hover",
+			accept: ".addable-resource",
+			drop: function( event, ui ) {
+				$( this ).find( ".placeholder" ).remove();
+				$( "<li data-prototype=" + ui.draggable.attr('data-prototype') + " class='added-resource'></li>" ).text( ui.draggable.text() ).appendTo( $('> ul', this) ).draggable({
+					appendTo: "body",
+					revert: "invalid"
+				});;
+				var key = $(this).attr('data-prototype') + "_" + ui.draggable.attr('data-prototype');
+				if(ajaxActions.hasOwnProperty(key) && ajaxActions[key] == 'rm') {
+					ajaxActions[key] = 'none';
+				}
+				else {
+					ajaxActions[key] = 'add';
+				}
+				$("#save-btn").addClass('btn-info');
+				$("#save-btn").removeClass('btn-default');
+			}
+		});
+	});
+	
+	$('#myModal').modal({
+        show: false,
+        remote: "{{ path('matrix_edit', {'id': entity.id}) }}"
+	});
+	$('#myModal').on('show.bs.modal', function (e) {
+		$('#indicator').show();
+	});
+	$('#myModal').on('shown.bs.modal', function (e) {
+		$('#indicator').hide();
+	});
+	
+	$('#save-btn').click(function() {
+		if($("#save-btn").hasClass('btn-info')) {
+			$(".loading_indicator").show();
+			var DATA = "";
+			for (var k in ajaxActions){
+				if (ajaxActions.hasOwnProperty(k)) {
+					 DATA += "&" + k + "=" + ajaxActions[k];
+				}
+			}
+			DATA = DATA.replace('&', ''); // replace first iteration of &
+			alert(DATA);
+			$.ajax({
+				type: "POST",
+				url: "{{ path('matrix_update', {'id': entity.id})}}",
+				data: DATA,
+				cache: false,
+				success: function(data){
+					alert(data);
+					$(".loading_indicator").hide();
+					ajaxActions = [];
+					$("#save-btn").addClass('btn-default');
+					$("#save-btn").removeClass('btn-info');
+				}
+			});    
+			return false;
 		}
 	});
 	</script>

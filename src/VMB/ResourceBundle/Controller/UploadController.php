@@ -27,8 +27,6 @@ class UploadController extends Controller
                 ->add('description')
                 ->add('type')
                 ->add('filename')
-                 ->add('dateCreate')
-                 ->add('dateUpdate')
                 ->add('file')
                 ->getForm();
             
