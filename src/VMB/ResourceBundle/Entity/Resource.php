@@ -5,6 +5,7 @@ namespace VMB\ResourceBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * Resource
@@ -69,16 +70,18 @@ class Resource
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="dateCreation", type="date")
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(name="dateCreate", type="date")
      */
-    private $dateCreation;
+    private $dateCreate;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="dateUpload", type="date")
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(name="dateUpdate", type="date")
      */
-    private $dateUpload;
+    private $dateUpdate;
 
     /**
      * @var integer
@@ -90,28 +93,28 @@ class Resource
     /**
      * @var integer
      *
-     * @ORM\Column(name="width", type="integer")
+     * @ORM\Column(name="width", type="integer", nullable=true)
      */
     private $width;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="height", type="integer")
+     * @ORM\Column(name="height", type="integer", nullable=true)
      */
     private $height;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="duration", type="integer")
+     * @ORM\Column(name="duration", type="integer", nullable=true)
      */
     private $duration;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="encodage", type="string", length=255)
+     * @ORM\Column(name="encodage", type="string", length=255, nullable=true)
      */
     private $encodage;
 
@@ -429,33 +432,30 @@ class Resource
         return $this->encodage;
     }
     
+        public function getExt()
+    {
+        if (null != $this->file)
+            {
+            $this->ext = $this->file->guessExtension();
+            return $this->ext;
+            }
+    }
     /**
      * @ORM\PrePersist()
      */
     public function preUpload()
     {
-       // if (null !== $this->file)
-         //   {
+        if (null !== $this->file)
+           {
             $this->setExtension($this->file->guessExtension());
             $name = preg_replace('/[^a-zA-Z0-9]/', '-', $this->getTitle());
             $this->filename = $name.sha1(uniqid(mt_rand(), false));
-            $this->setDateCreation("2011-06-0");
-            $this->setDateUpload("01");
-                //$this->set
-                //s$this->set
+            /* je recupère le type grâce au mime*/
+            $type_mime = explode("/",$this->file->getMimeType());
+            $this->setType($type_mime[0]);
+            $this->setSize(filesize($this->file));
             $this->path = $this->getPath().$this->filename.".".$this->getExtension();
-
-           // }
-    }
-
-    public function getExt()
-    {
-      //  if (null != $this->file)
-        //    {
-            $this->ext = $this->file->guessExtension();
-            return $this->ext;
-
-          //  }
+         }
     }
     
     /**
@@ -470,7 +470,7 @@ class Resource
         // être déplacé afin que l'entité ne soit pas persistée dans la
         // base de données comme le fait la méthode move() de UploadedFile
         $this->file->move($this->getUploadRootDir(), $this->path);
-        $this->
+        //$this->
 
         unset($this->file);
     }

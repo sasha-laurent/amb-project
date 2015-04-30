@@ -862,12 +862,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-                "reference": "832f18ca55af72c97996157b1e08f147d1d5efeb"
+                "reference": "192c53916942847aee687722af54f431aead0b70"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/832f18ca55af72c97996157b1e08f147d1d5efeb",
-                "reference": "832f18ca55af72c97996157b1e08f147d1d5efeb",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/192c53916942847aee687722af54f431aead0b70",
+                "reference": "192c53916942847aee687722af54f431aead0b70",
                 "shasum": ""
             },
             "require": {
@@ -921,7 +921,7 @@
             "keywords": [
                 "User management"
             ],
-            "time": "2015-04-15 14:50:07"
+            "time": "2015-04-16 23:14:14"
         },
         {
             "name": "gedmo/doctrine-extensions",
@@ -1457,16 +1457,16 @@
         },
         {
             "name": "sensiolabs/security-checker",
-            "version": "v2.0.1",
+            "version": "v2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sensiolabs/security-checker.git",
-                "reference": "134cecf1c61256bd8e973e11376891a724543820"
+                "reference": "cecb1397087dc9c733796eda6e9d121336039cdc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sensiolabs/security-checker/zipball/134cecf1c61256bd8e973e11376891a724543820",
-                "reference": "134cecf1c61256bd8e973e11376891a724543820",
+                "url": "https://api.github.com/repos/sensiolabs/security-checker/zipball/cecb1397087dc9c733796eda6e9d121336039cdc",
+                "reference": "cecb1397087dc9c733796eda6e9d121336039cdc",
                 "shasum": ""
             },
             "require": {
@@ -1498,7 +1498,7 @@
                 }
             ],
             "description": "A security checker for your composer.lock",
-            "time": "2015-01-26 16:25:19"
+            "time": "2015-04-21 07:52:05"
         },
         {
             "name": "stof/doctrine-extensions-bundle",
@@ -1966,20 +1966,20 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.18.0",
+            "version": "v1.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "4cf7464348e7f9893a93f7096a90b73722be99cf"
+                "reference": "9f70492f44398e276d1b81c1b43adfe6751c7b7f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/4cf7464348e7f9893a93f7096a90b73722be99cf",
-                "reference": "4cf7464348e7f9893a93f7096a90b73722be99cf",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/9f70492f44398e276d1b81c1b43adfe6751c7b7f",
+                "reference": "9f70492f44398e276d1b81c1b43adfe6751c7b7f",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.2.4"
+                "php": ">=5.2.7"
             },
             "type": "library",
             "extra": {
@@ -2019,7 +2019,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2015-01-25 17:32:08"
+            "time": "2015-04-19 08:30:27"
         },
         {
             "name": "vich/uploader-bundle",
