@@ -7,6 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 use VMB\PresentationBundle\Entity\Matrix;
+use VMB\PresentationBundle\Entity\Pov;
+use VMB\PresentationBundle\Entity\Level;
 use VMB\PresentationBundle\Entity\UsedResource;
 use VMB\PresentationBundle\Form\MatrixType;
 
@@ -51,7 +53,7 @@ class MatrixController extends Controller
         $resources = $em->getRepository('VMBResourceBundle:Resource')->findAll();
 
         return $this->render('VMBPresentationBundle:Matrix:show.html.twig', array(
-            'mainTitle' => 'Matrice "'.$entity->getTitle().'"',
+            'mainTitle' => $entity->getTitle(),
 			'backButtonUrl' => $this->generateUrl('matrix'),
 			'editButtonUrl' => $this->generateUrl('matrix_edit', array('id' => $entity->getId())),
 			'delButtonUrl' => $this->generateUrl('matrix_delete', array('id' => $entity->getId())),
@@ -69,56 +71,54 @@ class MatrixController extends Controller
     public function updateAction(Request $request, $id)
     {
 		$em = $this->getDoctrine()->getManager();
-		
-		$toBeAdded = array();
-		$toBeDeleted = array();
+
 		$resourceUpdates = $request->request->all();
 		
 		$nbRm = $nbAdd = 0;
 		
-		// We go through all data received and we part them into two lists
-		foreach($resourceUpdates as $info => $action) {
-			if(preg_match('`^([0-9]+)_([0-9]+)_([0-9]+)$`', $info, $matches)) {
-				$pov = $matches[1];
-				$lvl = $matches[2];
-				$res = $matches[3];
-				
-				if($action == 'rm') {
-					if(isset($toBeDeleted[$pov]) && !is_array($toBeDeleted[$pov])) {
-						$toBeDeleted[$pov] = array();
+		// We browse the existing used resources to see if they have been modified or removed
+		$usedResources = $em->getRepository('VMBPresentationBundle:UsedResource')->findByMatrixId($id);
+		foreach($usedResources as $usedRes) {
+			$key = $usedRes->getPov()->getId().'_'.$usedRes->getLevel()->getId();
+			
+			// We make sure that the value is in the right range
+			if(isset($resourceUpdates[$key]) && is_numeric($resourceUpdates[$key])) {
+				// Conversion to int before tests
+				$resourceUpdates[$key] = intval($resourceUpdates[$key]);
+				if($resourceUpdates[$key] >= 0) {				
+					// We must delete the entity
+					if($resourceUpdates[$key] == 0) {
+						$em->remove($usedRes);
+						$nbRm++;
 					}
-					$toBeDeleted[$pov][$lvl] = $res;
-				}
-				elseif($action == 'add') {
-					if(isset($toBeAdded[$pov]) && !is_array($toBeAdded[$pov])) {
-						$toBeAdded[$pov] = array();
+					// We must update the entity
+					else {
+						$usedRes->setResource($em->getRepository('VMBResourceBundle:Resource')->find($resourceUpdates[$key]));
 					}
-					$toBeAdded[$pov][$lvl] = $res;
+					unset($resourceUpdates[$key]);
 				}
 			}
 		}
 		
-		// We delete the usedResource meant to be removed
-		foreach($toBeDeleted as $pov => $subArr) {
-			foreach($subArr as $lvl => $res) {
-				$usedResource = $em->getRepository('VMBPresentationBundle:UsedResource')->findByCoordinates($id, $pov, $lvl, $res);
-				$em->remove($usedResource);
-				$nbRm++;
-			}
-		}
-		
-		// We add the new resources
-		foreach($toBeAdded as $pov => $subArr) {
-			foreach($subArr as $lvl => $res) {
-				$usedResource = new UsedResource($em->getRepository('VMBPresentationBundle:Matrix')->find($id));
-				$usedResource->setPov($em->getRepository('VMBPresentationBundle:Pov')->find($pov));
-				$usedResource->setLevel($em->getRepository('VMBPresentationBundle:Level')->find($lvl));
-				$usedResource->setResource($em->getRepository('VMBResourceBundle:Resource')->find($res));
+		// We browse the remaining post values > the remaining values that are not 0 are meant to be added to the database
+		foreach($resourceUpdates as $key => $res) {
+			if(preg_match('`^([0-9]+)_([0-9]+)$`', $key, $matches)) {
+				$pov = intval($matches[1]);
+				$lvl = intval($matches[2]);
+				$res = intval($res);
 				
-				$em->persist($usedResource);
-				$nbAdd++;
+				if($res != 0) {
+					$usedResource = new UsedResource($em->getRepository('VMBPresentationBundle:Matrix')->find($id));
+					$usedResource->setPov($em->getRepository('VMBPresentationBundle:Pov')->find($pov));
+					$usedResource->setLevel($em->getRepository('VMBPresentationBundle:Level')->find($lvl));
+					$usedResource->setResource($em->getRepository('VMBResourceBundle:Resource')->find($res));
+					
+					$em->persist($usedResource);
+					$nbAdd++;
+				}
 			}
 		}
+
 		$em->flush();
 		
 		$flashMessage = 'Matrice modifiée avec succès - '.$nbAdd.' ajouts | '.$nbRm.' retraits';

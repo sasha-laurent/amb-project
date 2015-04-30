@@ -4,9 +4,17 @@
   {{ mainTitle }} - {{ parent() }}
 {% endblock %}
 
+{% set nbActions = ((saveButton is defined) ? 1.5 : 0) + ((addButtonUrl is defined) ? 1 : 0) + ((editButtonUrl is defined) ? 1 : 0) + ((delButtonUrl is defined) ? 1 : 0) %}
+
+{% if nbActions > 3 %}
+	{% set colWidth = 3 %}
+{% else %}
+	{% set colWidth = 2 %}
+{% endif %}
+
 {% block h1_title %}
 	<div class="row">
-		<div class="col-md-10">
+		<div class="col-md-{{ 12 - colWidth }}">
 			{% if backButtonUrl is defined %}
 				<a class="btn btn-default" href="{{ backButtonUrl }}" >
 					<span class="left glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
@@ -14,7 +22,8 @@
 			{% endif %}
 			{{ mainTitle }}
 		</div>
-		<div class="col-md-2 text-right">
+		<div class="col-md-{{ colWidth }} text-right">
+			{% if saveButton is defined %}<span class="loading_indicator_inline"></span>{% endif %}
 			<div class="btn-group" role="group" aria-label="...">
 				{% if saveButton is defined %}
 					<a class="btn btn-default" id="save-btn">

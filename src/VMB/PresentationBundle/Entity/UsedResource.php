@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UsedResource
  *
- * @ORM\Table()
+ * @ORM\Table(name="usedresource",uniqueConstraints={@ORM\UniqueConstraint(name="uniq_resource_per_lvl_pov", columns={"pov_id", "level_id", "matrix_id"})})
  * @ORM\Entity(repositoryClass="VMB\PresentationBundle\Entity\UsedResourceRepository")
  */
 class UsedResource
@@ -23,21 +23,25 @@ class UsedResource
     
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\ResourceBundle\Entity\Resource")
+	* @ORM\JoinColumn(nullable=false)
 	*/
 	private $resource;
 
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Level")
+	* @ORM\JoinColumn(nullable=false)
 	*/
 	private $level;
 
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Pov")
+	* @ORM\JoinColumn(nullable=false)
 	*/
 	private $pov;
 	
 	/**
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Matrix", inversedBy="resources")
+	* @ORM\JoinColumn(nullable=false)
 	*/
 	private $matrix;
 	

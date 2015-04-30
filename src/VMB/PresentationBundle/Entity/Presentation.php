@@ -74,6 +74,14 @@ class Presentation
 	private $matrix;
 
 
+	/**
+     * Constructor
+     */
+    public function __construct($matrix)
+    {
+        $this->setMatrix($matrix);
+    }
+
     /**
      * Get id
      *

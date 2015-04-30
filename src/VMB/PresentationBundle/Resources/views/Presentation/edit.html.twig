@@ -1,16 +1,33 @@
-{% extends '::base.html.twig' %}
+{% extends "::Backend/subPage.html.twig" %}
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 
 {% block body -%}
-    <h1>Presentation edit</h1>
+    <table id="matrix" class="table table-bordered">
+		<tr>
+			<th width="15%"></th>
+			{% for level in matrix.levels %}
+			<th style="width:{{ 85 / (matrix.levels|length) }}%;" class="text-center">{{ level.title }}</th>
+			{% endfor %}
+		</tr>
+		{% for pov in matrix.povs %}
+		<tr>
+			<th class="text-center">{{ pov.title }}</th>
+			{% for level in matrix.levels %}
+			<td data-prototype="{{ pov.id ~ "_" ~ level.id }}" class="text-center">
+				<ul>
+					{% if matrix.sortedResources[pov.id][level.id] is defined %}
+						<li data-prototype="{{ matrix.sortedResources[pov.id][level.id].id }}" class="added-resource">{{ matrix.sortedResources[pov.id][level.id].title }}</li>
+					{% endif %}
+				</ul>
+			</td>
+			{% endfor %}
+		</tr>
+		{% endfor %}
+	</table>
+	
+	<div class="well">
+		{{ form(form) }}
+	</div>
 
-    {{ form(edit_form) }}
-
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('presentation') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
 </ul>
 {% endblock %}

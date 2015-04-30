@@ -9,8 +9,10 @@ presentation_show:
         id:   \d{1,}
 
 presentation_new:
-    path:     /new
+    path:     /new/{idMatrix}
     defaults: { _controller: "VMBPresentationBundle:Presentation:new" }
+    requirements:
+        idMatrix:   \d{1,}
 
 presentation_edit:
     path:     /edit/{id}

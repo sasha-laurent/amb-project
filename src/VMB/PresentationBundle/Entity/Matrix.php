@@ -330,7 +330,7 @@ class Matrix
     {
 		$this->sortedResources = array();
 		foreach($this->resources as $resource) {
-			$this->sortedResources[$resource->getPov()->getId()][$resource->getLevel()->getId()] = $resource->getResource();
+			$this->sortedResources[$resource->getPov()->getId()][$resource->getLevel()->getId()] = $resource;
 		}
 	}
 }

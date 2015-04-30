@@ -17,13 +17,6 @@ class PresentationType extends AbstractType
         $builder
             ->add('title')
             ->add('description')
-            ->add('dateCreation')
-            ->add('dateUpdate')
-            ->add('duration')
-            ->add('updateMessage')
-            ->add('matrix', 'entity', array(
-				'class' => 'VMB\PresentationBundle\Entity\Matrix',
-				'property' => 'title'))
         ;
     }
     

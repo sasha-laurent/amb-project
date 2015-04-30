@@ -2,42 +2,56 @@
 {% set saveButton = 'true' %}
 {% extends '::Backend/subPage.html.twig' %}
 
+{% set cellWidth = (830 / entity.levels|length) %}
+	{% if cellWidth > 120 %}
+		{% set cellWidth = 120 %}
+	{% endif %}
+	{% set cellHeight = cellWidth * 9 / 16 %}
+
 {% block body %}
-	<div class="col-sm-5 pull-right">
-		<h4>Ajouter une ressource</h4>
-		<div class="well">
-			<ul id="file_list">
-				{% for elt in resources %}
-				<li data-prototype="{{ elt.id }}" class="addable-resource">{{ elt.title }}</li>
-				{% endfor %}
-			</ul>
-		</div>
-	</div>
-	<div class="col-sm-7">
-		<table id="matrix" class="table table-bordered">
-			<tr>
-				<th width="15%"></th>
+	<div class="drag_container">
+		<form id="matrix_form" action="{{ path('matrix_update', {'id': entity.id})}}" method="post">
+		<table style="width:{{ cellWidth*entity.levels|length + 120}}px;" id="matrix" class="table table-bordered">
+			<tr class="compact_tr">
+				<th width="120px"></th>
 				{% for level in entity.levels %}
-				<th style="width:{{ 85 / (entity.levels|length) }}%;" class="text-center">{{ level.title }}</th>
+				<th width="{{ cellWidth }}px" class="text-center">{{ level.title }}</th>
 				{% endfor %}
 			</tr>
 			{% for pov in entity.povs %}
-			<tr>
+			<tr height="{{ cellHeight }}px">
 				<th class="text-center">{{ pov.title }}</th>
 				{% for level in entity.levels %}
 				<td data-prototype="{{ pov.id ~ "_" ~ level.id }}" class="text-center">
-					<ul>
-						{% if entity.sortedResources[pov.id][level.id] is defined %}
-							<li data-prototype="{{ entity.sortedResources[pov.id][level.id].id }}" class="added-resource">{{ entity.sortedResources[pov.id][level.id].title }}</li>
-						{% endif %}
-					</ul>
+					<input type="hidden" name="{{ pov.id ~ "_" ~ level.id }}" value="{{ entity.sortedResources[pov.id][level.id].resource.id|default(0) }}" />
+					{% if entity.sortedResources[pov.id][level.id] is defined %}
+						<div class="usedResource" data-resource="{{ entity.sortedResources[pov.id][level.id].resource.id }}" style="background-image:url(https://i.ytimg.com/vi/63crAqHlIbM/mqdefault.jpg);">
+							<div class="resThumbnailHover"><span>{{ entity.sortedResources[pov.id][level.id].resource.title[:10] }}</span></div>
+						</div>
+					{% endif %}
 				</td>
 				{% endfor %}
 			</tr>
 			{% endfor %}
 		</table>
+		</form>
+		<hr/>
+		<div class="row">
+			<div class="col-sm-7">
+				<h4>Aperçu</h4>
+			</div>
+			<div class="col-sm-5">
+				<h4>Ajouter une ressource</h4>
+				<div class="well">
+					<ul id="file_list">
+						{% for elt in resources %}
+						<li data-resource="{{ elt.id }}" data-title="{{ elt.title }}" data-thumb="https://i.ytimg.com/vi/Ks_5q9lvcyA/mqdefault.jpg" class="addableResource">{{ elt.title }}</li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+		</div>
 	</div>
-	<div class="clearfix"></div>
 	<table class="table">
 		<tbody>
 			<tr>
@@ -68,7 +82,10 @@
 {% block script %}
 	{{ parent() }}
 	<script>
-	var ajaxActions = [];
+	var selectedClass = 'ui-state-highlight',
+		clickDelay = 250,
+		// click time (milliseconds)
+		lastClick, diffClick; // timestamps
 	
 	$( ".showAll" ).click(function() {
 		if($(this).hasClass('collapsed')) {
@@ -81,54 +98,100 @@
 		}
 	});
 	
-	$(function() {
-		$( ".added-resource" ).draggable({
-			appendTo: "body",
-			revert: "invalid"
+	function bindCustomDraggable(selector) {		
+		$(selector).bind('mousedown mouseup', function(e) {
+			if (e.type == "mousedown") {
+				lastClick = e.timeStamp; // get mousedown time
+			} else {
+				diffClick = e.timeStamp - lastClick;
+				if (diffClick < clickDelay) {
+					// add selected class to group draggable objects
+					$(this).toggleClass(selectedClass);
+				}
+			}
+		})
+		.draggable({
+			revertDuration: 10,
+			containment: '.drag_container',
+			zIndex: 1000,
+			cursor: "move", 
+			cursorAt: { top: {{ cellHeight / 2 }}, left: {{ cellWidth / 2 }} },
+			start: function(e, ui) {
+				ui.helper.addClass(selectedClass);
+			},
+			stop: function(e, ui) {
+				// reset group positions
+				$('.' + selectedClass).css({
+					top: 0,
+					left: 0
+				});
+			},
+			drag: function(e, ui) {
+				// set selected group position to main dragged object
+				// this works because the position is relative to the starting position
+				$('.' + selectedClass).css({
+					top: ui.position.top,
+					left: ui.position.left
+				});
+			}
 		});
-		$( "#file_list" ).droppable({
-			activeClass: "ui-state-default",
-			hoverClass: "ui-state-hover",
-			accept: ".added-resource",
-			drop: function( event, ui ) {
-				$( this ).find( ".placeholder" ).remove();
-				var key = $(ui.draggable).closest("td").attr('data-prototype') + "_" + ui.draggable.attr('data-prototype');
-				if(ajaxActions.hasOwnProperty(key) && ajaxActions[key] == 'add') {
-					ajaxActions[key] = 'none';
-				}
-				else {
-					ajaxActions[key] = 'rm';
-				}
-				$(ui.helper).remove(); //destroy clone
-				$(ui.draggable).remove(); //remove from list
-				$("#save-btn").addClass('btn-info');
-				$("#save-btn").removeClass('btn-default');
+	}
+	
+	function noticeUnsavedMatrix() {		
+		$("#save-btn").addClass('btn-info');
+		$("#save-btn").removeClass('btn-default');
+	}
+	
+	$(function() {
+		bindCustomDraggable($(".usedResource"));
+		// Script to deferentiate a click from a mousedown for drag event
+		
+		
+		$('.addableResource').draggable({
+			containment: '.drag_container',
+			zIndex: 1000,
+			cursor: "move",
+			revert: true,
+			helper: "clone"
+		});
+
+		$("#file_list").droppable({
+			accept: '.usedResource',
+			drop: function(e, ui) {
+				ui.draggable.prev('input').val(0);
+				$('.usedResource.' + selectedClass).prev('input').val(0);
+				ui.draggable.remove();
+				$('.usedResource.' + selectedClass).remove();
+				noticeUnsavedMatrix();
 			}
 		});
 		
-		$( ".addable-resource" ).draggable({
-			appendTo: "body",
-			helper: "clone"
-		});
-		$( "#matrix td" ).droppable({
-			activeClass: "ui-state-default",
-			hoverClass: "ui-state-hover",
-			accept: ".addable-resource",
-			drop: function( event, ui ) {
-				$( this ).find( ".placeholder" ).remove();
-				$( "<li data-prototype=" + ui.draggable.attr('data-prototype') + " class='added-resource'></li>" ).text( ui.draggable.text() ).appendTo( $('> ul', this) ).draggable({
-					appendTo: "body",
-					revert: "invalid"
-				});;
-				var key = $(this).attr('data-prototype') + "_" + ui.draggable.attr('data-prototype');
-				if(ajaxActions.hasOwnProperty(key) && ajaxActions[key] == 'rm') {
-					ajaxActions[key] = 'none';
+		$("#matrix td").droppable({
+			accept: '.usedResource, .addableResource',
+			drop: function(e, ui) {
+				if(ui.draggable.hasClass('usedResource')) {
+					if($('.usedResource.'+ selectedClass).length > 1) {
+						alert('Vous ne pouvez pas déplacer plusieurs éléments dans une seule case');
+					}
+					else {
+						ui.draggable.prev('input').val(0);
+						$('> .usedResource', this).remove();
+						$('> input', this).val(ui.draggable.attr('data-resource'));
+						ui.draggable.appendTo($(this)) // ui.draggable is appended by the script, so add it after
+						.removeClass(selectedClass).css({
+							top: 0,
+							left: 0
+						});
+						noticeUnsavedMatrix();
+					}
 				}
 				else {
-					ajaxActions[key] = 'add';
+					$('> .usedResource', this).remove();
+					$('> input', this).val(ui.draggable.attr('data-resource'));
+					$(this).append('<div class="usedResource" data-resource="' + ui.draggable.attr('data-resource') + '" style="background-image:url(' + ui.draggable.attr('data-thumb') + ');"><div class="resThumbnailHover"><span>' + ui.draggable.attr('data-title') + '</span></div></div>');
+					bindCustomDraggable($('> .usedResource', this));
+					noticeUnsavedMatrix();
 				}
-				$("#save-btn").addClass('btn-info');
-				$("#save-btn").removeClass('btn-default');
 			}
 		});
 	});
@@ -146,30 +209,10 @@
 	
 	$('#save-btn').click(function(event) {
 		if($("#save-btn").hasClass('btn-info')) {
-			$(".loading_indicator").show();
-			alert("test");
+			$(".loading_indicator_inline").css('display', 'inline-block');
+
 			event.preventDefault();
-			var newForm = $('<form>', {
-				'action': '{{ path('matrix_update', {'id': entity.id})}}',
-				'target': '_top',
-				'method': 'post'
-			});
-			
-			alert("test2");
-			
-			// On ajoute les valeurs
-			for (var k in ajaxActions){
-				if (ajaxActions.hasOwnProperty(k)) {
-					 newForm.append($('<input>', {
-						'name': k,
-						'value': ajaxActions[k],
-						'type': 'hidden'
-					}));
-				}
-			}
-			alert("here");
-			newForm.hide().appendTo("body").submit();
-			alert("there");
+			$('#matrix_form').submit();
 		}
 	});
 	</script>

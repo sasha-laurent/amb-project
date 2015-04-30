@@ -26,7 +26,7 @@ class PresentationController extends Controller
         $entities = $em->getRepository('VMBPresentationBundle:Presentation')->findAll();
 
         return $this->render('VMBPresentationBundle:Presentation:index.html.twig', array(
-            'mainTitle' => 'Affichage Presentation',
+            'mainTitle' => 'Toutes les présentations',
 			'addButtonUrl' => $this->generateUrl('presentation_new'),
             'entities' => $entities
         ));
@@ -58,9 +58,15 @@ class PresentationController extends Controller
      * Displays a form to create a new Presentation entity.
      *
      */
-    public function newAction()
+    public function newAction($idMatrix)
     {
-        $presentation = new Presentation();
+		$matrix = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Matrix')->find($idMatrix);
+
+		if ($matrix == null) {
+			throw $this->createNotFoundException('Unable to find Matrix entity.');
+		}
+		
+        $presentation = new Presentation($matrix);
 
         return $this->renderForm($presentation);
     }
@@ -102,11 +108,12 @@ class PresentationController extends Controller
 			}
 		}
 
-		return $this->render('::Backend/form.html.twig', 
+		return $this->render('VMBPresentationBundle:Presentation:edit.html.twig', 
 			array(
 				'form' => $form->createView(),
 				'mainTitle' => ((!($presentation->toString())) ? 'Ajout d\'un presentation' : 'Modification du presentation '.$presentation->toString()),
-				'backButtonUrl' => $this->generateUrl('presentation')
+				'backButtonUrl' => $this->generateUrl('presentation'),
+				'matrix' => $presentation->getMatrix()
 			));
     }
     /**
@@ -132,8 +139,8 @@ class PresentationController extends Controller
 
 		// Si la requête est en GET, on affiche une page de confirmation avant de delete
 		return $this->render('::Backend/delete.html.twig', array(
-			'entityTitle' => 'le presentation "'.$presentation->toString().'"',
-			'mainTitle' => 'Suppression du presentation '.$presentation->toString(),
+			'entityTitle' => '"'.$presentation->toString().'"',
+			'mainTitle' => 'Suppression de la présentation '.$presentation->toString(),
 			'backButtonUrl' => $this->generateUrl('presentation')
 		));
     }
