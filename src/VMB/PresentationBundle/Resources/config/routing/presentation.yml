@@ -25,7 +25,12 @@ presentation_edit:
     defaults: { _controller: "VMBPresentationBundle:Presentation:edit" }
     requirements:
         id:   \d{1,}
-      
+        
+presentation_create_copy:
+    path:     /createFrom/{id}
+    defaults: { _controller: "VMBPresentationBundle:Presentation:createFrom" }
+    requirements:
+        id:   \d{1,}
 
 presentation_delete:
     path:     /delete/{id}

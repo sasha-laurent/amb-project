@@ -62,7 +62,7 @@ class PresentationController extends Controller
      *
      */
     /**
-    * @Security("has_role('IS_AUTHENTICATED_REMEMBERED')")
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
     */
     public function showAction($id)
     {
@@ -85,7 +85,7 @@ class PresentationController extends Controller
      *
      */
     /**
-    * @Security("has_role('IS_AUTHENTICATED_REMEMBERED')")
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
     */
     public function newAction($idMatrix)
     {
@@ -105,7 +105,7 @@ class PresentationController extends Controller
      *
      */
     /**
-    * @Security("has_role('IS_AUTHENTICATED_REMEMBERED')")
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
     */
     public function editAction($id)
     {
@@ -113,14 +113,28 @@ class PresentationController extends Controller
 
 		return $this->renderForm($presentation);
     }
+    
+    /**
+     * Displays a form to create a new presentation from an existing Presentation entity.
+     *
+     */
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
+    public function createFromAction($id)
+    {
+        $presentation = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Presentation')->findWithSortedResources($id);
+
+		return $this->renderForm($presentation, true);
+    }
 
     /**
      * Finds and displays a Presentation entity.
      */
     /**
-    * @Security("has_role('IS_AUTHENTICATED_REMEMBERED')")
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
     */
-    protected function renderForm($presentation)
+    protected function renderForm($presentation, $saveAsCopy = false)
     {
 		$request = $this->get('request');
 		
@@ -137,12 +151,18 @@ class PresentationController extends Controller
 				
 				$postValues = $request->request->all();
 				
-				$checkedRes = $presentation->getResources();
-				$indexedCheckedRes = array();
-				if($checkedRes != null) {
-					foreach($checkedRes as $r) {
-						$indexedCheckedRes[$r->getUsedResource()->getId()] = $r;
+				// If it's a copy, we don't have to worry about modifiying existing objects
+				if(!$saveAsCopy) {
+					$checkedRes = $presentation->getResources();
+					$indexedCheckedRes = array();
+					if($checkedRes != null) {
+						foreach($checkedRes as $r) {
+							$indexedCheckedRes[$r->getUsedResource()->getId()] = $r;
+						}
 					}
+				}
+				else {
+					
 				}
 				
 				foreach($postValues as $key => $position) {
@@ -150,7 +170,7 @@ class PresentationController extends Controller
 						$resId = intval($matches[1]);
 						
 						// If the resource has already been persisted as a checked resource
-						if(isset($indexedCheckedRes[$resId])) {
+						if(!$saveAsCopy && isset($indexedCheckedRes[$resId])) {
 							$indexedCheckedRes[$resId]->setSort($position);
 							unset($indexedCheckedRes[$resId]);
 						}
@@ -165,10 +185,12 @@ class PresentationController extends Controller
 					}
 				}
 				
-				// If there are still values in this array it means it has to be removed
-				foreach($indexedCheckedRes as $r) {
-					$presentation->removeResource($r);
-					$em->remove($r);
+				if(!$saveAsCopy) {
+					// If there are still values in this array it means it has to be removed
+					foreach($indexedCheckedRes as $r) {
+						$presentation->removeResource($r);
+						$em->remove($r);
+					}
 				}
 				
 				$em->persist($presentation);
@@ -183,7 +205,7 @@ class PresentationController extends Controller
 		return $this->render('VMBPresentationBundle:Presentation:edit.html.twig', 
 			array(
 				'form' => $form->createView(),
-				'mainTitle' => ((!($presentation->toString())) ? 'Ajout d\'une présentation' : $presentation->toString()),
+				'mainTitle' => ((!($presentation->toString())) ? 'Ajout d\'une présentation' : ($saveAsCopy ? 'Copie de ': '').$presentation->toString()),
 				'backButtonUrl' => $this->generateUrl('presentation'),
 				'matrix' => $presentation->getMatrix(),
 				'presentation' => $presentation,
@@ -195,7 +217,7 @@ class PresentationController extends Controller
      *
      */
     /**
-    * @Security("has_role('IS_AUTHENTICATED_REMEMBERED')")
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
     */
     public function deleteAction(Request $request, $id)
     {
@@ -226,7 +248,7 @@ class PresentationController extends Controller
      * Retrieve an existing Presentation entity.
      */
     /**
-    * @Security("has_role('IS_AUTHENTICATED_REMEMBERED')")
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
     */
     protected function getPresentation($id)
     {

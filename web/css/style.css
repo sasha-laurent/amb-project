@@ -31,7 +31,8 @@ header {
 	margin-bottom: 0;
 	line-height: 36px;
 	text-align: center;
-	margin: 0px 15px;
+	margin-top: -4px;
+	margin-right: 16px;
 }
 
 .top-search-form {
