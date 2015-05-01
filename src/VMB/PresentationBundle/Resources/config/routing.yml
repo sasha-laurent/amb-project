@@ -5,6 +5,10 @@ vmb_presentation_presentation:
 vmb_presentation_matrix:
     resource: "@VMBPresentationBundle/Resources/config/routing/matrix.yml"
     prefix:   /matrix
+    
+vmb_presentation_ontology:
+    resource: "@VMBPresentationBundle/Resources/config/routing/ontology.yml"
+    prefix:   /ontology
 
 vmb_presentation_homepage:
     path:     /hello/{name}

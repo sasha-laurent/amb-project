@@ -1,0 +1,23 @@
+ontology_main:
+    pattern:  /
+    defaults: { _controller: VMBPresentationBundle:Ontology:main }
+
+indexation_main:
+    pattern: /indexation/ 
+    defaults: { _controller: VMBPresentationBundle:Ontology:indexationpage}
+
+ontology_edit:
+    pattern:  /edit/
+    defaults: { _controller: VMBPresentationBundle:Ontology:edit }
+
+ontology_edit_save:
+    pattern:  /save/
+    defaults: { _controller: VMBPresentationBundle:Ontology:saveOntology }
+
+ontology_index:
+    pattern:  /index/
+    defaults: { _controller: VMBPresentationBundle:Ontology:index }
+
+ontology_index_save:
+    pattern:  /index/save/
+    defaults: { _controller: VMBPresentationBundle:Ontology:saveIndex }

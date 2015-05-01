@@ -68,15 +68,24 @@
 						<a data-toggle="dropdown" class="dropdown-toggle header-nav-link" href="#">Présentations <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li><a href="{{ path('presentation') }}">Toutes les présentations</a></li>
+                            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                             <li><a href="{{ path('presentation_perso') }}">Mes présentations</a></li>
+                            {% endif %}
                         </ul>
 					</li>
 					<li class="dropdown header-nav-item">
 						<a data-toggle="dropdown" class="dropdown-toggle header-nav-link" href="#">Outils <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">Gestion des fichiers</a></li>
+							{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                            <li><a href="#">Gestion des ressources</a></li>
+                            {% endif %}
                             <li><a href="{{ path('matrix') }}">Gestion des matrices</a></li>
+                            {% if is_granted('ROLE_ADMIN') %}
                             <li><a href="#">Traduction</a></li>
+                            {% endif %}
+                            {% if is_granted('ROLE_TEACHER') %}
+                            <li><a href="{{ path('ontology_main') }}">Ontologies</a></li>
+                            {% endif %}
                         </ul>
 					</li>
 				</ul>

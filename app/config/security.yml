@@ -3,7 +3,8 @@ security:
         VMB\UserBundle\Entity\User: sha512
 
     role_hierarchy:
-        ROLE_ADMIN:       [ROLE_AUTEUR, ROLE_MODERATEUR]       # Un admin hérite des droits d'auteur et de modérateur
+        ROLE_TEACHER:     [ROLE_STUDENT]
+        ROLE_ADMIN:       [ROLE_TEACHER]
         ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH] # On garde ce rôle superadmin, il nous resservira par la suite
 
     providers:

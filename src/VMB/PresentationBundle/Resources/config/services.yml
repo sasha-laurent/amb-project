@@ -1,4 +1,11 @@
+parameters:
+    ontology.class: VMB\PresentationBundle\Model\ontologyModel
+
 services:
-#    vmb_presentation.example:
-#        class: VMB\PresentationBundle\Example
-#        arguments: [@service_id, "plain_value", %parameter%]
+    security.authentication.customized_success_handler:
+        class: %security.authentication.success_handler.class%
+        public: false
+        arguments:  [@router, @security.context]
+    ontology:
+        class: %ontology.class%
+        arguments: [@database_connection, @kernel]

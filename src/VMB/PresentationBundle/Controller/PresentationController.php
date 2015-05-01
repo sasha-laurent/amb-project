@@ -5,6 +5,7 @@ namespace VMB\PresentationBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 use VMB\PresentationBundle\Entity\Presentation;
 use VMB\PresentationBundle\Entity\CheckedResource;
@@ -21,6 +22,9 @@ class PresentationController extends Controller
      * Lists all Presentation entities.
      *
      */
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
     public function indexAction($page)
     {
         $em = $this->getDoctrine()->getManager();
@@ -57,6 +61,9 @@ class PresentationController extends Controller
      * Finds and displays a Presentation entity.
      *
      */
+    /**
+    * @Security("has_role('IS_AUTHENTICATED_REMEMBERED')")
+    */
     public function showAction($id)
     {
         $em = $this->getDoctrine()->getManager();
@@ -77,6 +84,9 @@ class PresentationController extends Controller
      * Displays a form to create a new Presentation entity.
      *
      */
+    /**
+    * @Security("has_role('IS_AUTHENTICATED_REMEMBERED')")
+    */
     public function newAction($idMatrix)
     {
 		$matrix = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Matrix')->getMatrixWithResources($idMatrix);
@@ -94,6 +104,9 @@ class PresentationController extends Controller
      * Displays a form to edit an existing Presentation entity.
      *
      */
+    /**
+    * @Security("has_role('IS_AUTHENTICATED_REMEMBERED')")
+    */
     public function editAction($id)
     {
         $presentation = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Presentation')->findWithSortedResources($id);
@@ -104,6 +117,9 @@ class PresentationController extends Controller
     /**
      * Finds and displays a Presentation entity.
      */
+    /**
+    * @Security("has_role('IS_AUTHENTICATED_REMEMBERED')")
+    */
     protected function renderForm($presentation)
     {
 		$request = $this->get('request');
@@ -178,6 +194,9 @@ class PresentationController extends Controller
      * Deletes a Presentation entity.
      *
      */
+    /**
+    * @Security("has_role('IS_AUTHENTICATED_REMEMBERED')")
+    */
     public function deleteAction(Request $request, $id)
     {
         $presentation = $this->getPresentation($id);
@@ -206,6 +225,9 @@ class PresentationController extends Controller
     /**
      * Retrieve an existing Presentation entity.
      */
+    /**
+    * @Security("has_role('IS_AUTHENTICATED_REMEMBERED')")
+    */
     protected function getPresentation($id)
     {
         $presentation = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Presentation')->find($id);

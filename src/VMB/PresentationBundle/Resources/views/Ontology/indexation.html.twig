@@ -1,0 +1,46 @@
+{% extends 'VMBPresentationBundle:Ontology:base.html.twig' %}
+
+{% block customScript %}
+$('.miller-container').taxonomyBrowser({
+  columns: 4,
+  columnheight: 450,    
+  json         : '{{ asset("bundles/telecomvmb/json/"~ontologyFile~"?p="~random()~"") }}',
+  jsonIndex    : '{{ asset("bundles/telecomvmb/json/"~indexFile~"?p="~random()~"") }}',
+  save		   : '{{ path("ontology_index_save") }}',
+  source       : 'json',
+  videoID	   : {{ videoID|json_encode|raw }},
+  ontologyMode : 'add',
+  id 		   : '{{id}}'      
+});
+{% endblock %}
+
+{% block buttons %}
+	<div style="display:block; clear:both;">
+		<ul class = "main-top-menu">
+  			<li><button class="btn save-tags">Save</button></li>
+		</ul>
+	</div>
+	
+	<div style="display:block; clear:both;">
+		<ul id="myTags">
+		</ul>
+	</div>
+{% endblock %}
+
+{% block uiDialogs %}
+	<!-- ui dialog for add or edit node -->
+	<div id="dialog-add-text" class = "dialog-ui" title="Enter a value">
+		<form>
+			<fieldset>
+				<ul>
+					<li class = "dialog-li">
+						<label id = "text-value-label" for="text-value">Value Attribute</label>
+						<input type="text" name="text-value" id="text-value" class="text ui-widget-content ui-corner-all">
+						<ul id="multiple-text-value">
+						</ul>
+					</li>
+				</ul>
+			</fieldset>
+		</form>
+	</div>
+{% endblock %}

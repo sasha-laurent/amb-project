@@ -1,0 +1,32 @@
+{% extends '::layout.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-7" style="margin-left:10px; margin-top:10px">
+            <select name="ontology" id="ontology" class="form-control">
+            {% for ontology in ontologies %}
+                <option value="{{ontology.id}}">{{ontology.name}}</option>
+            {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-5">
+                <div class="row" style="margin-bottom:10px;">
+                    <a class="btn btn-primary" href="#" onClick="submitForm()" style="margin-top: 4px; margin-left: 25px;">Edit Concept Hierarchy</a>
+                </div>
+                <div class="row" style="margin-left:10px;">
+                    <a class="btn btn-primary" href="{{ path('ontology_edit') }}">New Ontology</a>
+                </div>
+            </div>
+    </div>
+        </form>
+
+        <script>
+            function submitForm() {
+                $("#ontology-input").val($("#ontology").val());
+                $("#ontology-form").submit();
+            }
+        </script>
+        <form action="{{ path('ontology_edit') }}" method="get" id="ontology-form" style="visibility:hidden; display:none;">
+            <input type="text" name="ontology" id="ontology-input">
+        </form>
+{% endblock %}

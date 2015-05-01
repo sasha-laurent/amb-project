@@ -1,0 +1,82 @@
+{# app/Resources/views/Admin/Ontology/edit.html.twig #}
+{% extends 'VMBPresentationBundle:Ontology:base.html.twig' %}
+
+{% block title %}Edit Ontology{% endblock %}
+
+{% block customScript %}
+$('.miller-container').taxonomyBrowser({
+  columns: 4,
+  columnheight: 450,    
+  json         : '{{ asset("bundles/telecomvmb/json/"~file~"?p="~random()~"") }}',
+  save		   : '{{ path("ontology_edit_save") }}',
+  source       : 'json',
+  ontologyMode : 'edit',
+  id		   : '{{id}}'          
+});
+{% endblock %}
+
+{% block buttons %}
+	<ul class = "main-top-menu">
+		<li><button class="btn add-node" title="Add new node [Tab]">Add</button></li>
+		<li><button class="btn edit-node" title="Edit node [Shift+Enter]">Edit</button></li>
+  		<li><button class="btn delete-node" title="Delete node [Shift+D]">Delete</button></li>
+  		<li><button class="btn save-node">Save</button></li>
+	</ul>
+{% endblock %}
+
+{% block uiDialogs %}
+	<!-- ui dialog for add or edit node -->
+	<div id="dialog-confirm" class = "dialog-ui" title="Delete nodes?">
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+			You are about to delete <span id ="node-delete-number">0</span> nodes. Are you sure?</p>
+	</div>
+	<div id="dialog-form" class = "dialog-ui" title="Add or edit node">
+		<form>
+			<fieldset>
+				<ul>
+					<li class = "dialog-li">
+						<label for="name">Node name</label>
+						<input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all">
+					</li>
+					<li class = "dialog-li">
+						<label for="parent">Node parent</label>
+						<input type="text" name="parent" id="parent" class="text ui-widget-content ui-corner-all" readonly>
+					</li>
+					<li class = "dialog-li">
+						<label for="type">Node type</label>
+						<select name="type" id="type" class="text ui-widget-content ui-corner-all">
+							<option value="simple">Simple attribute</option>
+							<option value="date">Date</option>
+							<option value="dateInterval">Date Interval</option>
+							<option value="text">Value attribute</option>
+							<option value="multiple">Multiple Value attribute</option>
+						</select>
+					</li>
+					<!--
+					<li class = "date-options">
+						<span class = "date-options-start">
+							<label for="date-options-start">Date values</label>
+							<ul id="date-options-start">
+									<li><label><input type="checkbox" name="date-start[]" value="century"/> Century</label></li>
+									<li><label><input type="checkbox" name="date-start[]" value="year"/> Year</label></li>
+									<li><label><input type="checkbox" name="date-start[]" value="month"/> Month</label></li>
+									<li><label><input type="checkbox" name="date-start[]" value="day"/> Day</label></li>
+							</ul>
+						</span>
+						<span class = "date-options-end">
+							<label for="date-options-end">Date values</label>
+							<ul id="date-options-end">
+								<li><label><input type="checkbox" name="date-end[]" value="century"/> Century</label></li>
+								<li><label><input type="checkbox" name="date-end[]" value="year"/> Year</label></li>
+								<li><label><input type="checkbox" name="date-end[]" value="month"/> Month</label></li>
+								<li><label><input type="checkbox" name="date-end[]" value="day"/> Day</label></li>
+							</ul>
+						</span>
+					</li>
+					-->
+				</ul>
+			</fieldset>
+		</form>
+	</div>
+	<!-- end ui dialog -->
+{% endblock %}
