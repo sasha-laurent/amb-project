@@ -1,33 +1,179 @@
+{% set saveButton = 'true' %}
 {% extends "::Backend/subPage.html.twig" %}
 {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 
+{% set cellWidth = (830 / matrix.levels|length) %}
+	{% if cellWidth > 120 %}
+		{% set cellWidth = 120 %}
+	{% endif %}
+	{% set cellHeight = cellWidth * 9 / 16 %}
+
 {% block body -%}
-    <table id="matrix" class="table table-bordered">
-		<tr>
-			<th width="15%"></th>
+{{ form_start(form, {'attr': {'id': 'presentation_form', 'class': 'form-horizontal'}}) }}
+	<div class="well">
+		{# Les erreurs générales du formulaire. #}
+		{{ form_errors(form) }}
+		<div class="form-group">
+			{# Génération du label. #}
+			{{ form_label(form.title, "Titre", {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+
+			{# Affichage des erreurs pour ce champ précis. #}
+			{{ form_errors(form.title) }}
+
+			<div class="col-sm-10">
+			{# Génération de l'input. #}
+			{{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+			</div>
+		</div>
+
+		{# Idem pour un autre champ. #}
+		<div class="form-group">
+			{{ form_label(form.description, "Description", {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+			{{ form_errors(form.description) }}
+			<div class="col-sm-10">
+			{{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+			</div>
+		</div>
+	</div>
+	<hr/>
+    <table style="width:{{ cellWidth*matrix.levels|length + 120}}px;" id="matrix" class="table table-bordered">
+		<tr class="compact_tr">
+			<th width="120px"></th>
 			{% for level in matrix.levels %}
-			<th style="width:{{ 85 / (matrix.levels|length) }}%;" class="text-center">{{ level.title }}</th>
+			<th width="{{ cellWidth }}px" class="text-center">{{ level.title }}</th>
 			{% endfor %}
 		</tr>
 		{% for pov in matrix.povs %}
-		<tr>
+		<tr height="{{ cellHeight }}px">
 			<th class="text-center">{{ pov.title }}</th>
 			{% for level in matrix.levels %}
 			<td data-prototype="{{ pov.id ~ "_" ~ level.id }}" class="text-center">
-				<ul>
-					{% if matrix.sortedResources[pov.id][level.id] is defined %}
-						<li data-prototype="{{ matrix.sortedResources[pov.id][level.id].id }}" class="added-resource">{{ matrix.sortedResources[pov.id][level.id].title }}</li>
-					{% endif %}
-				</ul>
+				<input type="hidden" name="{{ pov.id ~ "_" ~ level.id }}" value="{{ matrix.sortedResources[pov.id][level.id].resource.id|default(0) }}" />
+				{% if matrix.sortedResources[pov.id][level.id] is defined %}
+					<div class="usedResource" data-resource="{{ matrix.sortedResources[pov.id][level.id].resource.id }}" style="background-image:url(https://i.ytimg.com/vi/63crAqHlIbM/mqdefault.jpg);">
+						<div class="resThumbnailHover" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="127" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
+							<span class="resTitle">{{ matrix.sortedResources[pov.id][level.id].resource.title[:10] }}</span>
+							<span class="resCheckBox"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></span>
+						</div>
+					</div>
+				{% endif %}
 			</td>
 			{% endfor %}
 		</tr>
 		{% endfor %}
 	</table>
-	
-	<div class="well">
-		{{ form(form) }}
+	<hr/>
+	<div class="row">
+		<div class="col-sm-7">
+			<h4><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> Aperçu du fichier sélectionné</h4>
+		</div>
+		<div class="col-sm-5">
+			{% set totalDuration = 0 %}
+			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Liste de lecture choisie</h4>
+			<ul class="list-group" id="file_list">
+				{% for res in presentation.resources %}
+					{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
+					<li class="list-group-item" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
+						<div class="row">
+							<div class="col-sm-8">{{ res.usedResource.resource.title }}</div>
+							<div class="col-sm-2">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
+							<div class="col-sm-2 text-right"><a id="rmRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
+							<input type="hidden" id="sort_{{ res.usedResource.id }}" name="sort_{{ res.usedResource.id }}" value="{{ res.usedResource.resource.duration }}" />
+						</div>
+					</li>
+				{% endfor %}
+			</ul>
+			<p class="text-right">
+				Durée totale : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
+			</p>
+		</div>
 	</div>
+	{{ form_widget(form.save, {'attr': {'style': 'display:none;', 'class': 'btn btn-primary'}}) }}
+	{{ form_rest(form) }}
+	{# Fermeture de la balise <form> du formulaire HTML #}
+	{{ form_end(form) }}
+{% endblock %}
 
-</ul>
+{% block script %}
+	{{ parent() }}
+	<script>
+		function pad(num, size) {
+			var s = num+"";
+			while (s.length < size) s = "0" + s;
+			return s;
+		}
+
+		function convertDurationToString(value) {
+			return (pad(~~(value / 60), 2)) + ':' + pad((value % 60), 2);
+		}
+		
+		function addToDuration(value) {
+			// conv base10
+			var current = $("#total_duration").html().split(":");
+			total = parseInt(current[0], 10)*60 + parseInt(current[1], 10) + value;
+			$("#total_duration").html(convertDurationToString(total));
+			$('#vmb_presentationbundle_presentation_duration').val(total);
+		}
+		
+		function sortAllItems(selector) {
+			$( selector ).each(function( index ) {
+				input = $(this).find('input');
+				if(input.attr('name') !== undefined) {
+					input.val(index);
+				}
+			});
+		}
+		
+		$(function () {
+			$('[data-toggle="popover"]').popover();
+			$('#file_list').sortable();
+			$( "#file_list" ).on( "sortupdate", function( event, ui ) { 
+				sortAllItems('#file_list li');
+			} );
+			
+			$( "#file_list" ).on( "sortupdate", function( event, ui ) { 
+				var input = ui.item.find('input');
+				input.attr('name', input.attr('id'));
+				
+				
+				$( "#file_list li" ).each(function( index ) {
+					input = $(this).find('input');
+					if(input.attr('name') !== undefined) {
+						input.val(index);
+					}
+				});
+			} );
+			
+			$('.resThumbnailHover').click(function(){
+				var duration = parseInt($('#usedRes_' + $(this).attr('data-id')).attr('data-duration'), 10);
+				
+				if($(this).hasClass('checkedRes')) {
+					$('#addedRes_' + $(this).attr('data-id')).remove();
+					$(this).removeClass('checkedRes');
+					
+					addToDuration(-duration);
+				}
+				else {
+					$('#file_list').append('<li class="list-group-item" id="addedRes_' + $(this).attr('data-id') + '" data-id="' + $(this).attr('data-id') + '"><div class="row"> \
+							<div class="col-sm-8">' + $(this).attr('data-title') + '</div> \
+							<div class="col-sm-2">' + convertDurationToString(duration) + '</div> \
+							<div class="col-sm-2 text-right"><a id="rmRes_' + $(this).attr('data-id') + '" data-id="' + $(this).attr('data-id') + '"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div> \
+							<input type="hidden" id="sort_' + $(this).attr('data-id') + '" name="sort_' + $(this).attr('data-id') + '" value="' + $('#file_list li').length + '" />\
+							</div></li>');
+					$('#rmRes_' + $(this).attr('data-id')).click(function() {
+						$('#addedRes_' + $(this).attr('data-id')).remove();
+						$('#usedRes_' + $(this).attr('data-id')).removeClass('checkedRes');
+						sortAllItems('#file_list li');
+					});
+					$(this).addClass('checkedRes');
+					addToDuration(duration);
+				}
+			});
+		})
+		
+		$('#save-btn').click(function(event) {
+			event.preventDefault();
+			$('#presentation_form').find('[type="submit"]').trigger('click');
+		});
+	</script>
 {% endblock %}

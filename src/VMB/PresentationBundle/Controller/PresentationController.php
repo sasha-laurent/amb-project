@@ -3,9 +3,11 @@
 namespace VMB\PresentationBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use VMB\PresentationBundle\Entity\Presentation;
+use VMB\PresentationBundle\Entity\CheckedResource;
 use VMB\PresentationBundle\Form\PresentationType;
 
 /**
@@ -27,7 +29,6 @@ class PresentationController extends Controller
 
         return $this->render('VMBPresentationBundle:Presentation:index.html.twig', array(
             'mainTitle' => 'Toutes les présentations',
-			'addButtonUrl' => $this->generateUrl('presentation_new'),
             'entities' => $entities
         ));
     }
@@ -60,7 +61,7 @@ class PresentationController extends Controller
      */
     public function newAction($idMatrix)
     {
-		$matrix = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Matrix')->find($idMatrix);
+		$matrix = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Matrix')->getMatrixWithResources($idMatrix);
 
 		if ($matrix == null) {
 			throw $this->createNotFoundException('Unable to find Matrix entity.');
@@ -99,11 +100,47 @@ class PresentationController extends Controller
 			if ($form->isValid()) 
 			{
 				$em = $this->getDoctrine()->getManager();
+				
+				$postValues = $request->request->all();
+				
+				$checkedRes = $presentation->getResources();
+				$indexedCheckedRes = array();
+				if($checkedRes != null) {
+					foreach($checkedRes as $r) {
+						$indexedCheckedRes[$r->getId()] = $r;
+					}
+				}
+				
+				foreach($postValues as $key => $position) {
+					if(preg_match('`sort_([0-9]+)`', $key, $matches)) {
+						$resId = intval($matches[1]);
+						
+						// If the resource has already been persisted as a checked resource
+						if(isset($indexedCheckedRes[$resId])) {
+							$indexedCheckedRes[$resId]->setSort($position);
+							unset($indexedCheckedRes[$resId]);
+						}
+						else {
+							$newCheckedRes = new CheckedResource();
+							$newCheckedRes->setPresentation($presentation);
+							$newCheckedRes->setUsedResource($em->getRepository('VMBPresentationBundle:UsedResource')->find($resId));
+							$newCheckedRes->setSort($position);
+							$em->persist($newCheckedRes);
+						}
+					}
+				}
+				
+				// If there are still values in this array it means it has to be removed
+				foreach($indexedCheckedRes as $r) {
+					$em->remove($r);
+				}
+				
 				$em->persist($presentation);
 				$em->flush();
 
-				$flashMessage = !$presentation->toString() ? 'Presentation added' : 'Presentation modified';
+				$flashMessage = !$presentation->toString() ? 'Présentation ajoutée' : 'Présentation modifiée';
 				$request->getSession()->getFlashBag()->add('success', $flashMessage);
+				
 				return $this->redirect($this->generateUrl('presentation'));
 			}
 		}
@@ -111,9 +148,10 @@ class PresentationController extends Controller
 		return $this->render('VMBPresentationBundle:Presentation:edit.html.twig', 
 			array(
 				'form' => $form->createView(),
-				'mainTitle' => ((!($presentation->toString())) ? 'Ajout d\'un presentation' : 'Modification du presentation '.$presentation->toString()),
+				'mainTitle' => ((!($presentation->toString())) ? 'Ajout d\'une présentation' : 'Modification d\'une présentation '.$presentation->toString()),
 				'backButtonUrl' => $this->generateUrl('presentation'),
-				'matrix' => $presentation->getMatrix()
+				'matrix' => $presentation->getMatrix(),
+				'presentation' => $presentation
 			));
     }
     /**

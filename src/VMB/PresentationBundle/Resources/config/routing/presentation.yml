@@ -1,6 +1,10 @@
 presentation:
     path:     /
     defaults: { _controller: "VMBPresentationBundle:Presentation:index" }
+    
+presentation_perso:
+    path:     /
+    defaults: { _controller: "VMBPresentationBundle:Presentation:personalIndex" }
 
 presentation_show:
     path:     /show/{id}

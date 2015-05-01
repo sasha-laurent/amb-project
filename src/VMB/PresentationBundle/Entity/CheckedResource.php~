@@ -2,6 +2,7 @@
 
 namespace VMB\PresentationBundle\Entity;
 
+use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -22,6 +23,7 @@ class CheckedResource
     private $id;
 
 	/**
+	* @Gedmo\SortableGroup
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Presentation", inversedBy="resources")
 	* @ORM\JoinColumn(nullable=false) 
 	*/
@@ -36,6 +38,7 @@ class CheckedResource
     /**
      * @var integer
      *
+     * @Gedmo\SortablePosition
      * @ORM\Column(name="sort", type="integer")
      */
     private $sort;
@@ -72,51 +75,5 @@ class CheckedResource
     public function getSort()
     {
         return $this->sort;
-    }
-
-    /**
-     * Set presentation
-     *
-     * @param \VMB\PresentationBundle\Entity\Presentation $presentation
-     * @return CheckedResource
-     */
-    public function setPresentation(\VMB\PresentationBundle\Entity\Presentation $presentation)
-    {
-        $this->presentation = $presentation;
-
-        return $this;
-    }
-
-    /**
-     * Get presentation
-     *
-     * @return \VMB\PresentationBundle\Entity\Presentation 
-     */
-    public function getPresentation()
-    {
-        return $this->presentation;
-    }
-
-    /**
-     * Set usedResource
-     *
-     * @param \VMB\PresentationBundle\Entity\UsedResource $usedResource
-     * @return CheckedResource
-     */
-    public function setUsedResource(\VMB\PresentationBundle\Entity\UsedResource $usedResource)
-    {
-        $this->usedResource = $usedResource;
-
-        return $this;
-    }
-
-    /**
-     * Get usedResource
-     *
-     * @return \VMB\PresentationBundle\Entity\UsedResource 
-     */
-    public function getUsedResource()
-    {
-        return $this->usedResource;
     }
 }

@@ -66,8 +66,8 @@
 					<li class="dropdown header-nav-item">
 						<a data-toggle="dropdown" class="dropdown-toggle header-nav-link" href="#">Présentations <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">Toutes les présentations</a></li>
-                            <li><a href="#">Mes présentations</a></li>
+                            <li><a href="{{ path('presentation') }}">Toutes les présentations</a></li>
+                            <li><a href="{{ path('presentation_perso') }}">Mes présentations</a></li>
                         </ul>
 					</li>
 					<li class="dropdown header-nav-item">
@@ -102,7 +102,6 @@
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 		{% block script %}
-			<script src="{{ asset('js/ie10-viewport-bug-workaround.js') }}"></script>
 			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 			<!-- Latest compiled and minified JavaScript -->
 			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>

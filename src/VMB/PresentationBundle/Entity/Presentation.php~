@@ -2,6 +2,7 @@
 
 namespace VMB\PresentationBundle\Entity;
 
+use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -37,14 +38,16 @@ class Presentation
 
     /**
      * @var \DateTime
-     *
+     
+     * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="dateCreation", type="date")
      */
     private $dateCreation;
 
     /**
      * @var \DateTime
-     *
+     
+     * @Gedmo\Timestampable(on="update")
      * @ORM\Column(name="dateUpdate", type="date")
      */
     private $dateUpdate;
@@ -59,7 +62,7 @@ class Presentation
     /**
      * @var string
      *
-     * @ORM\Column(name="updateMessage", type="text")
+     * @ORM\Column(name="updateMessage", type="text", nullable=true)
      */
     private $updateMessage;
     
@@ -72,7 +75,20 @@ class Presentation
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Matrix")
 	*/
 	private $matrix;
+	
+	/**
+	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\CheckedResource", mappedBy="presentation", cascade={"remove", "persist"})
+	*/
+	private $resources;
 
+
+	/**
+     * Constructor
+     */
+    public function __construct($matrix)
+    {
+        $this->setMatrix($matrix);
+    }
 
     /**
      * Get id
@@ -221,4 +237,55 @@ class Presentation
     {
         return $this->updateMessage;
     }
+
+    /**
+     * Set owner
+     *
+     * @param \VMB\UserBundle\Entity\User $owner
+     * @return Presentation
+     */
+    public function setOwner(\VMB\UserBundle\Entity\User $owner = null)
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * Get owner
+     *
+     * @return \VMB\UserBundle\Entity\User 
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    /**
+     * Set matrix
+     *
+     * @param \VMB\PresentationBundle\Entity\Matrix $matrix
+     * @return Presentation
+     */
+    public function setMatrix(\VMB\PresentationBundle\Entity\Matrix $matrix = null)
+    {
+        $this->matrix = $matrix;
+
+        return $this;
+    }
+
+    /**
+     * Get matrix
+     *
+     * @return \VMB\PresentationBundle\Entity\Matrix 
+     */
+    public function getMatrix()
+    {
+        return $this->matrix;
+    }
+    
+    public function toString()
+    {
+		return $this->title;
+	}
 }

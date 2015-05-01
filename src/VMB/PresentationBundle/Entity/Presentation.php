@@ -2,6 +2,7 @@
 
 namespace VMB\PresentationBundle\Entity;
 
+use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -37,14 +38,16 @@ class Presentation
 
     /**
      * @var \DateTime
-     *
+     
+     * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="dateCreation", type="date")
      */
     private $dateCreation;
 
     /**
      * @var \DateTime
-     *
+     
+     * @Gedmo\Timestampable(on="update")
      * @ORM\Column(name="dateUpdate", type="date")
      */
     private $dateUpdate;
@@ -59,7 +62,7 @@ class Presentation
     /**
      * @var string
      *
-     * @ORM\Column(name="updateMessage", type="text")
+     * @ORM\Column(name="updateMessage", type="text", nullable=true)
      */
     private $updateMessage;
     
@@ -72,6 +75,11 @@ class Presentation
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Matrix")
 	*/
 	private $matrix;
+	
+	/**
+	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\CheckedResource", mappedBy="presentation", cascade={"remove", "persist"})
+	*/
+	private $resources;
 
 
 	/**
@@ -280,4 +288,37 @@ class Presentation
     {
 		return $this->title;
 	}
+
+    /**
+     * Add resources
+     *
+     * @param \VMB\PresentationBundle\Entity\CheckedResource $resources
+     * @return Presentation
+     */
+    public function addResource(\VMB\PresentationBundle\Entity\CheckedResource $resources)
+    {
+        $this->resources[] = $resources;
+
+        return $this;
+    }
+
+    /**
+     * Remove resources
+     *
+     * @param \VMB\PresentationBundle\Entity\CheckedResource $resources
+     */
+    public function removeResource(\VMB\PresentationBundle\Entity\CheckedResource $resources)
+    {
+        $this->resources->removeElement($resources);
+    }
+
+    /**
+     * Get resources
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getResources()
+    {
+        return $this->resources;
+    }
 }
