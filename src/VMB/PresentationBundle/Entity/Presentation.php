@@ -68,11 +68,13 @@ class Presentation
     
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\UserBundle\Entity\User")
+	* @ORM\JoinColumn(nullable=false) 
 	*/
 	private $owner;
     
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Matrix")
+	* @ORM\JoinColumn(nullable=false) 
 	*/
 	private $matrix;
 	
@@ -90,6 +92,17 @@ class Presentation
     public function __construct($matrix)
     {
         $this->setMatrix($matrix);
+    }
+    
+    
+    /**
+     * Is the given User the author of this Post?
+     *
+     * @return bool
+     */
+    public function isOwner(\VMB\UserBundle\Entity\User $user = null)
+    {
+        return $user && $user->getId() == $this->getOwner()->getId();
     }
 
     /**
@@ -329,14 +342,28 @@ class Presentation
 		if(!is_array($this->sortedResources)) {
 			$this->sortResources();
 		}
-        return isset($this->sortedResources[$usedResourceId]);
+        if(isset($this->sortedResources[$usedResourceId])) {
+			return !($this->sortedResources[$usedResourceId]->getSuggested());
+		}
+		else { return false; }
+    }
+    
+    public function isSuggested($usedResourceId)
+    {
+		if(!is_array($this->sortedResources)) {
+			$this->sortResources();
+		}
+        if(isset($this->sortedResources[$usedResourceId])) {
+			return $this->sortedResources[$usedResourceId]->getSuggested();
+		}
+		else { return false; }
     }
     
     private function sortResources()
     {
 		$this->sortedResources = array();
 		foreach($this->resources as $resource) {
-			$this->sortedResources[$resource->getUsedResource()->getId()] = true;
+			$this->sortedResources[$resource->getUsedResource()->getId()] = $resource;
 		}
 	}
 }

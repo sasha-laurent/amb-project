@@ -162,25 +162,35 @@ class PresentationController extends Controller
 					}
 				}
 				else {
-					
+					$copiedPresentation = $presentation;
+					$em->detach($copiedPresentation);
+					$em->detach($presentation);
+					$presentation = new Presentation($copiedPresentation->getMatrix());
+					$presentation->setTitle($copiedPresentation->getTitle());
+					$presentation->setDescription($copiedPresentation->getDescription());				
+					$presentation->setDuration($copiedPresentation->getDuration());				
+					$em->persist($presentation);
 				}
 				
 				foreach($postValues as $key => $position) {
-					if(preg_match('`sort_([0-9]+)`', $key, $matches)) {
-						$resId = intval($matches[1]);
+					if(preg_match('`(sort|suggested)_([0-9]+)`', $key, $matches)) {
+						$resId = intval($matches[2]);
+						$isSuggested = ($matches[1] == 'suggested');
 						
 						// If the resource has already been persisted as a checked resource
 						if(!$saveAsCopy && isset($indexedCheckedRes[$resId])) {
 							$indexedCheckedRes[$resId]->setSort($position);
+							$indexedCheckedRes[$resId]->setSuggested($isSuggested);
 							unset($indexedCheckedRes[$resId]);
 						}
 						else {
 							$newCheckedRes = new CheckedResource();
 							$newCheckedRes->setPresentation($presentation);
+							$em->persist($newCheckedRes);
 							$presentation->addResource($newCheckedRes);
 							$newCheckedRes->setUsedResource($em->getRepository('VMBPresentationBundle:UsedResource')->find($resId));
 							$newCheckedRes->setSort($position);
-							$em->persist($newCheckedRes);
+							$newCheckedRes->setSuggested($isSuggested);
 						}
 					}
 				}
@@ -193,6 +203,7 @@ class PresentationController extends Controller
 					}
 				}
 				
+				$presentation->setOwner($this->getUser());
 				$em->persist($presentation);
 				$em->flush();
 

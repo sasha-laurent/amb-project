@@ -22,7 +22,7 @@ class CheckedResource
     private $id;
 
 	/**
-	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Presentation", inversedBy="resources")
+	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Presentation", inversedBy="resources", cascade={"persist"})
 	* @ORM\JoinColumn(nullable=false) 
 	*/
 	private $presentation;
@@ -32,6 +32,13 @@ class CheckedResource
 	* @ORM\JoinColumn(nullable=false)
 	*/
 	private $usedResource;
+	
+	/**
+     * @var boolean
+     *
+     * @ORM\Column(name="suggested", type="boolean")
+     */
+    private $suggested;
 
     /**
      * @var integer
@@ -118,5 +125,28 @@ class CheckedResource
     public function getUsedResource()
     {
         return $this->usedResource;
+    }
+
+    /**
+     * Set suggested
+     *
+     * @param boolean $suggested
+     * @return CheckedResource
+     */
+    public function setSuggested($suggested)
+    {
+        $this->suggested = $suggested;
+
+        return $this;
+    }
+
+    /**
+     * Get suggested
+     *
+     * @return boolean 
+     */
+    public function getSuggested()
+    {
+        return $this->suggested;
     }
 }

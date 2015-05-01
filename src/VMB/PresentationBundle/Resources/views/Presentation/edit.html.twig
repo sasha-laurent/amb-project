@@ -50,7 +50,7 @@
 			<td data-prototype="{{ pov.id ~ "_" ~ level.id }}" class="text-center">
 				{% if matrix.sortedResources[pov.id][level.id] is defined %}
 					<div class="usedResource" style="background-image:url(https://i.ytimg.com/vi/63crAqHlIbM/mqdefault.jpg);">
-						<div class="resThumbnailHover{% if presentation.isChecked(matrix.sortedResources[pov.id][level.id].id) %} checkedRes{% endif %}" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="127" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
+						<div class="resThumbnailHover{% if presentation.isChecked(matrix.sortedResources[pov.id][level.id].id) %} checkedRes{% elseif presentation.isSuggested(matrix.sortedResources[pov.id][level.id].id) %} suggestedRes{% endif %}" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="127" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
 							<span class="resTitle">{{ matrix.sortedResources[pov.id][level.id].resource.title[:10] }}</span>
 							<span class="resCheckBox"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></span>
 						</div>
@@ -61,6 +61,13 @@
 		</tr>
 		{% endfor %}
 	</table>
+	<div class="text-center">
+		<br/>
+		<i>
+			<span class="checkedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Ajoutée à la liste de lecture | 
+			<span class="suggestedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Suggérée en complément
+		</i>
+	</div>
 	<hr/>
 	<div class="row">
 		<div class="col-sm-7">
@@ -71,15 +78,17 @@
 			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Liste de lecture choisie</h4>
 			<ul class="list-group" id="file_list">
 				{% for res in presentation.resources %}
-					{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
-					<li class="list-group-item" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
-						<div class="row">
-							<div class="col-sm-8">{{ res.usedResource.resource.title }}</div>
-							<div class="col-sm-2">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
-							<div class="col-sm-2 text-right"><a class="rmRes" id="rmRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
-							<input type="hidden" id="sort_{{ res.usedResource.id }}" name="sort_{{ res.usedResource.id }}" value="{{ res.sort }}" />
-						</div>
-					</li>
+					{% if res.suggested == false %}
+						{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
+						<li class="list-group-item" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
+							<div class="row">
+								<div class="col-sm-8">{{ res.usedResource.resource.title }}</div>
+								<div class="col-sm-2">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
+								<div class="col-sm-2 text-right"><a class="rmRes" id="rmRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
+								<input type="hidden" id="sort_{{ res.usedResource.id }}" name="sort_{{ res.usedResource.id }}" value="{{ res.sort }}" />
+							</div>
+						</li>
+					{% endif %}
 				{% endfor %}
 			</ul>
 			<p class="text-right">
@@ -90,6 +99,11 @@
 	{{ form_widget(form.save, {'attr': {'style': 'display:none;', 'class': 'btn btn-primary'}}) }}
 	{{ form_rest(form) }}
 	{# Fermeture de la balise <form> du formulaire HTML #}
+	{% for res in presentation.resources %}
+		{% if res.suggested %}
+			<input type="hidden" id="suggested_{{ res.usedResource.id }}" name="suggested_{{ res.usedResource.id }}" value="1" />
+		{% endif %}
+	{% endfor %}
 	{{ form_end(form) }}
 {% endblock %}
 
@@ -159,8 +173,14 @@
 				if($(this).hasClass('checkedRes')) {
 					$('#addedRes_' + $(this).attr('data-id')).remove();
 					$(this).removeClass('checkedRes');
+					$(this).addClass('suggestedRes');
+					$('#presentation_form').append('<input type="hidden" id="suggested_'+$(this).attr('data-id')+'" name="suggested_'+$(this).attr('data-id')+'" value="1" />');
 					
 					addToDuration(-duration);
+				}
+				else if($(this).hasClass('suggestedRes')) {
+					$(this).removeClass('suggestedRes');
+					$('#suggested_'+$(this).attr('data-id')).remove();
 				}
 				else {
 					$('#file_list').append('<li class="list-group-item" id="addedRes_' + $(this).attr('data-id') + '" data-id="' + $(this).attr('data-id') + '"><div class="row"> \
