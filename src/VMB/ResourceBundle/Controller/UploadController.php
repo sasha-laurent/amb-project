@@ -48,17 +48,16 @@ class UploadController extends Controller
                 
                 // On récupère l'extension du fichier importé
                 $ext = $resource->getExtension();
-                
                 // On récupère le nom du fichier
                 $name = $resource->getTitle();
                 $resource->preUpload();
-               // $resource->upload();
+                
 
                //$path = $resource->getFilePath();
             
                 
                 $em->persist($resource);
-              //  $em->flush();
+                $em->flush();
 
                  return $this->render('VMBResourceBundle:Upload:index.html.twig', array(
             'form' => $form->createView(),
