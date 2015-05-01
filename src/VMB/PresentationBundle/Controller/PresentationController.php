@@ -21,15 +21,35 @@ class PresentationController extends Controller
      * Lists all Presentation entities.
      *
      */
-    public function indexAction()
+    public function indexAction($page)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('VMBPresentationBundle:Presentation')->findAll();
+        
+        if ($page < 1) {
+			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
+		}
+
+		// Ici je fixe le nombre d'annonces par page à 3
+		// Mais bien sûr il faudrait utiliser un paramètre, et y accéder via $this->container->getParameter('nb_per_page')
+		$nbPerPage = 6;
+
+		// On récupère notre objet Paginator
+        $entities = $em->getRepository('VMBPresentationBundle:Presentation')->getPresentations($page, $nbPerPage);
+
+		// On calcule le nombre total de pages grâce au count($listAdverts) qui retourne le nombre total d'annonces
+		$nbPages = ceil(count($entities)/$nbPerPage);
+
+		// Si la page n'existe pas, on retourne une 404
+		if ($page > $nbPages) {
+			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
+		}
 
         return $this->render('VMBPresentationBundle:Presentation:index.html.twig', array(
-            'mainTitle' => 'Toutes les présentations',
-            'entities' => $entities
+            'mainTitle'=> 'Présentations déjà existantes',
+            'entities' => $entities,
+			'nbPages'  => $nbPages,
+			'page'     => $page
         ));
     }
 
@@ -41,17 +61,15 @@ class PresentationController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('VMBPresentationBundle:Presentation')->find($id);
+        $entity = $em->getRepository('VMBPresentationBundle:Presentation')->findWithConcreteResources($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Presentation entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-
         return $this->render('VMBPresentationBundle:Presentation:show.html.twig', array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
+            'mainTitle' => $entity->getTitle(),
+			'entity' => $entity
         ));
     }
 
@@ -78,7 +96,7 @@ class PresentationController extends Controller
      */
     public function editAction($id)
     {
-        $presentation = $this->getPresentation($id);
+        $presentation = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Presentation')->findWithSortedResources($id);
 
 		return $this->renderForm($presentation);
     }
@@ -107,7 +125,7 @@ class PresentationController extends Controller
 				$indexedCheckedRes = array();
 				if($checkedRes != null) {
 					foreach($checkedRes as $r) {
-						$indexedCheckedRes[$r->getId()] = $r;
+						$indexedCheckedRes[$r->getUsedResource()->getId()] = $r;
 					}
 				}
 				
@@ -123,6 +141,7 @@ class PresentationController extends Controller
 						else {
 							$newCheckedRes = new CheckedResource();
 							$newCheckedRes->setPresentation($presentation);
+							$presentation->addResource($newCheckedRes);
 							$newCheckedRes->setUsedResource($em->getRepository('VMBPresentationBundle:UsedResource')->find($resId));
 							$newCheckedRes->setSort($position);
 							$em->persist($newCheckedRes);
@@ -132,6 +151,7 @@ class PresentationController extends Controller
 				
 				// If there are still values in this array it means it has to be removed
 				foreach($indexedCheckedRes as $r) {
+					$presentation->removeResource($r);
 					$em->remove($r);
 				}
 				
@@ -141,17 +161,17 @@ class PresentationController extends Controller
 				$flashMessage = !$presentation->toString() ? 'Présentation ajoutée' : 'Présentation modifiée';
 				$request->getSession()->getFlashBag()->add('success', $flashMessage);
 				
-				return $this->redirect($this->generateUrl('presentation'));
 			}
 		}
 
 		return $this->render('VMBPresentationBundle:Presentation:edit.html.twig', 
 			array(
 				'form' => $form->createView(),
-				'mainTitle' => ((!($presentation->toString())) ? 'Ajout d\'une présentation' : 'Modification d\'une présentation '.$presentation->toString()),
+				'mainTitle' => ((!($presentation->toString())) ? 'Ajout d\'une présentation' : $presentation->toString()),
 				'backButtonUrl' => $this->generateUrl('presentation'),
 				'matrix' => $presentation->getMatrix(),
-				'presentation' => $presentation
+				'presentation' => $presentation,
+				'alertDismissible' => true
 			));
     }
     /**

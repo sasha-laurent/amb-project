@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * CheckedResource
  *
- * @ORM\Table()
+ * @ORM\Table(name="checkedresource",uniqueConstraints={@ORM\UniqueConstraint(name="uniq_usedresource", columns={"usedResource_id", "presentation_id"})})
  * @ORM\Entity(repositoryClass="VMB\PresentationBundle\Entity\CheckedResourceRepository")
  */
 class CheckedResource

@@ -80,6 +80,8 @@ class Presentation
 	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\CheckedResource", mappedBy="presentation", cascade={"remove", "persist"})
 	*/
 	private $resources;
+	
+	private $sortedResources = null;
 
 
 	/**
@@ -321,4 +323,20 @@ class Presentation
     {
         return $this->resources;
     }
+    
+    public function isChecked($usedResourceId)
+    {
+		if(!is_array($this->sortedResources)) {
+			$this->sortResources();
+		}
+        return isset($this->sortedResources[$usedResourceId]);
+    }
+    
+    private function sortResources()
+    {
+		$this->sortedResources = array();
+		foreach($this->resources as $resource) {
+			$this->sortedResources[$resource->getUsedResource()->getId()] = true;
+		}
+	}
 }

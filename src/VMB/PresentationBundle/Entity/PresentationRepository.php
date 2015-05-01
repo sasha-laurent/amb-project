@@ -3,6 +3,7 @@
 namespace VMB\PresentationBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * PresentationRepository
@@ -12,4 +13,51 @@ use Doctrine\ORM\EntityRepository;
  */
 class PresentationRepository extends EntityRepository
 {
+	public function getPresentations($page, $nbPerPage)
+	{
+		$query = $this->createQueryBuilder('p')
+					  ->orderBy('p.dateUpdate', 'DESC')
+					  ->getQuery();
+
+		$query->setFirstResult(($page-1) * $nbPerPage)
+			  ->setMaxResults($nbPerPage);
+
+		return new Paginator($query, true);
+	}
+	
+	public function findWithSortedResources($id)
+	{
+		$qb = $this
+			->createQueryBuilder('p')
+			->leftJoin('p.resources', 'res')
+			->addSelect('res')
+			->orderBy('res.sort', 'ASC')
+			->where('p.id = :id')
+			->setParameter('id', $id)
+		;
+
+		return $qb
+		->getQuery()
+		->getSingleResult();
+	}
+	
+	public function findWithConcreteResources($id)
+	{
+		$qb = $this
+			->createQueryBuilder('p')
+			->leftJoin('p.resources', 'checkedRes')
+			->addSelect('checkedRes')
+			->leftJoin('checkedRes.usedResource', 'usedRes')
+			->addSelect('usedRes')
+			->leftJoin('usedRes.resource', 'res')
+			->addSelect('res')
+			->orderBy('checkedRes.sort', 'ASC')
+			->where('p.id = :id')
+			->setParameter('id', $id)
+		;
+
+		return $qb
+		->getQuery()
+		->getSingleResult();
+	}
 }

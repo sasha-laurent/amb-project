@@ -87,17 +87,6 @@
 		// click time (milliseconds)
 		lastClick, diffClick; // timestamps
 	
-	$( ".showAll" ).click(function() {
-		if($(this).hasClass('collapsed')) {
-			$(this).removeClass('collapsed');
-			$(this).html($(this).attr('data-prototype'));
-		}
-		else {
-			$(this).addClass('collapsed');
-			$(this).html('...');
-		}
-	});
-	
 	function bindCustomDraggable(selector) {		
 		$(selector).bind('mousedown mouseup', function(e) {
 			if (e.type == "mousedown") {

@@ -1,52 +1,85 @@
-{% extends '::base.html.twig' %}
+{% extends '::Backend/subPage.html.twig' %}
 
-{% block body -%}
-    <h1>Presentation</h1>
+{% block body %}
+    <div class="row">
+		<div class="col-sm-9">
+			<div class="player">
+				<video poster="https://cdn.selz.com/plyr/1.0/poster.jpg" controls crossorigin>
+					<!-- Video files -->
+					<source src="https://cdn.selz.com/plyr/1.0/movie.mp4" type="video/mp4">
+					<source src="https://cdn.selz.com/plyr/1.0/movie.webm" type="video/webm">
 
-    <table class="record_properties">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ entity.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ entity.title }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ entity.description }}</td>
-            </tr>
-            <tr>
-                <th>Datecreation</th>
-                <td>{{ entity.dateCreation|date('Y-m-d H:i:s') }}</td>
-            </tr>
-            <tr>
-                <th>Dateupdate</th>
-                <td>{{ entity.dateUpdate|date('Y-m-d H:i:s') }}</td>
-            </tr>
-            <tr>
-                <th>Duration</th>
-                <td>{{ entity.duration }}</td>
-            </tr>
-            <tr>
-                <th>Updatemessage</th>
-                <td>{{ entity.updateMessage }}</td>
-            </tr>
-        </tbody>
-    </table>
+					<!-- Text track file -->
+					<track kind="captions" label="English captions" src="https://cdn.selz.com/plyr/1.0/movie_captions_en.vtt" srclang="en" default>
 
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('presentation') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('presentation_edit', { 'id': entity.id }) }}">
-            Edit
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+					<!-- Fallback for browsers that don't support the <video> element -->
+					<a href="https://cdn.selz.com/plyr/1.0/movie.mp4">Download</a>
+				</video>
+			</div>
+			<br/>
+		</div>
+		<div class="col-sm-3">
+			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Liste de lecture</h4>
+			<ul class="list-group" id="file_list">
+				{% for res in entity.resources %}
+				<li class="list-group-item" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
+					<div class="row">
+						<div class="col-sm-8"><span class="glyphicon glyphicon-film" aria-hidden="true"></span> {{ res.usedResource.resource.title[:20] }}</div>
+						<div class="col-sm-4">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
+					</div>
+				</li>
+				{% endfor %}
+			</ul>
+		</div>
+    </div>
+    
+    <table class="table">
+		<tbody>
+			<tr>
+				<th width="120px">Description</th>
+				<td>{{ entity.description[:300] }} <span data-prototype="{{entity.description[300:]}}" class="showAll collapsed">...</span></td>
+			</tr>
+			<tr>
+				<th>Création</th>
+				<td>{{ entity.dateCreation|date('d/m/y') }}</td>
+			</tr>
+			<tr>
+				<th>Mise à jour</th>
+				<td>{{ entity.dateUpdate|date('d/m/y') }}</td>
+			</tr>
+		</tbody>
+	</table>
+{% endblock %}
+
+
+{% block script %}
+	{{ parent() }}
+	<script>
+	// Setup the player
+	plyr.setup({
+		debug: 	true,
+		title: 	"Video demo",
+		captions: {
+			defaultActive: true
+		},
+		onSetup: function() {
+			var player 	= this,
+				type 	= player.media.tagName.toLowerCase(),
+				toggle 	= document.querySelector("[data-toggle='fullscreen']");
+
+			console.log("✓ Setup done for <" + type + ">");
+
+			if(type === "video" && toggle) {
+				toggle.addEventListener("click", player.toggleFullscreen, false);
+			}
+		}
+	});
+	
+	var video = $('video')[0];
+	//$('.player').css('display', 'none');
+
+    video.onended = function(e) {
+      alert("Video ended");
+    };
+	</script>
 {% endblock %}

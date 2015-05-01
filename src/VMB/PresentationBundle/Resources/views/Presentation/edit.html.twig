@@ -48,10 +48,9 @@
 			<th class="text-center">{{ pov.title }}</th>
 			{% for level in matrix.levels %}
 			<td data-prototype="{{ pov.id ~ "_" ~ level.id }}" class="text-center">
-				<input type="hidden" name="{{ pov.id ~ "_" ~ level.id }}" value="{{ matrix.sortedResources[pov.id][level.id].resource.id|default(0) }}" />
 				{% if matrix.sortedResources[pov.id][level.id] is defined %}
-					<div class="usedResource" data-resource="{{ matrix.sortedResources[pov.id][level.id].resource.id }}" style="background-image:url(https://i.ytimg.com/vi/63crAqHlIbM/mqdefault.jpg);">
-						<div class="resThumbnailHover" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="127" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
+					<div class="usedResource" style="background-image:url(https://i.ytimg.com/vi/63crAqHlIbM/mqdefault.jpg);">
+						<div class="resThumbnailHover{% if presentation.isChecked(matrix.sortedResources[pov.id][level.id].id) %} checkedRes{% endif %}" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="127" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
 							<span class="resTitle">{{ matrix.sortedResources[pov.id][level.id].resource.title[:10] }}</span>
 							<span class="resCheckBox"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></span>
 						</div>
@@ -77,8 +76,8 @@
 						<div class="row">
 							<div class="col-sm-8">{{ res.usedResource.resource.title }}</div>
 							<div class="col-sm-2">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
-							<div class="col-sm-2 text-right"><a id="rmRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
-							<input type="hidden" id="sort_{{ res.usedResource.id }}" name="sort_{{ res.usedResource.id }}" value="{{ res.usedResource.resource.duration }}" />
+							<div class="col-sm-2 text-right"><a class="rmRes" id="rmRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
+							<input type="hidden" id="sort_{{ res.usedResource.id }}" name="sort_{{ res.usedResource.id }}" value="{{ res.sort }}" />
 						</div>
 					</li>
 				{% endfor %}
@@ -124,6 +123,12 @@
 			});
 		}
 		
+		function deleteFromPlaylist(resId) {
+			$('#addedRes_' + resId).remove();
+			$('#usedRes_' + resId).removeClass('checkedRes');
+			sortAllItems('#file_list li');
+		}
+		
 		$(function () {
 			$('[data-toggle="popover"]').popover();
 			$('#file_list').sortable();
@@ -144,6 +149,10 @@
 				});
 			} );
 			
+			$('.rmRes').click(function() {
+				deleteFromPlaylist($(this).attr('data-id'));
+			});
+			
 			$('.resThumbnailHover').click(function(){
 				var duration = parseInt($('#usedRes_' + $(this).attr('data-id')).attr('data-duration'), 10);
 				
@@ -161,9 +170,7 @@
 							<input type="hidden" id="sort_' + $(this).attr('data-id') + '" name="sort_' + $(this).attr('data-id') + '" value="' + $('#file_list li').length + '" />\
 							</div></li>');
 					$('#rmRes_' + $(this).attr('data-id')).click(function() {
-						$('#addedRes_' + $(this).attr('data-id')).remove();
-						$('#usedRes_' + $(this).attr('data-id')).removeClass('checkedRes');
-						sortAllItems('#file_list li');
+						deleteFromPlaylist($(this).attr('data-id'));
 					});
 					$(this).addClass('checkedRes');
 					addToDuration(duration);

@@ -1,6 +1,8 @@
 presentation:
-    path:     /
-    defaults: { _controller: "VMBPresentationBundle:Presentation:index" }
+    path:      /{page}
+    defaults:  { _controller: "VMBPresentationBundle:Presentation:index", page: 1 }
+    requirements:
+        page: \d*
     
 presentation_perso:
     path:     /
