@@ -610,7 +610,7 @@ class Resource
     protected function getUploadRootDir($mime_type = null)
     {
         // le chemin absolu du répertoire où les documents uploadés doivent être sauvegardés
-        return str_replace('\\', '/', __DIR__).'/../../../../'.$this->getUploadDir($mime_type);
+        return str_replace('\\', '/', __DIR__).'/../../../../web/'.$this->getUploadDir($mime_type);
     }
 
     protected function getUploadDir($mime_type = null)
@@ -618,17 +618,23 @@ class Resource
         // on se débarrasse de « __DIR__ » afin de ne pas avoir de problème lorsqu'on affiche
         // le document/image dans la vue.
         if($mime_type != null) {
-            return 'web/upload/resources/'.$this->getOwner().'/'.$mime_type.'/';
+            return 'upload/resources/'.$this->getOwner().'/'.$mime_type.'/';
         }
         else {
-            return 'web/upload/resources/'.$this->getOwner().'/';   
+            return 'upload/resources/'.$this->getOwner().'/';   
         }
     }
 
-    protected function getThumbsPath($filename)
+    protected function getThumbsPath()
     {
-        if($this->getType() == 'application')
-        return '/thumbs/'.$filename;
+        if($this->getType() == 'application'){
+            return 'img/icon/application.jpg';
+        }
+
+        if($this->getType() == 'text'){
+            return 'img/icon/text.jpg';
+        }
+        return ($this->getUploadDir($this->getType()).'thumbs/';
     }
 
     /**
