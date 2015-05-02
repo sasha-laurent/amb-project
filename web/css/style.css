@@ -247,21 +247,22 @@ header {
 	background-color: #f3f3f3;
 }
 
-#file_list {
+#file_list, #presentation_options {
 	overflow-y: auto;
 	max-height: 320px;
 	border: 1px solid #DDD;
 	border-radius: 4px;
 }
 
-#file_list .list-group-item {
+#file_list .list-group-item, #presentation_options .list-group-item {
 	border-left: 0px;
 	border-right: 0px;
+	border-radius: 0px;
 }
 
-#file_list .list-group-item:first-child {
+#file_list .list-group-item:first-child, #presentation_options .list-group-item:first-child {
 	border-top: 0px;
 }
-#file_list .list-group-item:last-child {
+#file_list .list-group-item:last-child, #presentation_options .list-group-item:last-child {
 	border-bottom: 0px;
 }

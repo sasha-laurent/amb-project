@@ -2,8 +2,21 @@
 
 {% block body %}
     <div class="row">
-		<div class="col-sm-4">
+		<div class="col-sm-5">
 			<h4><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> Options de la présentation</h4>
+			<div id="presentation_options" class="list-group">
+			  <a href="#" class="list-group-item active">
+				<h4 id="list-group-item-heading" class="list-group-item-heading">Présentation</h4>
+			  </a>
+			  {% for res in entity.resources %}
+				{% if res.suggested %}
+					<a href="#" class="list-group-item">
+						<h4 id="list-group-item-heading" class="list-group-item-heading">{{ res.usedResource.resource.title }}</h4>
+						<p class="list-group-item-text">Suggestion de l'auteur</p>
+					</a>
+				{% endif %}
+			{% endfor %}
+			</div>
 		</div>
 		<div class="col-sm-4">
 			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Nouvelle liste de lecture</h4>
@@ -25,8 +38,18 @@
 				Durée totale : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
 			</p>
 		</div>
-		<div class="col-sm-4">
-			<h4><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span> Options supplémentaires</h4>
+		<div class="col-sm-3">
+			<h4><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span> + d'options</h4>
+			<a href="#"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Visualisation avancée</a><br/>
+			<a href="#"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Voir d'autres présentations</a>			
+		</div>
+    </div>
+    <div class="row">
+		<div class="col-sm-5 text-center">
+			<button role="button" id="addContextualBtn" class="btn btn-primary">Générer du contenu contextuel</button>
+		</div>
+		<div class="col-sm-4 text-center">
+			<a role="button" class="btn btn-success"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Lancer la nouvelle présentation</a>
 		</div>
     </div>
     <hr/>
@@ -51,4 +74,20 @@
 			</tr>
 		</tbody>
 	</table>
+{% endblock %}
+
+{% block script %}
+	{{ parent() }}
+	<script>
+		$(function() {			
+			$("#presentation_options .list-group-item").click(function(e) {
+				$(this).toggleClass('active');
+				$(this).css('outline','0px');				
+			});
+			
+			$("#addContextualBtn").click(function() {
+				alert('add Contextual');
+			});
+		});
+	</script>
 {% endblock %}
