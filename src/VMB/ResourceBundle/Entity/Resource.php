@@ -469,7 +469,9 @@ class Resource
     {
         if (null !== $this->file)
         {
-            $this->setExtension($this->file->guessExtension());
+            dump($this->file);
+            $extension = pathinfo($this->file->getClientOriginalName(), PATHINFO_EXTENSION);
+            $this->setExtension($extension);
             $this->mime_type = explode("/",$this->file->getMimeType());
             $this->setType($this->mime_type[0]);
             $this->setSize(filesize($this->file));
@@ -483,14 +485,16 @@ class Resource
                 ->setEncoding('UTF-8')
                 ->analyze($this->file);
                
-            if($this->file->guessExtension() == 'jpeg' || $this->file->guessExtension() == 'png'){
+            if(in_array($extension, array('jpeg', 'jpg', 'png'))){
                 
                 $this->setHeight($analyse['height']);
                 $this->setWidth($analyse['width']);
             }
-
-            if($this->file->guessExtension() == 'mp3' ||  $this->file->guessExtension() == 'ogg' || $this->getType() == 'video'){
+            elseif(in_array($extension, array('ogg', 'mp3'))){
                 $this->setDuration($analyse['playtime_seconds']);
+            }
+            elseif($this->getType() == 'video'){
+                $this->setDuration($analyse['playtime_seconds']);   
             } 
         }
     }
