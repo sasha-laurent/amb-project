@@ -1,0 +1,26 @@
+topic:
+    path:     /
+    defaults: { _controller: "VMBPresentationBundle:Topic:index" }
+
+topic_show:
+    path:     /show/{id}
+    defaults: { _controller: "VMBPresentationBundle:Topic:show" }
+    requirements:
+        id:   \d{1,}
+
+topic_new:
+    path:     /new
+    defaults: { _controller: "VMBPresentationBundle:Topic:new" }
+
+topic_edit:
+    path:     /edit/{id}
+    defaults: { _controller: "VMBPresentationBundle:Topic:edit" }
+    requirements:
+        id:   \d{1,}
+      
+
+topic_delete:
+    path:     /delete/{id}
+    defaults: { _controller: "VMBPresentationBundle:Topic:delete" }
+    requirements:
+        id:   \d{1,}

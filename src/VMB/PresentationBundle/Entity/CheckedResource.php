@@ -29,7 +29,7 @@ class CheckedResource
 	
 	/**
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\UsedResource")
-	* @ORM\JoinColumn(nullable=false)
+	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
 	*/
 	private $usedResource;
 	
