@@ -34,7 +34,7 @@ class UploadController extends Controller
                 $em->persist($resource);
                 $em->flush();
 
-                $flashMessage = ($resource->getId()) ? 'Présentation ajoutée' : 'Présentation modifiée';
+                $flashMessage = ($resource->getId()) ? 'Ressource ajoutée' : 'Ressource modifiée';
                 $request->getSession()->getFlashBag()->add('success', $flashMessage);
             
             }

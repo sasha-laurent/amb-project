@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;
-
+use \GetId3\GetId3Core as GetId3;
 /**
  * Resource
  *
@@ -133,14 +133,13 @@ class Resource
     
 
     /**
-     * @Assert\File(maxSize="60000000")
+     * @Assert\File(maxSize="128000000000")
      */
     public $file;
 
     /*
     * Variable de mime
     */
-
     public $mime_type;
 
     /**
@@ -470,16 +469,29 @@ class Resource
     {
         if (null !== $this->file)
         {
-            //$this->setExtension($this->file->guessExtension());
-            //$name = preg_replace('/[^a-zA-Z0-9]/', '-', $this->getTitle());
-            //$this->filename = $name.sha1(uniqid(mt_rand(), false));
             $this->setExtension($this->file->guessExtension());
             $this->mime_type = explode("/",$this->file->getMimeType());
             $this->setType($this->mime_type[0]);
             $this->setSize(filesize($this->file));
             $this->setPath("");
+           
+           /*Analyse du fichier avec getID3 */
+           $getId3 = new GetId3();
+           $analyse = $getId3
+                ->setOptionMD5Data(true)
+                ->setOptionMD5DataSource(true)
+                ->setEncoding('UTF-8')
+                ->analyze($this->file);
+               
+            if($this->file->guessExtension() == 'jpeg' || $this->file->guessExtension() == 'png'){
+                
+                $this->setHeight($analyse['height']);
+                $this->setWidth($analyse['width']);
+            }
 
-           // $this->path = $this->filename.".".$this->getExtension();
+            if($this->file->guessExtension() == 'mp3' ||  $this->file->guessExtension() == 'ogg' || $this->getType() == 'video'){
+                $this->setDuration($analyse['playtime_seconds']);
+            } 
         }
     }
     
@@ -488,7 +500,7 @@ class Resource
      */
     public function upload()
     {
-        if (null === $this->file) {
+        if (null === $this->file){
             return;
         }
 
@@ -496,14 +508,24 @@ class Resource
         // être déplacé afin que l'entité ne soit pas persistée dans la
         // base de données comme le fait la méthode move() de UploadedFile
         // et on ajoute le reste a partir du type_mime et l'user
-        
-           
-        
-         //$this->
-        //$name =  $this->getTitle();
-        //$this->filename = $name;
-        /* je recupère le type grâce au mime*/
-        
+
+
+        if($this->file->guessExtension() == 'pdf' || $this->file->guessExtension() == 'txt' ){
+            // on attribue un icone
+        }
+        if($this->file->guessExtension() == 'jpeg' || $this->file->guessExtension() == 'png'){
+            // on crée la miniature
+        }
+
+        if($this->file->guessExtension() == 'mp3' ||  $this->file->guessExtension() == 'ogg'){
+            // on attribue une icône
+        } 
+
+        if ($this->getType() == 'video') {
+            /* On crée les miniatures
+            */
+        }
+    
         if (!is_dir($this->getUploadRootDir($this->getType())))
         {
             if (!is_dir($this->getUploadRootDir())) {

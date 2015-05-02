@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ddc4bbb078c620505a8db04e5e6534b4",
+    "hash": "7beef721836a11901e9c837d5aa0f67f",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -862,12 +862,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-                "reference": "192c53916942847aee687722af54f431aead0b70"
+                "reference": "7bdbe66c90a27b2f8298230309ad8d0cfec1cb6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/192c53916942847aee687722af54f431aead0b70",
-                "reference": "192c53916942847aee687722af54f431aead0b70",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/7bdbe66c90a27b2f8298230309ad8d0cfec1cb6e",
+                "reference": "7bdbe66c90a27b2f8298230309ad8d0cfec1cb6e",
                 "shasum": ""
             },
             "require": {
@@ -921,7 +921,7 @@
             "keywords": [
                 "User management"
             ],
-            "time": "2015-04-16 23:14:14"
+            "time": "2015-05-01 08:19:36"
         },
         {
             "name": "gedmo/doctrine-extensions",
@@ -1301,6 +1301,51 @@
                 "psr-3"
             ],
             "time": "2015-03-09 09:58:04"
+        },
+        {
+            "name": "phansys/getid3",
+            "version": "2.1.x-dev",
+            "target-dir": "GetId3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phansys/GetId3.git",
+                "reference": "75afebe3cf9cb5609d38fa640c58c32fd82fd59e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phansys/GetId3/zipball/75afebe3cf9cb5609d38fa640c58c32fd82fd59e",
+                "reference": "75afebe3cf9cb5609d38fa640c58c32fd82fd59e",
+                "shasum": ""
+            },
+            "suggest": {
+                "ext-exif": "EXIF extension is required for graphic modules.",
+                "ext-rar": "RAR extension is required for RAR archive module."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "GetId3": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL"
+            ],
+            "authors": [
+                {
+                    "name": "James Heinrich",
+                    "email": "info@getid3.org",
+                    "homepage": "http://www.getid3.org"
+                }
+            ],
+            "description": "This release of GetId3 library updates to PSR-0 CS, add namespaces and makes it Symfony 2.x installable by deps or composer mechanisms.",
+            "homepage": "http://www.getid3.org",
+            "keywords": [
+                "getid3",
+                "metadata",
+                "tags"
+            ],
+            "time": "2014-10-08 19:39:42"
         },
         {
             "name": "psr/log",
@@ -2147,7 +2192,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "friendsofsymfony/user-bundle": 20,
-        "doctrine/doctrine-fixtures-bundle": 20
+        "doctrine/doctrine-fixtures-bundle": 20,
+        "phansys/getid3": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
