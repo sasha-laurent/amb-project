@@ -42,13 +42,16 @@
 			</div>
 			<div class="col-sm-5">
 				<h4>Ajouter une ressource</h4>
-				<div class="well">
-					<ul id="file_list">
-						{% for elt in resources %}
-						<li data-resource="{{ elt.id }}" data-title="{{ elt.title }}" data-thumb="https://i.ytimg.com/vi/Ks_5q9lvcyA/mqdefault.jpg" class="addableResource">{{ elt.title }}</li>
-						{% endfor %}
-					</ul>
-				</div>
+				<ul class="list-group" id="file_list">
+					{% for elt in resources %}
+						<li class="list-group-item addableResource" data-resource="{{ elt.id }}" data-title="{{ elt.title }}" data-thumb="https://i.ytimg.com/vi/Ks_5q9lvcyA/mqdefault.jpg">
+							<div class="row">
+								<div class="col-sm-10">{{ elt.title }}</div>
+								<div class="col-sm-2">{{ "%02d"|format(elt.duration // 60) }}:{{ "%02d"|format(elt.duration % 60) }}</div>
+							</div>
+						</li>
+					{% endfor %}
+				</ul>
 			</div>
 		</div>
 	</div>
@@ -177,7 +180,7 @@
 				else {
 					$('> .usedResource', this).remove();
 					$('> input', this).val(ui.draggable.attr('data-resource'));
-					$(this).append('<div class="usedResource" data-resource="' + ui.draggable.attr('data-resource') + '" style="background-image:url(' + ui.draggable.attr('data-thumb') + ');"><div class="resThumbnailHover"><span>' + ui.draggable.attr('data-title') + '</span></div></div>');
+					$(this).append('<div class="usedResource" data-resource="' + ui.draggable.attr('data-resource') + '" style="background-image:url(' + ui.draggable.attr('data-thumb') + ');"><div class="resThumbnailHover"><span class="resTitle">' + ui.draggable.attr('data-title') + '</span></div></div>');
 					bindCustomDraggable($('> .usedResource', this));
 					noticeUnsavedMatrix();
 				}

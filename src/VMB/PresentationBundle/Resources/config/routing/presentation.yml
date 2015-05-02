@@ -13,6 +13,12 @@ presentation_show:
     defaults: { _controller: "VMBPresentationBundle:Presentation:show" }
     requirements:
         id:   \d{1,}
+        
+presentation_complementary:
+    path:     /show/additional/{id}
+    defaults: { _controller: "VMBPresentationBundle:Presentation:additionalContent" }
+    requirements:
+        id:   \d{1,}        
 
 presentation_new:
     path:     /new/{idMatrix}

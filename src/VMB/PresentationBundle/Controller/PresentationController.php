@@ -79,6 +79,32 @@ class PresentationController extends Controller
 			'entity' => $entity
         ));
     }
+    
+    /**
+     * Finds and displays a Presentation entity.
+     *
+     */
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
+    public function additionalContentAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('VMBPresentationBundle:Presentation')->findWithConcreteResources($id);
+        $matrix = $em->getRepository('VMBPresentationBundle:Matrix')->getMatrixWithResources($entity->getMatrix()->getId());
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Presentation entity.');
+        }
+
+        return $this->render('VMBPresentationBundle:Presentation:complement.html.twig', array(
+            'mainTitle' => 'Voir plus - '. $entity->getTitle(),
+            'backButtonUrl' => $this->generateUrl('presentation_show', array('id' => $id)),
+			'entity' => $entity,
+			'matrix' => $matrix
+        ));
+    }
 
     /**
      * Displays a form to create a new Presentation entity.

@@ -24,6 +24,8 @@ class MatrixRepository extends EntityRepository
 			->addSelect('usedR')
 			->leftJoin('usedR.resource', 'r')
 			->addSelect('r')
+			->orderBy('lvl.sort', 'ASC')
+			->addOrderBy('pov.sort', 'ASC')
 			->where('m.id = :id')
 			->setParameter('id', $id)
 		;

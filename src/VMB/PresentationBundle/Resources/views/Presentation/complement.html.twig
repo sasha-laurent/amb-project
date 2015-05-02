@@ -1,0 +1,54 @@
+{% extends '::Backend/subPage.html.twig' %}
+
+{% block body %}
+    <div class="row">
+		<div class="col-sm-4">
+			<h4><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> Options de la présentation</h4>
+		</div>
+		<div class="col-sm-4">
+			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Nouvelle liste de lecture</h4>
+			{% set totalDuration = 0 %}
+			<ul class="list-group" id="file_list">
+				{% for res in entity.resources %}
+					{% if res.suggested == false %}
+						{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
+						<li class="list-group-item" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
+							<div class="row">
+								<div class="col-sm-8"><span class="glyphicon glyphicon-film" aria-hidden="true"></span> {{ res.usedResource.resource.title[:20] }}</div>
+								<div class="col-sm-4">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
+							</div>
+						</li>
+					{% endif %}
+				{% endfor %}
+			</ul>
+			<p class="text-center">
+				Durée totale : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
+			</p>
+		</div>
+		<div class="col-sm-4">
+			<h4><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span> Options supplémentaires</h4>
+		</div>
+    </div>
+    <hr/>
+    <h3>Détails de la présentation</h3>
+    <table class="table">
+		<tbody>
+			<tr>
+				<th width="120px">Titre</th>
+				<td>{{ entity.title }}</td>
+			</tr>
+			<tr>
+				<th width="120px">Description</th>
+				<td>{{ entity.description[:300] }} <span data-prototype="{{entity.description[300:]}}" class="showAll collapsed">...</span></td>
+			</tr>
+			<tr>
+				<th>Création</th>
+				<td>{{ entity.dateCreation|date('d/m/y') }}</td>
+			</tr>
+			<tr>
+				<th>Mise à jour</th>
+				<td>{{ entity.dateUpdate|date('d/m/y') }}</td>
+			</tr>
+		</tbody>
+	</table>
+{% endblock %}

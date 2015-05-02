@@ -33,7 +33,10 @@ header {
 	text-align: center;
 	margin-top: -4px;
 	margin-right: 16px;
+	opacity: 0.85;
 }
+
+.header h3:hover { opacity:1; }
 
 .top-search-form {
 	float: left;
@@ -242,4 +245,23 @@ header {
 
 .list-group .list-group-item.row:hover {
 	background-color: #f3f3f3;
+}
+
+#file_list {
+	overflow-y: auto;
+	max-height: 320px;
+	border: 1px solid #DDD;
+	border-radius: 4px;
+}
+
+#file_list .list-group-item {
+	border-left: 0px;
+	border-right: 0px;
+}
+
+#file_list .list-group-item:first-child {
+	border-top: 0px;
+}
+#file_list .list-group-item:last-child {
+	border-bottom: 0px;
 }
