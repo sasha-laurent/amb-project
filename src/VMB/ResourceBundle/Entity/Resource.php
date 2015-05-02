@@ -634,7 +634,7 @@ class Resource
         if($this->getType() == 'text'){
             return 'img/icon/text.jpg';
         }
-        return ($this->getUploadDir($this->getType()).'thumbs/';
+        return $this->getUploadDir($this->getType()).'thumbs/';
     }
 
     /**
