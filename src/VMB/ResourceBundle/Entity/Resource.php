@@ -372,6 +372,21 @@ class Resource
     {
         return $this->size;
     }
+    
+    public function sizeToString()
+    {
+		$format = array('', 'K', 'M', 'G', 'T');
+		$size = $this->size;
+		$div = 1;
+		foreach($format as $suffix) {
+			$size = $size / $div;
+			if($size < 1000) {
+				return sprintf("%1\$.2f", $size).$suffix.'o';
+			}
+			$div *= 1000;
+		}
+		return sprintf("%1\$.2f", $size).' To';
+	}
 
     /**
      * Set width
@@ -441,6 +456,11 @@ class Resource
     {
         return $this->duration;
     }
+    
+    public function durationToString()
+    {
+		return sprintf("%02d", floor($this->duration / 60)).':'.sprintf("%02d", floor($this->duration % 60));
+	}
 
     /**
      * Set encodage
@@ -749,5 +769,51 @@ class Resource
     public function getTopic()
     {
         return $this->topic;
+    }
+
+    /**
+     * Set trusted
+     *
+     * @param string $trusted
+     * @return Resource
+     */
+    public function setTrusted($trusted)
+    {
+        $this->trusted = $trusted;
+
+        return $this;
+    }
+
+    /**
+     * Get trusted
+     *
+     * @return string 
+     */
+    public function getTrusted()
+    {
+        return $this->trusted;
+    }
+
+    /**
+     * Set indexed
+     *
+     * @param string $indexed
+     * @return Resource
+     */
+    public function setIndexed($indexed)
+    {
+        $this->indexed = $indexed;
+
+        return $this;
+    }
+
+    /**
+     * Get indexed
+     *
+     * @return string 
+     */
+    public function getIndexed()
+    {
+        return $this->indexed;
     }
 }
