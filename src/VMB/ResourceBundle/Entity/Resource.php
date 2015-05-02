@@ -1,6 +1,7 @@
 <?php
 
 namespace VMB\ResourceBundle\Entity;
+//include('SimpleImage.php');
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
@@ -469,7 +470,6 @@ class Resource
     {
         if (null !== $this->file)
         {
-            dump($this->file);
             $extension = pathinfo($this->file->getClientOriginalName(), PATHINFO_EXTENSION);
             $this->setExtension($extension);
             $this->mime_type = explode("/",$this->file->getMimeType());
@@ -487,8 +487,8 @@ class Resource
                
             if(in_array($extension, array('jpeg', 'jpg', 'png'))){
                 
-                $this->setHeight($analyse['height']);
-                $this->setWidth($analyse['width']);
+                $this->setHeight($analyse['video']['resolution_y']);
+                $this->setWidth($analyse['video']['resolution_x']);
             }
             elseif(in_array($extension, array('ogg', 'mp3'))){
                 $this->setDuration($analyse['playtime_seconds']);
@@ -507,28 +507,11 @@ class Resource
         if (null === $this->file){
             return;
         }
-
+        $extension = $this->getExtension();
         // vous devez lancer une exception ici si le fichier ne peut pas
         // être déplacé afin que l'entité ne soit pas persistée dans la
         // base de données comme le fait la méthode move() de UploadedFile
         // et on ajoute le reste a partir du type_mime et l'user
-
-
-        if($this->file->guessExtension() == 'pdf' || $this->file->guessExtension() == 'txt' ){
-            // on attribue un icone
-        }
-        if($this->file->guessExtension() == 'jpeg' || $this->file->guessExtension() == 'png'){
-            // on crée la miniature
-        }
-
-        if($this->file->guessExtension() == 'mp3' ||  $this->file->guessExtension() == 'ogg'){
-            // on attribue une icône
-        } 
-
-        if ($this->getType() == 'video') {
-            /* On crée les miniatures
-            */
-        }
     
         if (!is_dir($this->getUploadRootDir($this->getType())))
         {
@@ -539,6 +522,58 @@ class Resource
         }
         $this->file->move($this->getUploadRootDir($this->getType()), $this->getFilename().'.'.$this->getExtension());
         unset($this->file); 
+
+        if($this->getExtension() == 'pdf' || $this->getExtension() == 'txt' ){
+            // on attribue un icone
+        }
+        elseif(in_array($this->getExtension(), array('jpeg', 'jpg', 'png'))){
+            // on crée la miniature
+
+            if($extension =="jpg" || $extension =="jpeg" ){
+
+                $uploadedfile = $this->getUploadRootDir($this->getType()).$this->getFilename().'.'.$this->getExtension();
+                $src = imagecreatefromjpeg($uploadedfile);
+            }
+            else if($extension=="png"){
+                $uploadedfile = $this->getUploadRootDir($this->getType()).$this->getFilename().'.'.$this->getExtension();
+                $src = imagecreatefrompng($uploadedfile);
+            }
+ 
+            list($width,$height)=getimagesize($uploadedfile);
+
+            $newwidth1=200;
+            $newheight1=112;
+            $tmp1=imagecreatetruecolor($newwidth1,$newheight1);
+
+            //imagecopyresampled($tmp,$src,0,0,0,0,$newwidth,$newheight,$width,$height);
+            $ratio = $width/$height;
+            if($ratio > 16/9){
+                $width = intval($height * 16/9);
+            }
+            else{
+                $height = intval($width * 9/16);
+            }
+
+            imagecopyresampled($tmp1,$src,0,0,0,0,$newwidth1,$newheight1,$width,$height);
+            
+            if (!is_dir($this->getUploadRootDir($this->getType()).'/thumbs/')) {
+                mkdir($this->getUploadRootDir($this->getType()).'/thumbs/', 0777);
+            }
+            $filename1 = $this->getUploadRootDir($this->getType()).'/thumbs/'.$this->getFilename().'.jpeg';
+
+            imagejpeg($tmp1,$filename1,100);
+
+            imagedestroy($src);
+            
+            imagedestroy($tmp1);
+        }
+
+        elseif(in_array($extension, array('ogg', 'mp3'))){
+            // on attribue une icône
+        } 
+
+        elseif($this->getType() == 'video'){
+        }
     }
 
     /**
@@ -579,6 +614,7 @@ class Resource
 
     protected function getThumbsPath($filename)
     {
+        if($this->getType() == 'application')
         return '/thumbs/'.$filename;
     }
 
