@@ -132,7 +132,22 @@ class Resource
     */
     private $topic;
     
-
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="trusted")
+     */
+    
+    private $trusted;
+    
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="indexed")
+     */
+    
+    private $indexed;
+    
     /**
      * @Assert\File(maxSize="128000000000")
      */
@@ -556,7 +571,7 @@ class Resource
             if (!is_dir($this->getUploadRootDir($this->getType()).'thumbs/')) {
                 mkdir($this->getUploadRootDir($this->getType()).'thumbs/', 0777);
             }
-            $filename1 = $this->getUploadRootDir($this->getType()).'thumbs/'.$this->getFilename().'.jpeg';
+            $filename1 = $this->getUploadRootDir($this->getType()).'thumbs/'.$this->getFilename().'.jpg';
 
             imagejpeg($tmp1,$filename1,100);
 
@@ -585,7 +600,7 @@ class Resource
 
             $video
                 ->frame(\FFMpeg\Coordinate\TimeCode::fromSeconds($snapTime))
-                ->save($this->getUploadRootDir($this->getType()).'thumbs/'.$this->getFilename().'.jpeg');
+                ->save($this->getUploadRootDir($this->getType()).'thumbs/'.$this->getFilename().'.jpg');
         }
     }
 
@@ -594,7 +609,7 @@ class Resource
      */
     public function storeFilenameForRemove()
     {
-        $this->filenameForRemove = $this->getAbsolutePath();
+        $this->filenameForRemove = $this->getUploadRootDir($this->getType()).$this->getFilename().'.'.$this->getExtension();
     }
 
     /**
@@ -604,6 +619,13 @@ class Resource
     {
         if ($this->filenameForRemove) {
             unlink($this->filenameForRemove);
+            if(!in_array($this->getType(), array('application', 'text'))){
+            unlink(getThumbsPath());
+            }
+        }
+
+        if($this->getType() == 'text'){
+            return 'img/icon/text.jpg';
         }
     }
 
@@ -634,7 +656,7 @@ class Resource
         if($this->getType() == 'text'){
             return 'img/icon/text.jpg';
         }
-        return $this->getUploadDir($this->getType()).'thumbs/';
+        return $this->getUploadDir($this->getType()).'thumbs/'.$this->filename.'jpg';
     }
 
     /**
