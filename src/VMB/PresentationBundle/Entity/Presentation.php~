@@ -35,6 +35,20 @@ class Presentation
      * @ORM\Column(name="description", type="text")
      */
     private $description;
+    
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="public", type="boolean")
+     */
+    private $public;
+    
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="official", type="boolean")
+     */
+    private $official;
 
     /**
      * @var \DateTime
@@ -68,18 +82,28 @@ class Presentation
     
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\UserBundle\Entity\User")
+	* @ORM\JoinColumn(nullable=false) 
 	*/
 	private $owner;
     
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Matrix")
+	* @ORM\JoinColumn(nullable=false) 
 	*/
 	private $matrix;
+	
+	/**
+	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Topic")
+	* @ORM\JoinColumn(nullable=false)
+	*/
+	private $topic;
 	
 	/**
 	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\CheckedResource", mappedBy="presentation", cascade={"remove", "persist"})
 	*/
 	private $resources;
+	
+	private $sortedResources = null;
 
 
 	/**
@@ -88,6 +112,18 @@ class Presentation
     public function __construct($matrix)
     {
         $this->setMatrix($matrix);
+        $this->setTopic($matrix->getTopic());
+    }
+    
+    
+    /**
+     * Is the given User the author of this Post?
+     *
+     * @return bool
+     */
+    public function isOwner(\VMB\UserBundle\Entity\User $user = null)
+    {
+        return $user && $user->getId() == $this->getOwner()->getId();
     }
 
     /**
@@ -288,4 +324,90 @@ class Presentation
     {
 		return $this->title;
 	}
+
+    /**
+     * Add resources
+     *
+     * @param \VMB\PresentationBundle\Entity\CheckedResource $resources
+     * @return Presentation
+     */
+    public function addResource(\VMB\PresentationBundle\Entity\CheckedResource $resources)
+    {
+        $this->resources[] = $resources;
+
+        return $this;
+    }
+
+    /**
+     * Remove resources
+     *
+     * @param \VMB\PresentationBundle\Entity\CheckedResource $resources
+     */
+    public function removeResource(\VMB\PresentationBundle\Entity\CheckedResource $resources)
+    {
+        $this->resources->removeElement($resources);
+    }
+
+    /**
+     * Get resources
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getResources()
+    {
+        return $this->resources;
+    }
+    
+    public function isChecked($usedResourceId)
+    {
+		if(!is_array($this->sortedResources)) {
+			$this->sortResources();
+		}
+        if(isset($this->sortedResources[$usedResourceId])) {
+			return !($this->sortedResources[$usedResourceId]->getSuggested());
+		}
+		else { return false; }
+    }
+    
+    public function isSuggested($usedResourceId)
+    {
+		if(!is_array($this->sortedResources)) {
+			$this->sortResources();
+		}
+        if(isset($this->sortedResources[$usedResourceId])) {
+			return $this->sortedResources[$usedResourceId]->getSuggested();
+		}
+		else { return false; }
+    }
+    
+    private function sortResources()
+    {
+		$this->sortedResources = array();
+		foreach($this->resources as $resource) {
+			$this->sortedResources[$resource->getUsedResource()->getId()] = $resource;
+		}
+	}
+
+    /**
+     * Set topic
+     *
+     * @param \VMB\PresentationBundle\Entity\Topic $topic
+     * @return Presentation
+     */
+    public function setTopic(\VMB\PresentationBundle\Entity\Topic $topic)
+    {
+        $this->topic = $topic;
+
+        return $this;
+    }
+
+    /**
+     * Get topic
+     *
+     * @return \VMB\PresentationBundle\Entity\Topic 
+     */
+    public function getTopic()
+    {
+        return $this->topic;
+    }
 }

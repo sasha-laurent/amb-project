@@ -21,17 +21,29 @@
 			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Liste de lecture</h4>
 			{% set totalDuration = 0 %}
 			<ul class="list-group" id="file_list">
-				{% for res in entity.resources %}
-					{% if res.suggested == false %}
-						{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
-						<li class="list-group-item" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
+				{% if alternativeResources|length == 0 %}
+					{% for res in entity.resources %}
+						{% if res.suggested == false %}
+							{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
+							<li class="list-group-item" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
+								<div class="row">
+									<div class="col-sm-8"><span class="glyphicon glyphicon-film" aria-hidden="true"></span> {{ res.usedResource.resource.title[:20] }}</div>
+									<div class="col-sm-4">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
+								</div>
+							</li>
+						{% endif %}
+					{% endfor %}
+				{% else %}
+					{% for usedRes in alternativeResources %}
+						{% set totalDuration = totalDuration + usedRes.resource.duration %}
+						<li class="list-group-item" id="addedRes_{{ usedRes.id }}" data-id="{{ usedRes.id }}">
 							<div class="row">
-								<div class="col-sm-8"><span class="glyphicon glyphicon-film" aria-hidden="true"></span> {{ res.usedResource.resource.title[:20] }}</div>
-								<div class="col-sm-4">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
+								<div class="col-sm-8"><span class="glyphicon glyphicon-film" aria-hidden="true"></span> {{ usedRes.resource.title[:20] }}</div>
+								<div class="col-sm-4">{{ "%02d"|format(usedRes.resource.duration // 60) }}:{{ "%02d"|format(usedRes.resource.duration % 60) }}</div>
 							</div>
 						</li>
-					{% endif %}
-				{% endfor %}
+					{% endfor %}
+				{% endif %}
 			</ul>
 			<p class="text-center">
 				Durée totale : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>

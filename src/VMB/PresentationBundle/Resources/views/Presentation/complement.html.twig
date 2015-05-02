@@ -1,6 +1,7 @@
 {% extends '::Backend/subPage.html.twig' %}
 
 {% block body %}
+<form id="new_presentation_form" action="{{ path('presentation_show', {'id': entity.id}) }}" method="post">
     <div class="row">
 		<div class="col-sm-5">
 			<h4><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> Options de la présentation</h4>
@@ -10,9 +11,12 @@
 			  </a>
 			  {% for res in entity.resources %}
 				{% if res.suggested %}
-					<a href="#" class="list-group-item">
+					<a href="#" class="list-group-item suggestion-item" data-id="{{ res.usedResource.id }}">
 						<h4 id="list-group-item-heading" class="list-group-item-heading">{{ res.usedResource.resource.title }}</h4>
-						<p class="list-group-item-text">Suggestion de l'auteur</p>
+						<div class="list-group-item-text row">
+							<div class="col-sm-9">{{ res.usedResource.pov.title }} - {{ res.usedResource.level.title }}</div>
+							<div class="col-sm-3 text-right"><em>Suggéré</em></div>
+						</div>
 					</a>
 				{% endif %}
 			{% endfor %}
@@ -28,7 +32,8 @@
 						<li class="list-group-item" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
 							<div class="row">
 								<div class="col-sm-8"><span class="glyphicon glyphicon-film" aria-hidden="true"></span> {{ res.usedResource.resource.title[:20] }}</div>
-								<div class="col-sm-4">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
+								<div class="col-sm-4 text-right">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
+								<input type="hidden" name="usedResource_{{ res.usedResource.id }}" value="1" />
 							</div>
 						</li>
 					{% endif %}
@@ -36,6 +41,7 @@
 			</ul>
 			<p class="text-center">
 				Durée totale : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
+				<input type="hidden" id="input_duration" name="input_duration" value ="{{totalDuration}}" />
 			</p>
 		</div>
 		<div class="col-sm-3">
@@ -46,12 +52,13 @@
     </div>
     <div class="row">
 		<div class="col-sm-5 text-center">
-			<button role="button" id="addContextualBtn" class="btn btn-primary">Générer du contenu contextuel</button>
+			<button type="button" id="addContextualBtn" class="btn btn-primary">Générer du contenu contextuel</button>
 		</div>
 		<div class="col-sm-4 text-center">
-			<a role="button" class="btn btn-success"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Lancer la nouvelle présentation</a>
+			<button id="submit_new_presentation" role="button" class="btn btn-success"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Lancer la nouvelle présentation</button>
 		</div>
     </div>
+    </form>
     <hr/>
     <h3>Détails de la présentation</h3>
     <table class="table">
@@ -79,14 +86,124 @@
 {% block script %}
 	{{ parent() }}
 	<script>
+		{% set firstLoop = true %}
+		presentationUsedResources = [ {% for res in entity.resources %}{% if res.suggested == false %}{% if firstLoop %}{% set firstLoop = false %}{% else %}, {% endif %}{{ res.usedResource.id }}{% endif %}{% endfor %} ];
+		
+		resourcesCollection = {
+			{% for usedRes in matrix.resources %}
+			{{ usedRes.id }}: {
+				'pov': "{{ usedRes.pov.title }}", 
+				'level': "{{ usedRes.level.title }}", 
+				'shortTitle': "{{ usedRes.resource.title[:20] }}", 
+				'duration': {{ usedRes.resource.duration }},
+				'duration_str': "{{ "%02d"|format(usedRes.resource.duration // 60) }}:{{ "%02d"|format(usedRes.resource.duration % 60) }}"
+			},
+			{% endfor %}
+		};
+		
+		{% set firstLoop = true %}
+		additionalResources = [ {{ additionalResourcesId|join(',') }} ];
+		
+		function pad(num, size) {
+			var s = num+"";
+			while (s.length < size) s = "0" + s;
+			return s;
+		}
+		
+		function convertDurationToString(value) {
+			return (pad(~~(value / 60), 2)) + ':' + pad((value % 60), 2);
+		}
+		
+		function addToDuration(value) {
+			// conv base10
+			var current = $("#input_duration").val();
+			total = parseInt(current, 10) + value;
+			$("#total_duration").html(convertDurationToString(total));
+			$('#input_duration').val(total);
+		}
+		
+		function deleteFromPlaylist(resId) {
+			$('#addedRes_' + resId).remove();
+			addToDuration(-resourcesCollection[resId]['duration']);
+		}
+		
+		function addToPlaylist(resId, prepend=false) {
+			addToDuration(resourcesCollection[resId]['duration']);
+			newElt = '<li class="list-group-item" id="addedRes_' + resId + '" data-id="' + resId + '"> \
+				<div class="row"> \
+					<div class="col-sm-8"><span class="glyphicon glyphicon-film" aria-hidden="true"></span> ' + resourcesCollection[resId]['shortTitle'] + '</div> \
+					<div class="col-sm-4 text-right">' + resourcesCollection[resId]['duration_str'] + '</div> \
+					<input type="hidden" name="usedResource_' + resId + '" value="1" /> \
+				</div> \
+			</li>';
+			if(prepend) {
+				$('#file_list').prepend(newElt);
+			}
+			else {
+				$('#file_list').append(newElt);
+			}
+		}
+		
+		function togglePresentationOption(selector) {
+			// If we need to delete elements
+			if($(selector).hasClass('active')) {
+				$(selector).removeClass('active');
+				
+				// If it's single file
+				if($(selector).hasClass('suggestion-item')) {
+					deleteFromPlaylist($(selector).attr('data-id'));
+				}
+				// If we're dealing with the list included in the presentation
+				else {
+					var i;
+					for (i = 0; i < presentationUsedResources.length; ++i) {
+						deleteFromPlaylist(presentationUsedResources[i]);
+					}
+				}
+			}
+			// If we need to add elements
+			else {
+				$(selector).addClass('active');
+				if($(selector).hasClass('suggestion-item')) {
+					addToPlaylist($(selector).attr('data-id'));
+				}
+				else {
+					var i;
+					for (i = (presentationUsedResources.length - 1); i >= 0; --i) {
+						addToPlaylist(presentationUsedResources[i], true);
+					}
+				}
+			}
+			$(selector).css('outline','0px');
+		}
+		
 		$(function() {			
-			$("#presentation_options .list-group-item").click(function(e) {
-				$(this).toggleClass('active');
-				$(this).css('outline','0px');				
+			$("#presentation_options .list-group-item").click(function(e) {				
+				togglePresentationOption(this);				
 			});
 			
 			$("#addContextualBtn").click(function() {
-				alert('add Contextual');
+				if(additionalResources.length > 0) {
+					var resId = additionalResources.shift();
+					var newElt = '<a href="#" class="list-group-item suggestion-item" id="contextual_' + resId + '" data-id="' + resId + '"> \
+							<h4 id="list-group-item-heading" class="list-group-item-heading">' + resourcesCollection[resId]['shortTitle'] + '</h4> \
+							<div class="list-group-item-text row"> \
+								<div class="col-sm-9">' + resourcesCollection[resId]['pov'] + ' - ' + resourcesCollection[resId]['level'] + '</div> \
+								<div class="col-sm-3 text-right"><em>Conseillé</em></div> \
+							</div> \
+						</a>';
+					$("#presentation_options").append(newElt);
+					$("#contextual_" + resId).click(function(e) {				
+						togglePresentationOption(this);				
+					});
+				}
+				else {
+					alert("Aucun contenu additionel disponible");
+				}
+			});
+			
+			$("#submit_new_presentation").click(function() {
+				$("#new_presentation_form").submit();
 			});
 		});
 	</script>

@@ -35,6 +35,20 @@ class Presentation
      * @ORM\Column(name="description", type="text")
      */
     private $description;
+    
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="public", type="boolean")
+     */
+    private $public;
+    
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="official", type="boolean")
+     */
+    private $official;
 
     /**
      * @var \DateTime
@@ -79,6 +93,12 @@ class Presentation
 	private $matrix;
 	
 	/**
+	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Topic")
+	* @ORM\JoinColumn(nullable=false)
+	*/
+	private $topic;
+	
+	/**
 	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\CheckedResource", mappedBy="presentation", cascade={"remove", "persist"})
 	*/
 	private $resources;
@@ -92,6 +112,7 @@ class Presentation
     public function __construct($matrix)
     {
         $this->setMatrix($matrix);
+        $this->setTopic($matrix->getTopic());
     }
     
     
@@ -366,4 +387,73 @@ class Presentation
 			$this->sortedResources[$resource->getUsedResource()->getId()] = $resource;
 		}
 	}
+
+    /**
+     * Set topic
+     *
+     * @param \VMB\PresentationBundle\Entity\Topic $topic
+     * @return Presentation
+     */
+    public function setTopic(\VMB\PresentationBundle\Entity\Topic $topic)
+    {
+        $this->topic = $topic;
+
+        return $this;
+    }
+
+    /**
+     * Get topic
+     *
+     * @return \VMB\PresentationBundle\Entity\Topic 
+     */
+    public function getTopic()
+    {
+        return $this->topic;
+    }
+
+    /**
+     * Set public
+     *
+     * @param boolean $public
+     * @return Presentation
+     */
+    public function setPublic($public)
+    {
+        $this->public = $public;
+
+        return $this;
+    }
+
+    /**
+     * Get public
+     *
+     * @return boolean 
+     */
+    public function getPublic()
+    {
+        return $this->public;
+    }
+
+    /**
+     * Set official
+     *
+     * @param boolean $official
+     * @return Presentation
+     */
+    public function setOfficial($official)
+    {
+        $this->official = $official;
+
+        return $this;
+    }
+
+    /**
+     * Get official
+     *
+     * @return boolean 
+     */
+    public function getOfficial()
+    {
+        return $this->official;
+    }
 }

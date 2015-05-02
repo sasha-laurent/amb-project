@@ -144,6 +144,36 @@ header {
     text-decoration: none;    
 }
 
+.list-group-item.row [class^="col-"] a.switch-public, .list-group-item.row [class^="col-"] a.switch-private {
+	color: white;
+}
+
+.switch-public .hidden-value, .switch-private .hidden-value { display: none; }
+.switch-public:hover .hidden-value, .switch-private:hover .hidden-value { display: inline; }
+.switch-public:hover .shown-value, .switch-private:hover .shown-value { display: none; }
+
+.list-group-item.row [class^="col-"] a[type="button"].switch-public, .list-group-item.row [class^="col-"] a[type="button"].switch-private {
+	width: 84px;
+    display: inline-block;
+}
+
+.switch-public {
+	background-color: #5CB85C;
+	border-color: #4CAE4C;
+}
+.switch-public:hover {
+	background-color: #C9302C;
+	border-color: #AC2925;
+}
+.switch-private {
+	background-color: #C9302C;
+	border-color: #AC2925;	
+}
+.switch-private:hover {
+	background-color: #5CB85C;
+	border-color: #4CAE4C;
+}
+
 .showAll {
 	cursor: pointer;
 }

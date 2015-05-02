@@ -56,6 +56,12 @@ class Matrix
 	* @ORM\ManyToOne(targetEntity="VMB\UserBundle\Entity\User")
 	*/
 	private $owner;
+	
+	/**
+	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Topic")
+	* @ORM\JoinColumn(nullable=false)
+	*/
+	private $topic;
 
 	/**
 	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Pov", mappedBy="matrix", cascade={"remove", "persist"})
@@ -318,6 +324,16 @@ class Matrix
         return $this->resources;
     }
     
+    public function getUsedResourceById($id)
+    {
+		foreach($this->resources as $usedRes) {
+			if($usedRes->getId() == $id) {
+				return $usedRes;
+			}
+		}
+		return null;
+	}
+    
     public function getSortedResources()
     {
 		if(!is_array($this->sortedResources)) {
@@ -333,4 +349,27 @@ class Matrix
 			$this->sortedResources[$resource->getPov()->getId()][$resource->getLevel()->getId()] = $resource;
 		}
 	}
+
+    /**
+     * Set topic
+     *
+     * @param \VMB\PresentationBundle\Entity\Topic $topic
+     * @return Matrix
+     */
+    public function setTopic(\VMB\PresentationBundle\Entity\Topic $topic)
+    {
+        $this->topic = $topic;
+
+        return $this;
+    }
+
+    /**
+     * Get topic
+     *
+     * @return \VMB\PresentationBundle\Entity\Topic 
+     */
+    public function getTopic()
+    {
+        return $this->topic;
+    }
 }

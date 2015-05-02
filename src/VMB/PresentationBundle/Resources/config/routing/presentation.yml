@@ -5,8 +5,10 @@ presentation:
         page: \d*
     
 presentation_perso:
-    path:     /
-    defaults: { _controller: "VMBPresentationBundle:Presentation:personalIndex" }
+    path:     /personal/{page}
+    defaults: { _controller: "VMBPresentationBundle:Presentation:personalIndex", page: 1 }
+    requirements:
+        page: \d*
 
 presentation_show:
     path:     /show/{id}

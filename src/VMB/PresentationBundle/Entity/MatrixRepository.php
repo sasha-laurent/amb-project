@@ -16,16 +16,39 @@ class MatrixRepository extends EntityRepository
 	{
 		$qb = $this
 			->createQueryBuilder('m')
-			->leftJoin('m.povs', 'pov')
+			->innerJoin('m.povs', 'pov')
 			->addSelect('pov')
-			->leftJoin('m.levels', 'lvl')
+			->innerJoin('m.levels', 'lvl')
 			->addSelect('lvl')
 			->leftJoin('m.resources', 'usedR')
 			->addSelect('usedR')
 			->leftJoin('usedR.resource', 'r')
 			->addSelect('r')
-			->orderBy('lvl.sort', 'ASC')
-			->addOrderBy('pov.sort', 'ASC')
+			->orderBy('lvl.sort')
+			->addOrderBy('pov.sort')
+			->where('m.id = :id')
+			->setParameter('id', $id)
+		;
+
+		return $qb
+		->getQuery()
+		->getSingleResult();
+	}
+	
+	public function getMatrixWithSortedResources($id)
+	{
+		$qb = $this
+			->createQueryBuilder('m')
+			->leftJoin('m.resources', 'usedR')
+			->addSelect('usedR')
+			->leftJoin('usedR.resource', 'r')
+			->addSelect('r')
+			->innerJoin('usedR.pov', 'pov')
+			->addSelect('pov')
+			->innerJoin('usedR.level', 'lvl')
+			->addSelect('lvl')
+			->orderBy('pov.sort')
+			->addorderBy('lvl.sort')
 			->where('m.id = :id')
 			->setParameter('id', $id)
 		;

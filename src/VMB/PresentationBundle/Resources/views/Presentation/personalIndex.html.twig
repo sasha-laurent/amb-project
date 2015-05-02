@@ -1,0 +1,80 @@
+{% set addModal = '.bs-example-modal-lg' %}
+{% set addButtonUrl = 'true' %}
+{% extends '::Backend/subPage.html.twig' %}
+
+{% block body %}
+    <div class="panel panel-default">
+		<div class="panel-heading">
+			<div class="row">				
+				<div class="col-md-7">Titre</div>			
+				<div class="col-md-1 text-center">Durée</div>
+				<div class="col-md-2 text-center">Publique</div>				
+				<div class="col-md-2 text-center">Action</div>
+        	</div>
+		</div>
+	</div>
+	
+	<ul class="list-group">
+        {% for entity in entities %}
+			<li class="list-group-item row">
+				<div class="col-md-7"><a href="{{ path('presentation_show', { 'id': entity.id }) }}"><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> {{ entity.title }}</a></div>
+                <div class="col-md-1 text-center">{{ "%02d"|format(entity.duration // 60) }}:{{ "%02d"|format(entity.duration % 60) }}</div>
+                <div class="col-md-2 text-center">
+					{% if entity.public %}
+					<a type="button" class="btn switch-public" href="{{ path('presentation_perso') }}?switch={{ entity.id }}"><span class="shown-value">Publique</span><span class="hidden-value">Privée</span></a>
+					{% else %}
+					<a type="button" class="btn switch-private" href="{{ path('presentation_perso') }}?switch={{ entity.id }}"><span class="shown-value">Privée</span><span class="hidden-value">Publique</span></a>
+					{% endif %}
+				</div>
+                <div class="col-md-2 text-center">				
+					<div class="btn-group" role="group" aria-label="...">
+						{% if is_granted('ROLE_TEACHER') or entity.isOwner(app.user) %}
+						<a href="{{ path('presentation_edit', {'id' : entity.id}) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+						{% else %}
+						<a href="{{ path('presentation_create_copy', {'id' : entity.id}) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span></a>
+						{% endif %}
+						<a href="#" type="button" class="btn btn-default" title="Download"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
+						<a href="{{ path('presentation_delete', {'id' : entity.id}) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+					</div>
+				</div>
+            </li>
+        {% endfor %}
+    </ul>
+    
+    <div class="text-center">
+		<ul class="pagination">
+			{% if page == 1 %}
+			<li class="disabled">
+				<span>
+					<span aria-hidden="true">&laquo;</span>
+				</span>
+			</li>
+			{% else %}
+			<li>
+				<a href="{{ path('presentation', {'page': page-1}) }}" aria-label="Previous">
+					<span aria-hidden="true">&laquo;</span>
+				</a>
+			</li>
+			{% endif %}
+			{% for p in range(1, nbPages) %}
+				<li{% if p == page %} class="active"{% endif %}>
+					<a href="{{ path('presentation', {'page': p}) }}">{{ p }}</a>
+				</li>
+			{% endfor %}
+			{% if page == nbPages %}
+			<li class="disabled">
+				<span>
+					<span aria-hidden="true">&raquo;</span>
+				</span>
+			</li>
+			{% else %}
+			<li>
+				<a href="{{ path('presentation', {'page': page+1}) }}" aria-label="Next">
+					<span aria-hidden="true">&raquo;</span>
+				</a>
+			</li>
+			{% endif %}
+		</ul>
+	</div>
+    
+{% endblock %}

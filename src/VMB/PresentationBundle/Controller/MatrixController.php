@@ -173,10 +173,15 @@ class MatrixController extends Controller
     protected function renderForm($matrix)
     {
 		$request = $this->get('request');
+		$options = array();
+		
+		if($matrix->getId() != null) {
+			$options = array('action'=> $this->generateUrl('matrix_edit', array('id' => $matrix->getId())));
+		}
 		
 		$form = $this
 			->get('form.factory')
-			->create(new MatrixType(), $matrix, array('action'=> $this->generateUrl('matrix_edit', array('id' => $matrix->getId()))));
+			->create(new MatrixType(), $matrix, $options);
 			
 		if ($request->isMethod('POST')) 
 		{

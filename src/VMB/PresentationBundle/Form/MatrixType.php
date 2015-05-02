@@ -14,8 +14,17 @@ class MatrixType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder->add('title', null, array('label' => 'Titre'));
+        
+        $matrix = $builder->getData();
+        if($matrix->getTopic() == null) {
+			$builder->add('topic', 'entity', array(
+					'class' => 'VMBPresentationBundle:Topic',
+					'property' => 'title'
+				));
+		}
+           
         $builder
-            ->add('title', null, array('label' => 'Titre'))
             ->add('description', null, array('label' => 'Description'))
             ->add('povs', 'collection', array(
 				'by_reference' => false,
