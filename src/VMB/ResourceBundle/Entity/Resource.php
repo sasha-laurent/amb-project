@@ -137,16 +137,14 @@ class Resource
      *
      * @ORM\Column(name="trusted")
      */
-    
-    private $trusted;
+    private $trusted = false;
     
     /**
      * @var boolean
      *
      * @ORM\Column(name="indexed")
      */
-    
-    private $indexed;
+    private $indexed = false;
     
     /**
      * @Assert\File(maxSize="128000000000")
@@ -485,7 +483,7 @@ class Resource
     {
         if (null !== $this->file)
         {
-            $extension = pathinfo($this->file->getClientOriginalName(), PATHINFO_EXTENSION);
+            $extension = strtolower(pathinfo($this->file->getClientOriginalName(), PATHINFO_EXTENSION));
             $this->setExtension($extension);
             $this->mime_type = explode("/",$this->file->getMimeType());
             $this->setType($this->mime_type[0]);
@@ -619,13 +617,9 @@ class Resource
     {
         if ($this->filenameForRemove) {
             unlink($this->filenameForRemove);
-            if(!in_array($this->getType(), array('application', 'text'))){
-            unlink(getThumbsPath());
+            if(!in_array($this->getType(), array('application', 'text', 'audio'))){
+				unlink($this->getUploadRootDir($this->getType()).'thumbs/'.$this->filename.'.jpg');
             }
-        }
-
-        if($this->getType() == 'text'){
-            return 'img/icon/text.jpg';
         }
     }
 
@@ -656,7 +650,7 @@ class Resource
         if($this->getType() == 'text'){
             return 'img/icon/text.jpg';
         }
-        return $this->getUploadDir($this->getType()).'thumbs/'.$this->filename.'jpg';
+        return $this->getUploadDir($this->getType()).'thumbs/'.$this->filename.'.jpg';
     }
 
 

@@ -24,13 +24,12 @@ class ResourceType extends AbstractType
             $builder->add('topic', 'entity', array(
                 'class' => 'VMBPresentationBundle:Topic',
                 'property' => 'title'
-            ));
+            ))->add('file')
+            ->add('Sauvegarder', 'submit');
         }
-
-    $builder
-            ->add('file')
-            ->add('Mettre en ligne', 'submit')
-        ;
+        else {
+			$builder->add('Mettre en ligne', 'submit');
+		}
     }
     
     /**

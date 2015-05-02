@@ -1,11 +1,9 @@
-resource_index:
-    path:      /{page}
-    defaults:  { _controller: "VMBResourceBundle:Upload:index", page: 1 }
-    requirements:
-        page: \d*
+resource:
+    path:     /
+    defaults: { _controller: "VMBResourceBundle:Resource:index" }
 
 resource_new:
-    path:     /upload
+    path:     /new
     defaults: { _controller: "VMBResourceBundle:Upload:new" }
 
 resource_edit:
@@ -16,6 +14,6 @@ resource_edit:
 
 resource_delete:
     path:     /delete/{id}
-    defaults: { _controller: "VMBResourceBundle:Upload:delete" }
+    defaults: { _controller: "VMBResourceBundle:Resource:delete" }
     requirements:
         id:   \d{1,}
