@@ -523,10 +523,7 @@ class Resource
         $this->file->move($this->getUploadRootDir($this->getType()), $this->getFilename().'.'.$this->getExtension());
         unset($this->file); 
 
-        if($this->getExtension() == 'pdf' || $this->getExtension() == 'txt' ){
-            // on attribue un icone
-        }
-        elseif(in_array($this->getExtension(), array('jpeg', 'jpg', 'png'))){
+        if(in_array($this->getExtension(), array('jpeg', 'jpg', 'png'))){
             // on crée la miniature
 
             if($extension =="jpg" || $extension =="jpeg" ){
@@ -556,10 +553,10 @@ class Resource
 
             imagecopyresampled($tmp1,$src,0,0,0,0,$newwidth1,$newheight1,$width,$height);
             
-            if (!is_dir($this->getUploadRootDir($this->getType()).'/thumbs/')) {
-                mkdir($this->getUploadRootDir($this->getType()).'/thumbs/', 0777);
+            if (!is_dir($this->getUploadRootDir($this->getType()).'thumbs/')) {
+                mkdir($this->getUploadRootDir($this->getType()).'thumbs/', 0777);
             }
-            $filename1 = $this->getUploadRootDir($this->getType()).'/thumbs/'.$this->getFilename().'.jpeg';
+            $filename1 = $this->getUploadRootDir($this->getType()).'thumbs/'.$this->getFilename().'.jpeg';
 
             imagejpeg($tmp1,$filename1,100);
 
@@ -568,11 +565,27 @@ class Resource
             imagedestroy($tmp1);
         }
 
-        elseif(in_array($extension, array('ogg', 'mp3'))){
-            // on attribue une icône
-        } 
-
         elseif($this->getType() == 'video'){
+    
+            if (!is_dir($this->getUploadRootDir($this->getType()).'thumbs/')) {
+                mkdir($this->getUploadRootDir($this->getType()).'thumbs/', 0777);
+            }
+
+            $ffmpeg = \FFMpeg\FFMpeg::create();
+            $video = $ffmpeg->open($this->getUploadRootDir($this->getType()).$this->getFilename().'.'.$this->getExtension());
+            $video
+                ->filters()
+                ->resize(new \FFMpeg\Coordinate\Dimension(200, 112))
+                ->synchronize();
+
+            $snapTime = 10;
+            if($this->duration <= 10) {
+                $snapTime = 0;                
+            }
+
+            $video
+                ->frame(\FFMpeg\Coordinate\TimeCode::fromSeconds($snapTime))
+                ->save($this->getUploadRootDir($this->getType()).'thumbs/'.$this->getFilename().'.jpeg');
         }
     }
 
