@@ -23,19 +23,19 @@ class UsedResource
     
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\ResourceBundle\Entity\Resource")
-	* @ORM\JoinColumn(nullable=false)
+	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
 	*/
 	private $resource;
 
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Level")
-	* @ORM\JoinColumn(nullable=false)
+	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
 	*/
 	private $level;
 
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Pov")
-	* @ORM\JoinColumn(nullable=false)
+	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
 	*/
 	private $pov;
 	

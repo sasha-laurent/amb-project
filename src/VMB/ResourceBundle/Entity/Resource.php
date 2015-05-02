@@ -616,9 +616,14 @@ class Resource
     public function removeUpload()
     {
         if ($this->filenameForRemove) {
-            unlink($this->filenameForRemove);
+			if(is_file($this->filenameForRemove)) {
+				unlink($this->filenameForRemove);
+			}
             if(!in_array($this->getType(), array('application', 'text', 'audio'))){
-				unlink($this->getUploadRootDir($this->getType()).'thumbs/'.$this->filename.'.jpg');
+				$thumbsAbsolutePath = $this->getUploadRootDir($this->getType()).'thumbs/'.$this->filename.'.jpg';
+				if(is_file($thumbsAbsolutePath)) {
+					unlink($thumbsAbsolutePath);
+				}
             }
         }
     }
