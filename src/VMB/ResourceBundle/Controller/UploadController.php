@@ -10,63 +10,57 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Form\Form;
 
 use VMB\ResourceBundle\Entity\Resource;
+use VMB\ResourceBundle\Form\ResourceType;
 
 class UploadController extends Controller
 {
     
- /*
- *
- *Création du formulaire d'importation des ressources
- *
- */
-        public function formAction(Request $request)
+    protected function renderForm($resource)
+    {
+        $request = $this->get('request');
+        
+        $form = $this
+            ->get('form.factory')
+            ->create(new ResourceType(), $resource);
+            
+        if ($request->isMethod('POST')) 
         {
-             $resource = new Resource();
-             $form = $this->createFormBuilder($resource)
-                ->add('title')
-                ->add('description')
-                ->add('type')
-                ->add('filename')
-                ->add('file')
-                ->getForm();
-            
-             $request = $this->getRequest();
-            
-        /*Traitement de la requête
-        *
-        *Gestion du retour de formulaire
-        *
-        */
-            
-        if ($request->isMethod('POST'))
-        {   
-
             $form->handleRequest($request);
-            if ($form->isValid())
+            if ($form->isValid()) 
             {
                 $em = $this->getDoctrine()->getManager();
                 
-                // On récupère l'extension du fichier importé
-                $ext = $resource->getExtension();
-                // On récupère le nom du fichier
-                $name = $resource->getTitle();
-                $resource->preUpload();
-                
-
-               //$path = $resource->getFilePath();
-            
-                
+                $resource->setOwner($this->getUser());
                 $em->persist($resource);
                 $em->flush();
 
-                 return $this->render('VMBResourceBundle:Upload:index.html.twig', array(
-            'form' => $form->createView(),
-        ));
+                $flashMessage = ($resource->getId()) ? 'Présentation ajoutée' : 'Présentation modifiée';
+                $request->getSession()->getFlashBag()->add('success', $flashMessage);
+            
             }
         }
-            return $this->render('VMBResourceBundle:Upload:index.html.twig', array(
-            'form' => $form->createView(),
-        ));
+
+        return $this->render('::Backend/form.html.twig', 
+            array(
+                'form' => $form->createView(),
+                'mainTitle' => (($resource->getId()) ? 'Ajout d\'une ressource' : 'Modification d\'une ressource'),
+            ));
+    }
+
+    public function newAction(Request $request)
+    {
+        $resource = new Resource();
+        return $this->renderForm($resource);
+    }
+
+    public function editAction($id)
+    {
+
+    }
+
+    public function deleteAction($id)
+    {
+
     }
     
 }

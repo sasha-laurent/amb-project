@@ -33,6 +33,12 @@ class Resource
     private $title;
 
     /**
+    * @ORM\ManyToOne(targetEntity="VMB\UserBundle\Entity\User")
+    * @ORM\JoinColumn(nullable=true, onDelete="SET NULL") 
+    */
+    private $owner;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="description", type="text")
@@ -49,7 +55,8 @@ class Resource
     /**
      * @var string
      *
-     * @ORM\Column(name="filename", type="string", length=128)
+     * @Gedmo\Slug(fields={"title"})
+     * @ORM\Column(name="filename", type="string", length=128, unique=true)
      */
     private $filename;
 
@@ -119,9 +126,22 @@ class Resource
     private $encodage;
 
     /**
+    * @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Topic")
+    * @ORM\JoinColumn(nullable=false) 
+    */
+    private $topic;
+    
+
+    /**
      * @Assert\File(maxSize="60000000")
      */
     public $file;
+
+    /*
+    * Variable de mime
+    */
+
+    public $mime_type;
 
     /**
      * Get id
@@ -432,30 +452,35 @@ class Resource
         return $this->encodage;
     }
     
-        public function getExt()
+    public function getExt()
     {
         if (null != $this->file)
-            {
-            $this->ext = $this->file->guessExtension();
-            return $this->ext;
-            }
+        {
+        $this->ext = $this->file->guessExtension();
+        return $this->ext;
+        }
     }
+    
+
+
     /**
      * @ORM\PrePersist()
      */
     public function preUpload()
     {
         if (null !== $this->file)
-           {
+        {
+            //$this->setExtension($this->file->guessExtension());
+            //$name = preg_replace('/[^a-zA-Z0-9]/', '-', $this->getTitle());
+            //$this->filename = $name.sha1(uniqid(mt_rand(), false));
             $this->setExtension($this->file->guessExtension());
-            $name = preg_replace('/[^a-zA-Z0-9]/', '-', $this->getTitle());
-            $this->filename = $name.sha1(uniqid(mt_rand(), false));
-            /* je recupère le type grâce au mime*/
-            $type_mime = explode("/",$this->file->getMimeType());
-            $this->setType($type_mime[0]);
+            $this->mime_type = explode("/",$this->file->getMimeType());
+            $this->setType($this->mime_type[0]);
             $this->setSize(filesize($this->file));
-            $this->path = $this->getPath().$this->filename.".".$this->getExtension();
-         }
+            $this->setPath("");
+
+           // $this->path = $this->filename.".".$this->getExtension();
+        }
     }
     
     /**
@@ -466,13 +491,28 @@ class Resource
         if (null === $this->file) {
             return;
         }
+
         // vous devez lancer une exception ici si le fichier ne peut pas
         // être déplacé afin que l'entité ne soit pas persistée dans la
         // base de données comme le fait la méthode move() de UploadedFile
-        $this->file->move($this->getUploadRootDir(), $this->path);
-        //$this->
-
-        unset($this->file);
+        // et on ajoute le reste a partir du type_mime et l'user
+        
+           
+        
+         //$this->
+        //$name =  $this->getTitle();
+        //$this->filename = $name;
+        /* je recupère le type grâce au mime*/
+        
+        if (!is_dir($this->getUploadRootDir($this->getType())))
+        {
+            if (!is_dir($this->getUploadRootDir())) {
+                mkdir($this->getUploadRootDir(), 0777);
+            }
+            mkdir($this->getUploadRootDir($this->getType()), 0777);
+        }
+        $this->file->move($this->getUploadRootDir($this->getType()), $this->getFilename().'.'.$this->getExtension());
+        unset($this->file); 
     }
 
     /**
@@ -493,21 +533,118 @@ class Resource
         }
     }
 
-    public function getWebPath()
-    {
-        return null === $this->path ? null : $this->getUploadDir().'/'.$this->path;
-    }
-
-    protected function getUploadRootDir()
+    protected function getUploadRootDir($mime_type = null)
     {
         // le chemin absolu du répertoire où les documents uploadés doivent être sauvegardés
-        return __DIR__.'/../../../../../'.$this->getUploadDir();
+        return str_replace('\\', '/', __DIR__).'/../../../../'.$this->getUploadDir($mime_type);
     }
 
-    protected function getUploadDir()
+    protected function getUploadDir($mime_type = null)
     {
         // on se débarrasse de « __DIR__ » afin de ne pas avoir de problème lorsqu'on affiche
         // le document/image dans la vue.
-        return 'uploads/documents';
+        if($mime_type != null) {
+            return 'web/upload/resources/'.$this->getOwner().'/'.$mime_type.'/';
+        }
+        else {
+            return 'web/upload/resources/'.$this->getOwner().'/';   
+        }
+    }
+
+    protected function getThumbsPath($filename)
+    {
+        return '/thumbs/'.$filename;
+    }
+
+    /**
+     * Set dateCreate
+     *
+     * @param \DateTime $dateCreate
+     * @return Resource
+     */
+    public function setDateCreate($dateCreate)
+    {
+        $this->dateCreate = $dateCreate;
+
+        return $this;
+    }
+
+    /**
+     * Get dateCreate
+     *
+     * @return \DateTime 
+     */
+    public function getDateCreate()
+    {
+        return $this->dateCreate;
+    }
+
+    /**
+     * Set dateUpdate
+     *
+     * @param \DateTime $dateUpdate
+     * @return Resource
+     */
+    public function setDateUpdate($dateUpdate)
+    {
+        $this->dateUpdate = $dateUpdate;
+
+        return $this;
+    }
+
+    /**
+     * Get dateUpdate
+     *
+     * @return \DateTime 
+     */
+    public function getDateUpdate()
+    {
+        return $this->dateUpdate;
+    }
+
+    /**
+     * Set owner
+     *
+     * @param \VMB\UserBundle\Entity\User $owner
+     * @return Resource
+     */
+    public function setOwner(\VMB\UserBundle\Entity\User $owner = null)
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * Get owner
+     *
+     * @return \VMB\UserBundle\Entity\User 
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    /**
+     * Set topic
+     *
+     * @param \VMB\PresentationBundle\Entity\Topic $topic
+     * @return Resource
+     */
+    public function setTopic(\VMB\PresentationBundle\Entity\Topic $topic)
+    {
+        $this->topic = $topic;
+
+        return $this;
+    }
+
+    /**
+     * Get topic
+     *
+     * @return \VMB\PresentationBundle\Entity\Topic 
+     */
+    public function getTopic()
+    {
+        return $this->topic;
     }
 }
