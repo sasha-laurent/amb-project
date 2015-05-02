@@ -1,1 +1,11 @@
-{{ form(form) }}
+{% extends "::Backend/subPage.html.twig" %}
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block body %}
+
+<div class="well">
+	<form action="#" method="post" {{ form_enctype(form) }}>
+    {{ form_widget(form) }}
+</div>
+
+{% endblock %}

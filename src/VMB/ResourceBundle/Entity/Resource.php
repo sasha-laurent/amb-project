@@ -1,12 +1,13 @@
 <?php
 
 namespace VMB\ResourceBundle\Entity;
+//include('SimpleImage.php');
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;
-
+use \GetId3\GetId3Core as GetId3;
 /**
  * Resource
  *
@@ -33,6 +34,12 @@ class Resource
     private $title;
 
     /**
+    * @ORM\ManyToOne(targetEntity="VMB\UserBundle\Entity\User")
+    * @ORM\JoinColumn(nullable=true, onDelete="SET NULL") 
+    */
+    private $owner;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="description", type="text")
@@ -49,7 +56,8 @@ class Resource
     /**
      * @var string
      *
-     * @ORM\Column(name="filename", type="string", length=128)
+     * @Gedmo\Slug(fields={"title"})
+     * @ORM\Column(name="filename", type="string", length=128, unique=true)
      */
     private $filename;
 
@@ -119,9 +127,21 @@ class Resource
     private $encodage;
 
     /**
-     * @Assert\File(maxSize="60000000")
+    * @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Topic")
+    * @ORM\JoinColumn(nullable=false) 
+    */
+    private $topic;
+    
+
+    /**
+     * @Assert\File(maxSize="128000000000")
      */
     public $file;
+
+    /*
+    * Variable de mime
+    */
+    public $mime_type;
 
     /**
      * Get id
@@ -432,30 +452,51 @@ class Resource
         return $this->encodage;
     }
     
-        public function getExt()
+    public function getExt()
     {
         if (null != $this->file)
-            {
-            $this->ext = $this->file->guessExtension();
-            return $this->ext;
-            }
+        {
+        $this->ext = $this->file->guessExtension();
+        return $this->ext;
+        }
     }
+    
+
+
     /**
      * @ORM\PrePersist()
      */
     public function preUpload()
     {
         if (null !== $this->file)
-           {
-            $this->setExtension($this->file->guessExtension());
-            $name = preg_replace('/[^a-zA-Z0-9]/', '-', $this->getTitle());
-            $this->filename = $name.sha1(uniqid(mt_rand(), false));
-            /* je recupère le type grâce au mime*/
-            $type_mime = explode("/",$this->file->getMimeType());
-            $this->setType($type_mime[0]);
+        {
+            $extension = pathinfo($this->file->getClientOriginalName(), PATHINFO_EXTENSION);
+            $this->setExtension($extension);
+            $this->mime_type = explode("/",$this->file->getMimeType());
+            $this->setType($this->mime_type[0]);
             $this->setSize(filesize($this->file));
-            $this->path = $this->getPath().$this->filename.".".$this->getExtension();
-         }
+            $this->setPath("");
+           
+           /*Analyse du fichier avec getID3 */
+           $getId3 = new GetId3();
+           $analyse = $getId3
+                ->setOptionMD5Data(true)
+                ->setOptionMD5DataSource(true)
+                ->setEncoding('UTF-8')
+                ->analyze($this->file);
+               
+            if(in_array($extension, array('jpeg', 'jpg', 'png'))){
+                
+                $this->setHeight($analyse['video']['resolution_y']);
+                $this->setWidth($analyse['video']['resolution_x']);
+            }
+            elseif(in_array($extension, array('ogg', 'mp3'))){
+                $this->setDuration($analyse['playtime_seconds']);
+            }
+            elseif($this->getType() == 'video'){
+                $this->setDuration($analyse['playtime_seconds']);   
+            } 
+        }
     }
     
     /**
@@ -463,16 +504,89 @@ class Resource
      */
     public function upload()
     {
-        if (null === $this->file) {
+        if (null === $this->file){
             return;
         }
+        $extension = $this->getExtension();
         // vous devez lancer une exception ici si le fichier ne peut pas
         // être déplacé afin que l'entité ne soit pas persistée dans la
         // base de données comme le fait la méthode move() de UploadedFile
-        $this->file->move($this->getUploadRootDir(), $this->path);
-        //$this->
+        // et on ajoute le reste a partir du type_mime et l'user
+    
+        if (!is_dir($this->getUploadRootDir($this->getType())))
+        {
+            if (!is_dir($this->getUploadRootDir())) {
+                mkdir($this->getUploadRootDir(), 0777);
+            }
+            mkdir($this->getUploadRootDir($this->getType()), 0777);
+        }
+        $this->file->move($this->getUploadRootDir($this->getType()), $this->getFilename().'.'.$this->getExtension());
+        unset($this->file); 
 
-        unset($this->file);
+        if(in_array($this->getExtension(), array('jpeg', 'jpg', 'png'))){
+            // on crée la miniature
+
+            if($extension =="jpg" || $extension =="jpeg" ){
+
+                $uploadedfile = $this->getUploadRootDir($this->getType()).$this->getFilename().'.'.$this->getExtension();
+                $src = imagecreatefromjpeg($uploadedfile);
+            }
+            else if($extension=="png"){
+                $uploadedfile = $this->getUploadRootDir($this->getType()).$this->getFilename().'.'.$this->getExtension();
+                $src = imagecreatefrompng($uploadedfile);
+            }
+ 
+            list($width,$height)=getimagesize($uploadedfile);
+
+            $newwidth1=200;
+            $newheight1=112;
+            $tmp1=imagecreatetruecolor($newwidth1,$newheight1);
+
+            //imagecopyresampled($tmp,$src,0,0,0,0,$newwidth,$newheight,$width,$height);
+            $ratio = $width/$height;
+            if($ratio > 16/9){
+                $width = intval($height * 16/9);
+            }
+            else{
+                $height = intval($width * 9/16);
+            }
+
+            imagecopyresampled($tmp1,$src,0,0,0,0,$newwidth1,$newheight1,$width,$height);
+            
+            if (!is_dir($this->getUploadRootDir($this->getType()).'thumbs/')) {
+                mkdir($this->getUploadRootDir($this->getType()).'thumbs/', 0777);
+            }
+            $filename1 = $this->getUploadRootDir($this->getType()).'thumbs/'.$this->getFilename().'.jpeg';
+
+            imagejpeg($tmp1,$filename1,100);
+
+            imagedestroy($src);
+            
+            imagedestroy($tmp1);
+        }
+
+        elseif($this->getType() == 'video'){
+    
+            if (!is_dir($this->getUploadRootDir($this->getType()).'thumbs/')) {
+                mkdir($this->getUploadRootDir($this->getType()).'thumbs/', 0777);
+            }
+
+            $ffmpeg = \FFMpeg\FFMpeg::create();
+            $video = $ffmpeg->open($this->getUploadRootDir($this->getType()).$this->getFilename().'.'.$this->getExtension());
+            $video
+                ->filters()
+                ->resize(new \FFMpeg\Coordinate\Dimension(200, 112))
+                ->synchronize();
+
+            $snapTime = 10;
+            if($this->duration <= 10) {
+                $snapTime = 0;                
+            }
+
+            $video
+                ->frame(\FFMpeg\Coordinate\TimeCode::fromSeconds($snapTime))
+                ->save($this->getUploadRootDir($this->getType()).'thumbs/'.$this->getFilename().'.jpeg');
+        }
     }
 
     /**
@@ -493,21 +607,125 @@ class Resource
         }
     }
 
-    public function getWebPath()
-    {
-        return null === $this->path ? null : $this->getUploadDir().'/'.$this->path;
-    }
-
-    protected function getUploadRootDir()
+    protected function getUploadRootDir($mime_type = null)
     {
         // le chemin absolu du répertoire où les documents uploadés doivent être sauvegardés
-        return __DIR__.'/../../../../../'.$this->getUploadDir();
+        return str_replace('\\', '/', __DIR__).'/../../../../web/'.$this->getUploadDir($mime_type);
     }
 
-    protected function getUploadDir()
+    protected function getUploadDir($mime_type = null)
     {
         // on se débarrasse de « __DIR__ » afin de ne pas avoir de problème lorsqu'on affiche
         // le document/image dans la vue.
-        return 'uploads/documents';
+        if($mime_type != null) {
+            return 'upload/resources/'.$this->getOwner().'/'.$mime_type.'/';
+        }
+        else {
+            return 'upload/resources/'.$this->getOwner().'/';   
+        }
+    }
+
+    protected function getThumbsPath()
+    {
+        if($this->getType() == 'application'){
+            return 'img/icon/application.jpg';
+        }
+
+        if($this->getType() == 'text'){
+            return 'img/icon/text.jpg';
+        }
+        return ($this->getUploadDir($this->getType()).'thumbs/';
+    }
+
+    /**
+     * Set dateCreate
+     *
+     * @param \DateTime $dateCreate
+     * @return Resource
+     */
+    public function setDateCreate($dateCreate)
+    {
+        $this->dateCreate = $dateCreate;
+
+        return $this;
+    }
+
+    /**
+     * Get dateCreate
+     *
+     * @return \DateTime 
+     */
+    public function getDateCreate()
+    {
+        return $this->dateCreate;
+    }
+
+    /**
+     * Set dateUpdate
+     *
+     * @param \DateTime $dateUpdate
+     * @return Resource
+     */
+    public function setDateUpdate($dateUpdate)
+    {
+        $this->dateUpdate = $dateUpdate;
+
+        return $this;
+    }
+
+    /**
+     * Get dateUpdate
+     *
+     * @return \DateTime 
+     */
+    public function getDateUpdate()
+    {
+        return $this->dateUpdate;
+    }
+
+    /**
+     * Set owner
+     *
+     * @param \VMB\UserBundle\Entity\User $owner
+     * @return Resource
+     */
+    public function setOwner(\VMB\UserBundle\Entity\User $owner = null)
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * Get owner
+     *
+     * @return \VMB\UserBundle\Entity\User 
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    /**
+     * Set topic
+     *
+     * @param \VMB\PresentationBundle\Entity\Topic $topic
+     * @return Resource
+     */
+    public function setTopic(\VMB\PresentationBundle\Entity\Topic $topic)
+    {
+        $this->topic = $topic;
+
+        return $this;
+    }
+
+    /**
+     * Get topic
+     *
+     * @return \VMB\PresentationBundle\Entity\Topic 
+     */
+    public function getTopic()
+    {
+        return $this->topic;
     }
 }

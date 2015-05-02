@@ -52,7 +52,7 @@ class Presentation
 
     /**
      * @var \DateTime
-     
+     *
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="dateCreation", type="date")
      */
@@ -60,7 +60,7 @@ class Presentation
 
     /**
      * @var \DateTime
-     
+     *
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(name="dateUpdate", type="date")
      */

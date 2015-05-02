@@ -22,7 +22,8 @@
         "friendsofsymfony/user-bundle": "2.0.*@dev",
         "doctrine/doctrine-fixtures-bundle": "dev-master",
         "stof/doctrine-extensions-bundle": "~1.1",
-        "vich/uploader-bundle": "0.14.*"
+		"phansys/getid3": "2.1.*@dev",
+        "php-ffmpeg/php-ffmpeg": "~0.5"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

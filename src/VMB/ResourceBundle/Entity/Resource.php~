@@ -5,6 +5,7 @@ namespace VMB\ResourceBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * Resource
@@ -32,6 +33,12 @@ class Resource
     private $title;
 
     /**
+    * @ORM\ManyToOne(targetEntity="VMB\UserBundle\Entity\User")
+    * @ORM\JoinColumn(nullable=true, onDelete="SET NULL") 
+    */
+    private $owner;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="description", type="text")
@@ -48,7 +55,8 @@ class Resource
     /**
      * @var string
      *
-     * @ORM\Column(name="filename", type="string", length=128)
+     * @Gedmo\Slug(fields={"title"})
+     * @ORM\Column(name="filename", type="string", length=128, unique=true)
      */
     private $filename;
 
@@ -69,16 +77,18 @@ class Resource
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="dateCreation", type="date")
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(name="dateCreate", type="date")
      */
-    private $dateCreation;
+    private $dateCreate;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="dateUpload", type="date")
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(name="dateUpdate", type="date")
      */
-    private $dateUpload;
+    private $dateUpdate;
 
     /**
      * @var integer
@@ -90,35 +100,48 @@ class Resource
     /**
      * @var integer
      *
-     * @ORM\Column(name="width", type="integer")
+     * @ORM\Column(name="width", type="integer", nullable=true)
      */
     private $width;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="height", type="integer")
+     * @ORM\Column(name="height", type="integer", nullable=true)
      */
     private $height;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="duration", type="integer")
+     * @ORM\Column(name="duration", type="integer", nullable=true)
      */
     private $duration;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="encodage", type="string", length=255)
+     * @ORM\Column(name="encodage", type="string", length=255, nullable=true)
      */
     private $encodage;
+
+    /**
+    * @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Topic")
+    * @ORM\JoinColumn(nullable=false) 
+    */
+    private $topic;
+    
 
     /**
      * @Assert\File(maxSize="60000000")
      */
     public $file;
+
+    /*
+    * Variable de mime
+    */
+
+    public $mime_type;
 
     /**
      * Get id
@@ -429,33 +452,50 @@ class Resource
         return $this->encodage;
     }
     
+    public function getExt()
+    {
+        if (null != $this->file)
+        {
+        $this->ext = $this->file->guessExtension();
+        return $this->ext;
+        }
+    }
+    
+
+
     /**
      * @ORM\PrePersist()
      */
     public function preUpload()
     {
-       // if (null !== $this->file)
-         //   {
-            $this->setExtension($this->file->guessExtension());
-            $name = preg_replace('/[^a-zA-Z0-9]/', '-', $this->getTitle());
-            $this->filename = $name.sha1(uniqid(mt_rand(), false));
-            $this->setDateCreation("2011-06-0");
-            $this->setDateUpload("01");
-                //$this->set
-                //s$this->set
-            $this->path = $this->getPath().$this->filename.".".$this->getExtension();
+        if (null !== $this->file)
+        {
+        $this->setExtension($this->file->guessExtension());
+        //$name =  $this->getTitle();
+        //$this->filename = $name;
+        /* je recupère le type grâce au mime*/
+        $this->mime_type = explode("/",$this->file->getMimeType());
+        $this->setType($this->mime_type[0]);
+        $this->setSize(filesize($this->file));
+        //analyse des cahmos duration et size et autres grâce au mime
 
-           // }
-    }
+            
+            if ($this->mime_type == 'video')
+            {
+                $this->setDuration();
+                $this->setWidth();
+                $this->setHeight();
+                $this->setEncodage();
+            }
+            if ($this->mime_type == 'image')
+            {
+                $this->setWidth();
+                $this->setHeight();
+                $this->setEncodage();
+            }
 
-    public function getExt()
-    {
-      //  if (null != $this->file)
-        //    {
-            $this->ext = $this->file->guessExtension();
-            return $this->ext;
-
-          //  }
+            $this->path = $this->getPath().$this->getFilename().'.'.$this->getExtension();
+         }
     }
     
     /**
@@ -469,8 +509,10 @@ class Resource
         // vous devez lancer une exception ici si le fichier ne peut pas
         // être déplacé afin que l'entité ne soit pas persistée dans la
         // base de données comme le fait la méthode move() de UploadedFile
-        $this->file->move($this->getUploadRootDir(), $this->path);
-        $this->
+        // et on ajoute le reste a partir du type_mime et l'user
+
+        $this->file->move($this->getUploadRootDir($this->mime_type[0]), $this->path);
+        //$this->
 
         unset($this->file);
     }
@@ -493,21 +535,99 @@ class Resource
         }
     }
 
+    public function getFilePath()
+    {
+        return null === $this->path ? null : $this->getUploadRootDir($this->mime_type[0]).'/'.$this->filename.'.'.$this->getExtension();
+    }
     public function getWebPath()
     {
         return null === $this->path ? null : $this->getUploadDir().'/'.$this->path;
     }
 
-    protected function getUploadRootDir()
+    protected function getUploadRootDir($mime_type)
     {
         // le chemin absolu du répertoire où les documents uploadés doivent être sauvegardés
-        return __DIR__.'/../../../../../'.$this->getUploadDir();
+        return __DIR__.'/../../../../../'.$this->getUploadDir($mime_type);
     }
 
-    protected function getUploadDir()
+    protected function getUploadDir($mime_type)
     {
         // on se débarrasse de « __DIR__ » afin de ne pas avoir de problème lorsqu'on affiche
         // le document/image dans la vue.
-        return 'uploads/documents';
+        return 'uploads/documents/'.$this->getOwner().'/'.$mime_type.'/';
+    }
+
+    protected function getThumbsPath($filename)
+    {
+        return '/thumbs/'.$filename;
+    }
+
+    /**
+     * Set dateCreate
+     *
+     * @param \DateTime $dateCreate
+     * @return Resource
+     */
+    public function setDateCreate($dateCreate)
+    {
+        $this->dateCreate = $dateCreate;
+
+        return $this;
+    }
+
+    /**
+     * Get dateCreate
+     *
+     * @return \DateTime 
+     */
+    public function getDateCreate()
+    {
+        return $this->dateCreate;
+    }
+
+    /**
+     * Set dateUpdate
+     *
+     * @param \DateTime $dateUpdate
+     * @return Resource
+     */
+    public function setDateUpdate($dateUpdate)
+    {
+        $this->dateUpdate = $dateUpdate;
+
+        return $this;
+    }
+
+    /**
+     * Get dateUpdate
+     *
+     * @return \DateTime 
+     */
+    public function getDateUpdate()
+    {
+        return $this->dateUpdate;
+    }
+
+    /**
+     * Set owner
+     *
+     * @param \VMB\UserBundle\Entity\User $owner
+     * @return Resource
+     */
+    public function setOwner(\VMB\UserBundle\Entity\User $owner = null)
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * Get owner
+     *
+     * @return \VMB\UserBundle\Entity\User 
+     */
+    public function getOwner()
+    {
+        return $this->owner;
     }
 }

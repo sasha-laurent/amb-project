@@ -1,7 +1,3 @@
-vmb_resource_homepage:
-    path:     /resource/
-    defaults: { _controller: VMBResourceBundle:Default:index }
-
-vmb_resource_upload:
-    path:     /resource/upload
-    defaults: { _controller: VMBResourceBundle:Upload:form }
+vmb_resource_resource:
+    resource: "@VMBResourceBundle/Resources/config/routing/resource.yml"
+    prefix:   /resource
