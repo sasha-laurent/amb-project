@@ -56,7 +56,7 @@ class Resource
     /**
      * @var string
      *
-     * @Gedmo\Slug(fields={"title"})
+     * @Gedmo\Slug(fields={"title"},updatable=false)
      * @ORM\Column(name="filename", type="string", length=128, unique=true)
      */
     private $filename;
@@ -658,6 +658,7 @@ class Resource
         }
         return $this->getUploadDir($this->getType()).'thumbs/'.$this->filename.'jpg';
     }
+
 
     /**
      * Set dateCreate
