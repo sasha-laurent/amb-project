@@ -376,10 +376,9 @@ class Resource
     public function sizeToString()
     {
 		$format = array('', 'K', 'M', 'G', 'T');
-		$size = $this->size;
 		$div = 1;
 		foreach($format as $suffix) {
-			$size = $size / $div;
+			$size = $this->size / $div;
 			if($size < 1000) {
 				return sprintf("%1\$.2f", $size).$suffix.'o';
 			}
