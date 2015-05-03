@@ -664,6 +664,10 @@ class Resource
             return 'upload/resources/'.$this->getOwner().'/';   
         }
     }
+    
+    public function getResourcePath() {
+		return $this->getUploadDir($this->getType()).$this->filename.'.'.$this->extension;
+	}
 
     public function getThumbsPath()
     {

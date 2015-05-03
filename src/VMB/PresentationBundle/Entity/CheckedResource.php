@@ -22,7 +22,7 @@ class CheckedResource
     private $id;
 
 	/**
-	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Presentation", inversedBy="resources", cascade={"persist"})
+	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Presentation", inversedBy="resources")
 	* @ORM\JoinColumn(nullable=false) 
 	*/
 	private $presentation;

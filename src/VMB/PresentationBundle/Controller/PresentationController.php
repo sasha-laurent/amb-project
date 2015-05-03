@@ -176,6 +176,7 @@ class PresentationController extends Controller
             throw $this->createNotFoundException('Unable to find Presentation entity.');
         }
         
+        $checkedResourcesId = array();
         $checkedResources = $entity->getResources();
         foreach($checkedResources as $checkedRes) {
 			$checkedResourcesId[] = $checkedRes->getUsedResource()->getId();
@@ -261,7 +262,7 @@ class PresentationController extends Controller
     */
     public function editAction($id)
     {
-        $presentation = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Presentation')->findWithSortedResources($id);
+        $presentation = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Presentation')->findWithAllMatrixResources($id);
 
 		return $this->renderForm($presentation);
     }
@@ -303,6 +304,7 @@ class PresentationController extends Controller
 				
 				$postValues = $request->request->all();
 				
+				$workingPresentation = null;
 				// If it's a copy, we don't have to worry about modifiying existing objects
 				if(!$saveAsCopy) {
 					$checkedRes = $presentation->getResources();
@@ -312,20 +314,21 @@ class PresentationController extends Controller
 							$indexedCheckedRes[$r->getUsedResource()->getId()] = $r;
 						}
 					}
+					$workingPresentation = $presentation;
 				}
 				else {
-					$copiedPresentation = $presentation;
-					$em->detach($copiedPresentation);
 					$em->detach($presentation);
-					$presentation = new Presentation($copiedPresentation->getMatrix());
-					$presentation->setTitle($copiedPresentation->getTitle());
-					$presentation->setDescription($copiedPresentation->getDescription());				
-					$presentation->setDuration($copiedPresentation->getDuration());				
-					$em->persist($presentation);
+					$copiedPresentation = new Presentation($presentation->getMatrix());
+					$copiedPresentation->setTitle($presentation->getTitle());
+					$copiedPresentation->setDescription($presentation->getDescription());				
+					$copiedPresentation->setDuration($presentation->getDuration());
+					$workingPresentation = $copiedPresentation;
 				}
 				
+				
+				$totalDuration = 0;
 				foreach($postValues as $key => $position) {
-					if(preg_match('`(sort|suggested)_([0-9]+)`', $key, $matches)) {
+					if(preg_match('`(usedResource|suggested)_([0-9]+)`', $key, $matches)) {
 						$resId = intval($matches[2]);
 						$isSuggested = ($matches[1] == 'suggested');
 						
@@ -333,14 +336,22 @@ class PresentationController extends Controller
 						if(!$saveAsCopy && isset($indexedCheckedRes[$resId])) {
 							$indexedCheckedRes[$resId]->setSort($position);
 							$indexedCheckedRes[$resId]->setSuggested($isSuggested);
+							if(!$isSuggested) {
+								$totalDuration += $indexedCheckedRes[$resId]->getUsedResource()->getResource()->getDuration();
+							}
+							
 							unset($indexedCheckedRes[$resId]);
 						}
-						else {
+						// We ignore suggestions if we're dealing with a new copy (since we can't put suggestions at this stage)
+						elseif(($saveAsCopy && !$isSuggested) || !$saveAsCopy) {
 							$newCheckedRes = new CheckedResource();
-							$newCheckedRes->setPresentation($presentation);
+							$newCheckedRes->setPresentation($workingPresentation);
+							$workingPresentation->addResource($newCheckedRes);
 							$em->persist($newCheckedRes);
-							$presentation->addResource($newCheckedRes);
 							$newCheckedRes->setUsedResource($em->getRepository('VMBPresentationBundle:UsedResource')->find($resId));
+							if(!$isSuggested) {
+								$totalDuration += $newCheckedRes->getUsedResource()->getResource()->getDuration();
+							}
 							$newCheckedRes->setSort($position);
 							$newCheckedRes->setSuggested($isSuggested);
 						}
@@ -350,20 +361,27 @@ class PresentationController extends Controller
 				if(!$saveAsCopy) {
 					// If there are still values in this array it means it has to be removed
 					foreach($indexedCheckedRes as $r) {
-						$presentation->removeResource($r);
+						$workingPresentation->removeResource($r);
 						$em->remove($r);
 					}
 				}
 				
-				$presentation->setOwner($this->getUser());
-				$em->persist($presentation);
+				$workingPresentation->setDuration($totalDuration);
+				$workingPresentation->setOwner($this->getUser());
+				$em->persist($workingPresentation);
 				$em->flush();
 
-				$flashMessage = !$presentation->toString() ? 'Présentation ajoutée' : 'Présentation modifiée';
+				$flashMessage = !$workingPresentation->toString() ? 'Présentation ajoutée' : 'Présentation modifiée';
 				$request->getSession()->getFlashBag()->add('success', $flashMessage);
+				
+				if($saveAsCopy) {
+					return $this->redirect($this->generateUrl('presentation_perso'));
+				}
 				
 			}
 		}
+		
+		$shownPresentation = (isset($workingPresentation)) ? $workingPresentation : $presentation;
 
 		return $this->render('VMBPresentationBundle:Presentation:edit.html.twig', 
 			array(
@@ -372,7 +390,7 @@ class PresentationController extends Controller
 				'backButtonUrl' => $this->generateUrl('presentation'),
 				'copy' => $saveAsCopy,
 				'matrix' => $presentation->getMatrix(),
-				'presentation' => $presentation,
+				'presentation' => $shownPresentation,
 				'alertDismissible' => true
 			));
     }

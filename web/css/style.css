@@ -347,3 +347,7 @@ header {
 #browse_file .panel-title-link:hover, #browse_file .panel-title-link:focus {
 	text-decoration: none;
 }
+
+.wide-btn {
+	width: 250px;
+}

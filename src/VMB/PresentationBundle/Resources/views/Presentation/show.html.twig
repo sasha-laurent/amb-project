@@ -1,20 +1,35 @@
 {% extends '::Backend/subPage.html.twig' %}
 
+{% if alternativeResources|length == 0 %}
+	{% set firstResource = entity.resources[0].usedResource %}
+{% else %}
+	{% set firstResource = alternativeResources[0] %}
+{% endif %}
+
 {% block body %}
     <div class="row">
 		<div class="col-sm-9">
-			<div class="player">
-				<video poster="https://cdn.selz.com/plyr/1.0/poster.jpg" controls crossorigin>
+			<div {% if firstResource.resource.type != 'video' %}style="display: none;"{% endif %} class="player">
+				<video id="video_player" controls crossorigin>
 					<!-- Video files -->
-					<source src="https://cdn.selz.com/plyr/1.0/movie.mp4" type="video/mp4">
-					<source src="https://cdn.selz.com/plyr/1.0/movie.webm" type="video/webm">
-
-					<!-- Text track file -->
-					<track kind="captions" label="English captions" src="https://cdn.selz.com/plyr/1.0/movie_captions_en.vtt" srclang="en" default>
-
-					<!-- Fallback for browsers that don't support the <video> element -->
-					<a href="https://cdn.selz.com/plyr/1.0/movie.mp4">Download</a>
+					{% if firstResource.resource.type == 'video' %}
+					<source src="{{ asset(firstResource.resource.getResourcePath) }}">
+					{% endif %}
 				</video>
+			</div>
+			<div {% if firstResource.resource.type != 'audio' %}style="display: none;"{% endif %} class="player">
+				<audio id="audio_player" controls>
+					<!-- Audio files -->
+					{% if firstResource.resource.type == 'audio' %}
+					<source src="{{ asset(firstResource.resource.getResourcePath) }}">
+					{% endif %}
+				</audio>
+			</div>
+			<div class="image_player">
+				
+			</div>
+			<div class="file_player">
+				
 			</div>
 		</div>
 		<div class="col-sm-3">
@@ -27,7 +42,7 @@
 							{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
 							<li class="list-group-item" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
 								<div class="row">
-									<div class="col-sm-8"><span class="glyphicon glyphicon-film" aria-hidden="true"></span> {{ res.usedResource.resource.title[:20] }}</div>
+									<div class="col-sm-8"><span class="glyphicon glyphicon-{{ res.usedResource.resource.getGlyphicon }}" aria-hidden="true"></span> {{ res.usedResource.resource.title[:20] }}</div>
 									<div class="col-sm-4">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
 								</div>
 							</li>
@@ -38,7 +53,7 @@
 						{% set totalDuration = totalDuration + usedRes.resource.duration %}
 						<li class="list-group-item" id="addedRes_{{ usedRes.id }}" data-id="{{ usedRes.id }}">
 							<div class="row">
-								<div class="col-sm-8"><span class="glyphicon glyphicon-film" aria-hidden="true"></span> {{ usedRes.resource.title[:20] }}</div>
+								<div class="col-sm-8"><span class="glyphicon glyphicon-{{usedRes.resource.getGlyphicon }}" aria-hidden="true"></span> {{ usedRes.resource.title[:20] }}</div>
 								<div class="col-sm-4">{{ "%02d"|format(usedRes.resource.duration // 60) }}:{{ "%02d"|format(usedRes.resource.duration % 60) }}</div>
 							</div>
 						</li>
@@ -75,6 +90,38 @@
 {% block script %}
 	{{ parent() }}
 	<script>
+	
+	resourcesCollection = {
+		{% if alternativeResources|length == 0 %}
+			{% for res in entity.resources %}
+				{% if res.suggested == false %}
+					{{ res.usedResource.id }}: {
+						'pov': "{{ res.usedResource.pov.title }}", 
+						'level': "{{ res.usedResource.level.title }}", 
+						'shortTitle': "{{ res.usedResource.resource.title[:20] }}", 
+						'duration': {{ res.usedResource.resource.duration|default(0) }},
+						'duration_str': "{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}",
+						'src': "{{ asset(res.usedResource.resource.getResourcePath) }}",
+						'type': "{{ res.usedResource.resource.type }}"
+					},
+				{% endif %}
+			{% endfor %}
+		{% else %}
+			{% for usedRes in alternativeResources %}
+				{{ usedRes.id }}: {
+					'pov': "{{ usedRes.pov.title }}", 
+					'level': "{{ usedRes.level.title }}", 
+					'shortTitle': "{{ usedRes.resource.title[:20] }}", 
+					'duration': {{ usedRes.resource.duration|default(0) }},
+					'duration_str': "{{ "%02d"|format(usedRes.resource.duration // 60) }}:{{ "%02d"|format(usedRes.resource.duration % 60) }}",
+					'src': "{{ asset(usedRes.resource.getResourcePath) }}",
+					'type': "{{ usedRes.resource.type }}"
+				},
+			{% endfor %}
+		{% endif %}	
+	};
+	selectedRes = {{ firstResource.id }};
+	
 	// Setup the player
 	plyr.setup({
 		debug: 	true,
@@ -91,6 +138,40 @@
 
 			if(type === "video" && toggle) {
 				toggle.addEventListener("click", player.toggleFullscreen, false);
+			}
+		}
+	});
+	
+	function stopAndHideAll(newType) {
+		if(newType != 'video') {
+			videoPlayer = document.querySelectorAll(".player")[0].plyr;
+			videoPlayer.pause();
+			$(document.querySelectorAll(".player")[0]).hide();
+		}
+		if(newType != 'audio') {
+			audioPlayer = document.querySelectorAll(".player")[1].plyr;		
+			audioPlayer.pause();
+			$(document.querySelectorAll(".player")[1]).hide();
+		}
+	}
+	
+	$('#file_list .list-group-item').click(function() {
+		if(selectedRes != $(this).attr('data-id')) {
+			selectedRes = $(this).attr('data-id');
+			res = resourcesCollection[$(this).attr('data-id')];
+			stopAndHideAll(res['type']);
+			$(this).addClass('active');
+			if(res['type'] == 'audio') {
+				$(document.querySelectorAll(".player")[1]).show();
+				player = document.querySelectorAll(".player")[1].plyr;
+				player.source(res['src']);
+				player.play();
+			}
+			else if(res['type'] == 'video') {
+				$(document.querySelectorAll(".player")[0]).show();
+				player = document.querySelectorAll(".player")[0].plyr;
+				player.source(res['src']);
+				player.play();
 			}
 		}
 	});

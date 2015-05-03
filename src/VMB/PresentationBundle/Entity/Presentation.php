@@ -39,16 +39,16 @@ class Presentation
     /**
      * @var boolean
      *
-     * @ORM\Column(name="public", type="boolean")
+     * @ORM\Column(name="public", type="boolean", options={"default":0})
      */
-    private $public;
+    private $public = 0;
     
     /**
      * @var boolean
      *
-     * @ORM\Column(name="official", type="boolean")
+     * @ORM\Column(name="official", type="boolean", options={"default":0})
      */
-    private $official;
+    private $official = 0;
 
     /**
      * @var \DateTime
@@ -99,7 +99,7 @@ class Presentation
 	private $topic;
 	
 	/**
-	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\CheckedResource", mappedBy="presentation", cascade={"remove", "persist"})
+	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\CheckedResource", mappedBy="presentation", cascade={"remove", "persist", "detach"})
 	*/
 	private $resources;
 	
@@ -347,6 +347,11 @@ class Presentation
     {
         $this->resources->removeElement($resources);
     }
+    
+    public function clearResources()
+    {
+		$this->resources->clear();
+	}
 
     /**
      * Get resources
@@ -383,8 +388,10 @@ class Presentation
     private function sortResources()
     {
 		$this->sortedResources = array();
-		foreach($this->resources as $resource) {
-			$this->sortedResources[$resource->getUsedResource()->getId()] = $resource;
+		if($this->resources != null) {
+			foreach($this->resources as $resource) {
+				$this->sortedResources[$resource->getUsedResource()->getId()] = $resource;
+			}
 		}
 	}
 

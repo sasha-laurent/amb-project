@@ -1,4 +1,6 @@
-{% set saveButton = 'true' %}
+{% if copy == false %}
+	{% set saveButton = 'true' %}
+{% endif %}
 {% extends "::Backend/subPage.html.twig" %}
 {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 
@@ -51,7 +53,7 @@
 				{% if matrix.sortedResources[pov.id][level.id] is defined %}
 					<div class="usedResource" style="background-image:url({{ asset(matrix.sortedResources[pov.id][level.id].resource.getThumbsPath) }});">
 						{% if copy %}
-						<div class="resThumbnailHover" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="127" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
+						<div class="resThumbnailHover" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="{{ matrix.sortedResources[pov.id][level.id].resource.duration|default(0) }}" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
 							<span class="resTitle">{{ matrix.sortedResources[pov.id][level.id].resource.title[:18] }}</span>
 							<span class="resCheckBox">
 								{% if presentation.isChecked(matrix.sortedResources[pov.id][level.id].id) %}
@@ -65,7 +67,7 @@
 							</span>
 						</div>
 						{% else %}
-						<div class="resThumbnailHover{% if presentation.isChecked(matrix.sortedResources[pov.id][level.id].id) %} checkedRes{% elseif presentation.isSuggested(matrix.sortedResources[pov.id][level.id].id) %} suggestedRes{% endif %}" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="127" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
+						<div class="resThumbnailHover{% if presentation.isChecked(matrix.sortedResources[pov.id][level.id].id) %} checkedRes{% elseif presentation.isSuggested(matrix.sortedResources[pov.id][level.id].id) %} suggestedRes{% endif %}" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="{{ matrix.sortedResources[pov.id][level.id].resource.duration|default(0) }}" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
 							<span class="resTitle">{{ matrix.sortedResources[pov.id][level.id].resource.title[:18] }}</span>
 							<span class="resCheckBox"><span class="user-glyphicon glyphicon glyphicon-ok" aria-hidden="true"></span></span>
 						</div>
@@ -80,10 +82,19 @@
 	<div class="text-center">
 		<br/>
 		<i>
-			<span class="checkedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Ajoutée à la liste de lecture | 
+			<span class="checkedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Ajoutée à la liste de lecture |
+			{% if copy %}<span class="teacherRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Sélection du professeur |{% endif %}
 			<span class="suggestedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Suggérée en complément
 		</i>
 	</div>
+	{%  if copy %}
+	<div class="text-center">
+		<br/>
+		<button id="save_new_presentation" class="wide-btn btn btn-info" role="button" type="button"><span class="left glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Sauvegarder ma sélection</button>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<button id="submit_new_presentation" class="wide-btn btn btn-success" role="button" type="button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Lancer la nouvelle présentation</button>
+	</div>
+	{% endif %}
 	<hr/>
 	<div class="row">
 		<div class="col-sm-7">
@@ -102,7 +113,7 @@
 								<div class="col-sm-8">{{ res.usedResource.resource.title }}</div>
 								<div class="col-sm-2">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
 								<div class="col-sm-2 text-right"><a class="rmRes" id="rmRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
-								<input type="hidden" id="sort_{{ res.usedResource.id }}" name="sort_{{ res.usedResource.id }}" value="{{ res.sort }}" />
+								<input type="hidden" id="usedResource_{{ res.usedResource.id }}" name="usedResource_{{ res.usedResource.id }}" value="{{ res.sort }}" />
 							</div>
 						</li>
 					{% endif %}
@@ -205,7 +216,7 @@
 							<div class="col-sm-8">' + $(this).attr('data-title') + '</div> \
 							<div class="col-sm-2">' + convertDurationToString(duration) + '</div> \
 							<div class="col-sm-2 text-right"><a id="rmRes_' + $(this).attr('data-id') + '" data-id="' + $(this).attr('data-id') + '"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div> \
-							<input type="hidden" id="sort_' + $(this).attr('data-id') + '" name="sort_' + $(this).attr('data-id') + '" value="' + $('#file_list li').length + '" />\
+							<input type="hidden" id="usedResource_' + $(this).attr('data-id') + '" name="usedResource_' + $(this).attr('data-id') + '" value="' + $('#file_list li').length + '" />\
 							</div></li>');
 					$('#rmRes_' + $(this).attr('data-id')).click(function() {
 						deleteFromPlaylist($(this).attr('data-id'));
@@ -220,5 +231,16 @@
 			event.preventDefault();
 			$('#presentation_form').find('[type="submit"]').trigger('click');
 		});
+		{% if copy %}
+		$('#save_new_presentation').click(function(event) {
+			event.preventDefault();
+			$('#presentation_form').find('[type="submit"]').trigger('click');
+		});
+		$('#submit_new_presentation').click(function(event) {
+			event.preventDefault();
+			$('#presentation_form').attr("action", "{{ path("presentation_show", {'id': presentation.id}) }}");
+			$('#presentation_form').submit();
+		});
+		{% endif %}
 	</script>
 {% endblock %}

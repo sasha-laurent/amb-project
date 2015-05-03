@@ -55,6 +55,28 @@ class PresentationRepository extends EntityRepository
 		->getSingleResult();
 	}
 	
+	public function findWithAllMatrixResources($id)
+	{
+		$qb = $this
+			->createQueryBuilder('p')
+			->leftJoin('p.resources', 'checkedRes')->addSelect('checkedRes')
+			->leftJoin('p.matrix', 'm')->addSelect('m')
+			->leftJoin('m.levels', 'lvl')->addSelect('lvl')
+			->leftJoin('m.povs', 'pov')->addSelect('pov')
+			->leftJoin('m.resources', 'usedRes')->addSelect('usedRes')
+			->leftJoin('usedRes.resource', 'res')->addSelect('res')
+			->orderBy('checkedRes.sort', 'ASC')
+			->addOrderBy('lvl.sort', 'ASC')
+			->addOrderBy('pov.sort', 'ASC')
+			->where('p.id = :id')
+			->setParameter('id', $id)
+		;
+
+		return $qb
+		->getQuery()
+		->getSingleResult();
+	}
+	
 	public function findWithConcreteResources($id)
 	{
 		$qb = $this
