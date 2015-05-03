@@ -219,12 +219,36 @@ header {
 #matrix th {
 	vertical-align: middle;
 	background-color: #F5F5F5;
+	border: 1px solid #fff;
 }
 
-#matrix td {
+#matrix tr td {
 	padding: 0px;
 	height: 100%;
+	background-color: #f8f8f8;
+	border: 1px solid #ddd;
 }
+
+#matrix tr:first-child th {
+	border-color: #fff #ddd #ddd #ddd;
+}
+
+#matrix tr:first-child th:last-child, #matrix tr td:last-child {
+	border-color: #fff #fff #ddd #ddd;
+}
+
+#matrix tr th {
+	border-color: #ddd #ddd #ddd #fff;
+}
+
+#matrix tr:first-child th:first-child {
+	border-color: #fff #ddd #ddd #fff;
+}
+
+#matrix tr:last-child th, #matrix tr:last-child td {
+	border-bottom-color: #fff;
+}
+
 
 .usedResource, .usedResource .resThumbnailHover {
 	width: 100%;
