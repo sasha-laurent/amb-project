@@ -44,41 +44,58 @@
 				<h4><span class="glyphicon glyphicon-open" aria-hidden="true"></span>  Parcourir les ressources</h4>
 				<div id="browse_file" role="tab-panel">
 					<ul class="nav nav-tabs" role="tablist">
-						<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Officielles</a></li>
-						<li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Personnelles</a></li>
-						<li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-plus"></span></a></li>
+						<li role="presentation" class="active"><a href="#official" aria-controls="official" role="tab" data-toggle="tab">Officielles</a></li>
+						<li role="presentation"><a href="#personal" aria-controls="personal" role="tab" data-toggle="tab">Personnelles</a></li>
+						<li role="presentation"><a href="#unofficial" aria-controls="unoffficial" role="tab" data-toggle="tab">Partagées</a></li>
+						<li role="presentation"><a href="#"><span class="glyphicon glyphicon-plus"></span></a></li>
 					</ul>
-					<div class="panel-group" role="tablist">
-						<div class="panel panel-default">
-							{% set lastType = '' %}
-							{% for elt in resources %}
-								{% if lastType != elt.type %}
-									{% if lastType != '' %}
+					<div class="tab-content">
+						{% for key, subArrResources in resources %}
+						<div role="tabpanel" class="tab-pane{% if key == 'official' %} active{% endif %}" id="{{ key }}">
+							<div class="panel-group" role="tablist">
+								<div class="panel panel-default">
+									{% if subArrResources|length == 0 %}
+										<div style="" aria-expanded="true" class="panel-collapse">
+											<ul class="list-group">
+												<li class="list-group-item">
+													<em>Aucune ressource trouvée pour ce sujet dans cet espace</em>
+												</li>
 											</ul>
 										</div>
-									{% endif %}
-									{% set lastType = elt.type %}
-									<div class="panel-heading" role="tab" id="collapseListGroupHeading_{{ elt.type }}">
-										<h4 id="-collapsible-list-group-{{ elt.type }}" class="panel-title">
-										<a class="panel-title-link" data-toggle="collapse" href="#collapseListGroup_{{ elt.type }}" aria-expanded="true" aria-controls="collapseListGroup_{{ elt.type }}">
-											<span class="glyphicon glyphicon-{{ elt.getGlyphicon }}"></span> {{ elt.type|title }}
-										</a>
-										<a class="anchorjs-link" href="#-collapsible-list-group-{{ elt.type }}"><span class="anchorjs-icon"></span></a></h4>
-									</div>
-									<div style="" aria-expanded="false" id="collapseListGroup_{{ elt.type }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseListGroupHeading_{{ elt.type }}">
-										<ul class="list-group">
-								{% endif %}
-											<li class="list-group-item addableResource" data-resource="{{ elt.id }}" data-title="{{ elt.title[:18] }}" data-thumb="{{ asset(elt.getThumbsPath) }}">
-												<div class="row">
-													<div class="col-sm-10">{{ elt.title }}</div>
-													<div class="col-sm-2">{% if elt.duration > 0 %}{{ elt.durationToString }}{% endif %}</div>
+									{% else %}
+										{% set lastType = '' %}
+										{% for elt in subArrResources %}
+											{% if lastType != elt.type %}
+												{% if lastType != '' %}
+														</ul>
+													</div>
+												{% endif %}
+												{% set lastType = elt.type %}
+												<div class="panel-heading" role="tab" id="collapseListGroupHeading_{{ key }}_{{ elt.type }}">
+													<h4 id="-collapsible-list-group-{{ key }}-{{ elt.type }}" class="panel-title">
+													<a class="panel-title-link" data-toggle="collapse" href="#collapseListGroup_{{ key }}_{{ elt.type }}" aria-expanded="true" aria-controls="collapseListGroup_{{ key }}_{{ elt.type }}">
+														<span class="glyphicon glyphicon-{{ elt.getGlyphicon }}"></span> {{ elt.type|title }}
+													</a>
+													<a class="anchorjs-link" href="#-collapsible-list-group-{{ key }}-{{ elt.type }}"><span class="anchorjs-icon"></span></a></h4>
 												</div>
-											</li>
-							{% endfor %}
-										</ul>
-									</div>
-						</div>
-					</div>
+												<div style="" aria-expanded="false" id="collapseListGroup_{{ key }}_{{ elt.type }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseListGroupHeading_{{ key }}_{{ elt.type }}">
+													<ul class="list-group">
+											{% endif %}
+														<li class="list-group-item addableResource" data-resource="{{ elt.id }}" data-title="{{ elt.title[:18] }}" data-thumb="{{ asset(elt.getThumbsPath) }}">
+															<div class="row">
+																<div class="col-sm-10">{{ elt.title }}</div>
+																<div class="col-sm-2">{% if elt.duration > 0 %}{{ elt.durationToString }}{% endif %}</div>
+															</div>
+														</li>
+										{% endfor %}
+													</ul>
+												</div>
+									{% endif %}												
+								</div><!-- panel panel-default -->
+							</div><!-- panel-group -->
+						</div><!-- tab-pane -->
+						{% endfor %}
+					</div><!-- tab-content -->
 				</div>
 			</div>
 		</div>

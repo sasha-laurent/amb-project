@@ -370,6 +370,7 @@ class PresentationController extends Controller
 				'form' => $form->createView(),
 				'mainTitle' => ((!($presentation->toString())) ? 'Ajout d\'une présentation' : ($saveAsCopy ? 'Copie de ': '').$presentation->toString()),
 				'backButtonUrl' => $this->generateUrl('presentation'),
+				'copy' => $saveAsCopy,
 				'matrix' => $presentation->getMatrix(),
 				'presentation' => $presentation,
 				'alertDismissible' => true
