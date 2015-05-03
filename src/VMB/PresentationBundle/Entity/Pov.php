@@ -17,7 +17,7 @@ class Pov extends MatrixRow
     /**
 	* @Gedmo\SortableGroup
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Matrix", inversedBy="povs")
-	* @ORM\JoinColumn(nullable=false) 
+	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE") 
 	*/
 	protected $matrix;
 

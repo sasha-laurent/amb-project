@@ -23,7 +23,7 @@ class CheckedResource
 
 	/**
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Presentation", inversedBy="resources")
-	* @ORM\JoinColumn(nullable=false) 
+	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE") 
 	*/
 	private $presentation;
 	
