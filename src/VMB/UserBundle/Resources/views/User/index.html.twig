@@ -1,0 +1,51 @@
+{% extends '::Backend/subPage.html.twig' %}
+
+{% block body %}
+    <div class="panel panel-default">
+		<div class="panel-heading">
+			<div class="row">				
+				<div class="col-md-3">Id</div>				
+				<div class="col-md-7 ">Role</div>
+				<div class="col-md-2 text-center">Action</div>
+        	</div>
+		</div>
+	</div>
+	
+	<ul class="list-group" id="sortable">
+        {% for entity in entities %}
+			<li class="list-group-item row">
+								
+				<div class="col-md-3 ">{{ entity.username }}</div>
+				<div class="col-md-7 ">
+					{% if is_granted('ROLE_ADMIN') %}
+						{% if entity.hasRole('ROLE_ADMIN') %}
+							<a type="button" href="#"><span class="label label-primary">admin</span></a>
+							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_TEACHER"><span class="label label-default">teacher</span></a>
+							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_STUDENT"><span class="label label-default">user</span></a>
+							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=''"><span class="label label-default">blocked</span></a>
+						{% elseif entity.hasRole('ROLE_TEACHER') %}
+							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_ADMIN"><span class="label label-default">admin</span></a>
+							<a type="button" href="#"><span class="label label-primary">teacher</span></a>
+							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_STUDENT"><span class="label label-default">user</span></a>
+							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=''"><span class="label label-default">blocked</span></a>
+						{% elseif entity.hasRole('ROLE_STUDENT') %}
+							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_ADMIN"><span class="label label-default">admin</span></a>
+							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_TEACHER"><span class="label label-default">teacher</span></a>
+							<a type="button" href="#"><span class="label label-primary">user</span></a>
+							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=''"><span class="label label-default">blocked</span></a>
+						{% else %}
+							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_ADMIN"><span class="label label-default">admin</span></a>
+							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_TEACHER"><span class="label label-default">teacher</span></a>
+							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_STUDENT"><span class="label label-default">user</span></a>
+							<a type="button" href="#"><span class="label label-primary">blocked</span></a>
+						{% endif %}
+					{% endif %}
+				</div>
+                <div class="col-md-2 text-center">				
+					<a href="{{ path('admin_user_delete', {'id' : entity.id}) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+				</div>
+            </li>
+        {% endfor %}
+    </ul>
+    
+{% endblock %}

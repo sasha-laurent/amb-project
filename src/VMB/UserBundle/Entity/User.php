@@ -15,4 +15,8 @@ class User extends BaseUser
 	* @ORM\GeneratedValue(strategy="AUTO")
 	*/
 	protected $id;
+	
+	public function toString() {
+		return $this->getUsername();
+	}
 }

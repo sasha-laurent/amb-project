@@ -1,0 +1,57 @@
+{% extends '::Backend/subPage.html.twig' %}
+{% extends 'VMBUserBundle:AdminUsers:base.html.twig' %}
+
+{% block title %}{{'tab.users'|trans}}{% endblock %}
+
+{% block customStyles %}
+  <style>
+  	.input-group-addon {
+  		min-width: 100px;
+  	}
+  	.input-group {
+  		margin-top: 10px;
+  	}
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class = "container" style = "margin-top: 15px;">
+	{% for flashMessage in app.session.flashbag.get('success') %}
+	    <div class="alert alert-success" role="alert">
+	        {{ flashMessage }}
+	    </div>
+	{% endfor %}
+
+	{% for flashMessage in app.session.flashbag.get('fail') %}
+	    <div class="alert alert-danger" role="alert">
+	        {{ flashMessage }}
+	    </div>
+	{% endfor %}
+
+	<form method="post">
+	<div class="input-group">
+	  <span class="input-group-addon">{{'tab.user'|trans}}</span>
+	  <input autocomplete="off" name="user" type="text" class="form-control" placeholder="{{'tab.user'|trans}}" {% if new is not defined %}readonly{% endif %} value="{{user.username}}">
+	</div>
+
+	<div class="input-group">
+	  <span class="input-group-addon">{{'tab.mail'|trans}}</span>
+	  <input autocomplete="off" name="email" type="text" class="form-control" placeholder="{{'tab.mail'|trans}}" value="{{user.email}}">
+	</div>
+
+	<div class="input-group">
+	  <span class="input-group-addon">{{'tab.password'|trans}}</span>
+	  <input autocomplete="off" name="pass" type="password" class="form-control" placeholder="{{'text.password'|trans}}">
+	</div>
+
+	<div class="input-group">
+		<span class="input-group-addon">{{'tab.role'|trans}}</span>
+		<select name="role" class="form-control">
+	    <option value="prof" {% if user.roles[0] == 'ROLE_USER' %}selected{% endif %}>{{'role.prof'|trans}}</option>
+	    <option value="stud" {% if user.roles[0] == 'ROLE_STUD' %}selected{% endif %}>{{'role.stud'|trans}}</option>
+		</select>
+	</div>
+	<button class = "btn btn-success" style="margin-top: 20px;">{{'message.save'|trans}}</button>
+	</form>
+</div>
+{% endblock %}
