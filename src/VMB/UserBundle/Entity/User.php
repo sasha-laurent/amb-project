@@ -19,4 +19,109 @@ class User extends BaseUser
 	public function toString() {
 		return $this->getUsername();
 	}
+	
+	
+	/**
+	* @ORM\ManyToMany(targetEntity="VMB\PresentationBundle\Entity\Presentation")
+	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+	*/
+	
+	
+	protected $presentation;
+	
+	/**
+	 * @ORM\ManyToMany(targetEntity="VMB\ResourceBundle\Entity\Resource")
+	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+	 */
+	
+	protected $resource;
+	
+	
+	
+	
+	
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->presentation = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->resource = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Add presentation
+     *
+     * @param \VMB\PresentationBundle\Entity\Presentation $presentation
+     * @return User
+     */
+    public function addPresentation(\VMB\PresentationBundle\Entity\Presentation $presentation)
+    {
+        $this->presentation[] = $presentation;
+
+        return $this;
+    }
+
+    /**
+     * Remove presentation
+     *
+     * @param \VMB\PresentationBundle\Entity\Presentation $presentation
+     */
+    public function removePresentation(\VMB\PresentationBundle\Entity\Presentation $presentation)
+    {
+        $this->presentation->removeElement($presentation);
+    }
+
+    /**
+     * Get presentation
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPresentation()
+    {
+        return $this->presentation;
+    }
+
+    /**
+     * Add resource
+     *
+     * @param \VMB\ResourceBundle\Entity\Resource $resource
+     * @return User
+     */
+    public function addResource(\VMB\ResourceBundle\Entity\Resource $resource)
+    {
+        $this->resource[] = $resource;
+
+        return $this;
+    }
+
+    /**
+     * Remove resource
+     *
+     * @param \VMB\ResourceBundle\Entity\Resource $resource
+     */
+    public function removeResource(\VMB\ResourceBundle\Entity\Resource $resource)
+    {
+        $this->resource->removeElement($resource);
+    }
+
+    /**
+     * Get resource
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getResource()
+    {
+        return $this->resource;
+    }
 }

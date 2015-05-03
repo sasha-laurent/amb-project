@@ -1,3 +1,28 @@
 vmb_user_admin_user:
     resource: "@VMBUserBundle/Resources/config/routing/user.yml"
     prefix:   /admin/user
+    
+
+caddy_presentation_add:
+    path:     /caddy/presentation/add
+    defaults: { _controller: "VMBUserBundle:Caddy:addPresentation" }
+    requirements:
+        _method: POST
+        
+caddy_resource_add:
+    path:     /caddy/resource/add
+    defaults: { _controller: "VMBUserBundle:Caddy:addResource" }
+    requirements:
+        _method: POST
+
+caddy_presentation_remove:
+    path:     /caddy/presentation/remove
+    defaults: { _controller: "VMBUserBundle:Caddy:removePresentation" }
+    requirements:
+        _method: POST
+        
+caddy_resource_remove:
+    path:     /caddy/resource/remove
+    defaults: { _controller: "VMBUserBundle:Caddy:removeResource" }
+    requirements:
+        _method: POST
