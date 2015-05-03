@@ -37,4 +37,21 @@ class ResourceRepository extends EntityRepository
 		->getQuery()
 		->getResult();
 	}
+	
+	public function findByKeyword($keyword, $topicId = null)
+	{
+		$qb = $this
+			->createQueryBuilder('r')
+			->orderBy('r.type')
+		;
+		$qb->where('r.title LIKE :keyword')->setParameter('keyword', '%'.$keyword.'%');
+		
+		if($topicId !== null) {
+			$qb->andWhere('IDENTITY(r.topic) = :topicId')->setParameter('topicId', $topicId);
+		}
+
+		return $qb
+		->getQuery()
+		->getResult();
+	}
 }

@@ -54,6 +54,32 @@ class ResourceController extends Controller
             'delete_form' => $deleteForm->createView(),
         ));
     }
+    
+    /**
+     * Search an entity.
+     *
+     */
+    public function searchAction()
+    {
+		$request = $this->container->get('request');
+
+		if($request->isXmlHttpRequest())
+		{
+			$motcle = '';
+			$motcle = $request->request->get('motcle');
+        
+			$em = $this->getDoctrine()->getManager();
+
+			if($motcle != '')
+			{
+				$results = $em->getRepository('VMBResourceBundle:Resource')->findByKeyword($motcle);
+			}
+
+			return $this->render('VMBResourceBundle:Resource:searchResult.html.twig', array(
+				'results' => $results
+				));
+		}
+    }
 
     /**
      * Deletes a Resource entity.

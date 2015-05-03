@@ -3,3 +3,39 @@
 {% block title %}
   Présentation - {{ parent() }}
 {% endblock %}
+
+{% block body %}
+	C'est ma !
+	<a class="btn btn-default">
+		BOUTON
+	</a>
+	<div id="indicator" class="loading_indicator"></div>
+	<div id="myModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	  <div class="modal-dialog modal-lg">
+		<div class="modal-content container">
+		</div>
+	  </div>
+	</div>
+	
+	<div id="resultats_recherche"></div>
+{% endblock %}
+
+{% block script %}
+	{{ parent() }}
+	<script>
+	$(".btn").click(function(){ 
+		$(".loading").show();
+		$.ajax({
+			type: "POST",
+			url: "{{ path('resource_search')}}",
+			data: { motcle: "fire" },
+			cache: false,
+			success: function(data){
+			   $('#resultats_recherche').html(data);
+			   $(".loading").hide();
+			}
+		});    
+		return false;
+	});
+	</script>
+{% endblock %}

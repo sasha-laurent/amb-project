@@ -17,3 +17,9 @@ resource_delete:
     defaults: { _controller: "VMBResourceBundle:Resource:delete" }
     requirements:
         id:   \d{1,}
+        
+resource_search:
+    path:     /search
+    defaults: { _controller: "VMBResourceBundle:Resource:search" }
+    requirements:
+        _method: POST

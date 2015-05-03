@@ -15,5 +15,5 @@ vmb_presentation_ontology:
     prefix:   /ontology
 
 vmb_presentation_homepage:
-    path:     /hello/{name}
+    path:     /
     defaults: { _controller: VMBPresentationBundle:Default:index }
