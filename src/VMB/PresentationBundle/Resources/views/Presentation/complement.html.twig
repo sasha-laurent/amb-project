@@ -95,7 +95,7 @@
 				'pov': "{{ usedRes.pov.title }}", 
 				'level': "{{ usedRes.level.title }}", 
 				'shortTitle': "{{ usedRes.resource.title[:20] }}", 
-				'duration': {{ usedRes.resource.duration }},
+				'duration': {{ usedRes.resource.duration|default(0) }},
 				'duration_str': "{{ "%02d"|format(usedRes.resource.duration // 60) }}:{{ "%02d"|format(usedRes.resource.duration % 60) }}"
 			},
 			{% endfor %}

@@ -36,11 +36,12 @@
 			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Liste de lecture</h4>
 			{% set totalDuration = 0 %}
 			<ul class="list-group" id="file_list">
+				{% set firstLoop = true %}
 				{% if alternativeResources|length == 0 %}
 					{% for res in entity.resources %}
 						{% if res.suggested == false %}
 							{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
-							<li class="list-group-item" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
+							<li class="list-group-item{% if firstLoop %} active{% set firstLoop = false %}{% endif %}" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
 								<div class="row">
 									<div class="col-sm-8"><span class="glyphicon glyphicon-{{ res.usedResource.resource.getGlyphicon }}" aria-hidden="true"></span> {{ res.usedResource.resource.title[:20] }}</div>
 									<div class="col-sm-4">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
@@ -51,7 +52,7 @@
 				{% else %}
 					{% for usedRes in alternativeResources %}
 						{% set totalDuration = totalDuration + usedRes.resource.duration %}
-						<li class="list-group-item" id="addedRes_{{ usedRes.id }}" data-id="{{ usedRes.id }}">
+						<li class="list-group-item{% if firstLoop %} active{% set firstLoop = false %}{% endif %}" id="addedRes_{{ usedRes.id }}" data-id="{{ usedRes.id }}">
 							<div class="row">
 								<div class="col-sm-8"><span class="glyphicon glyphicon-{{usedRes.resource.getGlyphicon }}" aria-hidden="true"></span> {{ usedRes.resource.title[:20] }}</div>
 								<div class="col-sm-4">{{ "%02d"|format(usedRes.resource.duration // 60) }}:{{ "%02d"|format(usedRes.resource.duration % 60) }}</div>
@@ -71,16 +72,24 @@
     <table class="table">
 		<tbody>
 			<tr>
+				<th width="120px">Titre</th>
+				<td id="current-res-title">{{ firstResource.resource.title }}</td>
+			</tr>
+			<tr>
+				<th width="120px">Position</th>
+				<td id="current-res-position">{{ firstResource.pov.title }} - {{ firstResource.level.title }}</td>
+			</tr>
+			<tr>
 				<th width="120px">Description</th>
-				<td>{{ entity.description[:300] }} <span data-prototype="{{entity.description[300:]}}" class="showAll collapsed">...</span></td>
+				<td id="current-res-description">{{ firstResource.resource.description }}</td>
 			</tr>
 			<tr>
 				<th>Création</th>
-				<td>{{ entity.dateCreation|date('d/m/y') }}</td>
+				<td id="current-res-creation">{{ firstResource.resource.dateCreate|date('d/m/y') }}</td>
 			</tr>
 			<tr>
 				<th>Mise à jour</th>
-				<td>{{ entity.dateUpdate|date('d/m/y') }}</td>
+				<td id="current-res-update">{{ firstResource.resource.dateUpdate|date('d/m/y') }}</td>
 			</tr>
 		</tbody>
 	</table>
@@ -98,7 +107,10 @@
 					{{ res.usedResource.id }}: {
 						'pov': "{{ res.usedResource.pov.title }}", 
 						'level': "{{ res.usedResource.level.title }}", 
-						'shortTitle': "{{ res.usedResource.resource.title[:20] }}", 
+						'title': "{{ res.usedResource.resource.title }}", 
+						'description': "{{ res.usedResource.resource.description }}", 
+						'creation': "{{ res.usedResource.resource.dateCreate|date('d/m/y') }}", 
+						'update': "{{ res.usedResource.resource.dateUpdate|date('d/m/y') }}", 
 						'duration': {{ res.usedResource.resource.duration|default(0) }},
 						'duration_str': "{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}",
 						'src': "{{ asset(res.usedResource.resource.getResourcePath) }}",
@@ -111,7 +123,10 @@
 				{{ usedRes.id }}: {
 					'pov': "{{ usedRes.pov.title }}", 
 					'level': "{{ usedRes.level.title }}", 
-					'shortTitle': "{{ usedRes.resource.title[:20] }}", 
+					'title': "{{ usedRes.resource.title }}", 
+					'description': "{{ usedRes.resource.description }}", 
+					'creation': "{{ usedRes.resource.dateCreate|date('d/m/y') }}", 
+					'update': "{{ usedRes.resource.dateUpdate|date('d/m/y') }}", 
 					'duration': {{ usedRes.resource.duration|default(0) }},
 					'duration_str': "{{ "%02d"|format(usedRes.resource.duration // 60) }}:{{ "%02d"|format(usedRes.resource.duration % 60) }}",
 					'src': "{{ asset(usedRes.resource.getResourcePath) }}",
@@ -120,6 +135,19 @@
 			{% endfor %}
 		{% endif %}	
 	};
+	
+	resourcesOrder = [ {% if alternativeResources|length == 0 %}
+			{% for res in entity.resources %}
+				{% if res.suggested == false %}
+					{{ res.usedResource.id }},
+				{% endif %}
+			{% endfor %}
+		{% else %}
+			{% for usedRes in alternativeResources %}
+				{{ usedRes.id }},
+			{% endfor %}
+		{% endif %} ];
+		
 	selectedRes = {{ firstResource.id }};
 	
 	// Setup the player
@@ -155,12 +183,19 @@
 		}
 	}
 	
-	$('#file_list .list-group-item').click(function() {
-		if(selectedRes != $(this).attr('data-id')) {
-			selectedRes = $(this).attr('data-id');
-			res = resourcesCollection[$(this).attr('data-id')];
+	function triggerNewRes(resId) {
+		if(selectedRes != resId) {
+			$('#addedRes_' + selectedRes).removeClass('active');
+			selectedRes = resId;
+			res = resourcesCollection[resId];
 			stopAndHideAll(res['type']);
-			$(this).addClass('active');
+			$('#addedRes_' + resId).addClass('active');
+			$('#current-res-title').html(res['title']);
+			$('#current-res-position').html(res['pov'] + ' - ' + res['level']);
+			$('#current-res-creation').html(res['creation']);
+			$('#current-res-update').html(res['update']);
+			$('#current-res-description').html(res['description']);
+			
 			if(res['type'] == 'audio') {
 				$(document.querySelectorAll(".player")[1]).show();
 				player = document.querySelectorAll(".player")[1].plyr;
@@ -174,13 +209,37 @@
 				player.play();
 			}
 		}
+	}
+	
+	function indexOf(array, item) {
+		for (var i = 0; i < array.length; i++) {
+			if (array[i].toString() === item.toString()) return i;
+		}
+		return -1;
+	}
+	
+	function nextResource() {
+		i = indexOf(resourcesOrder, selectedRes);
+		i++;
+		if(i < resourcesOrder.length) {
+			triggerNewRes(resourcesOrder[i]);
+		}
+	}
+	
+	$('#file_list .list-group-item').click(function() {
+		triggerNewRes($(this).attr('data-id'));
 	});
 	
 	var video = $('video')[0];
 	//$('.player').css('display', 'none');
-
     video.onended = function(e) {
-      alert("Video ended");
+		nextResource();
+    };
+    
+    var audio = $('audio')[0];
+	//$('.player').css('display', 'none');
+    audio.onended = function(e) {
+		nextResource();
     };
 	</script>
 {% endblock %}
