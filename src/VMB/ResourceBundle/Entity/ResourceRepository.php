@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
  */
 class ResourceRepository extends EntityRepository
 {
-	public function findByTopicSortedByType($topic)
+	public function findByTopicSortedByType($topic, $official =  true, $user = null, $exclusive = false)
 	{
 		$qb = $this
 			->createQueryBuilder('r')
@@ -20,7 +20,19 @@ class ResourceRepository extends EntityRepository
 			->where('r.topic = :topic')
 			->setParameter('topic', $topic)
 		;
-
+		
+		if($official !== null) {
+			$qb->andWhere('r.trusted = :official')->setParameter('official', $official);
+		}
+		
+		if($user != null) {
+			if($exclusive) {
+				$qb->andWhere('r.owner <> :user')->setParameter('user', $user);
+			}
+			else {
+				$qb->andWhere('r.owner = :user')->setParameter('user', $user);
+			}
+		}
 		return $qb
 		->getQuery()
 		->getResult();

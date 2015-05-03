@@ -135,16 +135,16 @@ class Resource
     /**
      * @var boolean
      *
-     * @ORM\Column(name="trusted")
+     * @ORM\Column(name="trusted", options={"default":0})
      */
-    private $trusted = false;
+    private $trusted = 0;
     
     /**
      * @var boolean
      *
-     * @ORM\Column(name="indexed")
+     * @ORM\Column(name="indexed", options={"default":0})
      */
-    private $indexed = false;
+    private $indexed = 0;
     
     /**
      * @Assert\File(maxSize="128000000000")

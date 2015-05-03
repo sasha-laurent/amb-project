@@ -57,7 +57,9 @@ class MatrixController extends Controller
             throw $this->createNotFoundException('Unable to find Matrix entity.');
         }
         
-        $resources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic());
+        $validResources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic(), true);
+        $personalResources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic(), null, $this->getUser());
+        $unofficialResources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic(), false, $this->getUser(), true);
 
         return $this->render('VMBPresentationBundle:Matrix:show.html.twig', array(
             'mainTitle' => $entity->getTitle(),
@@ -65,7 +67,7 @@ class MatrixController extends Controller
 			'editButtonUrl' => $this->generateUrl('matrix_edit', array('id' => $entity->getId())),
 			'delButtonUrl' => $this->generateUrl('matrix_delete', array('id' => $entity->getId())),
 			'entity' => $entity,
-			'resources' => $resources,
+			'resources' => array('official' => $validResources, 'personal' => $personalResources, 'unofficial' => $unofficialResources),
 			'alertDismissible' => true
 		));
     }

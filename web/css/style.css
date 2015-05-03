@@ -271,27 +271,26 @@ header {
 }
 
 .resThumbnailHover .resCheckBox {
-	display: none;
-}
-
-.resThumbnailHover.checkedRes .resCheckBox, .resThumbnailHover.suggestedRes .resCheckBox {
 	display: block; 
 	position: absolute;
 	bottom: 0px;
 	right: 0px;
 	
-	width: 32px;
-	padding: 6px;
+	height: 22px;
+	line-height: 22px;
+	padding: 0px 4px;
 	
 	background-color: rgba(0,0,0,0.7);
-	color: #0BB700;
 }
 
-.resThumbnailHover.suggestedRes .resCheckBox, .glyphicon.suggestedRes {
+.checkedRes .user-glyphicon, .glyphicon.checkedRes {
+	color: #0BB700;
+}
+.suggestedRes .resCheckBox .user-glyphicon, .glyphicon.suggestedRes {
 	color: #FF9D22;
 }
-.glyphicon.checkedRes {
-	color: #0BB700;
+.glyphicon.teacherRes {
+	color: #00B7FF;
 }
 
 
@@ -325,10 +324,13 @@ header {
 
 #browse_file .panel {
 	border-radius: 0px 0px 4px 4px;
+	height: 400px;
+	overflow-y: auto;
 }
 
 #browse_file .panel-heading {
 	border-radius: 0px;
+	border-bottom: 1px solid #ddd;
 	padding: 0;
 }
 

@@ -49,11 +49,27 @@
 			{% for level in matrix.levels %}
 			<td data-prototype="{{ pov.id ~ "_" ~ level.id }}" class="text-center">
 				{% if matrix.sortedResources[pov.id][level.id] is defined %}
-					<div class="usedResource" style="background-image:url(https://i.ytimg.com/vi/63crAqHlIbM/mqdefault.jpg);">
-						<div class="resThumbnailHover{% if presentation.isChecked(matrix.sortedResources[pov.id][level.id].id) %} checkedRes{% elseif presentation.isSuggested(matrix.sortedResources[pov.id][level.id].id) %} suggestedRes{% endif %}" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="127" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
-							<span class="resTitle">{{ matrix.sortedResources[pov.id][level.id].resource.title[:10] }}</span>
-							<span class="resCheckBox"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></span>
+					<div class="usedResource" style="background-image:url({{ asset(matrix.sortedResources[pov.id][level.id].resource.getThumbsPath) }});">
+						{% if copy %}
+						<div class="resThumbnailHover" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="127" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
+							<span class="resTitle">{{ matrix.sortedResources[pov.id][level.id].resource.title[:18] }}</span>
+							<span class="resCheckBox">
+								{% if presentation.isChecked(matrix.sortedResources[pov.id][level.id].id) %}
+									<span class="glyphicon glyphicon-ok teacherRes" aria-hidden="true"></span>
+								{% elseif presentation.isSuggested(matrix.sortedResources[pov.id][level.id].id) %}
+									<span class="glyphicon glyphicon-ok suggestedRes" aria-hidden="true"></span>
+								{% else %}
+									<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+								{% endif %}
+								<span class="user-glyphicon glyphicon glyphicon-ok" aria-hidden="true"></span>
+							</span>
 						</div>
+						{% else %}
+						<div class="resThumbnailHover{% if presentation.isChecked(matrix.sortedResources[pov.id][level.id].id) %} checkedRes{% elseif presentation.isSuggested(matrix.sortedResources[pov.id][level.id].id) %} suggestedRes{% endif %}" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="127" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
+							<span class="resTitle">{{ matrix.sortedResources[pov.id][level.id].resource.title[:18] }}</span>
+							<span class="resCheckBox"><span class="user-glyphicon glyphicon glyphicon-ok" aria-hidden="true"></span></span>
+						</div>
+						{% endif %}
 					</div>
 				{% endif %}
 			</td>
@@ -77,6 +93,7 @@
 			{% set totalDuration = 0 %}
 			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Liste de lecture choisie</h4>
 			<ul class="list-group" id="file_list">
+				{% if copy == false %}
 				{% for res in presentation.resources %}
 					{% if res.suggested == false %}
 						{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
@@ -90,6 +107,7 @@
 						</li>
 					{% endif %}
 				{% endfor %}
+				{% endif %}
 			</ul>
 			<p class="text-right">
 				Durée totale : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
@@ -173,7 +191,7 @@
 				if($(this).hasClass('checkedRes')) {
 					$('#addedRes_' + $(this).attr('data-id')).remove();
 					$(this).removeClass('checkedRes');
-					$(this).addClass('suggestedRes');
+					{% if copy == false %}$(this).addClass('suggestedRes');{% endif %}
 					$('#presentation_form').append('<input type="hidden" id="suggested_'+$(this).attr('data-id')+'" name="suggested_'+$(this).attr('data-id')+'" value="1" />');
 					
 					addToDuration(-duration);
