@@ -1,7 +1,6 @@
 <?php
 
 namespace VMB\ResourceBundle\Entity;
-//include('SimpleImage.php');
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;

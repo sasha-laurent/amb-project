@@ -16,6 +16,7 @@ class TopicType extends AbstractType
     {
         $builder
             ->add('title', null, array('label'=>'Titre'))
+            ->add('file')
             ->add('Sauvegarder', 'submit')
         ;
     }

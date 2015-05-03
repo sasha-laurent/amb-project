@@ -1,4 +1,4 @@
-php "OntologyController.php"
+php "TopicController.php"
 
 pause
 del "%0"

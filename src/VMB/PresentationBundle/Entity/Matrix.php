@@ -60,7 +60,7 @@ class Matrix
 	
 	/**
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Topic")
-	* @ORM\JoinColumn(nullable=false)
+	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
 	*/
 	private $topic;
 

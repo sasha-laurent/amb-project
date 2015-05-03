@@ -3,7 +3,9 @@
 namespace VMB\PresentationBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\File\File;
 
 use VMB\PresentationBundle\Entity\Topic;
 use VMB\PresentationBundle\Form\TopicType;
@@ -21,8 +23,7 @@ class TopicController extends Controller
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
-
+		$em = $this->getDoctrine()->getManager();
         $entities = $em->getRepository('VMBPresentationBundle:Topic')->findAll();
 
         return $this->render('VMBPresentationBundle:Topic:index.html.twig', array(
@@ -122,14 +123,16 @@ class TopicController extends Controller
 				
 				$request->getSession()->getFlashBag()->add('success', 'Thématique supprimée');
 			} catch (\Exception $e) {
+				dump($e);
 				$request->getSession()->getFlashBag()->add('danger',"An error occured");
 			}
+			return new Response('<body>ds</body>');
 			return $this->redirect($this->generateUrl('topic'));
 		}
 
 		// Si la requête est en GET, on affiche une page de confirmation avant de delete
 		return $this->render('::Backend/delete.html.twig', array(
-			'entityTitle' => 'la thématique "'.$topic->toString().'" [ATTENTION CELA SUPPRIMERA TOUTES LES MATRICES ET PRESENTATIONS LIEES]',
+			'entityTitle' => 'la thématique "'.$topic->toString().'" [ATTENTION CELA SUPPRIMERA TOUTES LES MATRICES, RESSOURCES ET PRESENTATIONS LIEES]',
 			'mainTitle' => 'Suppression d\'une thématique',
 			'backButtonUrl' => $this->generateUrl('topic')
 		));
