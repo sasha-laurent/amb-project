@@ -54,6 +54,7 @@ header {
 	float: left;
 	padding: 0px 10px;
 	margin: 0px;
+	height: 42px;
 }
 
 .header-actions {
@@ -234,11 +235,12 @@ header {
 
 .resThumbnailHover .resTitle {
 	display: block;
-	width: 75%;
+	width: 100%;
 	margin: auto;
 	background-color: rgba(0,0,0,0.7);
 	padding: 0px 12px 0px 12px;
 	color: white;
+	font-size: 11px;
 }
 .usedResource.ui-state-highlight .resThumbnailHover {
 	background-color: rgba(252, 152, 52, 0.6);
@@ -295,4 +297,27 @@ header {
 }
 #file_list .list-group-item:last-child, #presentation_options .list-group-item:last-child {
 	border-bottom: 0px;
+}
+
+#browse_file .panel {
+	border-radius: 0px 0px 4px 4px;
+}
+
+#browse_file .panel-heading {
+	border-radius: 0px;
+	padding: 0;
+}
+
+#browse_file .nav-tabs {
+	border:0px;
+}
+
+#browse_file .panel-title-link {
+	display: inline-block;
+	width: 100%;	
+	outline: 0px;
+	padding: 10px 15px;
+}
+#browse_file .panel-title-link:hover, #browse_file .panel-title-link:focus {
+	text-decoration: none;
 }

@@ -57,7 +57,7 @@ class MatrixController extends Controller
             throw $this->createNotFoundException('Unable to find Matrix entity.');
         }
         
-        $resources = $em->getRepository('VMBResourceBundle:Resource')->findAll();
+        $resources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic());
 
         return $this->render('VMBPresentationBundle:Matrix:show.html.twig', array(
             'mainTitle' => $entity->getTitle(),

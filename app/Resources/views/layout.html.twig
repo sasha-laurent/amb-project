@@ -64,6 +64,7 @@
 					<input class="form-control search-input" name="q" placeholder="Recherche" type="text">
 				</form>
 				<ul class="header-nav left" role="navigation">
+					{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
 					<li class="dropdown header-nav-item">
 						<a data-toggle="dropdown" class="dropdown-toggle header-nav-link" href="#">Présentations <b class="caret"></b></a>
                         <ul class="dropdown-menu">
@@ -75,10 +76,8 @@
 					</li>
 					<li class="dropdown header-nav-item">
 						<a data-toggle="dropdown" class="dropdown-toggle header-nav-link" href="#">Outils <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-							{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                            <li><a href="#">Gestion des ressources</a></li>
-                            {% endif %}
+                        <ul class="dropdown-menu">				
+                            <li><a href="{{ path('resource') }}">Gestion des ressources</a></li>
                             <li><a href="{{ path('matrix') }}">Gestion des matrices</a></li>
                             {% if is_granted('ROLE_ADMIN') %}
                             <li><a href="#">Traduction</a></li>
@@ -89,6 +88,7 @@
                             {% endif %}
                         </ul>
 					</li>
+					{% endif %}
 				</ul>
 			</div>
 		</header>

@@ -64,7 +64,7 @@ class Resource
     /**
      * @var string
      *
-     * @ORM\Column(name="type", type="string", length=10)
+     * @ORM\Column(name="type", type="string", length=16)
      */
     private $type;
 
@@ -665,17 +665,19 @@ class Resource
         }
     }
 
-    protected function getThumbsPath()
+    public function getThumbsPath()
     {
-        if($this->getType() == 'application'){
-            return 'img/icon/application.jpg';
-        }
-
-        if($this->getType() == 'text'){
-            return 'img/icon/text.jpg';
+        if(in_array($this->getType(), array('application', 'text', 'audio'))) {
+            return 'img/icon/'.$this->getType().'.jpg';
         }
         return $this->getUploadDir($this->getType()).'thumbs/'.$this->filename.'.jpg';
     }
+    
+    public function getGlyphicon()
+    {
+		$assoc = array('video' => 'film', 'image' => 'picture', 'audio' => 'volume-up', 'application' => 'paperclip', 'text' => 'file');
+		return $assoc[$this->type];
+	}
 
 
     /**

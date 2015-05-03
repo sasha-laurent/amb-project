@@ -25,8 +25,8 @@
 				<td data-prototype="{{ pov.id ~ "_" ~ level.id }}" class="text-center">
 					<input type="hidden" name="{{ pov.id ~ "_" ~ level.id }}" value="{{ entity.sortedResources[pov.id][level.id].resource.id|default(0) }}" />
 					{% if entity.sortedResources[pov.id][level.id] is defined %}
-						<div class="usedResource" data-resource="{{ entity.sortedResources[pov.id][level.id].resource.id }}" style="background-image:url(https://i.ytimg.com/vi/63crAqHlIbM/mqdefault.jpg);">
-							<div class="resThumbnailHover"><span class="resTitle">{{ entity.sortedResources[pov.id][level.id].resource.title[:10] }}</span></div>
+						<div class="usedResource" data-resource="{{ entity.sortedResources[pov.id][level.id].resource.id }}" style="background-image:url({{ asset(entity.sortedResources[pov.id][level.id].resource.getThumbsPath) }});">
+							<div class="resThumbnailHover"><span class="resTitle">{{ entity.sortedResources[pov.id][level.id].resource.title[:18] }}</span></div>
 						</div>
 					{% endif %}
 				</td>
@@ -38,20 +38,48 @@
 		<hr/>
 		<div class="row">
 			<div class="col-sm-7">
-				<h4>Aperçu</h4>
+				<h4><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>   Aperçu de la ressource courante</h4>
 			</div>
 			<div class="col-sm-5">
-				<h4>Ajouter une ressource</h4>
-				<ul class="list-group" id="file_list">
-					{% for elt in resources %}
-						<li class="list-group-item addableResource" data-resource="{{ elt.id }}" data-title="{{ elt.title }}" data-thumb="https://i.ytimg.com/vi/Ks_5q9lvcyA/mqdefault.jpg">
-							<div class="row">
-								<div class="col-sm-10">{{ elt.title }}</div>
-								<div class="col-sm-2">{{ "%02d"|format(elt.duration // 60) }}:{{ "%02d"|format(elt.duration % 60) }}</div>
-							</div>
-						</li>
-					{% endfor %}
-				</ul>
+				<h4><span class="glyphicon glyphicon-open" aria-hidden="true"></span>  Parcourir les ressources</h4>
+				<div id="browse_file" role="tab-panel">
+					<ul class="nav nav-tabs" role="tablist">
+						<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Officielles</a></li>
+						<li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Personnelles</a></li>
+						<li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-plus"></span></a></li>
+					</ul>
+					<div class="panel-group" role="tablist">
+						<div class="panel panel-default">
+							{% set lastType = '' %}
+							{% for elt in resources %}
+								{% if lastType != elt.type %}
+									{% if lastType != '' %}
+											</ul>
+										</div>
+									{% endif %}
+									{% set lastType = elt.type %}
+									<div class="panel-heading" role="tab" id="collapseListGroupHeading_{{ elt.type }}">
+										<h4 id="-collapsible-list-group-{{ elt.type }}" class="panel-title">
+										<a class="panel-title-link" data-toggle="collapse" href="#collapseListGroup_{{ elt.type }}" aria-expanded="true" aria-controls="collapseListGroup_{{ elt.type }}">
+											<span class="glyphicon glyphicon-{{ elt.getGlyphicon }}"></span> {{ elt.type|title }}
+										</a>
+										<a class="anchorjs-link" href="#-collapsible-list-group-{{ elt.type }}"><span class="anchorjs-icon"></span></a></h4>
+									</div>
+									<div style="" aria-expanded="false" id="collapseListGroup_{{ elt.type }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseListGroupHeading_{{ elt.type }}">
+										<ul class="list-group">
+								{% endif %}
+											<li class="list-group-item addableResource" data-resource="{{ elt.id }}" data-title="{{ elt.title[:18] }}" data-thumb="{{ asset(elt.getThumbsPath) }}">
+												<div class="row">
+													<div class="col-sm-10">{{ elt.title }}</div>
+													<div class="col-sm-2">{% if elt.duration > 0 %}{{ elt.durationToString }}{% endif %}</div>
+												</div>
+											</li>
+							{% endfor %}
+										</ul>
+									</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -147,7 +175,7 @@
 			helper: "clone"
 		});
 
-		$("#file_list").droppable({
+		$("#browse_file").droppable({
 			accept: '.usedResource',
 			drop: function(e, ui) {
 				ui.draggable.prev('input').val(0);

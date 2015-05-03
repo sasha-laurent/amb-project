@@ -12,4 +12,17 @@ use Doctrine\ORM\EntityRepository;
  */
 class ResourceRepository extends EntityRepository
 {
+	public function findByTopicSortedByType($topic)
+	{
+		$qb = $this
+			->createQueryBuilder('r')
+			->orderBy('r.type')
+			->where('r.topic = :topic')
+			->setParameter('topic', $topic)
+		;
+
+		return $qb
+		->getQuery()
+		->getResult();
+	}
 }
