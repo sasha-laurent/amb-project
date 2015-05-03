@@ -31,10 +31,17 @@ class MatrixController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 		
-        $entities = $em->getRepository('VMBPresentationBundle:Matrix')->findAll();
+		if($this->get('security.context')->isGranted('ROLE_ADMIN')) {
+			$entities = $em->getRepository('VMBPresentationBundle:Matrix')->findAll();
+			$mainTitle = 'Affichage des matrices';
+		}
+		else {
+			$entities = $em->getRepository('VMBPresentationBundle:Matrix')->findBy(array('owner' => $this->getUser()));
+			$mainTitle = 'Affichage de vos matrices de présentation';
+		}
 
         return $this->render('VMBPresentationBundle:Matrix:index.html.twig', array(
-            'mainTitle' => 'Affichage des matrices',
+            'mainTitle' => $mainTitle,
 			'addButtonUrl' => $this->generateUrl('matrix_new'),
             'entities' => $entities
         ));
@@ -191,6 +198,7 @@ class MatrixController extends Controller
 			if ($form->isValid()) 
 			{
 				$em = $this->getDoctrine()->getManager();
+				$matrix->setOwner($this->getUser());
 				$em->persist($matrix);
 				$em->flush();
 

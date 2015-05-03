@@ -6,7 +6,7 @@
 
 {% block body %}
 	C'est ma !
-	<a class="btn btn-default">
+	<a id="search-test" class="btn btn-default">
 		BOUTON
 	</a>
 	<div id="indicator" class="loading_indicator"></div>
@@ -23,7 +23,7 @@
 {% block script %}
 	{{ parent() }}
 	<script>
-	$(".btn").click(function(){ 
+	$("#search-test").click(function(){ 
 		$(".loading").show();
 		$.ajax({
 			type: "POST",
