@@ -45,3 +45,9 @@ presentation_delete:
     defaults: { _controller: "VMBPresentationBundle:Presentation:delete" }
     requirements:
         id:   \d{1,}
+        
+presentation_copy:
+    path:     /copy/{id}
+    defaults: { _controller: "VMBPresentationBundle:Presentation:deepCopy" }
+    requirements:
+        id:   \d{1,}

@@ -1,7 +1,10 @@
 {% extends '::Backend/subPage.html.twig' %}
 
+{% set firstResource = null %}
 {% if alternativeResources|length == 0 %}
-	{% set firstResource = entity.resources[0].usedResource %}
+	{% if entity.resources|length != 0 %}
+		{% set firstResource = entity.resources[0].usedResource %}
+	{% endif %}
 {% else %}
 	{% set firstResource = alternativeResources[0] %}
 {% endif %}
@@ -9,6 +12,7 @@
 {% block body %}
     <div class="row">
 		<div class="col-sm-9">
+			{% if firstResource != null %}
 			<div {% if firstResource.resource.type != 'video' %}style="display: none;"{% endif %} class="player">
 				<video id="video_player" controls crossorigin>
 					<!-- Video files -->
@@ -31,6 +35,7 @@
 			<div class="file_player">
 				
 			</div>
+			{% endif %}
 		</div>
 		<div class="col-sm-3">
 			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Liste de lecture</h4>
@@ -68,6 +73,7 @@
 		</div>
     </div>
     <hr/>
+    {% if firstResource != null %}
     <h3>Détails de la ressource actuelle</h3>
     <table class="table">
 		<tbody>
@@ -93,6 +99,7 @@
 			</tr>
 		</tbody>
 	</table>
+	{% endif %}
 {% endblock %}
 
 
@@ -148,7 +155,7 @@
 			{% endfor %}
 		{% endif %} ];
 		
-	selectedRes = {{ firstResource.id }};
+	selectedRes = {{ firstResource.id|default(0) }};
 	
 	// Setup the player
 	plyr.setup({

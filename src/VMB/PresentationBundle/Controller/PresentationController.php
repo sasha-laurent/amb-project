@@ -8,6 +8,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 use VMB\PresentationBundle\Entity\Presentation;
+use VMB\PresentationBundle\Entity\Matrix;
+use VMB\PresentationBundle\Entity\Level;
+use VMB\PresentationBundle\Entity\Pov;
+use VMB\PresentationBundle\Entity\UsedResource;
 use VMB\PresentationBundle\Entity\CheckedResource;
 use VMB\PresentationBundle\Form\PresentationType;
 
@@ -104,6 +108,112 @@ class PresentationController extends Controller
 			'nbPages'  => $nbPages,
 			'page'     => $page
         ));
+    }
+    
+    public function deepCopyAction(Request $request, $id)
+    {
+		$presentation = null;
+		if ($request->isMethod('POST')) {
+			try {
+				$em = $this->getDoctrine()->getManager();
+				$presentation = $em->getRepository('VMBPresentationBundle:Presentation')->findWithConcreteResources($id);
+				$matrix = $em->getRepository('VMBPresentationBundle:Matrix')->getMatrixWithResources($presentation->getMatrix()->getId());
+				$em->detach($presentation);
+				$em->detach($matrix);
+				
+				// Copy the matrix
+				$newMatrix = clone $matrix;
+				
+				// PoVs
+				$newPovs = array();
+				foreach($newMatrix->getPovs() as $pov) {
+					$newPovs[$pov->getId()] = clone $pov;
+					$newPovs[$pov->getId()]->setMatrix($newMatrix);
+				}
+				
+				$newMatrix->clearPovs();
+				foreach($newPovs as $newPov) {
+					$newMatrix->addPov($newPov);
+				}
+				
+				// Levels
+				$newLvls = array();
+				foreach($newMatrix->getLevels() as $lvl) {
+					$newLvls[$lvl->getId()] = clone $lvl;
+					$newLvls[$lvl->getId()]->setMatrix($newMatrix);
+				}
+				
+				$newMatrix->clearLevels();
+				foreach($newLvls as $newLvl) {
+					$newMatrix->addLevel($newLvl);
+				}
+				
+				// Used Resources
+				$newResources = array();
+				foreach($newMatrix->getResources() as $res) {
+					$newResources[$res->getId()] = clone $res;
+					$newResources[$res->getId()]->setPov($newPovs[$res->getPov()->getId()]);
+					$newResources[$res->getId()]->setLevel($newLvls[$res->getLevel()->getId()]);
+					$newResources[$res->getId()]->setMatrix($newMatrix);
+				}
+				
+				$newMatrix->clearResources();
+				foreach($newResources as $newRes) {
+					// no cascade persist, we must do it here
+					$newMatrix->addResource($newRes);
+					$em->persist($newRes);
+				}
+				
+				$newMatrix->setOwner($this->getUser());
+				$newMatrix->setDateCreation(new \DateTime());
+				$newMatrix->setDateUpdate(new \DateTime());
+				
+				
+				// We now manage the presentation and the checked resources
+				$newPresentation = clone $presentation;
+				$newPresentation->setMatrix($newMatrix);
+				$newPresentation->setDateCreation(new \DateTime());
+				$newPresentation->setDateUpdate(new \DateTime());
+				$newPresentation->setOwner($this->getUser());
+				$newPresentation->setPublic(false);
+				$newPresentation->setOfficial(false);
+				
+				// Checked Resources
+				$newCheckedResources = array();
+				foreach($newPresentation->getResources() as $res) {
+					$newCheckedResources[$res->getId()] = clone $res;
+					$newCheckedResources[$res->getId()]->setPresentation($newPresentation);
+					$newCheckedResources[$res->getId()]->setUsedResource($newResources[$res->getUsedResource()->getId()]);
+				}
+				
+				$newPresentation->clearResources();
+				foreach($newCheckedResources as $newRes) {
+					// cascade persist here
+					$newPresentation->addResource($newRes);
+				}
+				
+				$em->persist($newMatrix);
+				$em->persist($newPresentation);
+				dump($presentation);
+				dump($newPresentation);
+				$em->flush();
+				
+				$request->getSession()->getFlashBag()->add('success', 'Copie de la présentation réussie');
+			} catch (\Exception $e) {
+				$request->getSession()->getFlashBag()->add('danger',"An error occured");
+			}
+			return $this->redirect($this->generateUrl('presentation_perso'));
+		}
+		else {
+			$presentation = $this->getPresentation($id);
+		}
+
+		// Si la requête est en GET, on affiche une page de confirmation avant de delete
+		return $this->render('VMBPresentationBundle:Presentation:copy.html.twig', array(
+			'entityTitle' => '"'.$presentation->toString().'"',
+			'mainTitle' => 'Copie de la présentation '.$presentation->toString(),
+			'backButtonUrl' => $this->generateUrl('presentation')
+		));
     }
     
     public function displayMatrixesAction()
@@ -404,7 +514,17 @@ class PresentationController extends Controller
     public function deleteAction(Request $request, $id)
     {
         $presentation = $this->getPresentation($id);
-
+        
+        $lastUrl = preg_replace('`(.+)'. $this->generateUrl('vmb_presentation_homepage') .'`', '/', $request->headers->get('referer'));
+		$match = $this->get('router')->match($lastUrl);
+		$arr = array('route' => $match['_route'], 'args' => array());
+		foreach($match as $key => $value) {
+			if(substr($key, 0, 1) != '_') {
+				$arr['args'][$key] = $value;
+			}
+		}
+		dump($arr);
+		dump($this->generateUrl($arr['route'], $arr['args']));
 		if ($request->isMethod('POST')) {
 			try {
 				$em = $this->getDoctrine()->getManager();

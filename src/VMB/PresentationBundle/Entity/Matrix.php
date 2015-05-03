@@ -65,17 +65,17 @@ class Matrix
 	private $topic;
 
 	/**
-	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Pov", mappedBy="matrix", cascade={"remove", "persist"})
+	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Pov", mappedBy="matrix", cascade={"remove", "persist", "detach"})
 	*/
 	private $povs;
 	
 	/**
-	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Level", mappedBy="matrix", cascade={"remove", "persist"})
+	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Level", mappedBy="matrix", cascade={"remove", "persist", "detach"})
 	*/
 	private $levels;
 	
 	/**
-	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\UsedResource", mappedBy="matrix", cascade={"remove"})
+	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\UsedResource", mappedBy="matrix", cascade={"remove", "detach"})
 	*/
 	private $resources;
 	
@@ -229,6 +229,11 @@ class Matrix
     {
         return $this->povs;
     }
+    
+    public function clearPovs()
+    {
+		$this->povs->clear();
+	}
 
     /**
      * Add levels
@@ -264,6 +269,10 @@ class Matrix
         return $this->levels;
     }
 
+    public function clearLevels()
+    {
+		$this->levels->clear();
+	}
     /**
      * Set owner
      *
@@ -324,6 +333,12 @@ class Matrix
     {
         return $this->resources;
     }
+    
+    
+    public function clearResources()
+    {
+		$this->resources->clear();
+	}
     
     public function getUsedResourceById($id)
     {

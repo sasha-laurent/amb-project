@@ -11,3 +11,4 @@
 /bin/
 /web/upload/*
 /composer.phar
+*.bat
