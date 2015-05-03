@@ -54,6 +54,7 @@ class Matrix
     
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\UserBundle\Entity\User")
+	* @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
 	*/
 	private $owner;
 	

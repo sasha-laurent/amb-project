@@ -82,7 +82,7 @@ class Presentation
     
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\UserBundle\Entity\User")
-	* @ORM\JoinColumn(nullable=false) 
+	* @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
 	*/
 	private $owner;
     

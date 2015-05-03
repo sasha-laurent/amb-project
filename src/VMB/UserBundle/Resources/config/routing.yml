@@ -1,0 +1,3 @@
+vmb_user_admin_user:
+    resource: "@VMBUserBundle/Resources/config/routing/user.yml"
+    prefix:   /admin/user
