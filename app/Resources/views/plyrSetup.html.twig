@@ -1,0 +1,32 @@
+	// Setup the player
+	plyr.setup({
+		debug: 	true,
+		title: 	"Video demo",
+		captions: {
+			defaultActive: true
+		},
+		onSetup: function() {
+			var player 	= this,
+				type 	= player.media.tagName.toLowerCase(),
+				toggle 	= document.querySelector("[data-toggle='fullscreen']");
+
+			console.log("✓ Setup done for <" + type + ">");
+
+			if(type === "video" && toggle) {
+				toggle.addEventListener("click", player.toggleFullscreen, false);
+			}
+		}
+	});
+
+	function stopAndHideAll(newType) {
+		if(newType != 'video') {
+			videoPlayer = document.querySelectorAll(".player")[0].plyr;
+			videoPlayer.pause();
+			$(document.querySelectorAll(".player")[0]).hide();
+		}
+		if(newType != 'audio') {
+			audioPlayer = document.querySelectorAll(".player")[1].plyr;		
+			audioPlayer.pause();
+			$(document.querySelectorAll(".player")[1]).hide();
+		}
+	}

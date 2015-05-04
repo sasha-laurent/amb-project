@@ -4,7 +4,7 @@
   {{ mainTitle }} - {{ parent() }}
 {% endblock %}
 
-{% set nbActions = ((saveButton is defined) ? 1.5 : 0) + ((addButtonUrl is defined) ? 1 : 0) + ((editButtonUrl is defined) ? 1 : 0) + ((delButtonUrl is defined) ? 1 : 0) %}
+{% set nbActions = ((saveButton is defined) ? 1.5 : 0) + ((saveToCaddy is defined) ? 1.5 : 0) + ((forkButtonUrl is defined) ? 1 : 0) + ((addButtonUrl is defined) ? 1 : 0) + ((editButtonUrl is defined) ? 1 : 0) + ((delButtonUrl is defined) ? 1 : 0) %}
 
 {% if nbActions > 3 %}
 	{% set colWidth = 3 %}
@@ -23,8 +23,13 @@
 			{{ mainTitle }}
 		</div>
 		<div class="col-md-{{ colWidth }} text-right">
-			{% if saveButton is defined %}<span class="loading_indicator_inline"></span>{% endif %}
+			{% if (saveButton is defined) or (saveToCaddy is defined) %}<span class="loading_indicator_inline"></span>{% endif %}
 			<div class="btn-group" role="group" aria-label="...">
+				{% if saveToCaddy is defined %}
+					<a class="btn {% if inCaddy %}btn-info{% else %}btn-default{% endif %} {{ saveToCaddy }}AddToCaddy" data-id="{{ entity.id }}" id="caddy-btn">
+						<span class="left glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
+					</a>				
+				{% endif %}
 				{% if saveButton is defined %}
 					<a class="btn btn-default" id="save-btn">
 						<span class="left glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
@@ -45,7 +50,20 @@
 						<span class="left glyphicon glyphicon-remove" aria-hidden="true"></span>
 					</a>
 				{% endif %}
+				{% if forkButtonUrl is defined %}
+					<a class="btn btn-default" href="{{ forkButtonUrl }}" >
+						<span class="left glyphicon glyphicon-copy" aria-hidden="true"></span>
+					</a>
+				{% endif %}
 			</div>
 		</div>
 	</div>	
+{% endblock %}
+
+
+{% block script %}
+	{{ parent() }}
+	{% if (saveToCaddy is defined) %}
+		{% include '::addToCaddy.html.twig' %}
+	{% endif %}
 {% endblock %}

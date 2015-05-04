@@ -12,30 +12,7 @@
 {% block body %}
     <div class="row">
 		<div class="col-sm-9">
-			{% if firstResource != null %}
-			<div {% if firstResource.resource.type != 'video' %}style="display: none;"{% endif %} class="player">
-				<video id="video_player" controls crossorigin>
-					<!-- Video files -->
-					{% if firstResource.resource.type == 'video' %}
-					<source src="{{ asset(firstResource.resource.getResourcePath) }}">
-					{% endif %}
-				</video>
-			</div>
-			<div {% if firstResource.resource.type != 'audio' %}style="display: none;"{% endif %} class="player">
-				<audio id="audio_player" controls>
-					<!-- Audio files -->
-					{% if firstResource.resource.type == 'audio' %}
-					<source src="{{ asset(firstResource.resource.getResourcePath) }}">
-					{% endif %}
-				</audio>
-			</div>
-			<div class="image_player">
-				
-			</div>
-			<div class="file_player">
-				
-			</div>
-			{% endif %}
+			{% include '::players.html.twig' %}
 		</div>
 		<div class="col-sm-3">
 			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Liste de lecture</h4>
@@ -157,38 +134,7 @@
 		
 	selectedRes = {{ firstResource.id|default(0) }};
 	
-	// Setup the player
-	plyr.setup({
-		debug: 	true,
-		title: 	"Video demo",
-		captions: {
-			defaultActive: true
-		},
-		onSetup: function() {
-			var player 	= this,
-				type 	= player.media.tagName.toLowerCase(),
-				toggle 	= document.querySelector("[data-toggle='fullscreen']");
-
-			console.log("✓ Setup done for <" + type + ">");
-
-			if(type === "video" && toggle) {
-				toggle.addEventListener("click", player.toggleFullscreen, false);
-			}
-		}
-	});
-	
-	function stopAndHideAll(newType) {
-		if(newType != 'video') {
-			videoPlayer = document.querySelectorAll(".player")[0].plyr;
-			videoPlayer.pause();
-			$(document.querySelectorAll(".player")[0]).hide();
-		}
-		if(newType != 'audio') {
-			audioPlayer = document.querySelectorAll(".player")[1].plyr;		
-			audioPlayer.pause();
-			$(document.querySelectorAll(".player")[1]).hide();
-		}
-	}
+	{% include '::plyrSetup.html.twig' %}
 	
 	function triggerNewRes(resId) {
 		if(selectedRes != resId) {

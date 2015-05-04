@@ -5,10 +5,10 @@
 {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 
 {% set cellWidth = (830 / matrix.levels|length) %}
-	{% if cellWidth > 120 %}
-		{% set cellWidth = 120 %}
-	{% endif %}
-	{% set cellHeight = cellWidth * 9 / 16 %}
+{% if cellWidth > 120 %}
+	{% set cellWidth = 120 %}
+{% endif %}
+{% set cellHeight = cellWidth * 9 / 16 %}
 
 {% block body -%}
 {{ form_start(form, {'attr': {'id': 'presentation_form', 'class': 'form-horizontal'}}) }}
@@ -99,6 +99,8 @@
 	<div class="row">
 		<div class="col-sm-7">
 			<h4><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> Aperçu du fichier sélectionné</h4>
+			{% include '::players.html.twig' %}
+			<br/>
 		</div>
 		<div class="col-sm-5">
 			{% set totalDuration = 0 %}
@@ -108,7 +110,7 @@
 				{% for res in presentation.resources %}
 					{% if res.suggested == false %}
 						{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
-						<li class="list-group-item" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
+						<li class="list-group-item playableResource playableRes_{{res.usedResource.id}}" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
 							<div class="row">
 								<div class="col-sm-8">{{ res.usedResource.resource.title }}</div>
 								<div class="col-sm-2">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
@@ -139,6 +141,52 @@
 {% block script %}
 	{{ parent() }}
 	<script>
+		resourcesCollection = {
+			{% for usedRes in matrix.resources %}
+				{{ usedRes.id }}: {
+					'title': "{{ usedRes.resource.title }}", 
+					'description': "{{ usedRes.resource.description }}", 
+					'creation': "{{ usedRes.resource.dateCreate|date('d/m/y') }}", 
+					'update': "{{ usedRes.resource.dateUpdate|date('d/m/y') }}", 
+					'duration': {{ usedRes.resource.duration|default(0) }},
+					'duration_str': "{{ "%02d"|format(usedRes.resource.duration // 60) }}:{{ "%02d"|format(usedRes.resource.duration % 60) }}",
+					'src': "{{ asset(usedRes.resource.getResourcePath) }}",
+					'type': "{{ usedRes.resource.type }}"
+				},
+			{% endfor %}
+		};
+		selectedRes = 0;
+		$(document.querySelectorAll(".player")[0]).show();
+		
+		{% include '::plyrSetup.html.twig' %}
+		
+		function triggerNewRes(resId) {
+			if(selectedRes != resId) {
+				$('.playableRes_' + selectedRes).removeClass('active');
+				selectedRes = resId;
+				res = resourcesCollection[resId];
+				stopAndHideAll(res['type']);
+				$('.playableRes_' + resId).addClass('active');
+				
+				if(res['type'] == 'audio') {
+					$(document.querySelectorAll(".player")[1]).show();
+					player = document.querySelectorAll(".player")[1].plyr;
+					player.source(res['src']);
+					player.play();
+				}
+				else if(res['type'] == 'video') {
+					$(document.querySelectorAll(".player")[0]).show();
+					player = document.querySelectorAll(".player")[0].plyr;
+					player.source(res['src']);
+					player.play();
+				}
+			}
+		}
+		
+		$('.playableResource').click(function() {
+			triggerNewRes($(this).attr('data-id'));
+		});
+		
 		function pad(num, size) {
 			var s = num+"";
 			while (s.length < size) s = "0" + s;
@@ -212,7 +260,7 @@
 					$('#suggested_'+$(this).attr('data-id')).remove();
 				}
 				else {
-					$('#file_list').append('<li class="list-group-item" id="addedRes_' + $(this).attr('data-id') + '" data-id="' + $(this).attr('data-id') + '"><div class="row"> \
+					$('#file_list').append('<li class="list-group-item playableResource playableRes_' + $(this).attr('data-id') + '" id="addedRes_' + $(this).attr('data-id') + '" data-id="' + $(this).attr('data-id') + '"><div class="row"> \
 							<div class="col-sm-8">' + $(this).attr('data-title') + '</div> \
 							<div class="col-sm-2">' + convertDurationToString(duration) + '</div> \
 							<div class="col-sm-2 text-right"><a id="rmRes_' + $(this).attr('data-id') + '" data-id="' + $(this).attr('data-id') + '"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div> \
@@ -220,6 +268,9 @@
 							</div></li>');
 					$('#rmRes_' + $(this).attr('data-id')).click(function() {
 						deleteFromPlaylist($(this).attr('data-id'));
+					});
+					$('.playableRes_' + $(this).attr('data-id')).click(function() {
+						triggerNewRes($(this).attr('data-id'));
 					});
 					$(this).addClass('checkedRes');
 					addToDuration(duration);

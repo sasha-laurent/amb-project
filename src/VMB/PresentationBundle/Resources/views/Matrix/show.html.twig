@@ -38,7 +38,8 @@
 		<hr/>
 		<div class="row">
 			<div class="col-sm-7">
-				<h4><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>   Aperçu de la ressource courante</h4>
+				<h4><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Aperçu de la ressource courante</h4>
+				{% include '::players.html.twig' %}
 			</div>
 			<div class="col-sm-5">
 				<h4><span class="glyphicon glyphicon-open" aria-hidden="true"></span>  Parcourir les ressources</h4>
@@ -47,7 +48,7 @@
 						<li role="presentation" class="active"><a href="#official" aria-controls="official" role="tab" data-toggle="tab">Officielles</a></li>
 						<li role="presentation"><a href="#personal" aria-controls="personal" role="tab" data-toggle="tab">Personnelles</a></li>
 						<li role="presentation"><a href="#unofficial" aria-controls="unoffficial" role="tab" data-toggle="tab">Partagées</a></li>
-						<li role="presentation"><a href="#"><span class="glyphicon glyphicon-plus"></span></a></li>
+						<li role="presentation"><a href="{{ path('resource_new') }}"><span class="glyphicon glyphicon-plus"></span></a></li>
 					</ul>
 					<div class="tab-content">
 						{% for key, subArrResources in resources %}
@@ -81,7 +82,7 @@
 												<div style="" aria-expanded="false" id="collapseListGroup_{{ key }}_{{ elt.type }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseListGroupHeading_{{ key }}_{{ elt.type }}">
 													<ul class="list-group">
 											{% endif %}
-														<li class="list-group-item addableResource" data-resource="{{ elt.id }}" data-title="{{ elt.title[:18] }}" data-thumb="{{ asset(elt.getThumbsPath) }}">
+														<li class="list-group-item addableResource addableRes_{{elt.id}}" data-resource="{{ elt.id }}" data-title="{{ elt.title[:18] }}" data-thumb="{{ asset(elt.getThumbsPath) }}">
 															<div class="row">
 																<div class="col-sm-10">{{ elt.title }}</div>
 																<div class="col-sm-2">{% if elt.duration > 0 %}{{ elt.durationToString }}{% endif %}</div>
@@ -130,10 +131,58 @@
 {% block script %}
 	{{ parent() }}
 	<script>
+	resourcesCollection = {
+		{% for key, subArrResources in resources %}
+			{% for elt in subArrResources %}
+				{{ elt.id }}: {
+					'title': "{{ elt.title }}", 
+					'description': "{{ elt.description }}", 
+					'creation': "{{ elt.dateCreate|date('d/m/y') }}", 
+					'update': "{{ elt.dateUpdate|date('d/m/y') }}", 
+					'duration': {{ elt.duration|default(0) }},
+					'duration_str': "{{ "%02d"|format(elt.duration // 60) }}:{{ "%02d"|format(elt.duration % 60) }}",
+					'src': "{{ asset(elt.getResourcePath) }}",
+					'type': "{{ elt.type }}"
+				},
+			{% endfor %}
+		{% endfor %}
+	};
+	selectedRes = 0;
+	$(document.querySelectorAll(".player")[0]).show();
+	
+	{% include '::plyrSetup.html.twig' %}
+		
 	var selectedClass = 'ui-state-highlight',
 		clickDelay = 250,
 		// click time (milliseconds)
 		lastClick, diffClick; // timestamps
+		
+	function triggerNewRes(resId) {
+		if(selectedRes != resId) {
+			$('.addableRes_' + selectedRes).removeClass('active');
+			selectedRes = resId;
+			res = resourcesCollection[resId];
+			stopAndHideAll(res['type']);
+			$('.addableRes_' + resId).addClass('active');
+			
+			if(res['type'] == 'audio') {
+				$(document.querySelectorAll(".player")[1]).show();
+				player = document.querySelectorAll(".player")[1].plyr;
+				player.source(res['src']);
+				player.play();
+			}
+			else if(res['type'] == 'video') {
+				$(document.querySelectorAll(".player")[0]).show();
+				player = document.querySelectorAll(".player")[0].plyr;
+				player.source(res['src']);
+				player.play();
+			}
+		}
+	}
+	
+	$('.addableResource').click(function() {
+		triggerNewRes($(this).attr('data-resource'));
+	});
 	
 	function bindCustomDraggable(selector) {		
 		$(selector).bind('mousedown mouseup', function(e) {

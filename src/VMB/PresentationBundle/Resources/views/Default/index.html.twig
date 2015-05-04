@@ -5,9 +5,8 @@
 {% endblock %}
 
 {% block body %}
-	C'est ma !
 	<a id="search-test" class="btn btn-default">
-		BOUTON
+		Add to caddy
 	</a>
 	<div id="indicator" class="loading_indicator"></div>
 	<div id="myModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
@@ -20,22 +19,4 @@
 	<div id="resultats_recherche"></div>
 {% endblock %}
 
-{% block script %}
-	{{ parent() }}
-	<script>
-	$("#search-test").click(function(){ 
-		$(".loading").show();
-		$.ajax({
-			type: "POST",
-			url: "{{ path('resource_search')}}",
-			data: { motcle: "fire" },
-			cache: false,
-			success: function(data){
-			   $('#resultats_recherche').html(data);
-			   $(".loading").hide();
-			}
-		});    
-		return false;
-	});
-	</script>
-{% endblock %}
+

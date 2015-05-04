@@ -14,7 +14,7 @@ class CaddyController extends Controller
 	public function addPresentationAction()
 	{
 		$request = $this->container->get('request');
-		$id = $this->container->get('id');
+		$id = $request->request->get('id');
 		$user = $this->getUser();
 		if($request->isXmlHttpRequest()){
 			$em = $this->getDoctrine()->getManager();
@@ -24,12 +24,15 @@ class CaddyController extends Controller
 				->find($id);
 			
 			if(!$presentation){
-				throw $this->createNotFoundException(
-				'Aucune présentation n\'a pu être trouvé'
-				);
+				return new Response('unknown');
 			}
-			$user->addPresentation($presentation);
-			$em->flush();
+			try {
+				$user->addPresentation($presentation);
+				$em->flush();
+			}
+			catch(\Exception $e) {
+				return new Response('duplicate');
+			}
 			return new Response('ok');
 		}
 		return new Response('failure');
@@ -38,7 +41,7 @@ class CaddyController extends Controller
 	public function removePresentationAction()
 	{
 		$request = $this->container->get('request');
-		$id = $this->container->get('id');
+		$id = $request->request->get('id');
 		$user = $this->getUser();
 		if($request->isXmlHttpRequest()){
 			$em = $this->getDoctrine()->getManager();
@@ -48,9 +51,7 @@ class CaddyController extends Controller
 				->find($id);
 		
 			if(!$presentation){
-				throw $this->createNotFoundException(
-				'Aucune présentation n\'a pu être trouvé'
-				);
+				return new Response('unknown');
 			}
 			$user->removePresentation($presentation);
 			$em->flush();
@@ -62,7 +63,7 @@ class CaddyController extends Controller
 	public function addResourceAction()
 	{
 		$request = $this->container->get('request');
-		$id = $this->container->get('id');
+		$id = $request->request->get('id');
 		$user = $this->getUser();
 		if($request->isXmlHttpRequest()){
 			$em = $this->getDoctrine()->getManager();
@@ -72,13 +73,15 @@ class CaddyController extends Controller
 				->find($id);
 		
 			if(!$resource){
-				throw $this->createNotFoundException(
-				'Aucune présentation n\'a pu être trouvé'
-				);
+				return new Response('unknown');
 			}
-			$user->addResource($resource);
-			$em->flush();
-			return new Response('ok');
+			try {
+				$user->addResource($resource);
+				$em->flush();
+			}
+			catch(\Exception $e) {
+				return new Response('duplicate');
+			}
 		}
 		return new Response('failure');
 	}
@@ -86,7 +89,7 @@ class CaddyController extends Controller
 	public function removeResourceAction()
 	{
 		$request = $this->container->get('request');
-		$id = $this->container->get('id');
+		$id = $request->request->get('id');
 		$user = $this->getUser();
 		if($request->isXmlHttpRequest()){
 			$em = $this->getDoctrine()->getManager();
@@ -96,9 +99,7 @@ class CaddyController extends Controller
 				->find($id);
 		
 			if(!$resource){
-				throw $this->createNotFoundException(
-				'Aucune présentation n\'a pu être trouvé'
-				);
+				return new Response('unknown');
 			}
 			$user->removeResource($resource);
 			$em->flush();

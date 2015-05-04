@@ -124,4 +124,22 @@ class User extends BaseUser
     {
         return $this->resource;
     }
+    
+    public function presentationIsInCaddy($presentation) {
+		foreach($this->presentation as $p) {
+			if($p->getId() == $presentation->getId()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public function resourceIsInCaddy($resource) {
+		foreach($this->resource as $r) {
+			if($r->getId() == $resource->getId()) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

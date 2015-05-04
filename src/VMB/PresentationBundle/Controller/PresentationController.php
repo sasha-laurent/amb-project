@@ -212,7 +212,7 @@ class PresentationController extends Controller
 		return $this->render('VMBPresentationBundle:Presentation:copy.html.twig', array(
 			'entityTitle' => '"'.$presentation->toString().'"',
 			'mainTitle' => 'Copie de la présentation '.$presentation->toString(),
-			'backButtonUrl' => $this->generateUrl('presentation')
+			'backButtonUrl' => $this->generateUrl('presentation_perso')
 		));
     }
     
@@ -261,11 +261,22 @@ class PresentationController extends Controller
 			}
 		}
 
-        return $this->render('VMBPresentationBundle:Presentation:show.html.twig', array(
+		$user = $this->getUser();
+	
+		$args = array(
             'mainTitle' => $entity->getTitle(),
+            'saveToCaddy' => 'presentation',
+            'inCaddy' => $user->presentationIsInCaddy($entity),
 			'entity' => $entity,
 			'alternativeResources' => $alternativeResources
-        ));
+        );
+        if($entity->isOwner($user)) {
+			$args['editButtonUrl'] = $this->generateUrl('presentation_edit', array('id' => $id));
+		}
+		else {
+			$args['forkButtonUrl'] = $this->generateUrl('presentation_deep_copy', array('id' => $id));
+		}
+        return $this->render('VMBPresentationBundle:Presentation:show.html.twig', $args);
     }
     
     /**
