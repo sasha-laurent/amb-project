@@ -46,11 +46,6 @@ class Topic
      */
     public $file;
 
-    /*
-    * Variable de mime
-    */
-    public $mime_type;
-
 	private $filenameForRemove;
 
     /**
@@ -111,56 +106,50 @@ class Topic
         return $this->slug;
     }
     
-    /**
-     * @ORM\PrePersist()
-     */
     public function preUpload()
     {
-        if (null !== $this->file){
-            $extension = strtolower(pathinfo($this->file->getClientOriginalName(), PATHINFO_EXTENSION));
-             dump($extension);
-        }
+        
     }
 
-    
-    /**
-     * @ORM\PostPersist()
-     */
     public function upload()
     {
         if (null === $this->file){
             return;
         }
-        $this->file->move(str_replace('\\', '/', __DIR__).'/../../../../../web/upload/topic/', $this->file->getClientOriginalName());        
-		dump(str_replace('\\', '/', __DIR__).'/../../../../../web/upload/topic/', $this->file->getClientOriginalName());
+        $extension = strtolower(pathinfo($this->file->getClientOriginalName(), PATHINFO_EXTENSION));
+        if(in_array($extension, array('jpg', 'jpeg'))) {
+			$path = str_replace('\\', '/', __DIR__).'/../../../../web/upload/topic/';
+			dump($path);
+			$this->file->move($path, $this->getSlug().'.jpg');
+			
+			$uploadedfile = $path.$this->getSlug().'.jpg';
+			dump($uploadedfile);
+			$src = imagecreatefromjpeg($uploadedfile);
+			
+			list($width,$height) = getimagesize($uploadedfile);
+			$newWidth=205;
+			$newHeight=155;
+			$tmp = imagecreatetruecolor($newWidth,$newHeight);
+			imagecopyresampled($tmp, $src, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
 		
-		$uploadedfile = str_replace('\\', '/', __DIR__).'/../../../../../web/upload/topic/'.$this->file->getClientOriginalName();
-		dump($uploadedfile);
-		$src = imagecreatefromjpeg($uploadedfile);
-		
-		list($width,$height) = getimagesize($uploadedfile);
+			imagejpeg($tmp, $uploadedfile);
 
-		$newWidth=218;
-		$newHeight=155;
-		
-		$tmp = imagecreatetruecolor($newWidth,$newHeight);
-		
-		imagecopyresampled($tmp,$src,0,0,0,0,$newWidth,$newHeight,$width,$height);
-	
-		$filename = 'upload/topic/'.$this->getSlug().'.jpg';
-		
-		imagejpeg($tmp,$filename,100);
-
-		imagedestroy($src);
-		
-		imagedestroy($tmp);
-		
-        unset($this->file);
+			imagedestroy($src);
+			imagedestroy($tmp);
+			
+			unset($this->file);
+		}
     }
     
+    public function getThumbsPath()
+    {
+		$path = 'upload/topic/';
+		return $path.$this->getSlug().'.jpg';
+	}
+	    
     public function storeFilenameForRemove()
     {
-        $this->filenameForRemove = str_replace('\\', '/', __DIR__).'/../../../../../web/upload/topic/'.$this->getSlug().'.jpg';
+        $this->filenameForRemove = str_replace('\\', '/', __DIR__).'/../../../../web/upload/topic/'.$this->getSlug().'.jpg';
     }
 
     /**

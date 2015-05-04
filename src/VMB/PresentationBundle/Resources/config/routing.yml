@@ -17,3 +17,17 @@ vmb_presentation_ontology:
 vmb_presentation_homepage:
     path:     /
     defaults: { _controller: VMBPresentationBundle:Default:index }
+    
+vmb_presentation_browse:
+    path:     /browse/{page}
+    defaults: { _controller: "VMBPresentationBundle:Topic:browse", page: 1 }
+    requirements:
+        page: \d*
+        
+vmb_presentation_browse_topic:
+    path:     /browse/topic/{topic}/{page}
+    defaults: { _controller: "VMBPresentationBundle:Presentation:browseTopic", page: 1 }
+    requirements:
+        topic: \d{1,}
+        page: \d*
+    

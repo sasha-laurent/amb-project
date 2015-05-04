@@ -16,6 +16,17 @@ use VMB\PresentationBundle\Form\TopicType;
  */
 class TopicController extends Controller
 {
+	
+	public function browseAction()
+    {
+		$em = $this->getDoctrine()->getManager();
+        $entities = $em->getRepository('VMBPresentationBundle:Topic')->findAll();
+
+        return $this->render('VMBPresentationBundle:Topic:browse.html.twig', array(
+            'mainTitle' => 'Affichage des thématiques',
+            'entities' => $entities
+        ));
+    }
 
     /**
      * Lists all Topic entities.
@@ -92,7 +103,9 @@ class TopicController extends Controller
 			{
 				$em = $this->getDoctrine()->getManager();
 				$em->persist($topic);
+				$topic->preUpload();
 				$em->flush();
+				$topic->upload();
 
 				$flashMessage = !$topic->toString() ? 'Thématique ajoutée' : 'Thématique modifiée';
 				$request->getSession()->getFlashBag()->add('success', $flashMessage);

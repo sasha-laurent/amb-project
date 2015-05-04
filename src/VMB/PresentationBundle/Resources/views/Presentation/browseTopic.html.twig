@@ -1,0 +1,33 @@
+{% extends '::layout.html.twig' %}
+
+{% block h1_title %}
+	{{ mainTitle }}
+{% endblock %}
+
+{% block body %}
+	<div class="row">
+		{% for entity in entities %}
+		<div class="col-md-3">
+			<a class="thumbnail-link" href="{{ path('presentation_show', { 'id': entity.id }) }}">
+				<div class="thumbnail">
+					<img data-holder-rendered="true" src="{{ asset(entity.getThumbsPath) }}" style="height: 155px; width: 100%; display: block;" />
+				
+					<div class="caption">
+						<h3 id="thumbnail-label">{{ entity.title }}</h3>
+					</div>
+				</div>
+			</a>
+		</div>
+		{% else %}
+			{% set skipPagination = true %}
+			<div class="col-md-12">
+				<em>Aucune présentation publique dans cet espace</em>
+				<br/><br/>
+			</div>
+		{% endfor %}
+    </div>    
+    
+    {% if skipPagination is defined %}
+    {% include '::pagination.html.twig' %}
+    {% endif %}
+{% endblock %}

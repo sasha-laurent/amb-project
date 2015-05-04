@@ -3,6 +3,8 @@
 namespace VMB\PresentationBundle\Entity;
 
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -104,6 +106,22 @@ class Presentation
 	private $resources;
 	
 	private $sortedResources = null;
+	
+	/**
+     * @var string
+     *
+     * @Gedmo\Slug(fields={"title"},updatable=false)
+     * @ORM\Column(name="slug", type="string", length=128, unique=true)
+     * */
+    private $slug;
+    
+    /**
+     * @Assert\File(maxSize="128000000000")
+     * 
+     */
+    public $file;
+
+	private $filenameForRemove;
 
 
 	/**
@@ -462,5 +480,87 @@ class Presentation
     public function getOfficial()
     {
         return $this->official;
+    }
+    
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     * @return Resource
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get filename
+     *
+     * @return string 
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+    
+    public function preUpload()
+    {
+        
+    }
+
+    public function upload()
+    {
+        if (null === $this->file){
+            return;
+        }
+        $extension = strtolower(pathinfo($this->file->getClientOriginalName(), PATHINFO_EXTENSION));
+        if(in_array($extension, array('jpg', 'jpeg'))) {
+			$path = str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/';
+			dump($path);
+			$this->file->move($path, $this->getSlug().'.jpg');
+			
+			$uploadedfile = $path.$this->getSlug().'.jpg';
+			dump($uploadedfile);
+			$src = imagecreatefromjpeg($uploadedfile);
+			
+			list($width,$height) = getimagesize($uploadedfile);
+			$newWidth=205;
+			$newHeight=155;
+			$tmp = imagecreatetruecolor($newWidth,$newHeight);
+			imagecopyresampled($tmp, $src, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+		
+			imagejpeg($tmp, $uploadedfile);
+
+			imagedestroy($src);
+			imagedestroy($tmp);
+			
+			unset($this->file);
+		}
+    }
+    
+    public function getThumbsPath()
+    {
+		$path = 'upload/presentation/';
+		return $path.$this->getSlug().'.jpg';
+	}
+	    
+    public function storeFilenameForRemove()
+    {
+        $this->filenameForRemove = str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getSlug().'.jpg';
+    }
+
+    /**
+     * @ORM\PostRemove()
+     */
+    public function removeUpload()
+    {
+        if ($this->filenameForRemove) {
+			if(is_file($this->filenameForRemove)) {
+				unlink($this->filenameForRemove);
+			}
+           
+        }
     }
 }

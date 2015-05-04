@@ -18,6 +18,7 @@ class PresentationType extends AbstractType
             ->add('title', null, array('label'=> 'Titre'))
             ->add('description', null, array('label'=> 'Description'))
             ->add('duration', 'hidden')
+            ->add('file')
             ->add('save', 'submit')
         ;
     }

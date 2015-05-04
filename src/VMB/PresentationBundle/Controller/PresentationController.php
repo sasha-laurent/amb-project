@@ -61,6 +61,34 @@ class PresentationController extends Controller
         ));
     }
     
+    public function browseTopicAction($topic, $page)
+    {
+		if ($page < 1) {
+			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
+		}
+		
+		$nbPerPage = 12;
+		
+		$em = $this->getDoctrine()->getManager();
+		$topic = $em->getRepository('VMBPresentationBundle:Topic')->find($topic);
+        $entities = $em->getRepository('VMBPresentationBundle:Presentation')->getPresentations($page, $nbPerPage, $topic);
+        
+        // On calcule le nombre total de pages grâce au count($listAdverts) qui retourne le nombre total d'annonces
+		$nbPages = ceil(count($entities)/$nbPerPage);
+		
+		// Si la page n'existe pas, on retourne une 404
+		if ($page > $nbPages && $page != 1) {
+			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
+		}
+
+        return $this->render('VMBPresentationBundle:Presentation:browseTopic.html.twig', array(
+            'mainTitle' => $topic->getTitle().' - Présentations',
+            'entities' => $entities,
+			'nbPages'  => $nbPages,
+			'page'     => $page
+        ));
+    }
+    
     /**
     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
     */
@@ -78,7 +106,7 @@ class PresentationController extends Controller
 		$nbPerPage = 12;
 
 		// On récupère notre objet Paginator
-        $entities = $em->getRepository('VMBPresentationBundle:Presentation')->getPresentations($page, $nbPerPage, 'all', 'all', $this->getUser());
+        $entities = $em->getRepository('VMBPresentationBundle:Presentation')->getPresentations($page, $nbPerPage, null, 'all', 'all', $this->getUser());
         $request = $this->get('request');
 		if ($request->isMethod('GET')) 
 		{
@@ -490,7 +518,9 @@ class PresentationController extends Controller
 				$workingPresentation->setDuration($totalDuration);
 				$workingPresentation->setOwner($this->getUser());
 				$em->persist($workingPresentation);
+				$workingPresentation->preUpload();
 				$em->flush();
+				$workingPresentation->upload();
 
 				$flashMessage = !$workingPresentation->toString() ? 'Présentation ajoutée' : 'Présentation modifiée';
 				$request->getSession()->getFlashBag()->add('success', $flashMessage);

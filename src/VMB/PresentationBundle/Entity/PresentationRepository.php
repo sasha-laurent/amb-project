@@ -13,11 +13,16 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
  */
 class PresentationRepository extends EntityRepository
 {
-	public function getPresentations($page, $nbPerPage, $public=true, $official=true, $user = null)
+	public function getPresentations($page, $nbPerPage, $topic=null, $public=true, $official=true, $user = null)
 	{
 		$builder = $this->createQueryBuilder('p')
 					  ->orderBy('p.dateUpdate', 'DESC');
-					  
+		
+		if($topic != null) {
+			$builder->andWhere('p.topic = :topic')
+			->setParameter('topic', $topic);
+		}
+			  
 		if(is_bool($public)) {
 			$builder->andWhere('p.public = :public')
 			->setParameter('public', $public);

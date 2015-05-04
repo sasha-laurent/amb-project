@@ -1,0 +1,23 @@
+{% extends '::layout.html.twig' %}
+
+{% block h1_title %}
+	Parcourir les présentations
+{% endblock %}
+
+{% block body %}
+	<div class="row">
+		{% for entity in entities %}
+		<div class="col-md-3">
+			<a class="thumbnail-link" href="{{ path('vmb_presentation_browse_topic', { 'topic': entity.id }) }}">
+				<div class="thumbnail">
+					<img data-holder-rendered="true" src="{{ asset(entity.getThumbsPath) }}" style="height: 155px; width: 100%; display: block;" />
+				
+					<div class="caption">
+						<h3 id="thumbnail-label">{{ entity.title }}</h3>
+					</div>
+				</div>
+			</a>
+		</div>
+		{% endfor %}
+    </div>    
+{% endblock %}
