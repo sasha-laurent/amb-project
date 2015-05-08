@@ -13,7 +13,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
  */
 class PresentationRepository extends EntityRepository
 {
-	public function getPresentations($page, $nbPerPage, $topic=null, $public=true, $official=true, $user = null)
+	public function getPresentations($page, $nbPerPage, $topic=null, $public=true, $official=true, $default='all', $user = null)
 	{
 		$builder = $this->createQueryBuilder('p')
 					  ->orderBy('p.dateUpdate', 'DESC');
@@ -31,6 +31,11 @@ class PresentationRepository extends EntityRepository
 		if(is_bool($official)) {
 			$builder->andWhere('p.official = :official')
 			->setParameter('official', $official);
+		}
+		
+		if(is_bool($default)) {
+			$builder->andWhere('p.default = :default')
+			->setParameter('default', $default);
 		}
 		
 		if($user != null) {

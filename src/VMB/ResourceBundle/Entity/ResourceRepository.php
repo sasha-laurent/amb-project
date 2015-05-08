@@ -3,6 +3,7 @@
 namespace VMB\ResourceBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * ResourceRepository
@@ -12,12 +13,41 @@ use Doctrine\ORM\EntityRepository;
  */
 class ResourceRepository extends EntityRepository
 {
+	public function getResources($page, $nbPerPage, $topic=null, $official=true, $user = null)
+	{
+		$builder = $this->createQueryBuilder('r')
+			->orderBy('r.type');
+		
+		if($topic != null) {
+			$builder->innerJoin('r.topic', 't')
+			->where('t = :topic')
+			->setParameter('topic', $topic);
+		}
+		
+		if(is_bool($official)) {
+			$builder->andWhere('r.trusted = :official')
+			->setParameter('official', $official);
+		}
+		
+		if($user != null) {
+			$builder->andWhere('r.owner = :user')->setParameter('user', $user);
+		}
+
+		$query = $builder->getQuery();
+		$query->setFirstResult(($page-1) * $nbPerPage)
+			  ->setMaxResults($nbPerPage);
+
+		return new Paginator($query, true);
+	}
+	
+	
 	public function findByTopicSortedByType($topic, $official =  true, $user = null, $exclusive = false)
 	{
 		$qb = $this
 			->createQueryBuilder('r')
 			->orderBy('r.type')
-			->where('r.topic = :topic')
+			->innerJoin('r.topic', 't')
+			->where('t = :topic')
 			->setParameter('topic', $topic)
 		;
 		
@@ -47,7 +77,8 @@ class ResourceRepository extends EntityRepository
 		$qb->where('r.title LIKE :keyword')->setParameter('keyword', '%'.$keyword.'%');
 		
 		if($topicId !== null) {
-			$qb->andWhere('IDENTITY(r.topic) = :topicId')->setParameter('topicId', $topicId);
+			$qb->innerJoin('r.topic', 't')
+			->where('t.topic = :topic')->andWhere('IDENTITY(t.id) = :topicId')->setParameter('topicId', $topicId);
 		}
 
 		return $qb

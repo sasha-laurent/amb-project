@@ -1,3 +1,16 @@
 vmb_resource_resource:
     resource: "@VMBResourceBundle/Resources/config/routing/resource.yml"
     prefix:   /resource
+
+vmb_resource_browse:
+    path:     /resource/browse/{page}
+    defaults: { _controller: "VMBResourceBundle:Resource:browse", page: 1 }
+    requirements:
+        page: \d*
+        
+vmb_resource_browse_topic:
+    path:     /resource/browse/topic/{topic}/{page}
+    defaults: { _controller: "VMBResourceBundle:Resource:browse", page: 1 }
+    requirements:
+        topic: \d{1,}
+        page: \d*

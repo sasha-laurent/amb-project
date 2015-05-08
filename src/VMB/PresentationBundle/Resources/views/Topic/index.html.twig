@@ -10,18 +10,6 @@
 		</div>
 	</div>
 	
-	<ul class="list-group" id="sortable">
-        {% for entity in entities %}
-			<li class="list-group-item row">					
-				<div class="col-md-10"><a href="{{ path('topic_show', { 'id': entity.id }) }}">{{ entity.title }}</a></div>
-                <div class="col-md-2 text-center">				
-					<div class="btn-group" role="group" aria-label="...">
-						<a href="{{ path('topic_edit', {'id' : entity.id}) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-						<a href="{{ path('topic_delete', {'id' : entity.id}) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
-					</div>
-				</div>
-            </li>
-        {% endfor %}
-    </ul>
+	{% include "VMBPresentationBundle:Topic:indexLinks.html.twig" with {'links': entities} %}
     
 {% endblock %}

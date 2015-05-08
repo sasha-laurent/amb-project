@@ -17,17 +17,6 @@ use VMB\PresentationBundle\Form\TopicType;
 class TopicController extends Controller
 {
 	
-	public function browseAction()
-    {
-		$em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository('VMBPresentationBundle:Topic')->findAll();
-
-        return $this->render('VMBPresentationBundle:Topic:browse.html.twig', array(
-            'mainTitle' => 'Affichage des thématiques',
-            'entities' => $entities
-        ));
-    }
-
     /**
      * Lists all Topic entities.
      *
@@ -35,7 +24,7 @@ class TopicController extends Controller
     public function indexAction()
     {
 		$em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository('VMBPresentationBundle:Topic')->findAll();
+        $entities = $em->getRepository('VMBPresentationBundle:Topic')->childrenHierarchy();
 
         return $this->render('VMBPresentationBundle:Topic:index.html.twig', array(
             'mainTitle' => 'Affichage des thématiques',
@@ -139,7 +128,6 @@ class TopicController extends Controller
 				dump($e);
 				$request->getSession()->getFlashBag()->add('danger',"An error occured");
 			}
-			return new Response('<body>ds</body>');
 			return $this->redirect($this->generateUrl('topic'));
 		}
 

@@ -20,13 +20,13 @@ vmb_presentation_homepage:
     
 vmb_presentation_browse:
     path:     /browse/{page}
-    defaults: { _controller: "VMBPresentationBundle:Topic:browse", page: 1 }
+    defaults: { _controller: "VMBPresentationBundle:Presentation:browse", page: 1 }
     requirements:
         page: \d*
         
 vmb_presentation_browse_topic:
     path:     /browse/topic/{topic}/{page}
-    defaults: { _controller: "VMBPresentationBundle:Presentation:browseTopic", page: 1 }
+    defaults: { _controller: "VMBPresentationBundle:Presentation:browse", page: 1 }
     requirements:
         topic: \d{1,}
         page: \d*

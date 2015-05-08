@@ -3,6 +3,8 @@
 namespace VMB\PresentationBundle\Entity;
 
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -39,20 +41,27 @@ class Presentation
     /**
      * @var boolean
      *
-     * @ORM\Column(name="public", type="boolean")
+     * @ORM\Column(name="public", type="boolean", options={"default":0})
      */
-    private $public;
+    private $public = 0;
     
     /**
      * @var boolean
      *
-     * @ORM\Column(name="official", type="boolean")
+     * @ORM\Column(name="official", type="boolean", options={"default":0})
      */
-    private $official;
+    private $official = 0;
+    
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="default", type="boolean", options={"default":0})
+     */
+    private $default = 0;
 
     /**
      * @var \DateTime
-     
+     *
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="dateCreation", type="date")
      */
@@ -60,7 +69,7 @@ class Presentation
 
     /**
      * @var \DateTime
-     
+     *
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(name="dateUpdate", type="date")
      */
@@ -82,28 +91,44 @@ class Presentation
     
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\UserBundle\Entity\User")
-	* @ORM\JoinColumn(nullable=false) 
+	* @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
 	*/
 	private $owner;
     
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Matrix")
-	* @ORM\JoinColumn(nullable=false) 
+	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE") 
 	*/
 	private $matrix;
 	
 	/**
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Topic")
-	* @ORM\JoinColumn(nullable=false)
+	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
 	*/
 	private $topic;
 	
 	/**
-	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\CheckedResource", mappedBy="presentation", cascade={"remove", "persist"})
+	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\CheckedResource", mappedBy="presentation", cascade={"remove", "persist", "detach"})
 	*/
 	private $resources;
 	
 	private $sortedResources = null;
+	
+	/**
+     * @var string
+     *
+     * @Gedmo\Slug(fields={"title"},updatable=false)
+     * @ORM\Column(name="slug", type="string", length=128, unique=true)
+     * */
+    private $slug;
+    
+    /**
+     * @Assert\File(maxSize="128000000000")
+     * 
+     */
+    public $file;
+
+	private $filenameForRemove;
 
 
 	/**
@@ -347,6 +372,11 @@ class Presentation
     {
         $this->resources->removeElement($resources);
     }
+    
+    public function clearResources()
+    {
+		$this->resources->clear();
+	}
 
     /**
      * Get resources
@@ -383,8 +413,10 @@ class Presentation
     private function sortResources()
     {
 		$this->sortedResources = array();
-		foreach($this->resources as $resource) {
-			$this->sortedResources[$resource->getUsedResource()->getId()] = $resource;
+		if($this->resources != null) {
+			foreach($this->resources as $resource) {
+				$this->sortedResources[$resource->getUsedResource()->getId()] = $resource;
+			}
 		}
 	}
 
@@ -409,5 +441,133 @@ class Presentation
     public function getTopic()
     {
         return $this->topic;
+    }
+
+    /**
+     * Set public
+     *
+     * @param boolean $public
+     * @return Presentation
+     */
+    public function setPublic($public)
+    {
+        $this->public = $public;
+
+        return $this;
+    }
+
+    /**
+     * Get public
+     *
+     * @return boolean 
+     */
+    public function getPublic()
+    {
+        return $this->public;
+    }
+
+    /**
+     * Set official
+     *
+     * @param boolean $official
+     * @return Presentation
+     */
+    public function setOfficial($official)
+    {
+        $this->official = $official;
+
+        return $this;
+    }
+
+    /**
+     * Get official
+     *
+     * @return boolean 
+     */
+    public function getOfficial()
+    {
+        return $this->official;
+    }
+    
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     * @return Resource
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get filename
+     *
+     * @return string 
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+    
+    public function preUpload()
+    {
+        
+    }
+
+    public function upload()
+    {
+        if (null === $this->file){
+            return;
+        }
+        $extension = strtolower(pathinfo($this->file->getClientOriginalName(), PATHINFO_EXTENSION));
+        if(in_array($extension, array('jpg', 'jpeg'))) {
+			$path = str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/';
+			dump($path);
+			$this->file->move($path, $this->getSlug().'.jpg');
+			
+			$uploadedfile = $path.$this->getSlug().'.jpg';
+			dump($uploadedfile);
+			$src = imagecreatefromjpeg($uploadedfile);
+			
+			list($width,$height) = getimagesize($uploadedfile);
+			$newWidth=205;
+			$newHeight=155;
+			$tmp = imagecreatetruecolor($newWidth,$newHeight);
+			imagecopyresampled($tmp, $src, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+		
+			imagejpeg($tmp, $uploadedfile);
+
+			imagedestroy($src);
+			imagedestroy($tmp);
+			
+			unset($this->file);
+		}
+    }
+    
+    public function getThumbsPath()
+    {
+		$path = 'upload/presentation/';
+		return $path.$this->getSlug().'.jpg';
+	}
+	    
+    public function storeFilenameForRemove()
+    {
+        $this->filenameForRemove = str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getSlug().'.jpg';
+    }
+
+    /**
+     * @ORM\PostRemove()
+     */
+    public function removeUpload()
+    {
+        if ($this->filenameForRemove) {
+			if(is_file($this->filenameForRemove)) {
+				unlink($this->filenameForRemove);
+			}
+           
+        }
     }
 }

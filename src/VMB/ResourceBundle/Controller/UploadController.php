@@ -30,7 +30,6 @@ class UploadController extends Controller
             {
                 $em = $this->getDoctrine()->getManager();
                 
-                $resource->setOwner($this->getUser());
                 $em->persist($resource);
                 $em->flush();
 
@@ -52,6 +51,7 @@ class UploadController extends Controller
     public function newAction(Request $request)
     {
         $resource = new Resource();
+        $resource->setOwner($this->getUser());
         return $this->renderForm($resource);
     }
 

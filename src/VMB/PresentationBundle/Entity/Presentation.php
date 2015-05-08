@@ -51,6 +51,13 @@ class Presentation
      * @ORM\Column(name="official", type="boolean", options={"default":0})
      */
     private $official = 0;
+    
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="`default`", type="boolean", options={"default":0})
+     */
+    private $default = 0;
 
     /**
      * @var \DateTime
@@ -141,7 +148,7 @@ class Presentation
      */
     public function isOwner(\VMB\UserBundle\Entity\User $user = null)
     {
-        return $user && $user->getId() == $this->getOwner()->getId();
+        return $user && $this->getOwner() && $user->getId() == $this->getOwner()->getId();
     }
 
     /**
@@ -542,8 +549,10 @@ class Presentation
     
     public function getThumbsPath()
     {
-		$path = 'upload/presentation/';
-		return $path.$this->getSlug().'.jpg';
+		if(is_file(str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getSlug().'.jpg')) {
+			return 'upload/presentation/'.$this->getSlug().'.jpg';
+		}
+		else return 'img/icon/default_topic_thumb.jpg';
 	}
 	    
     public function storeFilenameForRemove()
@@ -562,5 +571,28 @@ class Presentation
 			}
            
         }
+    }
+
+    /**
+     * Set default
+     *
+     * @param boolean $default
+     * @return Presentation
+     */
+    public function setDefault($default)
+    {
+        $this->default = $default;
+
+        return $this;
+    }
+
+    /**
+     * Get default
+     *
+     * @return boolean 
+     */
+    public function getDefault()
+    {
+        return $this->default;
     }
 }

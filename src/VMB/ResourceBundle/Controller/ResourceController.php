@@ -32,6 +32,46 @@ class ResourceController extends Controller
             'entities' => $entities
         ));
     }
+    
+    public function browseAction($page, $topic=null)
+    {
+		if ($page < 1) {
+			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
+		}
+		
+		$nbPerPage = 12;
+		$em = $this->getDoctrine()->getManager();
+		$topics = $em->getRepository('VMBPresentationBundle:Topic')->childrenHierarchy();
+		
+		
+		$mainTitle = 'Parcourir les ressources';
+		if($topic != null) {
+			$topic = $em->getRepository('VMBPresentationBundle:Topic')->find($topic);
+			$mainTitle = $topic->getTitle().' - Ressources';
+		}
+		
+		$request = $this->get('request');
+		$official = ($request->query->get('official') == 1) ? true : 'all';
+		
+        $entities = $em->getRepository('VMBResourceBundle:Resource')->getResources($page, $nbPerPage, $topic, $official);
+        
+        // On calcule le nombre total de pages grâce au count($listAdverts) qui retourne le nombre total d'annonces
+		$nbPages = ceil(count($entities)/$nbPerPage);
+		
+		// Si la page n'existe pas, on retourne une 404
+		if ($page > $nbPages && $page != 1) {
+			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
+		}
+
+        return $this->render('VMBResourceBundle:Resource:browseTopic.html.twig', array(
+            'mainTitle' => $mainTitle,
+            'topic' 	=> $topic,
+            'topics' 	=> $topics,
+            'entities' 	=> $entities,
+			'nbPages'  	=> $nbPages,
+			'page'     	=> $page
+        ));
+    }
 
     /**
      * Finds and displays a Resource entity.

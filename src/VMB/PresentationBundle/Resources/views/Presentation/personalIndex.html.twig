@@ -6,9 +6,13 @@
     <div class="panel panel-default">
 		<div class="panel-heading">
 			<div class="row">				
-				<div class="col-md-7">Titre</div>			
+				<div class="col-md-{% if is_granted('ROLE_TEACHER') %}6{% else %}8{% endif %}">Titre</div>			
 				<div class="col-md-1 text-center">Durée</div>
-				<div class="col-md-2 text-center">Publique</div>				
+				<div class="col-md-1 text-center">Publique</div>
+				{% if is_granted('ROLE_TEACHER') %}
+				<div class="col-md-1 text-center">Défaut</div>
+				<div class="col-md-1 text-center">Officiel</div>
+				{% endif %}				
 				<div class="col-md-2 text-center">Action</div>
         	</div>
 		</div>
@@ -17,15 +21,41 @@
 	<ul class="list-group">
         {% for entity in entities %}
 			<li class="list-group-item row">
-				<div class="col-md-7"><a href="{{ path('presentation_show', { 'id': entity.id }) }}"><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> {{ entity.title }}</a></div>
+				<div class="col-md-{% if is_granted('ROLE_TEACHER') %}6{% else %}8{% endif %}"><a href="{{ path('presentation_show', { 'id': entity.id }) }}"><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> {{ entity.title }}</a></div>
                 <div class="col-md-1 text-center">{{ "%02d"|format(entity.duration // 60) }}:{{ "%02d"|format(entity.duration % 60) }}</div>
-                <div class="col-md-2 text-center">
-					{% if entity.public %}
-					<a type="button" class="btn switch-public" href="{{ path('presentation_perso') }}?switch={{ entity.id }}"><span class="shown-value">Publique</span><span class="hidden-value">Privée</span></a>
+                <div class="col-md-1 text-center">
+					<a type="button" class="btn switch" href="{{ path('presentation_perso', {'id': entity.id, 'public': (entity.public+1)%2}) }}">
+						{% if entity.public==1 %}
+							<span class="shown-value glyphicon glyphicon-ok"></span>
+							<span class="hidden-value glyphicon glyphicon-minus"></span>
+						{% else %}
+							<span class="shown-value glyphicon glyphicon-minus"></span>
+							<span class="hidden-value glyphicon glyphicon-ok"></span>
+						{% endif %}
+					</a>
+				</div>
+				{% if is_granted('ROLE_TEACHER') %}
+				<div class="col-md-1 text-center">
+					{% if entity.default %}
+					<a type="button" class="btn switch" href="{{ path('presentation_perso', {'id': entity.id, 'default': (entity.default+1)%2}) }}">
+						<span class="shown-value glyphicon glyphicon-ok"></span>
+						<span class="hidden-value glyphicon glyphicon-minus"></span>
+					</a>
 					{% else %}
-					<a type="button" class="btn switch-private" href="{{ path('presentation_perso') }}?switch={{ entity.id }}"><span class="shown-value">Privée</span><span class="hidden-value">Publique</span></a>
+					<a type="button" class="btn switch" href="{{ path('presentation_perso', {'id': entity.id, 'default': (entity.default+1)%2}) }}">
+						<span class="shown-value glyphicon glyphicon-minus"></span>
+						<span class="hidden-value glyphicon glyphicon-ok"></span>
+					</a>
 					{% endif %}
 				</div>
+				<div class="col-md-1 text-center">
+					{% if entity.official %}
+						<span class="label label-success">oui</span>
+					{% else %}
+						<span class="label label-danger">non</span>
+					{% endif %}
+				</div>
+				{% endif %}	
                 <div class="col-md-2 text-center">				
 					<div class="btn-group" role="group" aria-label="...">
 						{% if is_granted('ROLE_TEACHER') or entity.isOwner(app.user) %}

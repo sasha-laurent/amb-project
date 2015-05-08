@@ -100,7 +100,7 @@
 			<span class="suggestedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Suggérée en complément
 		</i>
 	</div>
-	{%  if copy %}
+	{% if copy %}
 	<div class="text-center">
 		<br/>
 		<button id="save_new_presentation" class="wide-btn btn btn-info" role="button" type="button"><span class="left glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Sauvegarder ma sélection</button>
@@ -118,42 +118,69 @@
 		<div class="col-sm-5">
 			{% set totalDuration = 0 %}
 			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Liste de lecture choisie</h4>
-			<ul class="list-group" id="file_list">
-				{% if copy == false %}
-				{% for res in presentation.resources %}
-					{% if res.suggested == false %}
-						{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
-						<li class="list-group-item playableResource playableRes_{{res.usedResource.id}}" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
-							<div class="row">
-								<div class="col-sm-8">{{ res.usedResource.resource.title }}</div>
-								<div class="col-sm-2">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
-								<div class="col-sm-2 text-right"><a class="rmRes" id="rmRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
-								<input type="hidden" id="usedResource_{{ res.usedResource.id }}" name="usedResource_{{ res.usedResource.id }}" value="{{ res.sort }}" />
-							</div>
-						</li>
-					{% endif %}
-				{% endfor %}
-				{% endif %}
-			</ul>
-			<p class="text-right">
-				Durée totale : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
-			</p>
+			{% if not copy %}
+				<div role="tab-panel">
+					<ul class="nav nav-tabs" role="tablist">
+						<li role="presentation" class="active" id="playlist-tab-toggle"><a href="#playlist_tab" aria-controls="playlist_tab" role="tab" data-toggle="tab">Liste de lecture</a></li>
+						<li role="presentation" id="suggestion-tab-toggle"><a href="#suggestion_tab" aria-controls="suggestion_tab" role="tab" data-toggle="tab">Suggestions</a></li>
+					</ul>
+					<div class="tab-content">
+						<div role="tabpanel" class="tab-pane active" id="playlist_tab">
+			{% endif %}
+							<ul class="list-group" id="file_list">
+								{% if copy == false %}
+									{% for res in presentation.resources %}
+										{% if res.suggested == false %}
+											{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
+											<li class="list-group-item playableResource playableRes_{{res.usedResource.id}}" id="addedRes_{{ res.usedResource.id }}" data-type="used" data-id="{{ res.usedResource.id }}">
+												<div class="row">
+													<div class="col-sm-8">{{ res.usedResource.resource.title }}</div>
+													<div class="col-sm-2">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
+													<div class="col-sm-2 text-right"><a class="rmRes" id="rmRes_{{ res.usedResource.id }}" data-type="used" data-id="{{ res.usedResource.id }}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
+													<input type="hidden" id="usedResource_{{ res.usedResource.id }}" name="usedResource_{{ res.usedResource.id }}" value="{{ res.sort }}" />
+												</div>
+											</li>
+										{% endif %}
+									{% endfor %}
+								{% endif %}
+							</ul>
+							<p class="text-right">
+								Durée totale : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
+							</p>
+						{% if not copy %}
+						</div>
+						<!-- Suggestions -->
+						<div role="tabpanel" class="tab-pane" id="suggestion_tab">
+							<ul class="list-group" id="suggestion_list">
+							{% for res in presentation.resources %}
+								{% if res.suggested == true %}
+									{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
+									<li class="list-group-item playableResource suggestedRes_{{res.usedResource.id}}" id="suggestedRes_{{ res.usedResource.id }}" data-type="suggestion" data-id="{{ res.usedResource.id }}">
+										<div class="row">
+											<div class="col-sm-8">{{ res.usedResource.resource.title }}</div>
+											<div class="col-sm-2">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
+											<div class="col-sm-2 text-right"><a class="rmRes" id="rmRes_{{ res.usedResource.id }}" data-type="suggestion" data-id="{{ res.usedResource.id }}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
+											<input type="hidden" id="suggestedResource_{{ res.usedResource.id }}" name="suggestedResource_{{ res.usedResource.id }}" value="{{ res.sort }}" />
+										</div>
+									</li>
+								{% endif %}
+							{% endfor %}
+							</ul>
+						</div>
+					</div><!-- .tab-content -->
+				</div><!-- role=tab-panel -->
+			{% endif %}
 		</div>
 	</div>
 	{{ form_widget(form.save, {'attr': {'style': 'display:none;', 'class': 'btn btn-primary'}}) }}
 	{{ form_rest(form) }}
 	{# Fermeture de la balise <form> du formulaire HTML #}
-	{% for res in presentation.resources %}
-		{% if res.suggested %}
-			<input type="hidden" id="suggested_{{ res.usedResource.id }}" name="suggested_{{ res.usedResource.id }}" value="1" />
-		{% endif %}
-	{% endfor %}
 	{{ form_end(form) }}
 {% endblock %}
 
 {% block script %}
 	{{ parent() }}
-	<script>
+	<script>		
 		resourcesCollection = {
 			{% for usedRes in matrix.resources %}
 				{{ usedRes.id }}: {
@@ -185,13 +212,13 @@
 					$(document.querySelectorAll(".player")[1]).show();
 					player = document.querySelectorAll(".player")[1].plyr;
 					player.source(res['src']);
-					player.play();
+					//player.play();
 				}
 				else if(res['type'] == 'video') {
 					$(document.querySelectorAll(".player")[0]).show();
 					player = document.querySelectorAll(".player")[0].plyr;
 					player.source(res['src']);
-					player.play();
+					//player.play();
 				}
 			}
 		}
@@ -227,15 +254,109 @@
 			});
 		}
 		
-		function deleteFromPlaylist(resId) {
-			$('#addedRes_' + resId).remove();
-			$('#usedRes_' + resId).removeClass('checkedRes');
-			sortAllItems('#file_list li');
+		function deleteFromPlaylist(resId, type) {
+			if(type == 'used') {
+				$('#addedRes_' + resId).remove();
+				$('#usedRes_' + resId).removeClass('checkedRes');
+				sortAllItems('#file_list li');
+				addToDuration(-parseInt($('#usedRes_' + resId).attr('data-duration'), 10));
+			}
+			else {
+				$('#suggestedRes_' + resId).remove();
+				$('#usedRes_' + resId).removeClass('suggestedRes');
+				sortAllItems('#suggestion_list li');
+			}
 		}
 		
+		function addToPlaylist(resId, title, type) {
+			if(type == 'used') {
+				$('#usedRes_' + resId).addClass('checkedRes');
+				$('#file_list').append(generateNewItem(resId, title, 'used'));
+				$('#rmRes_' + resId).click(function() 	 { deleteFromPlaylist($(this).attr('data-id'), 'used'); });
+				addToDuration(parseInt($('#usedRes_' + resId).attr('data-duration'), 10));
+			}
+			else {
+				$('#usedRes_' + resId).addClass('suggestedRes');
+				$('#suggestion_list').append(generateNewItem(resId, title, 'suggestion'));
+				$('#rmRes_' + resId).click(function() 	 { deleteFromPlaylist($(this).attr('data-id'), 'suggestion'); });
+			}
+			$('.playableRes_' + resId).click(function() { triggerNewRes($(this).attr('data-id'));});
+		}
+		
+		function generateNewItem(id, title, type) {
+			var duration = parseInt($('#usedRes_' + id).attr('data-duration'), 10);
+			if(type=='used') {
+				return '<li class="list-group-item playableResource playableRes_' + id + '" id="addedRes_' + id + '" data-type="used" data-id="' + id + '"><div class="row"> \
+					<div class="col-sm-8">' + title + '</div> \
+					<div class="col-sm-2">' + convertDurationToString(duration) + '</div> \
+					<div class="col-sm-2 text-right"><a id="rmRes_' + id + '" data-type="used" data-id="' + id + '"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div> \
+					<input type="hidden" id="usedResource_' + id + '" name="usedResource_' + id + '" value="' + $('#file_list li').length + '" />\
+					</div></li>';
+			}
+			else {
+				return '<li class="list-group-item playableResource playableRes_' + id + '" id="suggestedRes_' + id + '" data-type="suggestion" data-id="' + id + '"><div class="row"> \
+					<div class="col-sm-8">' + title + '</div> \
+					<div class="col-sm-2">' + convertDurationToString(duration) + '</div> \
+					<div class="col-sm-2 text-right"><a id="rmRes_' + id + '" data-type="suggestion" data-id="' + id + '"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div> \
+					<input type="hidden" id="suggestedResource_' + id + '" name="suggestedResource_' + id + '" value="' + $('#suggestion_list li').length + '" />\
+					</div></li>'
+			}
+		}
+		
+		
 		$(function () {
+			$('#file_list li').draggable({
+				zIndex: 100000,
+				revert: true,
+				revertDuration: 0,
+				connectToSortable: "#file_list"
+			});
+
+			$("#playlist-tab-toggle").droppable({
+				accept: '#suggestion_list li',
+				tolerance: 'touch',
+				over: function (event, ui) {
+					//workaround for bug http://bugs.jqueryui.com/ticket/6259
+					ui.helper.removeData('overSortable');
+				}, 
+				drop: function (event, ui) {
+					//workaround for bug http://bugs.jqueryui.com/ticket/6259
+					if (ui.helper.data('overSortable') != null) {
+						ui.helper.removeData('overSortable'); return;
+					}
+					addToPlaylist(ui.draggable.attr('data-id'), resourcesCollection[ui.draggable.attr('data-id')]['title'], 'used')
+					deleteFromPlaylist(ui.draggable.attr('data-id'), 'suggestion');
+					ui.draggable.remove();
+				}
+			});
+			
+			$("#suggestion-tab-toggle").droppable({
+				accept: '#file_list li',
+				tolerance: 'touch',
+				over: function (event, ui) {
+					//workaround for bug http://bugs.jqueryui.com/ticket/6259
+					ui.helper.removeData('overSortable');
+				}, 
+				drop: function (event, ui) {
+					//workaround for bug http://bugs.jqueryui.com/ticket/6259
+					if (ui.helper.data('overSortable') != null) {
+						ui.helper.removeData('overSortable'); return;
+					}
+					addToPlaylist(ui.draggable.attr('data-id'), resourcesCollection[ui.draggable.attr('data-id')]['title'], 'suggestion')
+					deleteFromPlaylist(ui.draggable.attr('data-id'), 'used');
+					ui.draggable.remove();
+				}
+			});
+			
 			$('[data-toggle="popover"]').popover();
-			$('#file_list').sortable();
+			$('#file_list').sortable({
+				out: function (event, ui) {
+					//workaround for bug http://bugs.jqueryui.com/ticket/6259
+					ui.helper.data('overSortable', true);
+				}
+			}).droppable({
+				accept: '#none'
+			});
 			$( "#file_list" ).on( "sortupdate", function( event, ui ) { 
 				sortAllItems('#file_list li');
 			} );
@@ -253,40 +374,45 @@
 				});
 			} );
 			
+			$('#suggestion_list').sortable().droppable({
+				accept: '#none'
+			});
+			$( "#suggestion_list" ).on( "sortupdate", function( event, ui ) { 
+				sortAllItems('#suggestion_list li');
+			} );
+			
+			$( "#suggestion_list" ).on( "sortupdate", function( event, ui ) { 
+				var input = ui.item.find('input');
+				input.attr('name', input.attr('id'));
+				
+				
+				$( "#suggestion_list li" ).each(function( index ) {
+					input = $(this).find('input');
+					if(input.attr('name') !== undefined) {
+						input.val(index);
+					}
+				});
+			} );
+			
 			$('.rmRes').click(function() {
-				deleteFromPlaylist($(this).attr('data-id'));
+				deleteFromPlaylist($(this).attr('data-id'), $(this).attr('data-type'));
 			});
 			
 			$('.resThumbnailHover').click(function(){
 				var duration = parseInt($('#usedRes_' + $(this).attr('data-id')).attr('data-duration'), 10);
 				
 				if($(this).hasClass('checkedRes')) {
-					$('#addedRes_' + $(this).attr('data-id')).remove();
-					$(this).removeClass('checkedRes');
-					{% if copy == false %}$(this).addClass('suggestedRes');{% endif %}
-					$('#presentation_form').append('<input type="hidden" id="suggested_'+$(this).attr('data-id')+'" name="suggested_'+$(this).attr('data-id')+'" value="1" />');
+					deleteFromPlaylist($(this).attr('data-id'), 'used');
 					
-					addToDuration(-duration);
+					{% if copy == false %}
+					addToPlaylist($(this).attr('data-id'), $(this).attr('data-title'), 'suggestion');
+					{% endif %}
 				}
 				else if($(this).hasClass('suggestedRes')) {
-					$(this).removeClass('suggestedRes');
-					$('#suggested_'+$(this).attr('data-id')).remove();
+					deleteFromPlaylist($(this).attr('data-id'), 'suggestion');
 				}
 				else {
-					$('#file_list').append('<li class="list-group-item playableResource playableRes_' + $(this).attr('data-id') + '" id="addedRes_' + $(this).attr('data-id') + '" data-id="' + $(this).attr('data-id') + '"><div class="row"> \
-							<div class="col-sm-8">' + $(this).attr('data-title') + '</div> \
-							<div class="col-sm-2">' + convertDurationToString(duration) + '</div> \
-							<div class="col-sm-2 text-right"><a id="rmRes_' + $(this).attr('data-id') + '" data-id="' + $(this).attr('data-id') + '"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div> \
-							<input type="hidden" id="usedResource_' + $(this).attr('data-id') + '" name="usedResource_' + $(this).attr('data-id') + '" value="' + $('#file_list li').length + '" />\
-							</div></li>');
-					$('#rmRes_' + $(this).attr('data-id')).click(function() {
-						deleteFromPlaylist($(this).attr('data-id'));
-					});
-					$('.playableRes_' + $(this).attr('data-id')).click(function() {
-						triggerNewRes($(this).attr('data-id'));
-					});
-					$(this).addClass('checkedRes');
-					addToDuration(duration);
+					addToPlaylist($(this).attr('data-id'), $(this).attr('data-title'), 'used');
 				}
 			});
 		})

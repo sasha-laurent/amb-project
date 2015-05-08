@@ -64,19 +64,25 @@ class MatrixController extends Controller
             throw $this->createNotFoundException('Unable to find Matrix entity.');
         }
         
-        $validResources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic(), true);
-        $personalResources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic(), null, $this->getUser());
-        $unofficialResources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic(), false, $this->getUser(), true);
+        if($this->get('security.context')->isGranted('ROLE_ADMIN') || $entity->isOwner($this->getUser())) {					
+			$validResources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic(), true);
+			$personalResources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic(), null, $this->getUser());
+			$unofficialResources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic(), false, $this->getUser(), true);
 
-        return $this->render('VMBPresentationBundle:Matrix:show.html.twig', array(
-            'mainTitle' => $entity->getTitle(),
-			'backButtonUrl' => $this->generateUrl('matrix'),
-			'editButtonUrl' => $this->generateUrl('matrix_edit', array('id' => $entity->getId())),
-			'delButtonUrl' => $this->generateUrl('matrix_delete', array('id' => $entity->getId())),
-			'entity' => $entity,
-			'resources' => array('official' => $validResources, 'personal' => $personalResources, 'unofficial' => $unofficialResources),
-			'alertDismissible' => true
-		));
+			return $this->render('VMBPresentationBundle:Matrix:show.html.twig', array(
+				'mainTitle' => $entity->getTitle(),
+				'backButtonUrl' => $this->generateUrl('matrix'),
+				'editButtonUrl' => $this->generateUrl('matrix_edit', array('id' => $entity->getId())),
+				'delButtonUrl' => $this->generateUrl('matrix_delete', array('id' => $entity->getId())),
+				'entity' => $entity,
+				'resources' => array('official' => $validResources, 'personal' => $personalResources, 'unofficial' => $unofficialResources),
+				'alertDismissible' => true
+			));
+		}
+		else {
+			$this->get('request')->getSession()->getFlashBag()->add('danger', 'Vous ne disposez pas des droits suffisants pour effectuer cette opération');
+			return $this->redirect($this->generateUrl('matrix'));
+		}
     }
     
     /**
@@ -170,7 +176,13 @@ class MatrixController extends Controller
     {
         $matrix = $this->getMatrix($id);
 
-		return $this->renderForm($matrix);
+		if($this->get('security.context')->isGranted('ROLE_ADMIN') || $matrix->isOwner($this->getUser())) {		
+			return $this->renderForm($matrix);
+		}
+		else {
+			$this->get('request')->getSession()->getFlashBag()->add('danger', 'Vous ne disposez pas des droits suffisants pour effectuer cette opération');
+			return $this->redirect($this->generateUrl('matrix'));
+		}
     }
 
     /**

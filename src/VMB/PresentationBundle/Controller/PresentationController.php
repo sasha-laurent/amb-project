@@ -27,12 +27,23 @@ class PresentationController extends Controller
      *
      */
     /**
-    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
-    */
+	* @Security("has_role('ROLE_ADMIN')")
+	*/
     public function indexAction($page)
     {
         $em = $this->getDoctrine()->getManager();
-
+		
+		
+		$request = $this->get('request');
+		if($request->query->get('default') != null && $request->query->get('id') != null) { 
+			$this->setPresentationDefaultValue($request->query->get('id'), $request->query->get('default'));
+		}
+		if($request->query->get('public') != null && $request->query->get('id') != null) { 
+			$this->setPresentationPublicValue($request->query->get('id'), $request->query->get('public'));
+		}
+		if($request->query->get('official') != null && $request->query->get('id') != null) { 
+			$this->setPresentationOfficialValue($request->query->get('id'), $request->query->get('official'));
+		}
         
         if ($page < 1) {
 			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
@@ -43,7 +54,7 @@ class PresentationController extends Controller
 		$nbPerPage = 12;
 
 		// On récupère notre objet Paginator
-        $entities = $em->getRepository('VMBPresentationBundle:Presentation')->getPresentations($page, $nbPerPage);
+        $entities = $em->getRepository('VMBPresentationBundle:Presentation')->getPresentations($page, $nbPerPage, null, 'all', 'all', 'all');
 
 		// On calcule le nombre total de pages grâce au count($listAdverts) qui retourne le nombre total d'annonces
 		$nbPages = ceil(count($entities)/$nbPerPage);
@@ -54,24 +65,35 @@ class PresentationController extends Controller
 		}
 
         return $this->render('VMBPresentationBundle:Presentation:index.html.twig', array(
-            'mainTitle'=> 'Présentations déjà existantes',
+            'mainTitle'=> 'Toutes les présentations',
             'entities' => $entities,
 			'nbPages'  => $nbPages,
 			'page'     => $page
         ));
     }
     
-    public function browseTopicAction($topic, $page)
+    public function browseAction($page, $topic=null)
     {
 		if ($page < 1) {
 			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
 		}
 		
 		$nbPerPage = 12;
-		
 		$em = $this->getDoctrine()->getManager();
-		$topic = $em->getRepository('VMBPresentationBundle:Topic')->find($topic);
-        $entities = $em->getRepository('VMBPresentationBundle:Presentation')->getPresentations($page, $nbPerPage, $topic);
+		$topics = $em->getRepository('VMBPresentationBundle:Topic')->childrenHierarchy();
+		
+		
+		$mainTitle = 'Parcourir les présentations';
+		if($topic != null) {
+			$topic = $em->getRepository('VMBPresentationBundle:Topic')->find($topic);
+			$mainTitle = $topic->getTitle().' - Présentations';
+		}
+		
+		$request = $this->get('request');
+		$official = ($request->query->get('official') == 1) ? true : 'all';
+		$default = ($request->query->get('default') == 1) ? true : 'all';
+		
+        $entities = $em->getRepository('VMBPresentationBundle:Presentation')->getPresentations($page, $nbPerPage, $topic, true, $official, $default);
         
         // On calcule le nombre total de pages grâce au count($listAdverts) qui retourne le nombre total d'annonces
 		$nbPages = ceil(count($entities)/$nbPerPage);
@@ -82,10 +104,12 @@ class PresentationController extends Controller
 		}
 
         return $this->render('VMBPresentationBundle:Presentation:browseTopic.html.twig', array(
-            'mainTitle' => $topic->getTitle().' - Présentations',
-            'entities' => $entities,
-			'nbPages'  => $nbPages,
-			'page'     => $page
+            'mainTitle' => $mainTitle,
+            'topic' 	=> $topic,
+            'topics' 	=> $topics,
+            'entities' 	=> $entities,
+			'nbPages'  	=> $nbPages,
+			'page'     	=> $page
         ));
     }
     
@@ -95,7 +119,14 @@ class PresentationController extends Controller
     public function personalIndexAction($page)
     {
         $em = $this->getDoctrine()->getManager();
-
+		
+		$request = $this->get('request');
+		if($request->query->get('default') != null && $request->query->get('id') != null) { 
+			$this->setPresentationDefaultValue($request->query->get('id'), $request->query->get('default'));
+		}
+		if($request->query->get('public') != null && $request->query->get('id') != null) { 
+			$this->setPresentationPublicValue($request->query->get('id'), $request->query->get('public'));
+		}
         
         if ($page < 1) {
 			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
@@ -106,21 +137,7 @@ class PresentationController extends Controller
 		$nbPerPage = 12;
 
 		// On récupère notre objet Paginator
-        $entities = $em->getRepository('VMBPresentationBundle:Presentation')->getPresentations($page, $nbPerPage, null, 'all', 'all', $this->getUser());
-        $request = $this->get('request');
-		if ($request->isMethod('GET')) 
-		{
-			$idSwitch = $request->query->get('switch');
-			if($idSwitch != null && is_numeric($idSwitch)) {
-				foreach($entities as $presentation) {
-					if($presentation->getId() == $idSwitch) {
-						$presentation->setPublic(!$presentation->getPublic());
-						$em->flush();
-						break;
-					}
-				}
-			}
-		}
+        $entities = $em->getRepository('VMBPresentationBundle:Presentation')->getPresentations($page, $nbPerPage, null, 'all', 'all', 'all', $this->getUser());
 
 		// On calcule le nombre total de pages grâce au count($listAdverts) qui retourne le nombre total d'annonces
 		$nbPages = ceil(count($entities)/$nbPerPage);
@@ -354,11 +371,13 @@ class PresentationController extends Controller
 		}
 		
 		$additionalResourcesId = array();
+		$i = 0;
 		while(count($sortedResources) > 0) {
+			$additionalResourcesId[$i] = array();
 			foreach($sortedResources as $pov => $subArr) {
 				foreach($subArr as $lvl => $usedRes) {
 					// We add the first element we find and break
-					$additionalResourcesId[] = $sortedResources[$pov][$lvl]->getId();
+					$additionalResourcesId[$i][] = $sortedResources[$pov][$lvl]->getId();
 					unset($sortedResources[$pov][$lvl]);
 					break;
 				}
@@ -370,6 +389,7 @@ class PresentationController extends Controller
 					unset($sortedResources[$pov]);
 				}
 			}
+			$i++;
 		}
 		
         
@@ -412,8 +432,14 @@ class PresentationController extends Controller
     public function editAction($id)
     {
         $presentation = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Presentation')->findWithAllMatrixResources($id);
-
-		return $this->renderForm($presentation);
+		
+		if($this->get('security.context')->isGranted('ROLE_ADMIN') || $presentation->isOwner($this->getUser())) {		
+			return $this->renderForm($presentation);
+		}
+		else {
+			$this->get('request')->getSession()->getFlashBag()->add('danger', 'Vous ne disposez pas des droits suffisants pour effectuer cette opération');
+			return $this->redirect($this->generateUrl('presentation_perso'));
+		}
     }
     
     /**
@@ -477,9 +503,9 @@ class PresentationController extends Controller
 				
 				$totalDuration = 0;
 				foreach($postValues as $key => $position) {
-					if(preg_match('`(usedResource|suggested)_([0-9]+)`', $key, $matches)) {
+					if(preg_match('`(usedResource|suggestedResource)_([0-9]+)`', $key, $matches)) {
 						$resId = intval($matches[2]);
-						$isSuggested = ($matches[1] == 'suggested');
+						$isSuggested = ($matches[1] == 'suggestedResource');
 						
 						// If the resource has already been persisted as a checked resource
 						if(!$saveAsCopy && isset($indexedCheckedRes[$resId])) {
@@ -516,7 +542,9 @@ class PresentationController extends Controller
 				}
 				
 				$workingPresentation->setDuration($totalDuration);
-				$workingPresentation->setOwner($this->getUser());
+				if(!is_numeric($workingPresentation->getId())) {
+					$workingPresentation->setOwner($this->getUser());
+				}
 				$em->persist($workingPresentation);
 				$workingPresentation->preUpload();
 				$em->flush();
@@ -564,8 +592,7 @@ class PresentationController extends Controller
 				$arr['args'][$key] = $value;
 			}
 		}
-		dump($arr);
-		dump($this->generateUrl($arr['route'], $arr['args']));
+
 		if ($request->isMethod('POST')) {
 			try {
 				$em = $this->getDoctrine()->getManager();
@@ -576,7 +603,7 @@ class PresentationController extends Controller
 			} catch (\Exception $e) {
 				$request->getSession()->getFlashBag()->add('danger',"An error occured");
 			}
-			return $this->redirect($this->generateUrl('presentation'));
+			return $this->redirect($this->generateUrl('presentation_perso'));
 		}
 
 		// Si la requête est en GET, on affiche une page de confirmation avant de delete
@@ -590,9 +617,6 @@ class PresentationController extends Controller
     /**
      * Retrieve an existing Presentation entity.
      */
-    /**
-    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
-    */
     protected function getPresentation($id)
     {
         $presentation = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Presentation')->find($id);
@@ -603,4 +627,86 @@ class PresentationController extends Controller
 
 		return $presentation;
     }
+    
+    /**
+     * Test rights of the user and modify if he's allowed
+     */
+    protected function setPresentationDefaultValue($id, $defaultValue, $flashBags=true)
+    {
+        $presentation = $this->getPresentation($id);
+        
+		if($defaultValue != null) {
+			// only officials presentations can be set to default
+			if($presentation->getOfficial() == 1) {
+				// the user must own the presentation or at least be a teacher
+				if($this->get('security.context')->isGranted('ROLE_TEACHER') ||$presentation->isOwner($this->getUser())) {
+					// check if the value is correct
+					$newDefaultValue = intval($defaultValue);
+					if(in_array($newDefaultValue, array(0, 1))) {
+						// modification
+						$presentation->setDefault($newDefaultValue);
+						$this->getDoctrine()->getManager()->flush();
+					}
+				}
+				elseif($flashBags) {
+					$this->get('request')->getSession()->getFlashBag()->add('danger', 'Vous ne disposez pas de droits suffisants pour effectuer cette opération');
+				}
+			}
+			elseif($flashBags) {
+				$this->get('request')->getSession()->getFlashBag()->add('danger', 'Une présentation non officielle ne peut être passée en présentation par défaut');
+			}
+		}
+    }
+    
+    
+    /**
+     * Test rights of the user and modify if he's allowed
+     */
+    protected function setPresentationPublicValue($id, $value, $flashBags=true)
+    {
+        $presentation = $this->getPresentation($id);
+        
+		if($value != null) {
+			// the user must own the presentation or at least be a teacher
+			if($this->get('security.context')->isGranted('ROLE_ADMIN') ||$presentation->isOwner($this->getUser())) {
+				// check if the value is correct
+				$newValue = intval($value);
+				if(in_array($newValue, array(0, 1))) {
+					// modification
+					$presentation->setPublic($newValue);
+					$this->getDoctrine()->getManager()->flush();
+				}
+			}
+			elseif($flashBags) {
+				$this->get('request')->getSession()->getFlashBag()->add('danger', 'Vous ne disposez pas de droits suffisants pour effectuer cette opération');
+			}
+		}
+    }
+    
+    
+    /**
+     * Test rights of the user and modify if he's allowed
+     */
+    protected function setPresentationOfficialValue($id, $value, $flashBags=true)
+    {
+        $presentation = $this->getPresentation($id);
+        
+		if($value != null) {
+			// the user must own the presentation or at least be a teacher
+			if($this->get('security.context')->isGranted('ROLE_TEACHER')) {
+				// check if the value is correct
+				$newValue = intval($value);
+				if(in_array($newValue, array(0, 1))) {
+					// modification
+					$presentation->setOfficial($newValue);
+					$this->getDoctrine()->getManager()->flush();
+				}
+			}
+			elseif($flashBags) {
+				$this->get('request')->getSession()->getFlashBag()->add('danger', 'Vous ne disposez pas de droits suffisants pour effectuer cette opération');
+			}
+		}
+    }
+    
+    
 }

@@ -45,6 +45,7 @@ class User extends BaseUser
      */
     public function __construct()
     {
+		parent::__construct();
         $this->presentation = new \Doctrine\Common\Collections\ArrayCollection();
         $this->resource = new \Doctrine\Common\Collections\ArrayCollection();
     }

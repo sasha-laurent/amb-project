@@ -1,25 +1,27 @@
 {% extends '::Backend/subPage.html.twig' %}
 
+{% set hasSuggestions = false %}
+{% for res in entity.resources if hasSuggestions == false %}
+	{% if res.suggested %}
+		{% set hasSuggestions = true %}
+	{% endif %}
+{% endfor %}
+
 {% block body %}
 <form id="new_presentation_form" action="{{ path('presentation_show', {'id': entity.id}) }}" method="post">
     <div class="row">
 		<div class="col-sm-5">
 			<h4><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> Options de la présentation</h4>
 			<div id="presentation_options" class="list-group">
-			  <a href="#" class="list-group-item active">
-				<h4 id="list-group-item-heading" class="list-group-item-heading">Présentation</h4>
-			  </a>
-			  {% for res in entity.resources %}
-				{% if res.suggested %}
-					<a href="#" class="list-group-item suggestion-item" data-id="{{ res.usedResource.id }}">
-						<h4 id="list-group-item-heading" class="list-group-item-heading">{{ res.usedResource.resource.title }}</h4>
-						<div class="list-group-item-text row">
-							<div class="col-sm-9">{{ res.usedResource.pov.title }} - {{ res.usedResource.level.title }}</div>
-							<div class="col-sm-3 text-right"><em>Suggéré</em></div>
-						</div>
-					</a>
+				<a href="#" class="list-group-item active">
+					<h4 id="list-group-item-heading" class="list-group-item-heading">Présentation</h4>
+				</a>
+				
+				{% if hasSuggestions %}
+				<a href="#" class="list-group-item suggestion-item">
+					<h4 id="list-group-item-heading" class="list-group-item-heading">Suggestion du professeur</h4>
+				</a>
 				{% endif %}
-			{% endfor %}
 			</div>
 		</div>
 		<div class="col-sm-4">
@@ -31,7 +33,7 @@
 						{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
 						<li class="list-group-item" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
 							<div class="row">
-								<div class="col-sm-8"><span class="glyphicon glyphicon-film" aria-hidden="true"></span> {{ res.usedResource.resource.title[:20] }}</div>
+								<div class="col-sm-8"><span class="glyphicon glyphicon-{{ res.usedResource.resource.getGlyphicon }}" aria-hidden="true"></span> {{ res.usedResource.resource.title[:20] }}</div>
 								<div class="col-sm-4 text-right">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
 								<input type="hidden" name="usedResource_{{ res.usedResource.id }}" value="1" />
 							</div>
@@ -47,7 +49,8 @@
 		<div class="col-sm-3">
 			<h4><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span> + d'options</h4>
 			<a href="{{ path('presentation_create_copy', {'id' : entity.id}) }}"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Visualisation avancée</a><br/>
-			<a href="#"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Voir d'autres présentations</a>			
+			<a href="{{ path('vmb_presentation_browse_topic',  {'topic': entity.topic.id}) }}"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Présentations de cette thématique</a><br/>		
+			<a href="{{ path('vmb_presentation_browse_topic',  {'topic': entity.topic.id, 'default':1}) }}"><span class="glyphicon glyphicon-education" aria-hidden="true"></span> Présentations par défaut sur cette thématique</a><br/>		
 		</div>
     </div>
     <div class="row">
@@ -86,8 +89,8 @@
 {% block script %}
 	{{ parent() }}
 	<script>
-		{% set firstLoop = true %}
-		presentationUsedResources = [ {% for res in entity.resources %}{% if res.suggested == false %}{% if firstLoop %}{% set firstLoop = false %}{% else %}, {% endif %}{{ res.usedResource.id }}{% endif %}{% endfor %} ];
+		numComplement = 1;
+		hasSuggestions = {% if hasSuggestions %}true{% else %}false{% endif %};
 		
 		resourcesCollection = {
 			{% for usedRes in matrix.resources %}
@@ -95,14 +98,32 @@
 				'pov': "{{ usedRes.pov.title }}", 
 				'level': "{{ usedRes.level.title }}", 
 				'shortTitle': "{{ usedRes.resource.title[:20] }}", 
+				'glyphicon' : "{{ usedRes.resource.getGlyphicon }}",
 				'duration': {{ usedRes.resource.duration|default(0) }},
 				'duration_str': "{{ "%02d"|format(usedRes.resource.duration // 60) }}:{{ "%02d"|format(usedRes.resource.duration % 60) }}"
 			},
 			{% endfor %}
 		};
 		
-		{% set firstLoop = true %}
-		additionalResources = [ {{ additionalResourcesId|join(',') }} ];
+		{% set totalDuration = 0 %}
+		resources = [ 
+			// Presentation
+			{% set firstLoop = true %}
+			[ {% for res in entity.resources %}{% if res.suggested == false %}{% set totalDuration = totalDuration + res.usedResource.resource.duration %}{% if firstLoop %}{% set firstLoop = false %}{% else %}, {% endif %}{{ res.usedResource.id }}{% endif %}{% endfor %} ],
+			
+			// Suggestions
+			{% if hasSuggestions %}
+				{% set firstLoop = true %}
+				[ {% for res in entity.resources %}{% if res.suggested == true %}{% if firstLoop %}{% set firstLoop = false %}{% else %}, {% endif %}{{ res.usedResource.id }}{% endif %}{% endfor %} ],
+			{% endif %}
+			
+			// Complements
+			{% for subList in additionalResourcesId %}
+				[ {{ subList|join(',') }} ],
+			{% endfor %}
+		];
+		
+		totalDuration = {{totalDuration}};
 		
 		function pad(num, size) {
 			var s = num+"";
@@ -116,10 +137,9 @@
 		
 		function addToDuration(value) {
 			// conv base10
-			var current = $("#input_duration").val();
-			total = parseInt(current, 10) + value;
-			$("#total_duration").html(convertDurationToString(total));
-			$('#input_duration').val(total);
+			totalDuration = totalDuration + value;
+			$("#total_duration").html(convertDurationToString(totalDuration));
+			$('#input_duration').val(totalDuration);
 		}
 		
 		function deleteFromPlaylist(resId) {
@@ -131,7 +151,7 @@
 			addToDuration(resourcesCollection[resId]['duration']);
 			newElt = '<li class="list-group-item" id="addedRes_' + resId + '" data-id="' + resId + '"> \
 				<div class="row"> \
-					<div class="col-sm-8"><span class="glyphicon glyphicon-film" aria-hidden="true"></span> ' + resourcesCollection[resId]['shortTitle'] + '</div> \
+					<div class="col-sm-8"><span class="glyphicon glyphicon-' + resourcesCollection[resId]['glyphicon'] + '" aria-hidden="true"></span> ' + resourcesCollection[resId]['shortTitle'] + '</div> \
 					<div class="col-sm-4 text-right">' + resourcesCollection[resId]['duration_str'] + '</div> \
 					<input type="hidden" name="usedResource_' + resId + '" value="1" /> \
 				</div> \
@@ -145,33 +165,22 @@
 		}
 		
 		function togglePresentationOption(selector) {
+			var index = $('#presentation_options .list-group-item').index($(selector)); 
+			
 			// If we need to delete elements
 			if($(selector).hasClass('active')) {
 				$(selector).removeClass('active');
-				
-				// If it's single file
-				if($(selector).hasClass('suggestion-item')) {
-					deleteFromPlaylist($(selector).attr('data-id'));
-				}
-				// If we're dealing with the list included in the presentation
-				else {
-					var i;
-					for (i = 0; i < presentationUsedResources.length; ++i) {
-						deleteFromPlaylist(presentationUsedResources[i]);
-					}
+				var i;
+				for (i = 0; i < resources[index].length; ++i) {
+					deleteFromPlaylist(resources[index][i]);
 				}
 			}
 			// If we need to add elements
 			else {
 				$(selector).addClass('active');
-				if($(selector).hasClass('suggestion-item')) {
-					addToPlaylist($(selector).attr('data-id'));
-				}
-				else {
-					var i;
-					for (i = (presentationUsedResources.length - 1); i >= 0; --i) {
-						addToPlaylist(presentationUsedResources[i], true);
-					}
+				var i;
+				for (i = 0; i < resources[index].length; ++i) {
+					addToPlaylist(resources[index][i]);
 				}
 			}
 			$(selector).css('outline','0px');
@@ -183,19 +192,17 @@
 			});
 			
 			$("#addContextualBtn").click(function() {
-				if(additionalResources.length > 0) {
-					var resId = additionalResources.shift();
-					var newElt = '<a href="#" class="list-group-item suggestion-item" id="contextual_' + resId + '" data-id="' + resId + '"> \
-							<h4 id="list-group-item-heading" class="list-group-item-heading">' + resourcesCollection[resId]['shortTitle'] + '</h4> \
-							<div class="list-group-item-text row"> \
-								<div class="col-sm-9">' + resourcesCollection[resId]['pov'] + ' - ' + resourcesCollection[resId]['level'] + '</div> \
-								<div class="col-sm-3 text-right"><em>Conseillé</em></div> \
-							</div> \
+				currentIndex = numComplement + ((hasSuggestions) ? 1 : 0);
+				if(currentIndex < resources.length) {
+					var resList = resources[currentIndex];
+					var newElt = '<a href="#" class="list-group-item suggestion-item" id="contextual_' + numComplement + '"> \
+							<h4 id="list-group-item-heading" class="list-group-item-heading">Complément #' + numComplement + '</h4> \
 						</a>';
 					$("#presentation_options").append(newElt);
-					$("#contextual_" + resId).click(function(e) {				
+					$("#contextual_" + numComplement).click(function(e) {				
 						togglePresentationOption(this);				
 					});
+					numComplement++;
 				}
 				else {
 					alert("Aucun contenu additionel disponible");

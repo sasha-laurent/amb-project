@@ -16,6 +16,14 @@ class TopicType extends AbstractType
     {
         $builder
             ->add('title', null, array('label'=>'Titre'))
+            ->add('parent',  'entity', array(
+				'class' => 'VMB\PresentationBundle\Entity\Topic', 
+				'empty_value' => '+ Nouvelle racine',
+				'required' => false,
+				 'query_builder' => function(\Gedmo\Tree\Entity\Repository\NestedTreeRepository $repo) {
+					return $repo->getNodesHierarchyQueryBuilder();
+				  }
+				))
             ->add('file')
             ->add('Sauvegarder', 'submit')
         ;

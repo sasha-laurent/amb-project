@@ -50,7 +50,7 @@ class UserController extends Controller
 
         return $this->render('VMBUserBundle:User:index.html.twig', array(
             'mainTitle' => 'Affichage User',
-			'addButtonUrl' => $this->generateUrl('admin_user'),
+			'addButtonUrl' => $this->generateUrl('fos_user_registration_register'),
             'entities' => $entities
         ));
         

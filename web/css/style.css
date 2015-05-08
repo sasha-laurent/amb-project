@@ -213,7 +213,9 @@ header {
 	color: white;
 }
 
-.switch-public .hidden-value, .switch-private .hidden-value { display: none; }
+.switch .hidden-value { display: none; }
+.switch:hover .hidden-value { display: inline; }
+.switch:hover .shown-value { display: none; }
 .switch-public:hover .hidden-value, .switch-private:hover .hidden-value { display: inline; }
 .switch-public:hover .shown-value, .switch-private:hover .shown-value { display: none; }
 
@@ -366,6 +368,19 @@ header {
 	background-color: #f3f3f3;
 }
 
+
+.list-group .list-group-item.row[data-level="0"] 	{ background-color: #fff; }
+.list-group .list-group-item.row[data-level="1"] 	{ background-color: #fbfbfb; }
+.list-group .list-group-item.row[data-level="2"] 	{ background-color: #f8f8f8; }
+.list-group .list-group-item.row[data-level="3"] 	{ background-color: #f4f4f4; }
+.list-group .list-group-item.row[data-level="4"] 	{ background-color: #efefef; }
+.list-group .list-group-item.row[data-level="5"] 	{ background-color: #ebebeb; }
+.list-group .list-group-item.row[data-level="6"] 	{ background-color: #e8e8e8; }
+.panel-collapse			{ border-left: 1px solid #ddd; }
+.panel-collapse > ul 	{ border-left: 12px solid #fff; }
+.list-group .list-group { margin-bottom: 0px; }
+.list-group .list-group .list-group-item:first-child { border-radius: 0px; }
+
 #file_list, #presentation_options {
 	overflow-y: auto;
 	max-height: 320px;
@@ -416,6 +431,47 @@ header {
 	width: 250px;
 }
 
+.thumbnail {
+
+}
+
 .thumbnail-link:hover {
 	text-decoration:none;
+}
+
+select[multiple="multiple"] {
+	min-height: 200px;
+}
+
+.browse-topics {
+	background-color: #ddd;
+	padding: 1px 12px 12px 12px;
+}
+
+.browse-topics ul {
+	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+.browse-topics .row {
+	margin: 0px;
+}
+
+.browse-topics .col-md-10 {
+	padding: 0px;
+	font-size: 12px;
+}
+
+.browse-topics .panel-collapse, #browse_file .panel-collapse			{ border-left: 0px; }
+.browse-topics .panel-collapse > ul, #browse_file .panel-collapse > ul 	{ border-left: 0px; }
+
+.view-more-title a {
+	color: black;
+}
+.view-more-title a:hover {
+	text-decoration: none;
+}
+.view-more-title .glyphicon {
+	top: 4px;
 }

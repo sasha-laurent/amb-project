@@ -296,6 +296,16 @@ class Matrix
         return $this->owner;
     }
     
+    /**
+     * Is the given User the author of this Post?
+     *
+     * @return bool
+     */
+    public function isOwner(\VMB\UserBundle\Entity\User $user = null)
+    {
+        return $user && $this->getOwner() && $user->getId() == $this->getOwner()->getId();
+    }
+    
     public function getDimension()
     {
 		return $this->povs->count().'x'.$this->levels->count();
