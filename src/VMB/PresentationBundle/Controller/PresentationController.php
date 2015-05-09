@@ -92,8 +92,9 @@ class PresentationController extends Controller
 		$request = $this->get('request');
 		$official = ($request->query->get('official') == 1) ? true : 'all';
 		$default = ($request->query->get('default') == 1) ? true : 'all';
+		$search = $request->query->get('search');
 		
-        $entities = $em->getRepository('VMBPresentationBundle:Presentation')->getPresentations($page, $nbPerPage, $topic, true, $official, $default);
+        $entities = $em->getRepository('VMBPresentationBundle:Presentation')->getPresentations($page, $nbPerPage, $topic, true, $official, $default, null, $search);
         
         // On calcule le nombre total de pages grâce au count($listAdverts) qui retourne le nombre total d'annonces
 		$nbPages = ceil(count($entities)/$nbPerPage);
@@ -108,6 +109,7 @@ class PresentationController extends Controller
             'topic' 	=> $topic,
             'topics' 	=> $topics,
             'entities' 	=> $entities,
+            'search' 	=> $search,
 			'nbPages'  	=> $nbPages,
 			'page'     	=> $page
         ));

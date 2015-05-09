@@ -13,7 +13,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
  */
 class ResourceRepository extends EntityRepository
 {
-	public function getResources($page, $nbPerPage, $topic=null, $official=true, $user = null)
+	public function getResources($page, $nbPerPage, $topic=null, $official=true, $user = null, $search = null)
 	{
 		$builder = $this->createQueryBuilder('r')
 			->orderBy('r.type');
@@ -32,6 +32,10 @@ class ResourceRepository extends EntityRepository
 		
 		if($user != null) {
 			$builder->andWhere('r.owner = :user')->setParameter('user', $user);
+		}
+		
+		if($search != null) {
+			$builder->andWhere('r.title LIKE :keyword')->setParameter('keyword', '%'.$search.'%');
 		}
 
 		$query = $builder->getQuery();

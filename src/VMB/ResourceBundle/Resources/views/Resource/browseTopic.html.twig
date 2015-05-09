@@ -12,11 +12,14 @@
 	<div class="row">
 		<div class="col-md-3">
 			<div class="browse-topics">
+				<form action="{{ path(app.request.get('_route'), {'topic':topic.id|default(null), 'default':((app.request.get('default') + 1) % 2)|default(1), 'official':app.request.get('official')|default(null)}) }}" method="GET">
+					<div class="form-group"><input class="form-control" type="text" name="search" value="{{ search|default() }}" placeHolder="Rechercher..." /></div>
+				</form>
 				<h4>Filtres</h4>
 				<div class="row">
 					<div class="col-md-10">Officielles uniquement :</div>
 					<div class="col-md-2 text-right">
-						<a href="{{ path(app.request.get('_route'), {'topic':topic.id|default(null), 'official':((app.request.get('official') + 1) % 2)|default(1), 'default':app.request.get('default')|default(null)}) }}" class="switch">
+						<a href="{{ path(app.request.get('_route'), {'topic':topic.id|default(null), 'official':((app.request.get('official') + 1) % 2)|default(1), 'default':app.request.get('default')|default(null), 'search':search|default(null)}) }}" class="switch">
 							{% if app.request.get('official')|default(0) == 0 %}
 								<span class="hidden-value glyphicon glyphicon-ok"></span>
 								<span class="shown-value glyphicon glyphicon-minus"></span>
@@ -47,7 +50,7 @@
 				</div>
 				{% else %}
 					<div class="col-md-12 text-center">
-						<em>Aucune ressource dans cet espace</em>
+						<em>Aucune ressource dans cet espace pour ces paramètres de recherche</em>
 						<br/><br/>
 					</div>
 				{% endfor %}

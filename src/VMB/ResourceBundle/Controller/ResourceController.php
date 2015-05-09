@@ -52,8 +52,9 @@ class ResourceController extends Controller
 		
 		$request = $this->get('request');
 		$official = ($request->query->get('official') == 1) ? true : 'all';
+		$search = $request->query->get('search');
 		
-        $entities = $em->getRepository('VMBResourceBundle:Resource')->getResources($page, $nbPerPage, $topic, $official);
+        $entities = $em->getRepository('VMBResourceBundle:Resource')->getResources($page, $nbPerPage, $topic, $official, null, $search);
         
         // On calcule le nombre total de pages grâce au count($listAdverts) qui retourne le nombre total d'annonces
 		$nbPages = ceil(count($entities)/$nbPerPage);
@@ -67,6 +68,7 @@ class ResourceController extends Controller
             'mainTitle' => $mainTitle,
             'topic' 	=> $topic,
             'topics' 	=> $topics,
+            'search' 	=> $search,
             'entities' 	=> $entities,
 			'nbPages'  	=> $nbPages,
 			'page'     	=> $page

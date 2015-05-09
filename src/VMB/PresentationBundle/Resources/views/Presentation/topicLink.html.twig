@@ -4,7 +4,7 @@
 		<div class="row">
 			<div class="col-md-10">
 				{% for i in 1..link.lvl if link.lvl > 0 %}&nbsp;&nbsp;{% endfor %}
-				<a href="{{ path("vmb_presentation_browse_topic", {'topic': link.id, 'official':app.request.get('official')|default(null), 'default':app.request.get('default')|default(null)}) }}" title="{{ link.title }}">
+				<a href="{{ path("vmb_presentation_browse_topic", {'topic': link.id, 'official':app.request.get('official')|default(null), 'default':app.request.get('default')|default(null), 'search':search|default(null)}) }}" title="{{ link.title }}">
 					{{ link.title }} ({{ link.__children|length }})
 				</a>
 			</div>

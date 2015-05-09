@@ -13,7 +13,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
  */
 class PresentationRepository extends EntityRepository
 {
-	public function getPresentations($page, $nbPerPage, $topic=null, $public=true, $official=true, $default='all', $user = null)
+	public function getPresentations($page, $nbPerPage, $topic=null, $public=true, $official=true, $default='all', $user = null, $search = null)
 	{
 		$builder = $this->createQueryBuilder('p')
 					  ->orderBy('p.dateUpdate', 'DESC');
@@ -42,6 +42,10 @@ class PresentationRepository extends EntityRepository
 		
 		if($user != null) {
 			$builder->andWhere('p.owner = :user')->setParameter('user', $user);
+		}
+		
+		if($search != null) {
+			$builder->andWhere('p.title LIKE :keyword')->setParameter('keyword', '%'.$search.'%');
 		}
 
 		$query = $builder->getQuery();
