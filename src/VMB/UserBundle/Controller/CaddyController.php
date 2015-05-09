@@ -78,6 +78,7 @@ class CaddyController extends Controller
 			try {
 				$user->addResource($resource);
 				$em->flush();
+				return new Response('ok');
 			}
 			catch(\Exception $e) {
 				return new Response('duplicate');

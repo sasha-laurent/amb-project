@@ -1,34 +1,12 @@
 <script>
 $(".resourceAddToCaddy").click(function(){ 
-	$(".loading").show();
+	var idElt = $(this).attr('data-id');
+	$(".loading_indicator_" + idElt).css('display', 'inline-block');
 	if($(this).hasClass('btn-info')) {
 		path = "{{ path('caddy_resource_remove')}}";
 	}
 	else {
 		path = "{{ path('caddy_resource_add')}}";
-	}
-	$.ajax({
-		type: "POST",
-		url: path,
-		data: { id: $(this).attr('data-id') },
-		cache: false,
-		success: function(data){
-			if(data == 'ok') {
-				$(this).toggleClass('btn-info');
-			}
-			$(".loading").hide();
-		}
-	});    
-	return false;
-});
-
-$(".presentationAddToCaddy").click(function(){ 
-	$(".loading_indicator_inline").css('display', 'inline-block');
-	if($(this).hasClass('btn-info')) {
-		path = "{{ path('caddy_presentation_remove')}}";
-	}
-	else {
-		path = "{{ path('caddy_presentation_add')}}";
 	}
 	var elt = $(this);
 	$.ajax({
@@ -47,7 +25,40 @@ $(".presentationAddToCaddy").click(function(){
 					$(elt).addClass('btn-info');
 				}
 			}
-			$(".loading_indicator_inline").css('display', 'none');
+			$(".loading_indicator_" + idElt).css('display', 'none');
+		}
+	});    
+	return false;
+});
+
+$(".presentationAddToCaddy").click(function(){ 
+	var idElt = $(this).attr('data-id');
+	$(".loading_indicator_" + idElt).css('display', 'inline-block');
+	if($(this).hasClass('btn-info')) {
+		path = "{{ path('caddy_presentation_remove')}}";
+	}
+	else {
+		path = "{{ path('caddy_presentation_add')}}";
+	}
+	var elt = $(this);
+	var idElt = $(this).attr('data-id');
+	$.ajax({
+		type: "POST",
+		url: path,
+		data: { id: $(this).attr('data-id') },
+		cache: false,
+		success: function(data){
+			if(data == 'ok') {
+				if($(elt).hasClass('btn-info')) {
+					$(elt).removeClass('btn-info');
+					$(elt).addClass('btn-default');
+				}
+				else {
+					$(elt).removeClass('btn-default');
+					$(elt).addClass('btn-info');
+				}
+			}
+			$(".loading_indicator_" + idElt).css('display', 'none');
 		}
 	});    
 	return false;

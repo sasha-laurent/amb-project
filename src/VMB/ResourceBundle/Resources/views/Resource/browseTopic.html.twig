@@ -38,12 +38,20 @@
 			<div class="row">
 				{% for entity in entities %}
 				<div class="col-md-4">
-					<a class="thumbnail-link" href="{{ path('presentation_show', { 'id': entity.id }) }}">
-						<div class="thumbnail">
+					<a class="thumbnail-link" href="{{ path('resource_show', { 'id': entity.id }) }}">
+						<div class="thumbnail block-browse block-resource">
 							<img data-holder-rendered="true" src="{{ asset(entity.getThumbsPath) }}" style="height: 155px; width: 100%; display: block;" />
 						
 							<div class="caption">
-								<h3 id="thumbnail-label">{{ entity.title }}</h3>
+								<h3 class="thumbnail-label"><span class="glyphicon glyphicon-{{ entity.getGlyphicon }}"></span> {{ entity.title }}</h3>
+							</div>
+							
+							<div class="duration">
+								Durée : {{ entity.durationToString }}
+							</div>
+							<div class="caddy-icon">
+								<span class="loading_indicator_inline loading_indicator_{{entity.id}}"></span>
+								<a class="btn {% if app.user.resourceIsInCaddy(entity) %}btn-info{% else %}btn-default{% endif %} resourceAddToCaddy" data-id="{{ entity.id }}"><span class="glyphicon glyphicon-shopping-cart"></span></a>
 							</div>
 						</div>
 					</a>
@@ -61,4 +69,9 @@
 		</div>
     </div>  
     <br/>
+{% endblock %}
+
+{% block script %}
+	{{ parent() }}
+	{% include '::addToCaddy.html.twig' %}
 {% endblock %}

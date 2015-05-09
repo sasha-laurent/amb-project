@@ -1,6 +1,12 @@
 resource:
     path:     /
     defaults: { _controller: "VMBResourceBundle:Resource:index" }
+    
+resource_show:
+    path:     /show/{id}
+    defaults: { _controller: "VMBResourceBundle:Resource:show" }
+    requirements:
+        id: \d{1,}
 
 resource_new:
     path:     /new

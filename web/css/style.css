@@ -479,3 +479,28 @@ select[multiple="multiple"] {
 #players_container {
 	min-height:445px;
 }
+
+.block-browse {
+	height: 249px;
+}
+
+.block-browse h3.thumbnail-label {
+	font-size: 14px;
+	text-transform: uppercase;
+	margin: 0px;
+	height: 31px;
+}
+
+.block-browse .duration {
+	float: left;
+	line-height: 34px;
+	padding-left: 9px;
+	width: 65%;
+}
+
+.block-browse .caddy-icon {
+	float: left;
+	width: 35%;
+	text-align: right;
+	padding-right: 0px;
+}

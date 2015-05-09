@@ -275,6 +275,11 @@ class Presentation
     {
         return $this->duration;
     }
+    
+    public function durationToString()
+    {
+		return sprintf("%02d", floor($this->duration / 60)).':'.sprintf("%02d", floor($this->duration % 60));
+	}
 
     /**
      * Set updateMessage

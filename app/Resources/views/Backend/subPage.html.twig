@@ -23,7 +23,7 @@
 			{{ mainTitle }}
 		</div>
 		<div class="col-md-{{ colWidth }} text-right">
-			{% if (saveButton is defined) or (saveToCaddy is defined) %}<span class="loading_indicator_inline"></span>{% endif %}
+			{% if (saveButton is defined) or (saveToCaddy is defined) %}<span class="loading_indicator_inline loading_indicator_{{entity.id}}"></span>{% endif %}
 			<div class="btn-group" role="group" aria-label="...">
 				{% if saveToCaddy is defined %}
 					<a class="btn {% if inCaddy %}btn-info{% else %}btn-default{% endif %} {{ saveToCaddy }}AddToCaddy" data-id="{{ entity.id }}" id="caddy-btn">

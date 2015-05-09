@@ -1,80 +1,38 @@
-{% extends '::base.html.twig' %}
+{% extends '::Backend/subPage.html.twig' %}
 
 {% block body -%}
-    <h1>Resource</h1>
-
-    <table class="record_properties">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ entity.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ entity.title }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ entity.description }}</td>
-            </tr>
-            <tr>
-                <th>Path</th>
-                <td>{{ entity.path }}</td>
-            </tr>
-            <tr>
-                <th>Filename</th>
-                <td>{{ entity.filename }}</td>
-            </tr>
-            <tr>
-                <th>Type</th>
-                <td>{{ entity.type }}</td>
-            </tr>
-            <tr>
-                <th>Extension</th>
-                <td>{{ entity.extension }}</td>
-            </tr>
-            <tr>
-                <th>Datecreate</th>
-                <td>{{ entity.dateCreate|date('Y-m-d H:i:s') }}</td>
-            </tr>
-            <tr>
-                <th>Dateupdate</th>
-                <td>{{ entity.dateUpdate|date('Y-m-d H:i:s') }}</td>
-            </tr>
-            <tr>
-                <th>Size</th>
-                <td>{{ entity.size }}</td>
-            </tr>
-            <tr>
-                <th>Width</th>
-                <td>{{ entity.width }}</td>
-            </tr>
-            <tr>
-                <th>Height</th>
-                <td>{{ entity.height }}</td>
-            </tr>
-            <tr>
-                <th>Duration</th>
-                <td>{{ entity.duration }}</td>
-            </tr>
-            <tr>
-                <th>Encodage</th>
-                <td>{{ entity.encodage }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('resource') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('resource_edit', { 'id': entity.id }) }}">
-            Edit
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+	<div class="row">
+		<div class="col-md-9">
+			{% include '::players.html.twig' with{'playingResource': entity} %}
+		</div>
+		<div class="col-md-3">
+			{{ entity.description }}<br/><br/>
+			<table class="record_properties">
+				<tbody>
+					<tr>
+						<th>Type</th>
+						<td>&nbsp;<span class="glyphicon glyphicon-{{ entity.getGlyphicon }}"></span> {{ entity.type }}</td>
+					</tr>
+					<tr>
+						<th>Création</th>
+						<td>&nbsp;{{ entity.dateCreate|date('d/m/y') }}</td>
+					</tr>
+					<tr>
+						<th>Mise à jour</th>
+						<td>&nbsp;{{ entity.dateUpdate|date('d/m/y') }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<br/>
 {% endblock %}
+
+
+{% block script %}
+	{{ parent() }}
+	<script>
+	{% include '::plyrSetup.html.twig' %}
+	</script>
+{% endblock %}
+

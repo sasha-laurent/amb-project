@@ -89,11 +89,11 @@ class ResourceController extends Controller
             throw $this->createNotFoundException('Unable to find Resource entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-
         return $this->render('VMBResourceBundle:Resource:show.html.twig', array(
             'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
+            'mainTitle' => $entity->getTitle(),
+            'saveToCaddy' => 'resource',
+            'inCaddy' => $this->getUser()->resourceIsInCaddy($entity)
         ));
     }
     

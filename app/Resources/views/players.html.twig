@@ -1,34 +1,38 @@
+{% if playingResource is not defined %}
+	{% set playingResource = firstResource.resource|default(null) %}
+{% endif %} 
+
 <div id="players_container">
-	{% if (firstResource|default(null)) != null %}
-	<div {% if firstResource.resource.type != 'video' %}style="display: none;"{% endif %} class="player">
+	{% if playingResource != null %}
+	<div {% if playingResource.type != 'video' %}style="display: none;"{% endif %} class="player">
 		<video id="video_player" controls crossorigin>
 			<!-- Video files -->
-			{% if firstResource.resource.type == 'video' %}
-			<source src="{{ asset(firstResource.resource.getResourcePath) }}">
+			{% if playingResource.type == 'video' %}
+			<source src="{{ asset(playingResource.getResourcePath) }}">
 			{% endif %}
 		</video>
 	</div>
-	<div {% if firstResource.resource.type != 'audio' %}style="display: none;"{% endif %} class="player">
+	<div {% if playingResource.type != 'audio' %}style="display: none;"{% endif %} class="player">
 		<audio id="audio_player" controls>
 			<!-- Audio files -->
-			{% if firstResource.resource.type == 'audio' %}
-			<source src="{{ asset(firstResource.resource.getResourcePath) }}">
+			{% if playingResource.type == 'audio' %}
+			<source src="{{ asset(playingResource.getResourcePath) }}">
 			{% endif %}
 		</audio>
 	</div>
-	<div {% if firstResource.resource.type != 'image' %}style="display: none;"{% endif %} class="image_player text-center">
-		{% if firstResource.resource.type == 'image' %}
-		<a href="{{ asset(firstResource.resource.getResourcePath) }}" target="_blank">Afficher ce fichier dans un autre onglet</a>
-		<img style='width:100%;' src="{{ asset(firstResource.resource.getResourcePath) }}" />
+	<div {% if playingResource.type != 'image' %}style="display: none;"{% endif %} class="image_player text-center">
+		{% if playingResource.type == 'image' %}
+		<a href="{{ asset(playingResource.getResourcePath) }}" target="_blank">Afficher ce fichier dans un autre onglet</a>
+		<img style='width:100%;' src="{{ asset(playingResource.getResourcePath) }}" />
 		{% else %}
 		<a href="#" target="_blank">Afficher ce fichier dans un autre onglet</a>
 		<img style='width:100%;' />
 		{% endif %}
 	</div>
-	<div {% if firstResource.resource.type != 'text' and firstResource.resource.type != 'application' %}style="display: none;"{% endif %} class="file_player text-center">
-		{% if firstResource.resource.type == 'text' or firstResource.resource.type == 'application' %}
-		<a href="{{ asset(firstResource.resource.getResourcePath) }}" target="_blank">Afficher ce fichier dans un autre onglet</a>
-		<iframe src="{{ asset(firstResource.resource.getResourcePath) }}" width="542" height="400" align="middle"></iframe>
+	<div {% if playingResource.type != 'text' and playingResource.type != 'application' %}style="display: none;"{% endif %} class="file_player text-center">
+		{% if playingResource.type == 'text' or playingResource.type == 'application' %}
+		<a href="{{ asset(playingResource.getResourcePath) }}" target="_blank">Afficher ce fichier dans un autre onglet</a>
+		<iframe src="{{ asset(playingResource.getResourcePath) }}" width="542" height="400" align="middle"></iframe>
 		{% else %}
 		<a href="#" target="_blank">Afficher ce fichier dans un autre onglet</a>
 		<iframe style="visibility:hidden;" width="542" height="400" align="middle"></iframe>
