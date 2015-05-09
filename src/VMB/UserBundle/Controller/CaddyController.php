@@ -5,12 +5,27 @@ namespace VMB\UserBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 use VMB\UserBundle\Entity\User;
 
 class CaddyController extends Controller
 {
 	
+	/**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
+	public function showAction($display)
+	{
+		return $this->render('VMBUserBundle:Caddy:show.html.twig', array(
+            'mainTitle' => 'Caddy',
+            'display' => $display
+        ));
+	} 
+	
+	/**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
 	public function addPresentationAction()
 	{
 		$request = $this->container->get('request');
@@ -38,12 +53,15 @@ class CaddyController extends Controller
 		return new Response('failure');
 	}
 	
+	/**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
 	public function removePresentationAction()
 	{
 		$request = $this->container->get('request');
 		$id = $request->request->get('id');
 		$user = $this->getUser();
-		if($request->isXmlHttpRequest()){
+		if($request->isXmlHttpRequest() || $request->getMethod() == 'POST'){
 			$em = $this->getDoctrine()->getManager();
 		
 			$presentation = $em
@@ -55,11 +73,20 @@ class CaddyController extends Controller
 			}
 			$user->removePresentation($presentation);
 			$em->flush();
-			return new Response('ok');
+			// Generate the response
+			if($request->isXmlHttpRequest()) {
+				return new Response('ok');
+			}
+			else {
+				return $this->redirect($this->generateUrl('caddy_show_presentation'));
+			}
 		}
 		return new Response('failure');
 	}
 	
+	/**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
 	public function addResourceAction()
 	{
 		$request = $this->container->get('request');
@@ -87,12 +114,15 @@ class CaddyController extends Controller
 		return new Response('failure');
 	}
 	
+	/**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
 	public function removeResourceAction()
 	{
 		$request = $this->container->get('request');
 		$id = $request->request->get('id');
 		$user = $this->getUser();
-		if($request->isXmlHttpRequest()){
+		if($request->isXmlHttpRequest() || $request->getMethod() == 'POST'){
 			$em = $this->getDoctrine()->getManager();
 		
 			$resource = $em
@@ -104,7 +134,13 @@ class CaddyController extends Controller
 			}
 			$user->removeResource($resource);
 			$em->flush();
-			return new Response('ok');
+			
+			if($request->isXmlHttpRequest()) {
+				return new Response('ok');
+			}
+			else {
+				return $this->redirect($this->generateUrl('caddy_show_resource'));
+			}
 		}
 		return new Response('failure');
 	}

@@ -22,11 +22,13 @@
 	</div>
 	<div {% if playingResource.type != 'image' %}style="display: none;"{% endif %} class="image_player text-center">
 		{% if playingResource.type == 'image' %}
-		<a href="{{ asset(playingResource.getResourcePath) }}" target="_blank">Afficher ce fichier dans un autre onglet</a>
-		<img style='width:100%;' src="{{ asset(playingResource.getResourcePath) }}" />
+		<a href="{{ asset(playingResource.getResourcePath) }}" target="_blank">Afficher ce fichier dans un autre onglet
+			<img style='width:100%;' src="{{ asset(playingResource.getResourcePath) }}" />
+		</a>
 		{% else %}
-		<a href="#" target="_blank">Afficher ce fichier dans un autre onglet</a>
-		<img style='width:100%;' />
+		<a href="#" target="_blank">Afficher ce fichier dans un autre onglet
+			<img style='width:100%;' />
+		</a>
 		{% endif %}
 	</div>
 	<div {% if playingResource.type != 'text' and playingResource.type != 'application' %}style="display: none;"{% endif %} class="file_player text-center">
@@ -48,8 +50,9 @@
 		</audio>
 	</div>
 	<div style="display: none;" class="image_player text-center">
-		<a href="#" target="_blank">Afficher ce fichier dans un autre onglet</a>
-		<img style='width:100%;' />
+		<a href="#" target="_blank">Afficher ce fichier dans un autre onglet
+			<img style='width:100%;' />
+		</a>
 	</div>
 	<div style="display: none;" class="file_player text-center">
 		<a href="#" target="_blank">Afficher ce fichier dans un autre onglet</a>

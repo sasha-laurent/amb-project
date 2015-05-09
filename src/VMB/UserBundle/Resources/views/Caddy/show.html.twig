@@ -1,0 +1,93 @@
+{% extends '::layout.html.twig' %}
+
+
+{% block h1_title %}
+	<div class="row">
+		<div class="col-md-8">
+			{{ mainTitle }}
+		</div>
+		<div class="col-md-4 text-right">
+			<div class="btn-group">
+				<a href="{{ path('caddy_show_presentation') }}" class="btn btn-{% if display == 'presentation' %}primary{% else %}default{% endif %}">
+					Présentations
+				</a>
+				<a href="{{ path('caddy_show_resource') }}" class="btn btn-{% if display == 'resource' %}primary{% else %}default{% endif %}" href="/VMB/vmb/web/app_dev.php/logout">
+					Ressources
+				</a>
+			</div>
+		</div>
+	</div>	
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+		{% if display == 'presentation' %}
+			{% for entity in app.user.presentation %}
+			<div class="col-md-3">
+				<a class="thumbnail-link" href="{{ path('presentation_show', { 'id': entity.id }) }}">
+					<div class="thumbnail block-browse block-presentation">
+						<img data-holder-rendered="true" src="{{ asset(entity.getThumbsPath) }}" style="height: 155px; width: 100%; display: block;" />
+					
+						<div class="caption">
+							<h3 class="thumbnail-label">{{ entity.title }}</h3>
+						</div>
+						
+						<div class="duration">
+							Durée : {{ entity.durationToString }}
+						</div>
+						<div class="caddy-icon">
+							<span class="loading_indicator_inline loading_indicator_{{entity.id}}"></span>
+							<form action="{{ path('caddy_presentation_remove') }}" method="post">
+								<button class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+								<input type="hidden" name="id" value="{{ entity.id }}" />
+							</form>
+						</div>
+					</div>
+				</a>
+			</div>
+			{% else %}
+				<div class="col-md-12 text-center">
+					<em>Aucune présentation dans cet espace</em>
+					<br/><br/>
+				</div>
+			{% endfor %}
+		{% else %}
+			{% for entity in app.user.resource %}
+			<div class="col-md-3">
+				<a class="thumbnail-link" href="{{ path('resource_show', { 'id': entity.id }) }}">
+					<div class="thumbnail block-browse block-resource">
+						<img data-holder-rendered="true" src="{{ asset(entity.getThumbsPath) }}" style="height: 155px; width: 100%; display: block;" />
+					
+						<div class="caption">
+							<h3 class="thumbnail-label"><span class="glyphicon glyphicon-{{ entity.getGlyphicon }}"></span> {{ entity.title }}</h3>
+						</div>
+						
+						<div class="duration">
+							Durée : {{ entity.durationToString }}
+						</div>
+						<div class="caddy-icon">
+							<span class="loading_indicator_inline loading_indicator_{{entity.id}}"></span>
+							<form action="{{ path('caddy_resource_remove') }}" method="post">
+								<button class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+								<input type="hidden" name="id" value="{{ entity.id }}" />
+							</form>
+						</div>
+					</div>
+				</a>
+			</div>
+			{% else %}
+				<div class="col-md-12 text-center">
+					<em>Aucune ressource dans cet espace</em>
+					<br/><br/>
+				</div>
+			{% endfor %}
+		{% endif %}
+	</div>
+{% endblock %}
+
+
+{% block script %}
+	{{ parent() }}
+	{% include '::addToCaddy.html.twig' %}
+{% endblock %}
+

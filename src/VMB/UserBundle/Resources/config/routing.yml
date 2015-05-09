@@ -26,3 +26,11 @@ caddy_resource_remove:
     defaults: { _controller: "VMBUserBundle:Caddy:removeResource" }
     requirements:
         _method: POST
+        
+caddy_show_resource:
+    path: /caddy/resource
+    defaults: { _controller: "VMBUserBundle:Caddy:show", display:'resource' }
+
+caddy_show_presentation:
+    path: /caddy/presentation
+    defaults: { _controller: "VMBUserBundle:Caddy:show", display:'presentation' }
