@@ -475,3 +475,7 @@ select[multiple="multiple"] {
 .view-more-title .glyphicon {
 	top: 4px;
 }
+
+#players_container {
+	min-height:445px;
+}

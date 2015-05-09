@@ -79,6 +79,13 @@ class Matrix
 	*/
 	private $resources;
 	
+	/**
+     * @var boolean
+     *
+     * @ORM\Column(name="official", type="boolean", options={"default":0})
+     */
+    private $official = 0;
+	
 	private $sortedResources = null;
 
     /**
@@ -397,5 +404,28 @@ class Matrix
     public function getTopic()
     {
         return $this->topic;
+    }
+
+    /**
+     * Set official
+     *
+     * @param boolean $official
+     * @return Matrix
+     */
+    public function setOfficial($official)
+    {
+        $this->official = $official;
+
+        return $this;
+    }
+
+    /**
+     * Get official
+     *
+     * @return boolean 
+     */
+    public function getOfficial()
+    {
+        return $this->official;
     }
 }

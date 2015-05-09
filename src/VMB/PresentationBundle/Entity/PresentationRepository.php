@@ -19,8 +19,10 @@ class PresentationRepository extends EntityRepository
 					  ->orderBy('p.dateUpdate', 'DESC');
 		
 		if($topic != null) {
-			$builder->andWhere('p.topic = :topic')
-			->setParameter('topic', $topic);
+			$builder->join('p.topic', 't')
+			->andWhere('t.lft >= :topicLft')->setParameter('topicLft', $topic->getLft())
+			->andWhere('t.rgt <= :topicRgt')->setParameter('topicRgt', $topic->getRgt())
+			->andWhere('t.root = :topicRoot')->setParameter('topicRoot', $topic->getRoot());
 		}
 			  
 		if(is_bool($public)) {

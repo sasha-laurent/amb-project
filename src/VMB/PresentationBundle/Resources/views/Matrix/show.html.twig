@@ -42,12 +42,12 @@
 				{% include '::players.html.twig' %}
 			</div>
 			<div class="col-sm-5">
-				<h4><span class="glyphicon glyphicon-open" aria-hidden="true"></span>  Parcourir les ressources</h4>
+				<h4><span class="glyphicon glyphicon-open" aria-hidden="true"></span>  Parcourir les ressources{% if entity.official %} officielles{% endif %}</h4>
 				<div id="browse_file" role="tab-panel">
 					<ul class="nav nav-tabs" role="tablist">
 						<li role="presentation" class="active"><a href="#official" aria-controls="official" role="tab" data-toggle="tab">Officielles</a></li>
 						<li role="presentation"><a href="#personal" aria-controls="personal" role="tab" data-toggle="tab">Personnelles</a></li>
-						<li role="presentation"><a href="#unofficial" aria-controls="unoffficial" role="tab" data-toggle="tab">Partagées</a></li>
+						{% if not entity.official %}<li role="presentation"><a href="#unofficial" aria-controls="unoffficial" role="tab" data-toggle="tab">Partagées</a></li>{% endif %}
 						<li role="presentation"><a href="{{ path('resource_new') }}"><span class="glyphicon glyphicon-plus"></span></a></li>
 					</ul>
 					<div class="tab-content">
@@ -59,7 +59,8 @@
 										<div style="" aria-expanded="true" class="panel-collapse">
 											<ul class="list-group">
 												<li class="list-group-item">
-													<em>Aucune ressource trouvée pour ce sujet dans cet espace</em>
+													<em>Aucune ressource trouvée pour ce sujet dans cet espace
+													{% if entity.official %}<br/>Cette matrice étant officielle, seules les ressources officielles (et donc indexées) sont ici affichées{% endif %}</em>
 												</li>
 											</ul>
 										</div>
@@ -165,18 +166,7 @@
 			stopAndHideAll(res['type']);
 			$('.addableRes_' + resId).addClass('active');
 			
-			if(res['type'] == 'audio') {
-				$(document.querySelectorAll(".player")[1]).show();
-				player = document.querySelectorAll(".player")[1].plyr;
-				player.source(res['src']);
-				//player.play();
-			}
-			else if(res['type'] == 'video') {
-				$(document.querySelectorAll(".player")[0]).show();
-				player = document.querySelectorAll(".player")[0].plyr;
-				player.source(res['src']);
-				//player.play();
-			}
+			displayNewRes(res['src'], res['type']);
 		}
 	}
 	

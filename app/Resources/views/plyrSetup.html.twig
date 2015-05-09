@@ -29,4 +29,43 @@
 			audioPlayer.pause();
 			$(document.querySelectorAll(".player")[1]).hide();
 		}
+		if(newType != 'image') {
+			$('.image_player').hide();
+			$('.image_player img').attr('src', '');
+		}
+		if(newType != 'application' && newType != 'text') {
+			$('.file_player').hide();
+			$('.file_player iframe').css('visibility', 'hidden');
+			$('.file_player iframe').attr('src', '');
+		}
+	}
+	
+	function displayNewRes(src, type, play=false) {
+		if(type == 'audio') {
+			$(document.querySelectorAll(".player")[1]).show();
+			player = document.querySelectorAll(".player")[1].plyr;
+			player.source(src);
+			if(play) {
+				player.play();
+			}
+		}
+		else if(type == 'video') {
+			$(document.querySelectorAll(".player")[0]).show();
+			player = document.querySelectorAll(".player")[0].plyr;
+			player.source(src);
+			if(play) {
+				player.play();
+			}
+		}
+		else if(type == 'image') {
+			$('.image_player').show();
+			$('.image_player img').attr('src', src);
+			$('.image_player a').attr('href', src);
+		}
+		else {
+			$('.file_player').show();
+			$('.file_player iframe').css('visibility', 'visible');
+			$('.file_player iframe').attr('src', src);
+			$('.file_player a').attr('href', src);
+		}
 	}

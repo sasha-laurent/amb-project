@@ -3,7 +3,11 @@
 {% set firstResource = null %}
 {% if alternativeResources|length == 0 %}
 	{% if entity.resources|length != 0 %}
-		{% set firstResource = entity.resources[0].usedResource %}
+		{% for checkedRes in entity.resources if firstResource == null %}
+			{% if checkedRes.suggested == 0 %}
+				{% set firstResource = checkedRes.usedResource %}
+			{% endif %}
+		{% endfor %}
 	{% endif %}
 {% else %}
 	{% set firstResource = alternativeResources[0] %}
@@ -151,18 +155,7 @@
 			$('#current-res-update').html(res['update']);
 			$('#current-res-description').html(res['description']);
 			
-			if(res['type'] == 'audio') {
-				$(document.querySelectorAll(".player")[1]).show();
-				player = document.querySelectorAll(".player")[1].plyr;
-				player.source(res['src']);
-				player.play();
-			}
-			else if(res['type'] == 'video') {
-				$(document.querySelectorAll(".player")[0]).show();
-				player = document.querySelectorAll(".player")[0].plyr;
-				player.source(res['src']);
-				player.play();
-			}
+			displayNewRes(res['src'], res['type'], true);
 		}
 	}
 	

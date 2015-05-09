@@ -66,7 +66,7 @@ class MatrixController extends Controller
         
         if($this->get('security.context')->isGranted('ROLE_ADMIN') || $entity->isOwner($this->getUser())) {					
 			$validResources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic(), true);
-			$personalResources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic(), null, $this->getUser());
+			$personalResources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic(), ($entity->getOfficial() ? true : null), $this->getUser());
 			$unofficialResources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic(), false, $this->getUser(), true);
 
 			return $this->render('VMBPresentationBundle:Matrix:show.html.twig', array(
@@ -96,6 +96,7 @@ class MatrixController extends Controller
     public function updateAction(Request $request, $id)
     {
 		$em = $this->getDoctrine()->getManager();
+		$matrix = $em->getRepository('VMBPresentationBundle:Matrix')->find($id);
 
 		$resourceUpdates = $request->request->all();
 		
@@ -133,13 +134,21 @@ class MatrixController extends Controller
 				$res = intval($res);
 				
 				if($res != 0) {
-					$usedResource = new UsedResource($em->getRepository('VMBPresentationBundle:Matrix')->find($id));
-					$usedResource->setPov($em->getRepository('VMBPresentationBundle:Pov')->find($pov));
-					$usedResource->setLevel($em->getRepository('VMBPresentationBundle:Level')->find($lvl));
-					$usedResource->setResource($em->getRepository('VMBResourceBundle:Resource')->find($res));
-					
-					$em->persist($usedResource);
-					$nbAdd++;
+					$resource = $em->getRepository('VMBResourceBundle:Resource')->find($res);
+						
+					// We allow to add a resource to an official matrix only if it's trusted
+					if(!$matrix->getOfficial() || $resource->getTrusted()) {
+						$usedResource = new UsedResource($matrix);
+						$usedResource->setPov($em->getRepository('VMBPresentationBundle:Pov')->find($pov));
+						$usedResource->setLevel($em->getRepository('VMBPresentationBundle:Level')->find($lvl));
+						$usedResource->setResource($resource);
+						
+						$em->persist($usedResource);
+						$nbAdd++;
+					}
+					else {
+						$request->getSession()->getFlashBag()->add('danger', 'Une ressource n\'a pu être ajoutée car elle n\'est pas officielle');
+					}
 				}
 			}
 		}

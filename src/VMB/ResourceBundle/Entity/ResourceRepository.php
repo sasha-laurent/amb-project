@@ -19,9 +19,10 @@ class ResourceRepository extends EntityRepository
 			->orderBy('r.type');
 		
 		if($topic != null) {
-			$builder->innerJoin('r.topic', 't')
-			->where('t = :topic')
-			->setParameter('topic', $topic);
+			$builder->join('r.topic', 't')
+			->andWhere('t.lft >= :topicLft')->setParameter('topicLft', $topic->getLft())
+			->andWhere('t.rgt <= :topicRgt')->setParameter('topicRgt', $topic->getRgt())
+			->andWhere('t.root = :topicRoot')->setParameter('topicRoot', $topic->getRoot());
 		}
 		
 		if(is_bool($official)) {
@@ -46,9 +47,10 @@ class ResourceRepository extends EntityRepository
 		$qb = $this
 			->createQueryBuilder('r')
 			->orderBy('r.type')
-			->innerJoin('r.topic', 't')
-			->where('t = :topic')
-			->setParameter('topic', $topic)
+			->join('r.topic', 't')
+			->andWhere('t.lft >= :topicLft')->setParameter('topicLft', $topic->getLft())
+			->andWhere('t.rgt <= :topicRgt')->setParameter('topicRgt', $topic->getRgt())
+			->andWhere('t.root = :topicRoot')->setParameter('topicRoot', $topic->getRoot())
 		;
 		
 		if($official !== null) {

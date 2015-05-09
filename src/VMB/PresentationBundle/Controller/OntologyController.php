@@ -155,9 +155,21 @@ class OntologyController extends Controller
     {
     	$data = $request->request->get('data');
         $id = $request->request->get('id');
-    	$file = $this->getAbsoluteIndexFile($id);
-    	file_put_contents($file, $data);
-    	return new Response('ok');
+        $resourcesId = $request->request->get('videoID');
+        
+        $em = $this->getDoctrine()->getManager();
+        foreach($resourcesId as $resId) {
+			$resource = $em->getRepository('VMBResourceBundle:Resource')->find($resId);
+			if($resource != null) {
+				$resource->setIndexed(true);
+				// Since the user is a teacher
+				$resource->setTrusted(true);
+			}
+		}
+		$em->flush();
+		$file = $this->getAbsoluteIndexFile($id);
+		file_put_contents($file, $data);
+		return new Response('ok');
     }
     
     public function newOntology() {

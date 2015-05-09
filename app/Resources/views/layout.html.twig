@@ -69,6 +69,7 @@
 						<a data-toggle="dropdown" class="dropdown-toggle header-nav-link" href="#">Présentations <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li><a href="{{ path('vmb_presentation_browse') }}">Parcourir les présentations</a></li>
+                            <li><a href="{{ path('vmb_resource_browse') }}">Parcourir les ressources</a></li>
                             {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                             <li><a href="{{ path('presentation_perso') }}">Mes présentations</a></li>
                             {% endif %}

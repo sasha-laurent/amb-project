@@ -50,7 +50,7 @@
 				{% for entity in entities %}
 				<div class="col-md-4">
 					<a class="thumbnail-link" href="{{ path('presentation_show', { 'id': entity.id }) }}">
-						<div class="thumbnail">
+						<div class="thumbnail block-presentation">
 							<img data-holder-rendered="true" src="{{ asset(entity.getThumbsPath) }}" style="height: 155px; width: 100%; display: block;" />
 						
 							<div class="caption">
