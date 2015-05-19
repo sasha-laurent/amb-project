@@ -46,6 +46,13 @@ class CheckedResource
      * @ORM\Column(name="sort", type="integer")
      */
     private $sort;
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="duration", type="integer")
+     */
+    private $duration = 11;
 
 
     /**
@@ -148,5 +155,33 @@ class CheckedResource
     public function getSuggested()
     {
         return $this->suggested;
+    }
+
+    /**
+     * Set duration
+     *
+     * @param integer $duration
+     * @return CheckedResource
+     */
+    public function setDuration($duration)
+    {
+        $this->duration = $duration;
+
+        return $this;
+    }
+
+    /**
+     * Get duration
+     *
+     * @return integer 
+     */
+    public function getDuration()
+    {
+		if($this->usedResource->getResource()->getType() == 'video' || $this->usedResource->getResource()->getType() == 'audio') {
+			return $this->usedResource->getResource()->getDuration();
+		}
+		else {
+			return $this->duration;
+		}
     }
 }

@@ -22,14 +22,14 @@ class CheckedResource
     private $id;
 
 	/**
-	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Presentation", inversedBy="resources", cascade={"persist"})
-	* @ORM\JoinColumn(nullable=false) 
+	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Presentation", inversedBy="resources")
+	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE") 
 	*/
 	private $presentation;
 	
 	/**
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\UsedResource")
-	* @ORM\JoinColumn(nullable=false)
+	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
 	*/
 	private $usedResource;
 	
@@ -46,6 +46,13 @@ class CheckedResource
      * @ORM\Column(name="sort", type="integer")
      */
     private $sort;
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="duration", type="integer")
+     */
+    private $duration = 11;
 
 
     /**
@@ -125,5 +132,28 @@ class CheckedResource
     public function getUsedResource()
     {
         return $this->usedResource;
+    }
+
+    /**
+     * Set suggested
+     *
+     * @param boolean $suggested
+     * @return CheckedResource
+     */
+    public function setSuggested($suggested)
+    {
+        $this->suggested = $suggested;
+
+        return $this;
+    }
+
+    /**
+     * Get suggested
+     *
+     * @return boolean 
+     */
+    public function getSuggested()
+    {
+        return $this->suggested;
     }
 }

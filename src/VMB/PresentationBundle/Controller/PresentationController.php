@@ -505,16 +505,18 @@ class PresentationController extends Controller
 				
 				$totalDuration = 0;
 				foreach($postValues as $key => $position) {
-					if(preg_match('`(usedResource|suggestedResource)_([0-9]+)`', $key, $matches)) {
+					if(preg_match('`(usedResource|suggestedResource)_([0-9]+)_([0-9]+)`', $key, $matches)) {
 						$resId = intval($matches[2]);
 						$isSuggested = ($matches[1] == 'suggestedResource');
+						$duration = $matches[3];
 						
 						// If the resource has already been persisted as a checked resource
 						if(!$saveAsCopy && isset($indexedCheckedRes[$resId])) {
 							$indexedCheckedRes[$resId]->setSort($position);
 							$indexedCheckedRes[$resId]->setSuggested($isSuggested);
+							$indexedCheckedRes[$resId]->setDuration($duration);
 							if(!$isSuggested) {
-								$totalDuration += $indexedCheckedRes[$resId]->getUsedResource()->getResource()->getDuration();
+								$totalDuration += $indexedCheckedRes[$resId]->getDuration();
 							}
 							
 							unset($indexedCheckedRes[$resId]);
@@ -526,11 +528,12 @@ class PresentationController extends Controller
 							$workingPresentation->addResource($newCheckedRes);
 							$em->persist($newCheckedRes);
 							$newCheckedRes->setUsedResource($em->getRepository('VMBPresentationBundle:UsedResource')->find($resId));
-							if(!$isSuggested) {
-								$totalDuration += $newCheckedRes->getUsedResource()->getResource()->getDuration();
-							}
+							$newCheckedRes->setDuration($duration);
 							$newCheckedRes->setSort($position);
 							$newCheckedRes->setSuggested($isSuggested);
+							if(!$isSuggested) {
+								$totalDuration += $newCheckedRes->getDuration();
+							}
 						}
 					}
 				}

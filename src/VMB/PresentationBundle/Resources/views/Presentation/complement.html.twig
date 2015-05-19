@@ -30,11 +30,11 @@
 			<ul class="list-group" id="file_list">
 				{% for res in entity.resources %}
 					{% if res.suggested == false %}
-						{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
-						<li class="list-group-item" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
+						{% set totalDuration = totalDuration + res.duration %}
+						<li class="list-group-item presentationResource" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
 							<div class="row">
 								<div class="col-sm-8"><span class="glyphicon glyphicon-{{ res.usedResource.resource.getGlyphicon }}" aria-hidden="true"></span> {{ res.usedResource.resource.title[:20] }}</div>
-								<div class="col-sm-4 text-right">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
+								<div class="col-sm-4 text-right">{{ "%02d"|format(res.duration // 60) }}:{{ "%02d"|format(res.duration % 60) }}</div>
 								<input type="hidden" name="usedResource_{{ res.usedResource.id }}" value="1" />
 							</div>
 						</li>
@@ -109,7 +109,7 @@
 		resources = [ 
 			// Presentation
 			{% set firstLoop = true %}
-			[ {% for res in entity.resources %}{% if res.suggested == false %}{% set totalDuration = totalDuration + res.usedResource.resource.duration %}{% if firstLoop %}{% set firstLoop = false %}{% else %}, {% endif %}{{ res.usedResource.id }}{% endif %}{% endfor %} ],
+			[ {% for res in entity.resources %}{% if res.suggested == false %}{% set totalDuration = totalDuration + res.duration %}{% if firstLoop %}{% set firstLoop = false %}{% else %}, {% endif %}{{ res.usedResource.id }}{% endif %}{% endfor %} ],
 			
 			// Suggestions
 			{% if hasSuggestions %}
@@ -147,9 +147,10 @@
 			addToDuration(-resourcesCollection[resId]['duration']);
 		}
 		
-		function addToPlaylist(resId, prepend=false) {
+		function addToPlaylist(resId, type, prepend=false) {
 			addToDuration(resourcesCollection[resId]['duration']);
-			newElt = '<li class="list-group-item" id="addedRes_' + resId + '" data-id="' + resId + '"> \
+			
+			newElt = '<li class="list-group-item ' + type + 'Resource" id="addedRes_' + resId + '" data-id="' + resId + '"> \
 				<div class="row"> \
 					<div class="col-sm-8"><span class="glyphicon glyphicon-' + resourcesCollection[resId]['glyphicon'] + '" aria-hidden="true"></span> ' + resourcesCollection[resId]['shortTitle'] + '</div> \
 					<div class="col-sm-4 text-right">' + resourcesCollection[resId]['duration_str'] + '</div> \
@@ -166,6 +167,13 @@
 		
 		function togglePresentationOption(selector) {
 			var index = $('#presentation_options .list-group-item').index($(selector)); 
+			var type = 'complement';
+			if(index == 0) {
+				type = 'presentation';
+			}
+			else if(index == 1) {
+				type = 'suggestion';
+			}
 			
 			// If we need to delete elements
 			if($(selector).hasClass('active')) {
@@ -180,7 +188,7 @@
 				$(selector).addClass('active');
 				var i;
 				for (i = 0; i < resources[index].length; ++i) {
-					addToPlaylist(resources[index][i]);
+					addToPlaylist(resources[index][i], type);
 				}
 			}
 			$(selector).css('outline','0px');

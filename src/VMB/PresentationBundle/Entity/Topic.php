@@ -82,6 +82,11 @@ class Topic
     private $children;
     
     /**
+	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Ontology", mappedBy="topic", cascade={"remove", "persist", "detach"})
+	*/
+	private $ontologies;
+    
+    /**
      * @Assert\File(maxSize="128000000000")
      * 
      */
@@ -374,5 +379,38 @@ class Topic
     public function getChildren()
     {
         return $this->children;
+    }
+
+    /**
+     * Add ontologies
+     *
+     * @param \VMB\PresentationBundle\Entity\Ontology $ontologies
+     * @return Topic
+     */
+    public function addOntology(\VMB\PresentationBundle\Entity\Ontology $ontologies)
+    {
+        $this->ontologies[] = $ontologies;
+
+        return $this;
+    }
+
+    /**
+     * Remove ontologies
+     *
+     * @param \VMB\PresentationBundle\Entity\Ontology $ontologies
+     */
+    public function removeOntology(\VMB\PresentationBundle\Entity\Ontology $ontologies)
+    {
+        $this->ontologies->removeElement($ontologies);
+    }
+
+    /**
+     * Get ontologies
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getOntologies()
+    {
+        return $this->ontologies;
     }
 }

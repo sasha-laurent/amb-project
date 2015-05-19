@@ -82,12 +82,30 @@ class Topic
     private $children;
     
     /**
+	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Ontology", mappedBy="topic", cascade={"remove", "persist", "detach"})
+	*/
+	private $ontologies;
+    
+    /**
      * @Assert\File(maxSize="128000000000")
      * 
      */
     public $file;
 
 	private $filenameForRemove;
+
+
+	/**
+	 * Used for select form components
+	 * 
+	 */
+	public function __toString() {
+		$output = '';
+		for($i=0; $i < $this->lvl; $i++) {
+			$output .= '—';
+		}
+		return $output.$this->title;
+	}
 
     /**
      * Get id
@@ -184,8 +202,10 @@ class Topic
     
     public function getThumbsPath()
     {
-		$path = 'upload/topic/';
-		return $path.$this->getSlug().'.jpg';
+		if(is_file(str_replace('\\', '/', __DIR__).'/../../../../web/upload/topic/'.$this->getSlug().'.jpg')) {
+			return 'upload/topic/'.$this->getSlug().'.jpg';
+		}
+		else return 'img/icon/default_topic_thumb.jpg';
 	}
 	    
     public function storeFilenameForRemove()
@@ -205,5 +225,159 @@ class Topic
            
         }
     }
-}
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
+    /**
+     * Set lft
+     *
+     * @param integer $lft
+     * @return Topic
+     */
+    public function setLft($lft)
+    {
+        $this->lft = $lft;
+
+        return $this;
+    }
+
+    /**
+     * Get lft
+     *
+     * @return integer 
+     */
+    public function getLft()
+    {
+        return $this->lft;
+    }
+
+    /**
+     * Set lvl
+     *
+     * @param integer $lvl
+     * @return Topic
+     */
+    public function setLvl($lvl)
+    {
+        $this->lvl = $lvl;
+
+        return $this;
+    }
+
+    /**
+     * Get lvl
+     *
+     * @return integer 
+     */
+    public function getLvl()
+    {
+        return $this->lvl;
+    }
+
+    /**
+     * Set rgt
+     *
+     * @param integer $rgt
+     * @return Topic
+     */
+    public function setRgt($rgt)
+    {
+        $this->rgt = $rgt;
+
+        return $this;
+    }
+
+    /**
+     * Get rgt
+     *
+     * @return integer 
+     */
+    public function getRgt()
+    {
+        return $this->rgt;
+    }
+
+    /**
+     * Set root
+     *
+     * @param integer $root
+     * @return Topic
+     */
+    public function setRoot($root)
+    {
+        $this->root = $root;
+
+        return $this;
+    }
+
+    /**
+     * Get root
+     *
+     * @return integer 
+     */
+    public function getRoot()
+    {
+        return $this->root;
+    }
+
+    /**
+     * Set parent
+     *
+     * @param \VMB\PresentationBundle\Entity\Topic $parent
+     * @return Topic
+     */
+    public function setParent(\VMB\PresentationBundle\Entity\Topic $parent = null)
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * Get parent
+     *
+     * @return \VMB\PresentationBundle\Entity\Topic 
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * Add children
+     *
+     * @param \VMB\PresentationBundle\Entity\Topic $children
+     * @return Topic
+     */
+    public function addChild(\VMB\PresentationBundle\Entity\Topic $children)
+    {
+        $this->children[] = $children;
+
+        return $this;
+    }
+
+    /**
+     * Remove children
+     *
+     * @param \VMB\PresentationBundle\Entity\Topic $children
+     */
+    public function removeChild(\VMB\PresentationBundle\Entity\Topic $children)
+    {
+        $this->children->removeElement($children);
+    }
+
+    /**
+     * Get children
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+}

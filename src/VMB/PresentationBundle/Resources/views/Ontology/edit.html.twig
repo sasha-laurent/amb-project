@@ -24,6 +24,12 @@ $('.miller-container').taxonomyBrowser({
 	</ul>
 {% endblock %}
 
+{% block formBody %}
+	<div class="well">
+		{{ form(form) }}
+	</div>
+{% endblock %}
+
 {% block uiDialogs %}
 	<!-- ui dialog for add or edit node -->
 	<div id="dialog-confirm" class = "dialog-ui" title="Delete nodes?">

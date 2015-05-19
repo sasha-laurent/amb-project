@@ -504,3 +504,13 @@ select[multiple="multiple"] {
 	text-align: right;
 	padding-right: 0px;
 }
+
+.presentationResource { 
+	background-color: white;
+}
+.suggestionResource {
+	background-color: #EFEFEF;
+}
+.complementResource {
+	background-color: #DFDFDF;
+}

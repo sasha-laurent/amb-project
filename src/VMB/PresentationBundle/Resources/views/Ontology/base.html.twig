@@ -63,7 +63,9 @@
 	<div class = "button-menu">
     	{% block buttons %}{% endblock %}
 	</div>
-    <div style="clear:both;"></div>
+    <div style="clear:both;"><br/></div>
+    
+    {% block formBody %}{% endblock %}
 
     <!-- Miller container -->
 	<div class="miller-container">				
@@ -102,7 +104,7 @@
 	{% endblock %}
 
 	{% block uiDialogs %}{% endblock %}
-
+	<br/>
 {% endblock %}
 
 

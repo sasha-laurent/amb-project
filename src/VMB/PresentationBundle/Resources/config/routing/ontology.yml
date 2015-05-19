@@ -21,3 +21,9 @@ ontology_index:
 ontology_index_save:
     pattern:  /index/save/
     defaults: { _controller: VMBPresentationBundle:Ontology:saveIndex }
+
+ontology_list_available:
+    pattern:  /available/{resourceId}
+    defaults: { _controller: VMBPresentationBundle:Ontology:listAvailable }
+    requirements:
+        resourceId: \d{1,}

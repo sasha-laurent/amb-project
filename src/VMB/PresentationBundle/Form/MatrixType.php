@@ -19,9 +19,12 @@ class MatrixType extends AbstractType
         $matrix = $builder->getData();
         if($matrix->getTopic() == null) {
 			$builder->add('topic', 'entity', array(
-					'class' => 'VMBPresentationBundle:Topic',
-					'property' => 'title'
-				));
+			'label' => 'Thématique',
+			'multiple' => false,
+			'class' => 'VMBPresentationBundle:Topic',
+			 'query_builder' => function(\Gedmo\Tree\Entity\Repository\NestedTreeRepository $repo) {
+				return $repo->getNodesHierarchyQueryBuilder();
+			  }));
 		}
            
         $builder

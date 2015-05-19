@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 use VMB\PresentationBundle\Entity\Ontology;
+use VMB\PresentationBundle\Form\OntologyType;
 
 class OntologyController extends Controller
 {
@@ -55,34 +56,27 @@ class OntologyController extends Controller
         $name = 'new ontology';
         $file = 'ontology.json';
         if (is_null($ontology)) { // new ontologie
-            $id = '0';
+            $ontology = new Ontology();
             $name = 'New ontology';
+            $ontology->setName($name);
+            $id = '0';
         }
         else { // edit ontologie
             $name = $ontology->getName();
             $file = $ontology->getOntologyFile($id);
         }
+        
+        $form = $this
+			->get('form.factory')
+			->create(new OntologyType(), $ontology);
+        
         return $this->render('VMBPresentationBundle:Ontology:edit.html.twig', array(
             'name' => $name,
             'file' => $file,
-            'id'   => $id
+            'id'   => $id,
+            'form' => $form->createView()
             ));
     }
-
-    /*public function createAction(Request $request)
-    {
-        $ontology = $this->get('ontology');
-        $id = $request->query->get('ontology');
-        $ontArr = $ontology->getOntology($id);
-        $name = $request->get('name');
-        $file = 'ontology.json';
-        $file = $ontology->getOntologyFile($id);
-        return $this->render('VMBPresentationBundle:Ontology:edit.html.twig', array(
-            'name' => $name,
-            'file' => $file,
-            'id'   => $id
-            ));
-    }*/
 
 	/**
     * @Security("has_role('ROLE_TEACHER')")
@@ -135,17 +129,42 @@ class OntologyController extends Controller
     */
     public function saveOntologyAction(Request $request)
     {
+		$isNew = false;
     	$data = $request->request->get('data');
         $id = $request->request->get('id');
         
-        $ontology = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Ontology')->find($id);
+        $em = $this->getDoctrine()->getManager();
+        $ontology = $em->getRepository('VMBPresentationBundle:Ontology')->find($id);
         if(is_null($ontology)) { // create new ontologie
-            $ontology = $this->newOntology();
+            $ontology = new Ontology();
+            $isNew = true;
         }
-
-    	$file = $this->getAbsoluteOntologyFile($ontology->getId());
-    	file_put_contents($file, $data);
-    	return new Response('ok');
+        
+        $request = $this->get('request');
+			
+		if ($request->isMethod('POST')) 
+		{
+			$ontology->setName($request->request->get('title'));
+			if($isNew) {
+				$topic = $em->getRepository('VMBPresentationBundle:Topic')->find($request->request->get('topic'));
+				if($topic != null) {
+					$ontology->setTopic($topic);
+					$em->persist($ontology);
+					$em->flush();
+					
+					// We create the corresponding files
+					file_put_contents($this->getAbsoluteIndexFile($ontology->getId()), '{}');
+				}
+				else {
+					return new Response('ok');
+				}
+			}
+			else {
+				$em->flush();
+			}
+			file_put_contents($this->getAbsoluteOntologyFile($ontology->getId()), $data);
+		}
+    	return new Response($ontology->getId());
     }
 
 	/**
@@ -172,23 +191,25 @@ class OntologyController extends Controller
 		return new Response('ok');
     }
     
-    public function newOntology() {
-		$em = $this->getDoctrine()->getManager();
-		
-		// We create the new entity
-		$ontology = new Ontology();
-		$ontology->setName('New ontology');
-		$em->persist($ontology);
-        
-        // We flush to get and id
-        $em->flush();
-        
-        // We create the corresponding files
-        file_put_contents($this->getAbsoluteIndexFile($ontology->getId()), '{}');
-        file_put_contents($this->getAbsoluteOntologyFile($ontology->getId()), '[]');
-        
-        return $ontology;
+    public function listAvailable($resourceId)
+    {
+		return new Response('nope');
+	}
+    
+    /**
+     * Retrieve an existing Ontology entity.
+     */
+    protected function getOntology($id)
+    {
+        $ontology = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Ontology')->find($id);
+
+		if ($ontology == null) {
+			throw $this->createNotFoundException('Unable to find Ontology entity.');
+		}
+
+		return $ontology;
     }
+    
     public function getAbsoluteIndexFile($id) {
         return $this->get('kernel')->getRootDir().'/../web/bundles/telecomvmb/json/index'.$id.'.json';
     }

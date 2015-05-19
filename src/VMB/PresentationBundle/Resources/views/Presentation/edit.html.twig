@@ -1,5 +1,6 @@
 {% if copy == false %}
 	{% set saveButton = 'true' %}
+	{% set entity = presentation %}
 {% endif %}
 {% extends "::Backend/subPage.html.twig" %}
 {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
@@ -66,7 +67,7 @@
 				{% if matrix.sortedResources[pov.id][level.id] is defined %}
 					<div class="usedResource" style="background-image:url({{ asset(matrix.sortedResources[pov.id][level.id].resource.getThumbsPath) }});">
 						{% if copy %}
-						<div class="resThumbnailHover" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="{{ matrix.sortedResources[pov.id][level.id].resource.duration|default(0) }}" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
+						<div class="resThumbnailHover" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="{{ matrix.sortedResources[pov.id][level.id].resource.duration|default(11) }}" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
 							<span class="resTitle">{{ matrix.sortedResources[pov.id][level.id].resource.title[:18] }}</span>
 							<span class="resCheckBox">
 								{% if presentation.isChecked(matrix.sortedResources[pov.id][level.id].id) %}
@@ -80,7 +81,7 @@
 							</span>
 						</div>
 						{% else %}
-						<div class="resThumbnailHover{% if presentation.isChecked(matrix.sortedResources[pov.id][level.id].id) %} checkedRes{% elseif presentation.isSuggested(matrix.sortedResources[pov.id][level.id].id) %} suggestedRes{% endif %}" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="{{ matrix.sortedResources[pov.id][level.id].resource.duration|default(0) }}" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
+						<div class="resThumbnailHover{% if presentation.isChecked(matrix.sortedResources[pov.id][level.id].id) %} checkedRes{% elseif presentation.isSuggested(matrix.sortedResources[pov.id][level.id].id) %} suggestedRes{% endif %}" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="{{ matrix.sortedResources[pov.id][level.id].resource.duration|default(11) }}" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
 							<span class="resTitle">{{ matrix.sortedResources[pov.id][level.id].resource.title[:18] }}</span>
 							<span class="resCheckBox"><span class="user-glyphicon glyphicon glyphicon-ok" aria-hidden="true"></span></span>
 						</div>
@@ -131,13 +132,18 @@
 								{% if copy == false %}
 									{% for res in presentation.resources %}
 										{% if res.suggested == false %}
-											{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
-											<li class="list-group-item playableResource playableRes_{{res.usedResource.id}}" id="addedRes_{{ res.usedResource.id }}" data-type="used" data-id="{{ res.usedResource.id }}">
+											{% set totalDuration = totalDuration + res.duration %}
+											<li class="list-group-item playableResource playableRes_{{res.usedResource.id}}" id="addedRes_{{ res.usedResource.id }}" data-duration="{{ res.duration }}" data-type="used" data-id="{{ res.usedResource.id }}">
 												<div class="row">
-													<div class="col-sm-8">{{ res.usedResource.resource.title }}</div>
-													<div class="col-sm-2">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
+													<div class="col-sm-7"><span class="glyphicon glyphicon-{{ res.usedResource.resource.getGlyphicon }}"></span> {{ res.usedResource.resource.title }}</div>
+													<div class="col-sm-3 text-right">
+														{% if res.usedResource.resource.type != 'video' and res.usedResource.resource.type != 'audio' %}
+															<a class="editTimeButton"><span class="glyphicon glyphicon-edit"></span></a> 
+														{% endif %}
+														<span class="durationContainer">{{ "%02d"|format(res.duration // 60) }}:{{ "%02d"|format(res.duration % 60) }}</span>
+													</div>
 													<div class="col-sm-2 text-right"><a class="rmRes" id="rmRes_{{ res.usedResource.id }}" data-type="used" data-id="{{ res.usedResource.id }}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
-													<input type="hidden" id="usedResource_{{ res.usedResource.id }}" name="usedResource_{{ res.usedResource.id }}" value="{{ res.sort }}" />
+													<input type="hidden" id="usedResource_{{ res.usedResource.id }}" name="usedResource_{{ res.usedResource.id }}_{{ res.duration }}" value="{{ res.sort }}" />
 												</div>
 											</li>
 										{% endif %}
@@ -155,12 +161,17 @@
 							{% for res in presentation.resources %}
 								{% if res.suggested == true %}
 									{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
-									<li class="list-group-item playableResource suggestedRes_{{res.usedResource.id}}" id="suggestedRes_{{ res.usedResource.id }}" data-type="suggestion" data-id="{{ res.usedResource.id }}">
+									<li class="list-group-item playableResource suggestedRes_{{res.usedResource.id}}" id="suggestedRes_{{ res.usedResource.id }}" data-duration="{{ res.duration }}"  data-type="suggestion" data-id="{{ res.usedResource.id }}">
 										<div class="row">
-											<div class="col-sm-8">{{ res.usedResource.resource.title }}</div>
-											<div class="col-sm-2">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
+											<div class="col-sm-7"><span class="glyphicon glyphicon-{{ res.usedResource.resource.getGlyphicon }}"></span> {{ res.usedResource.resource.title }}</div>
+											<div class="col-sm-3 text-right">
+												{% if res.usedResource.resource.type != 'video' and res.usedResource.resource.type != 'audio' %}
+													<a class="editTimeButton"><span class="glyphicon glyphicon-edit"></span></a> 
+												{% endif %}
+												<span class="durationContainer">{{ "%02d"|format(res.duration // 60) }}:{{ "%02d"|format(res.duration % 60) }}</span>
+											</div>
 											<div class="col-sm-2 text-right"><a class="rmRes" id="rmRes_{{ res.usedResource.id }}" data-type="suggestion" data-id="{{ res.usedResource.id }}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
-											<input type="hidden" id="suggestedResource_{{ res.usedResource.id }}" name="suggestedResource_{{ res.usedResource.id }}" value="{{ res.sort }}" />
+											<input type="hidden" id="suggestedResource_{{ res.usedResource.id }}" name="suggestedResource_{{ res.usedResource.id }}_{{ res.duration }}" value="{{ res.sort }}" />
 										</div>
 									</li>
 								{% endif %}
@@ -188,10 +199,11 @@
 					'description': "{{ usedRes.resource.description }}", 
 					'creation': "{{ usedRes.resource.dateCreate|date('d/m/y') }}", 
 					'update': "{{ usedRes.resource.dateUpdate|date('d/m/y') }}", 
-					'duration': {{ usedRes.resource.duration|default(0) }},
-					'duration_str': "{{ "%02d"|format(usedRes.resource.duration // 60) }}:{{ "%02d"|format(usedRes.resource.duration % 60) }}",
+					'duration': {{ usedRes.resource.duration|default(11) }},
+					'duration_str': "{{ "%02d"|format((usedRes.resource.duration|default(11)) // 60) }}:{{ "%02d"|format((usedRes.resource.duration|default(11)) % 60) }}",
 					'src': "{{ asset(usedRes.resource.getResourcePath) }}",
-					'type': "{{ usedRes.resource.type }}"
+					'type': "{{ usedRes.resource.type }}",
+					'glyphicon': "{{ usedRes.resource.getGlyphicon }}"
 				},
 			{% endfor %}
 		};
@@ -234,6 +246,33 @@
 			$('#vmb_presentationbundle_presentation_duration').val(total);
 		}
 		
+		
+		function editTime(item) {
+			var li = $(item).closest('.playableResource');
+			var oldDuration = li.attr('data-duration');
+			var newDuration = prompt("Entrez la nouvelle durée pour cet item", oldDuration);
+
+			if (newDuration != null) {
+				newDuration = parseInt(newDuration, 10);
+				if(newDuration >= 5) {
+					oldDuration = parseInt(oldDuration, 10);
+					if(li.attr('data-type') == 'used') {
+						addToDuration(newDuration - oldDuration);
+					}
+					
+					li.attr('data-duration', newDuration + '');
+					li.find('.durationContainer').html(convertDurationToString(newDuration));
+					name = li.find('input').attr('name');
+					
+					var regex = /^(usedResource|suggestedResource)_([0-9]+)_([0-9]+)$/;
+					li.find('input').attr('name', name.replace(regex, '$1_$2_' + newDuration));
+				}
+				else {
+					alert('Erreur : le temps doit être supérieur à 5 secondes');
+				}
+			}
+		}
+		
 		function sortAllItems(selector) {
 			$( selector ).each(function( index ) {
 				input = $(this).find('input');
@@ -243,12 +282,18 @@
 			});
 		}
 		
-		function deleteFromPlaylist(resId, type) {
+		function deleteFromPlaylist(resId, type, duration = null) {
 			if(type == 'used') {
 				$('#addedRes_' + resId).remove();
 				$('#usedRes_' + resId).removeClass('checkedRes');
 				sortAllItems('#file_list li');
-				addToDuration(-parseInt($('#usedRes_' + resId).attr('data-duration'), 10));
+				
+				if(duration == null)  {
+					addToDuration(-parseInt($('#usedRes_' + resId).attr('data-duration'), 10));
+				}
+				else {
+					addToDuration(-parseInt(duration, 10));
+				}
 			}
 			else {
 				$('#suggestedRes_' + resId).remove();
@@ -257,37 +302,53 @@
 			}
 		}
 		
-		function addToPlaylist(resId, title, type) {
+		function addToPlaylist(resId, title, type, duration = null) {
 			if(type == 'used') {
 				$('#usedRes_' + resId).addClass('checkedRes');
-				$('#file_list').append(generateNewItem(resId, title, 'used'));
-				$('#rmRes_' + resId).click(function() 	 { deleteFromPlaylist($(this).attr('data-id'), 'used'); });
-				addToDuration(parseInt($('#usedRes_' + resId).attr('data-duration'), 10));
+				$('#file_list').append(generateNewItem(resId, title, 'used', duration));
+				$('#rmRes_' + resId).click(function(event) 	 { event.stopImmediatePropagation(); deleteFromPlaylist($(this).attr('data-id'), 'used', $(this).closest('.playableResource').attr('data-duration')); });
+				
+				if(duration == null)  {
+					addToDuration(parseInt($('#usedRes_' + resId).attr('data-duration'), 10));
+				}
+				else {
+					addToDuration(parseInt(duration, 10));
+				}
 			}
 			else {
 				$('#usedRes_' + resId).addClass('suggestedRes');
-				$('#suggestion_list').append(generateNewItem(resId, title, 'suggestion'));
-				$('#rmRes_' + resId).click(function() 	 { deleteFromPlaylist($(this).attr('data-id'), 'suggestion'); });
+				$('#suggestion_list').append(generateNewItem(resId, title, 'suggestion', duration));
+				$('#rmRes_' + resId).click(function(event) 	 { event.stopImmediatePropagation(); deleteFromPlaylist($(this).attr('data-id'), 'suggestion', $(this).closest('.playableResource').attr('data-duration')); });
 			}
 			$('.playableRes_' + resId).click(function() { triggerNewRes($(this).attr('data-id'));});
+			$('.playableRes_' + resId).find('.editTimeButton').click(function(event) { event.stopImmediatePropagation(); event.preventDefault(); editTime(this); });
 		}
 		
-		function generateNewItem(id, title, type) {
-			var duration = parseInt($('#usedRes_' + id).attr('data-duration'), 10);
+		function generateNewItem(id, title, type, duration = null) {
+			var resourceData = resourcesCollection[id];
+			if(duration == null)  {
+				duration = resourceData['duration'];
+			}
+			 
+			var editTime = '';
+			if(resourceData['type'] != 'video' && resourceData['type'] != 'audio') {
+				editTime = '<a class="editTimeButton"><span class="glyphicon glyphicon-edit"></span></a> ';
+			}
+			
 			if(type=='used') {
-				return '<li class="list-group-item playableResource playableRes_' + id + '" id="addedRes_' + id + '" data-type="used" data-id="' + id + '"><div class="row"> \
-					<div class="col-sm-8">' + title + '</div> \
-					<div class="col-sm-2">' + convertDurationToString(duration) + '</div> \
+				return '<li class="list-group-item playableResource playableRes_' + id + '" id="addedRes_' + id + '" data-duration="' + duration + '" data-type="used" data-id="' + id + '"><div class="row"> \
+					<div class="col-sm-7"><span class="glyphicon glyphicon-' + resourceData['glyphicon'] + '"></span> ' + title + '</div> \
+					<div class="col-sm-3 text-right">' + editTime + '<span class="durationContainer">' + convertDurationToString(duration) + '</span></div> \
 					<div class="col-sm-2 text-right"><a id="rmRes_' + id + '" data-type="used" data-id="' + id + '"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div> \
-					<input type="hidden" id="usedResource_' + id + '" name="usedResource_' + id + '" value="' + $('#file_list li').length + '" />\
+					<input type="hidden" id="usedResource_' + id + '" name="usedResource_' + id + '_' + duration + '" value="' + $('#file_list li').length + '" />\
 					</div></li>';
 			}
 			else {
-				return '<li class="list-group-item playableResource playableRes_' + id + '" id="suggestedRes_' + id + '" data-type="suggestion" data-id="' + id + '"><div class="row"> \
-					<div class="col-sm-8">' + title + '</div> \
-					<div class="col-sm-2">' + convertDurationToString(duration) + '</div> \
+				return '<li class="list-group-item playableResource playableRes_' + id + '" id="suggestedRes_' + id + '" data-duration="' + duration + '" data-type="suggestion" data-id="' + id + '"><div class="row"> \
+					<div class="col-sm-7"><span class="glyphicon glyphicon-' + resourceData['glyphicon'] + '"></span> ' + title + '</div> \
+					<div class="col-sm-3 text-right">' + editTime + '<span class="durationContainer">' + convertDurationToString(duration) + '</span></div> \
 					<div class="col-sm-2 text-right"><a id="rmRes_' + id + '" data-type="suggestion" data-id="' + id + '"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div> \
-					<input type="hidden" id="suggestedResource_' + id + '" name="suggestedResource_' + id + '" value="' + $('#suggestion_list li').length + '" />\
+					<input type="hidden" id="suggestedResource_' + id + '" name="suggestedResource_' + id + '_' + duration + '" value="' + $('#suggestion_list li').length + '" />\
 					</div></li>'
 			}
 		}
@@ -313,8 +374,8 @@
 					if (ui.helper.data('overSortable') != null) {
 						ui.helper.removeData('overSortable'); return;
 					}
-					addToPlaylist(ui.draggable.attr('data-id'), resourcesCollection[ui.draggable.attr('data-id')]['title'], 'used')
-					deleteFromPlaylist(ui.draggable.attr('data-id'), 'suggestion');
+					addToPlaylist(ui.draggable.attr('data-id'), resourcesCollection[ui.draggable.attr('data-id')]['title'], 'used', ui.draggable.attr('data-duration'))
+					deleteFromPlaylist(ui.draggable.attr('data-id'), 'suggestion', ui.draggable.attr('data-duration'));
 					ui.draggable.remove();
 				}
 			});
@@ -331,8 +392,8 @@
 					if (ui.helper.data('overSortable') != null) {
 						ui.helper.removeData('overSortable'); return;
 					}
-					addToPlaylist(ui.draggable.attr('data-id'), resourcesCollection[ui.draggable.attr('data-id')]['title'], 'suggestion')
-					deleteFromPlaylist(ui.draggable.attr('data-id'), 'used');
+					addToPlaylist(ui.draggable.attr('data-id'), resourcesCollection[ui.draggable.attr('data-id')]['title'], 'suggestion', ui.draggable.attr('data-duration'))
+					deleteFromPlaylist(ui.draggable.attr('data-id'), 'used', ui.draggable.attr('data-duration'));
 					ui.draggable.remove();
 				}
 			});
@@ -384,7 +445,7 @@
 			} );
 			
 			$('.rmRes').click(function() {
-				deleteFromPlaylist($(this).attr('data-id'), $(this).attr('data-type'));
+				deleteFromPlaylist($(this).attr('data-id'), $(this).attr('data-type'), $(this).closest('.playableResource').attr('data-duration'));
 			});
 			
 			$('.resThumbnailHover').click(function(){
@@ -405,6 +466,8 @@
 				}
 			});
 		})
+		
+		$('.editTimeButton').click(function(event) { event.stopImmediatePropagation(); event.preventDefault(); editTime(this); });
 		
 		$('#save-btn').click(function(event) {
 			event.preventDefault();
