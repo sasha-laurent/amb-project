@@ -27,8 +27,13 @@ class ResourceType extends AbstractType
 			 'query_builder' => function(\Gedmo\Tree\Entity\Repository\NestedTreeRepository $repo) {
 				return $repo->getNodesHierarchyQueryBuilder();
 			  }
-		))->add('file', 'file', array('label' => 'Fichier'))
-		->add('Sauvegarder', 'submit');
+		));
+		
+		if($resource->getTopic() == null) {
+			$builder->add('file', 'file', array('label' => 'Fichier'));
+		}
+		
+		$builder->add('Sauvegarder', 'submit');
     }
     
     /**
