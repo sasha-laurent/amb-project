@@ -24,7 +24,7 @@ class TopicType extends AbstractType
 					return $repo->getNodesHierarchyQueryBuilder();
 				  }
 				))
-            ->add('file', 'file', array('label' => 'Miniature'))
+            ->add('file', 'file', array('label' => 'Miniature', 'required' => false))
             ->add('Sauvegarder', 'submit')
         ;
     }
