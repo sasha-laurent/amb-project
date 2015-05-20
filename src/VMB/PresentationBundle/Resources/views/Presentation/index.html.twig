@@ -1,6 +1,10 @@
-{% set addModal = '.bs-example-modal-lg' %}
+{% set addModal = '#modalAddPresentation' %}
 {% set addButtonUrl = 'true' %}
 {% extends '::Backend/subPage.html.twig' %}
+
+{% if page == 1 and nbPages == 0 %}
+	{% set skipPagination = true %}
+{% endif %}
 
 {% block body %}
     <div class="panel panel-default">
@@ -58,9 +62,20 @@
 					</div>
 				</div>
             </li>
-        {% endfor %}
+        {% else %}
+			<li class="list-group-item row">
+				<div class="col-md-12 text-center">
+					<em>Aucune présentation dans cet espace</em>
+					<br/><br/>
+				</div>
+			</li>
+		{% endfor %}
     </ul>
     
-    {% include '::pagination.html.twig' %}
+    {% if skipPagination is not defined %}
+	{% include '::pagination.html.twig' %}
+	{% endif %}
+
+{% include 'VMBPresentationBundle:Presentation:modalAddButton.html.twig' %}
     
 {% endblock %}

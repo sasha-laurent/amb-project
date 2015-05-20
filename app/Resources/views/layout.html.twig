@@ -58,45 +58,49 @@
 								<li><a href="#"><span class="flag flag-icon flag-icon-gb"></span> English</a></li>
 								<li><a href="#"><span class="flag flag-icon flag-icon-es"></span> Español</a></li>
 								<li><a href="#"><span class="flag flag-icon flag-icon-jp"></span> 日本語</a></li>
+								{% if is_granted('ROLE_ADMIN') %}
+								<li role="presentation" class="divider"></li>
+								<li><a href="#">Traduction</a></li>
+								{% endif %}
 							</ul>
 						</div>
 					</div>
 				</div>
 				<h3><a href="{{ path('vmb_homepage') }}"><img src="{{ asset('img/vmb.png') }}" alt="VMB" title="Accueil" /></a></h3>
+				
+				
+				{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+				<ul class="header-nav left" role="navigation">
+					<li class="dropdown header-nav-item">
+						<a data-toggle="dropdown" class="dropdown-toggle header-nav-link" href="#">Consulter <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ path('vmb_presentation_browse') }}">Présentations</a></li>
+                            <li><a href="{{ path('vmb_resource_browse') }}">Ressources</a></li>
+                        </ul>
+					</li>
+					<li class="dropdown header-nav-item">
+						<a data-toggle="dropdown" class="dropdown-toggle header-nav-link" href="#">Gérer <b class="caret"></b></a>
+                        <ul class="dropdown-menu">				
+							<li><a href="{{ path('resource') }}">Ressources</a></li>
+                            <li><a href="{{ path('matrix') }}">Matrices</a></li>
+                            {% if is_granted('ROLE_ADMIN') %}
+                            <li><a href="{{ path('presentation') }}">Présentations</a></li>
+                            <li><a href="{{ path('topic') }}">Thématiques</a></li>
+                            {% else %}
+                            <li><a href="{{ path('presentation_perso') }}">Mes présentations</a></li>
+                            {% endif %}
+                            {% if is_granted('ROLE_TEACHER') %}
+                            <li><a href="{{ path('ontology_main') }}">Structure des connaissances</a></li>
+                            {% endif %}
+                        </ul>
+					</li>
+				</ul>
 				<form class="top-search-form" accept-charset="UTF-8" action="{{ path('vmb_presentation_browse') }}" method="get">
 					<input class="form-control search-input" name="search" placeholder="Recherche" type="text">
 				</form>
-				<ul class="header-nav left" role="navigation">
-					{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-					<li class="dropdown header-nav-item">
-						<a data-toggle="dropdown" class="dropdown-toggle header-nav-link" href="#">Présentations <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="{{ path('vmb_presentation_browse') }}">Parcourir les présentations</a></li>
-                            <li><a href="{{ path('vmb_resource_browse') }}">Parcourir les ressources</a></li>
-                            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                            <li><a href="{{ path('presentation_perso') }}">Mes présentations</a></li>
-                            {% endif %}
-                             {% if is_granted('ROLE_ADMIN') %}
-                            <li><a href="{{ path('presentation') }}">Gérer les présentations</a></li>
-                            {% endif %}
-                        </ul>
-					</li>
-					<li class="dropdown header-nav-item">
-						<a data-toggle="dropdown" class="dropdown-toggle header-nav-link" href="#">Outils <b class="caret"></b></a>
-                        <ul class="dropdown-menu">				
-                            <li><a href="{{ path('resource') }}">Gestion des ressources</a></li>
-                            <li><a href="{{ path('matrix') }}">Gestion des matrices</a></li>
-                            {% if is_granted('ROLE_ADMIN') %}
-                            <li><a href="#">Traduction</a></li>
-                            <li><a href="{{ path('topic') }}">Thématiques</a></li>
-                            {% endif %}
-                            {% if is_granted('ROLE_TEACHER') %}
-                            <li><a href="{{ path('ontology_main') }}">Ontologies</a></li>
-                            {% endif %}
-                        </ul>
-					</li>
-					{% endif %}
-				</ul>
+				{% else %}
+				<ul class="header-nav left" role="navigation"></ul>
+				{% endif %}
 			</div>
 		</header>
       
@@ -117,7 +121,7 @@
 			{% block body %}{% endblock %}
 		</div>
 		<footer class="footer">
-			<div class="container"><p>&copy; VMB 2015</p></div>
+			<div class="container">&copy; VMB 2015</div>
 		</footer>
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->

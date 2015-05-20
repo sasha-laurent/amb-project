@@ -44,6 +44,13 @@ class Resource
      * @ORM\Column(name="description", type="text")
      */
     private $description;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="keywords", type="text")
+     */
+    private $keywords;
 
     /**
      * @var string
@@ -819,5 +826,35 @@ class Resource
     public function getIndexed()
     {
         return $this->indexed;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->topic = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add topic
+     *
+     * @param \VMB\PresentationBundle\Entity\Topic $topic
+     * @return Resource
+     */
+    public function addTopic(\VMB\PresentationBundle\Entity\Topic $topic)
+    {
+        $this->topic[] = $topic;
+
+        return $this;
+    }
+
+    /**
+     * Remove topic
+     *
+     * @param \VMB\PresentationBundle\Entity\Topic $topic
+     */
+    public function removeTopic(\VMB\PresentationBundle\Entity\Topic $topic)
+    {
+        $this->topic->removeElement($topic);
     }
 }

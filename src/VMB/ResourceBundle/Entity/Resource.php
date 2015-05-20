@@ -44,6 +44,13 @@ class Resource
      * @ORM\Column(name="description", type="text")
      */
     private $description;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="keywords", type="text")
+     */
+    private $keywords;
 
     /**
      * @var string
@@ -278,6 +285,30 @@ class Resource
     public function getType()
     {
         return $this->type;
+    }
+    
+    /**
+     * Get type as a title
+     *
+     * @return string 
+     */
+    public function getTypeTitle()
+    {
+        if($this->type == 'audio') {
+			return 'Fichiers audio';
+		}
+		elseif($this->type == 'video') {
+			return 'Vidéos';
+		}
+		elseif($this->type == 'image') {
+			return 'Images';
+		}
+		elseif($this->type == 'text') {
+			return 'Textes';
+		}
+		else {
+			return 'Autres fichiers';
+		}
     }
 
     /**
@@ -849,5 +880,28 @@ class Resource
     public function removeTopic(\VMB\PresentationBundle\Entity\Topic $topic)
     {
         $this->topic->removeElement($topic);
+    }
+
+    /**
+     * Set keywords
+     *
+     * @param string $keywords
+     * @return Resource
+     */
+    public function setKeywords($keywords)
+    {
+        $this->keywords = $keywords;
+
+        return $this;
+    }
+
+    /**
+     * Get keywords
+     *
+     * @return string 
+     */
+    public function getKeywords()
+    {
+        return $this->keywords;
     }
 }

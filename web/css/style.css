@@ -2,7 +2,7 @@
 body {
 	padding-bottom: 20px;
 	font-family: 'Open Sans';
-	background-color: #F2F2F2;
+	background-color: #2C2C2C;
 }
 
 /* Home page style */
@@ -82,7 +82,6 @@ header {
 	background-color: #fff;
 	padding-top: 14px;
 	border-bottom: 1px solid #e5e5e5;
-	box-shadow: 0px 5px 5px 0px #F2F2F2;
 }
 
 .header {
@@ -153,9 +152,9 @@ header {
 
 /* Custom page footer */
 .footer .container {
-	padding-top: 19px;
-	color: #777;
-	border-top: 1px solid #e5e5e5;
+	padding-top: 0px;
+	color: #fff;
+	text-align: right;
 }
 
 .main_body {
@@ -214,8 +213,8 @@ header {
 }
 
 .switch .hidden-value { display: none; }
-.switch:hover .hidden-value { display: inline; }
-.switch:hover .shown-value { display: none; }
+.switch:hover .hidden-value, .switch:focus .hidden-value { display: inline; }
+.switch:hover .shown-value, .switch:focus .shown-value { display: none; }
 .switch-public:hover .hidden-value, .switch-private:hover .hidden-value { display: inline; }
 .switch-public:hover .shown-value, .switch-private:hover .shown-value { display: none; }
 

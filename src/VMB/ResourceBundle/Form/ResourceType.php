@@ -18,14 +18,16 @@ class ResourceType extends AbstractType
 
         $builder
             ->add('title', null, array('label' => 'Titre'))
-            ->add('description', null, array('label' => 'Description'));
+            ->add('description', null, array('label' => 'Description'))
+            ->add('keywords', null, array('label' => 'Mots-clés'));
 		$builder->add('topic', 'entity', array(
+			'label' => 'Thématique',
 			'multiple' => true,
 			'class' => 'VMBPresentationBundle:Topic',
 			 'query_builder' => function(\Gedmo\Tree\Entity\Repository\NestedTreeRepository $repo) {
 				return $repo->getNodesHierarchyQueryBuilder();
 			  }
-		))->add('file')
+		))->add('file', 'file', array('label' => 'Fichier'))
 		->add('Sauvegarder', 'submit');
     }
     

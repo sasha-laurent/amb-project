@@ -1,0 +1,42 @@
+<!-- Modal -->
+<div class="modal fade" id="modalAddPresentation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" id="myModalLabel">Ajouter une présentation</h3>
+      </div>
+      <div class="modal-body">
+        <h4>Créer une présentation de zéro</h4>
+        <p>
+			Créer une présentation s'effectue en 3 étapes :
+		</p>
+		<ul>
+			<li>Choisir dans quelle thématique votre présentation se situe</li>
+			<li>Définir une matrice de présentation utilisant les ressources de la thématique en question</li>
+			<li>Définir votre présentation à partir de votre matrice (en cliquant sur l'icone <span class="glyphicon glyphicon-blackboard"></span> dans la liste de vos matrices)</li>
+		</ul>	
+		<p>
+			<a href="{{ path('matrix_new') }}"><span class="glyphicon glyphicon-chevron-right"></span> Créer une matrice de présentation</a><br/>
+			<a href="{{ path('matrix') }}"><span class="glyphicon glyphicon-chevron-right"></span> Créer une présentation depuis vos matrices</a>
+        </p>
+        <hr/>
+        <h4>Créer une présentation depuis une présentation existante</h4>
+        <p>
+			Si vous souhaitez créer une présentation sans avoir à définir vous même votre matrice de présentation, il est possible de partir d'une matrice existante.
+			Pour se faire, il vous suffit de parcourir les présentations existantes et de vous rendre sur celle de votre choix. Une fois sur la page de la présentation, deux possibilités s'offrent à vous.
+		</p>
+		<ul>
+			<li>Faire une copie de travail de la présentation ET de la matrice associée en cliquant sur <span class="glyphicon glyphicon-duplicate"></span> en haut à droite</li>
+			<li>Ou bien vous rendre dans "Voir plus" puis dans "Visualisation avancée" pour créer une présentation en conservant la matrice d'origine (vous ne pourrez donc pas modifier cette dernière ni ajouter de ressources)</li>
+		</ul>
+		<p>
+			<a href="{{ path('vmb_presentation_browse') }}"><span class="glyphicon glyphicon-chevron-right"></span> Parcourir les présentations existantes</a>
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fermer <span class="glyphicon glyphicon-remove"></span></button>
+      </div>
+    </div>
+  </div>
+</div>

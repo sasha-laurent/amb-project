@@ -60,7 +60,7 @@ class PresentationController extends Controller
 		$nbPages = ceil(count($entities)/$nbPerPage);
 
 		// Si la page n'existe pas, on retourne une 404
-		if ($page > $nbPages) {
+		if ($page > $nbPages  && $page != 1) {
 			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
 		}
 
@@ -72,6 +72,9 @@ class PresentationController extends Controller
         ));
     }
     
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
     public function browseAction($page, $topic=null)
     {
 		if ($page < 1) {
@@ -145,7 +148,7 @@ class PresentationController extends Controller
 		$nbPages = ceil(count($entities)/$nbPerPage);
 
 		// Si la page n'existe pas, on retourne une 404
-		if ($page > $nbPages) {
+		if ($page > $nbPages && $page != 1) {
 			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
 		}
 
@@ -157,6 +160,9 @@ class PresentationController extends Controller
         ));
     }
     
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
     public function deepCopyAction(Request $request, $id)
     {
 		$presentation = null;
