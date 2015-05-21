@@ -29,7 +29,7 @@ class ResourceType extends AbstractType
 			  }
 		));
 		
-		if($resource->getTopic() == null) {
+		if($resource->getId() == null) {
 			$builder->add('file', 'file', array('label' => 'Fichier'));
 		}
 		
