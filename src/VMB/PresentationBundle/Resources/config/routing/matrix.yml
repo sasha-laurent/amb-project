@@ -30,3 +30,9 @@ matrix_delete:
     defaults: { _controller: "VMBPresentationBundle:Matrix:delete" }
     requirements:
         id:   \d{1,}
+
+matrix_delete_row:
+    path:     /deleteRow/
+    defaults: { _controller: "VMBPresentationBundle:Matrix:deleteRow" }
+    requirements:
+        _method: POST

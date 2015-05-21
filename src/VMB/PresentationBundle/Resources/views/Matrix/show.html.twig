@@ -290,5 +290,11 @@
 			$('#matrix_form').submit();
 		}
 	});
+	
+	$('html').keyup(function(e){
+		$('.usedResource.' + selectedClass).prev('input').val(0);
+		$('.usedResource.' + selectedClass).remove();
+		noticeUnsavedMatrix();
+	}) 
 	</script>
 {% endblock %}

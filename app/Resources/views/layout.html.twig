@@ -64,6 +64,12 @@
 								{% endif %}
 							</ul>
 						</div>
+						
+						<div class="btn-group">
+							<a class="btn btn-default" data-toggle="modal" data-target="#modalContextualHelp">
+								<span class="glyphicon glyphicon-question-sign"></span>
+							</a>
+						</div>
 					</div>
 				</div>
 				<h3><a href="{{ path('vmb_homepage') }}"><img src="{{ asset('img/vmb.png') }}" alt="VMB" title="Accueil" /></a></h3>
@@ -123,6 +129,24 @@
 		<footer class="footer">
 			<div class="container">&copy; VMB 2015</div>
 		</footer>
+		
+	<!-- Modal -->
+	<div class="modal fade" id="modalContextualHelp" tabindex="-1" role="dialog" aria-labelledby="modalContextualHelpLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modalContextualHelpLabel">Aide contextuelle</h4>
+		  </div>
+		  <div class="modal-body">
+			...
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Fermer <span class="glyphicon glyphicon-remove"></span></button>
+		  </div>
+		</div>
+	  </div>
+	</div>
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 		{% block script %}

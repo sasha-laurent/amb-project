@@ -79,8 +79,8 @@
 		}
 
 		// La fonction qui ajoute un lien de suppression d'une catégorie
-		function addDeleteLink($prototype, $container, deleteAllowed) {
-			if(deleteAllowed)
+		function addDeleteLink($prototype, $container, instantDelete) {
+			if(instantDelete)
 			{
 				// Création du lien
 				$deleteLink = $('<div class="col-sm-1"><a href="#" class="btn btn-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>');
@@ -98,7 +98,52 @@
 			}
 			else
 			{
-				$prototype.append('<div class="col-sm-1"></div>');
+				// Création du lien
+				$deleteLink = $('<div class="col-sm-1"><a href="#" class="btn btn-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>');
+
+				// Ajout du lien
+				$prototype.append($deleteLink);
+
+				// Ajout du listener sur le clic du lien
+				$deleteLink.click(function(e) {
+					flag = $(this).closest('form').attr('data-flag');
+					if(flag != "0" && flag != "1") {
+						flag = "0";
+					}
+					
+					if(flag == "0") {
+						if(confirm("Etes-vous sur ? Cette action supprimera définitivement cette ligne de la matrice.")) {
+							$(this).closest('form').attr('data-flag', "1");
+							var item = this;
+							$.ajax({
+								type: "POST",
+								url: '{{ path('matrix_delete_row') }}',
+								data: { 
+									fieldId: $(this).closest('.form-group').find('.col-sm-10 div').attr('id'), 
+									postAction: $(this).closest('form').attr('action') 
+								},
+								cache: false,
+								success: function(data){
+									if(data == 'ok') {
+										formContainer = $('> div', $(item).closest('.form-group').closest('.col-sm-10'));
+										$(item).closest('.form-group').remove();
+										reattributePositions(formContainer);
+										location.reload();
+									}
+									else {
+										alert('Une erreur est survenue');
+									}
+									$(item).closest('form').attr('data-flag', "0");
+								}
+							});
+							e.preventDefault(); // évite qu'un # apparaisse dans l'URL
+							return false;
+						}
+					}
+					else {
+						alert('Action déjà en cours');
+					}
+				});
 			}
 		}
 	  });

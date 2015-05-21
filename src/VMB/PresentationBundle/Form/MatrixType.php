@@ -34,16 +34,16 @@ class MatrixType extends AbstractType
 				'label'		   => 'Points de vues',
 				'type'         => new PovType(),
 				'allow_add'    => true,
-				'allow_delete' => false
+				'allow_delete' => true
 			  ))
 			->add('levels', 'collection', array(
 				'by_reference' => false,
 				'label'		   => 'Niveaux',
 				'type'         => new LevelType(),
 				'allow_add'    => true,
-				'allow_delete' => false
+				'allow_delete' => true
 			  ))
-			->add('save', 'submit')
+			->add('save', 'submit', array('label' => 'Sauvegarder'))
         ;
     }
     

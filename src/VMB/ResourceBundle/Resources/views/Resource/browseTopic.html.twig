@@ -12,14 +12,14 @@
 	<div class="row">
 		<div class="col-md-3">
 			<div class="browse-topics">
-				<form action="{{ path(app.request.get('_route'), {'topic':topic.id|default(null), 'default':((app.request.get('default') + 1) % 2)|default(1), 'official':app.request.get('official')|default(null)}) }}" method="GET">
+				<form action="{{ path(app.request.get('_route'), {'topic':topic.id|default(null), 'personal':((app.request.get('personal') + 1) % 2)|default(1), 'official':app.request.get('official')|default(null)}) }}" method="GET">
 					<div class="form-group"><input class="form-control" type="text" name="search" value="{{ search|default() }}" placeHolder="Rechercher..." /></div>
 				</form>
 				<h4>Filtres</h4>
 				<div class="row">
 					<div class="col-md-10">Officielles uniquement :</div>
 					<div class="col-md-2 text-right">
-						<a href="{{ path(app.request.get('_route'), {'topic':topic.id|default(null), 'official':((app.request.get('official') + 1) % 2)|default(1), 'default':app.request.get('default')|default(null), 'search':search|default(null)}) }}" class="switch">
+						<a href="{{ path(app.request.get('_route'), {'topic':topic.id|default(null), 'official':((app.request.get('official') + 1) % 2)|default(1), 'personal':app.request.get('personal')|default(null), 'search':search|default(null)}) }}" class="switch">
 							{% if app.request.get('official')|default(0) == 0 %}
 								<span class="hidden-value glyphicon glyphicon-ok"></span>
 								<span class="shown-value glyphicon glyphicon-minus"></span>
@@ -29,8 +29,21 @@
 							{% endif %}
 						</a>
 					</div>
+						
+					<div class="col-md-10">Ressources personnelles :</div>
+					<div class="col-md-2 text-right">
+						<a href="{{ path(app.request.get('_route'), {'topic':topic.id|default(null), 'personal':((app.request.get('personal') + 1) % 2)|default(1), 'official':app.request.get('official')|default(null), 'search':search|default(null)}) }}" class="switch">
+							{% if app.request.get('personal')|default(0) == 0 %}
+								<span class="hidden-value glyphicon glyphicon-ok"></span>
+								<span class="shown-value glyphicon glyphicon-minus"></span>
+							{% else %}
+								<span class="shown-value glyphicon glyphicon-ok"></span>
+								<span class="hidden-value glyphicon glyphicon-minus"></span>
+							{% endif %}
+						</a>
+					</div>
 				</div>
-				<h4>Catégories</h4>
+				<h4>Thématiques</h4>
 				{% include "VMBResourceBundle:Resource:topicLink.html.twig" with {'links': topics} %}
 			</div>
 		</div>
@@ -40,6 +53,11 @@
 				<div class="col-md-4">
 					<a class="thumbnail-link" href="{{ path('resource_show', { 'id': entity.id }) }}">
 						<div class="thumbnail block-browse block-resource">
+							<div class="thumbnail-description">
+								<h4>Description</h4>
+								<hr/>
+								<p>{{ entity.description }}</p>
+							</div>
 							<img data-holder-rendered="true" src="{{ asset(entity.getThumbsPath) }}" style="height: 155px; width: 100%; display: block;" />
 						
 							<div class="caption">
@@ -47,11 +65,19 @@
 							</div>
 							
 							<div class="duration">
-								Durée : {{ entity.durationToString }}
+								{{ entity.durationToString }}
 							</div>
 							<div class="caddy-icon">
 								<span class="loading_indicator_inline loading_indicator_{{entity.id}}"></span>
-								<a class="btn {% if app.user.resourceIsInCaddy(entity) %}btn-info{% else %}btn-default{% endif %} resourceAddToCaddy" data-id="{{ entity.id }}"><span class="glyphicon glyphicon-shopping-cart"></span></a>
+								<div class="btn-group" role="group" aria-label="...">
+									{% if is_granted('ROLE_ADMIN') or entity.isOwner(app.user) %}
+										<a href="{{ path('resource_edit', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>					
+										<a href="#" type="button" class="btn btn-default"><span class="glyphicon glyphicon-tags" aria-hidden="true"></span></a>					
+										<a href="{{ path('resource_delete', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>					
+									{% else %}
+										<a type="button" class="btn {% if app.user.resourceIsInCaddy(entity) %}btn-info{% else %}btn-default{% endif %} resourceAddToCaddy" data-id="{{ entity.id }}"><span class="glyphicon glyphicon-shopping-cart"></span></a>
+									{% endif %}
+								</div>
 							</div>
 						</div>
 					</a>

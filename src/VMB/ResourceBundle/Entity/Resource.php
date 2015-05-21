@@ -772,6 +772,16 @@ class Resource
 
         return $this;
     }
+    
+    /**
+     * Is the given User the author of this Post?
+     *
+     * @return bool
+     */
+    public function isOwner(\VMB\UserBundle\Entity\User $user = null)
+    {
+        return $user && $this->getOwner() && $user->getId() == $this->getOwner()->getId();
+    }
 
     /**
      * Get owner

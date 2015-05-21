@@ -236,6 +236,7 @@ class MatrixController extends Controller
 				'backButtonUrl' => $this->generateUrl('matrix')
 			));
     }
+    
     /**
      * Deletes a Matrix entity.
      *
@@ -246,26 +247,79 @@ class MatrixController extends Controller
     public function deleteAction(Request $request, $id)
     {
         $matrix = $this->getMatrix($id);
+        
+        if($this->get('security.context')->isGranted('ROLE_ADMIN') || $matrix->isOwner($this->getUser())) {	
 
-		if ($request->isMethod('POST')) {
-			try {
-				$em = $this->getDoctrine()->getManager();
-				$em->remove($matrix);
-				$em->flush();
-				
-				$request->getSession()->getFlashBag()->add('success', 'Matrice supprimée');
-			} catch (\Exception $e) {
-				$request->getSession()->getFlashBag()->add('danger',"An error occured");
+			if ($request->isMethod('POST')) {
+				try {
+					$em = $this->getDoctrine()->getManager();
+					$em->remove($matrix);
+					$em->flush();
+					
+					$request->getSession()->getFlashBag()->add('success', 'Matrice supprimée');
+				} catch (\Exception $e) {
+					$request->getSession()->getFlashBag()->add('danger',"An error occured");
+				}
+				return $this->redirect($this->generateUrl('matrix'));
 			}
+
+			// Si la requête est en GET, on affiche une page de confirmation avant de delete
+			return $this->render('::Backend/delete.html.twig', array(
+				'entityTitle' => 'la matrice "'.$matrix->toString().'"',
+				'mainTitle' => 'Suppression d\'une matrice',
+				'backButtonUrl' => $this->generateUrl('matrix')
+			));
+		}
+		else {
 			return $this->redirect($this->generateUrl('matrix'));
 		}
+    }
+    
+    /**
+     * Deletes a Matrix entity.
+     *
+     */
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
+    public function deleteRowAction(Request $request)
+    {
+		$fieldId = $request->request->get('fieldId');
+		$url = $request->request->get('postAction');
+		
+		// We search the corresponding matrix and the corresponding item since we only know its position and not its id
+		$regex = '`'.str_replace(0000000, '([0-9]+)', $this->generateUrl('matrix_edit', array('id' => 0000000))).'`';
+		if(preg_match($regex, $url, $matchesUrl)) {
+			$formType = new MatrixType();
+			if(preg_match('`'.$formType->getName().'_(povs|levels)_([0-9]+)`', $fieldId, $matchesField)) {
+				$matrixId = intval($matchesUrl[1]);
+				$type = $matchesField[1];
+				$position = intval($matchesField[2]);
+				try {
+					$matrix = $this->getMatrix($matrixId);
+					if($this->get('security.context')->isGranted('ROLE_ADMIN') || $matrix->isOwner($this->getUser())) {	
 
-		// Si la requête est en GET, on affiche une page de confirmation avant de delete
-		return $this->render('::Backend/delete.html.twig', array(
-			'entityTitle' => 'la matrice "'.$matrix->toString().'"',
-			'mainTitle' => 'Suppression d\'une matrice',
-			'backButtonUrl' => $this->generateUrl('matrix')
-		));
+						if($type == 'povs') {
+							$elt = $matrix->removePovAtIndex($position);
+						}
+						else {
+							$elt = $matrix->removeLevelAtIndex($position);
+						}
+						
+						// If the element was found
+						if($elt !== false) {
+							$em = $this->getDoctrine()->getManager();
+							$em->remove($elt);
+							$em->flush();
+							return new Response('ok');	
+						}
+					}
+				} catch (\Exception $e) {
+					return new Response($e); 
+				}
+			}
+		}
+		return new Response('error');
     }
 
     /**
