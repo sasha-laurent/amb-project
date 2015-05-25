@@ -276,7 +276,7 @@ class MatrixController extends Controller
     }
     
     /**
-     * Deletes a Matrix entity.
+     * Deletes a Matrix Row (level or Pov)
      *
      */
     /**

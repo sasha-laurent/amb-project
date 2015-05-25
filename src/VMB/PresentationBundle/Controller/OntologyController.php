@@ -19,11 +19,13 @@ class OntologyController extends Controller
     {
 		$em = $this->getDoctrine()->getManager();
         $ontologies = $em->getRepository('VMBPresentationBundle:Ontology')->findAll();
-        $resources = $em->getRepository('VMBResourceBundle:Resource')->findAll();
 
         return $this->render('VMBPresentationBundle:Ontology:main.html.twig',
-            array('videos' => $resources,
-                'ontologies' => $ontologies));
+            array(
+				'mainTitle' => 'Structure des connaissances',
+				'addButtonUrl' => $this->generateUrl('ontology_edit'),
+                'ontologies' => $ontologies
+            ));
     }
 
 	/**
@@ -189,6 +191,39 @@ class OntologyController extends Controller
 		$file = $this->getAbsoluteIndexFile($id);
 		file_put_contents($file, $data);
 		return new Response('ok');
+    }
+    
+    /**
+     * Deletes an Ontology entity.
+     *
+     */
+    /**
+    * @Security("has_role('ROLE_TEACHER')")
+    */
+    public function deleteAction(Request $request, $id)
+    {
+        $ontology = $this->getOntology($id);
+	
+		if ($request->isMethod('POST')) {
+			try {
+				$em = $this->getDoctrine()->getManager();
+				$em->remove($ontology);
+				$em->flush();
+				
+				$request->getSession()->getFlashBag()->add('success', 'Structure supprimée');
+			} catch (\Exception $e) {
+				$request->getSession()->getFlashBag()->add('danger',"An error occured");
+			}
+			return $this->redirect($this->generateUrl('ontology_main'));
+		}
+
+		// Si la requête est en GET, on affiche une page de confirmation avant de delete
+		return $this->render('::Backend/delete.html.twig', array(
+			'entityTitle' => 'la structure des connaissances "'.$ontology->getName().'"',
+			'mainTitle' => 'Suppression d\'une structure',
+			'backButtonUrl' => $this->generateUrl('ontology_main')
+		));
+
     }
     
     public function listAvailable($resourceId)

@@ -1,31 +1,42 @@
-{% extends '::layout.html.twig' %}
+{% extends '::Backend/subPage.html.twig' %}
 
 {% block body %}
-    <div class="row">
-        <div class="col-md-7" style="margin-left:10px; margin-top:10px">
-            <select name="ontology" id="ontology" class="form-control">
-            {% for ontology in ontologies %}
-                <option value="{{ontology.id}}">{{ontology.name}}</option>
-            {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-5">
-                <div class="row" style="margin-bottom:10px;">
-                    <a class="btn btn-primary" href="#" onClick="submitForm()" style="margin-top: 4px; margin-left: 25px;">Edit Concept Hierarchy</a>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<div class="row">				
+				<div class="col-md-6">Titre</div>
+				<div class="col-md-4 text-center">Thématique associée</div>						
+				<div class="col-md-2 text-center">Action</div>
+        	</div>
+		</div>
+	</div>
+	
+	<ul class="list-group">
+		{% for ontology in ontologies %}
+			<li class="list-group-item row">
+				<div class="col-md-6">
+					{{ ontology.name }}
+				</div>
+				<div class="col-md-4 text-center">
+					{{ ontology.topic.title }}
                 </div>
-                <div class="row" style="margin-left:10px;">
-                    <a class="btn btn-primary" href="{{ path('ontology_edit') }}">New Ontology</a>
-                </div>
-            </div>
-    </div>
-        </form>
+                <div class="col-md-2 text-center">				
+					<div class="btn-group" role="group" aria-label="...">
+						<a href="{{ path('ontology_edit', {'ontology' : ontology.id}) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+						<a href="{{ path('ontology_delete', {'id' : ontology.id}) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+					</div>
+				</div>
+            </li>
+        {% else %}
+			<li class="list-group-item row">
+				<div class="col-md-12 text-center">
+					<em>Aucune structure des connaissance enregistrée</em>
+					<br/><br/>
+				</div>
+			</li>
+		{% endfor %}
+    </ul>
 
-        <script>
-            function submitForm() {
-                $("#ontology-input").val($("#ontology").val());
-                $("#ontology-form").submit();
-            }
-        </script>
         <form action="{{ path('ontology_edit') }}" method="get" id="ontology-form" style="visibility:hidden; display:none;">
             <input type="text" name="ontology" id="ontology-input">
         </form>

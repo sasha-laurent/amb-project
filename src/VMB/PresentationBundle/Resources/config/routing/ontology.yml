@@ -17,6 +17,12 @@ ontology_edit_save:
 ontology_index:
     pattern:  /index/
     defaults: { _controller: VMBPresentationBundle:Ontology:index }
+    
+ontology_delete:
+    path:     /delete/{id}
+    defaults: { _controller: "VMBPresentationBundle:Ontology:delete" }
+    requirements:
+        id:   \d{1,}
 
 ontology_index_save:
     pattern:  /index/save/
