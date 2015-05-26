@@ -118,9 +118,11 @@
 			{% endif %}
 			
 			// Complements
-			{% for subList in additionalResourcesId %}
-				[ {{ subList|join(',') }} ],
-			{% endfor %}
+			{% if additionalResourcesId|length > 0 %}
+				{% for subList in additionalResourcesId %}
+					[ {{ subList|join(',') }} ],
+				{% endfor %}
+			{% endif %}
 		];
 		
 		totalDuration = {{totalDuration}};

@@ -117,7 +117,7 @@ class Presentation
 	/**
      * @var string
      *
-     * @Gedmo\Slug(fields={"title"},updatable=false)
+     * @Gedmo\Slug(fields={"id", "title"},updatable=true, unique=true)
      * @ORM\Column(name="slug", type="string", length=128, unique=true)
      * */
     private $slug;
@@ -531,9 +531,9 @@ class Presentation
         if(in_array($extension, array('jpg', 'jpeg'))) {
 			$path = str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/';
 			dump($path);
-			$this->file->move($path, $this->getSlug().'.jpg');
+			$this->file->move($path, $this->getId().'.jpg');
 			
-			$uploadedfile = $path.$this->getSlug().'.jpg';
+			$uploadedfile = $path.$this->getId().'.jpg';
 			dump($uploadedfile);
 			$src = imagecreatefromjpeg($uploadedfile);
 			
@@ -554,15 +554,15 @@ class Presentation
     
     public function getThumbsPath()
     {
-		if(is_file(str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getSlug().'.jpg')) {
-			return 'upload/presentation/'.$this->getSlug().'.jpg';
+		if(is_file(str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getId().'.jpg')) {
+			return 'upload/presentation/'.$this->getId().'.jpg';
 		}
 		else return 'img/icon/default_topic_thumb.jpg';
 	}
 	    
     public function storeFilenameForRemove()
     {
-        $this->filenameForRemove = str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getSlug().'.jpg';
+        $this->filenameForRemove = str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getId().'.jpg';
     }
 
     /**

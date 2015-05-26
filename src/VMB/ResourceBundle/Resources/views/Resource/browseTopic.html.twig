@@ -44,7 +44,7 @@
 					</div>
 				</div>
 				<h4>Thématiques</h4>
-				{% include "VMBResourceBundle:Resource:topicLink.html.twig" with {'links': topics} %}
+				{% include "VMBResourceBundle:Resource:topicLink.html.twig" with {'links': topics, 'current': topic.id|default(null)} %}
 			</div>
 		</div>
 		<div class="col-md-9">
@@ -99,5 +99,16 @@
 
 {% block script %}
 	{{ parent() }}
+	<script>
+	$(function() {
+	  if($('.collapse.in').length) {
+		  currentElt = $('.collapse.in');
+		  while($(currentElt).attr('data-level') != "0") {
+			  currentElt = $(currentElt).parent().closest('.collapse');
+			  currentElt.addClass('in');
+		  }
+	  }
+	});
+	</script>
 	{% include '::addToCaddy.html.twig' %}
 {% endblock %}

@@ -15,8 +15,8 @@
 			</div>
 		</div>
 	</li>
-	<div id="collapseListGroup{{ link.id }}" class="panel-collapse collapse" data-level="{{ link.lvl }}" role="tabpanel" aria-labelledby="collapseListGroupHeading{{ link.id }}">
-	{% include "VMBPresentationBundle:Presentation:topicLink.html.twig" with {'links': link.__children} %}
+	<div id="collapseListGroup{{ link.id }}" class="panel-collapse collapse{% if link.id == current %} in{% endif %}" data-level="{{ link.lvl }}" role="tabpanel" aria-labelledby="collapseListGroupHeading{{ link.id }}">
+	{% include "VMBPresentationBundle:Presentation:topicLink.html.twig" with {'links': link.__children, 'current': current} %}
 	</div>
 {% endfor %}
 </ul>

@@ -1,7 +1,7 @@
 {# app/Resources/views/Admin/Ontology/edit.html.twig #}
 {% extends 'VMBPresentationBundle:Ontology:base.html.twig' %}
 
-{% block title %}Edit Ontology{% endblock %}
+{% block h1_title %}Edit Ontology{% endblock %}
 
 {% block customScript %}
 $('.miller-container').taxonomyBrowser({
@@ -17,10 +17,10 @@ $('.miller-container').taxonomyBrowser({
 
 {% block buttons %}
 	<ul class = "main-top-menu">
-		<li><button class="btn add-node" title="Add new node [Tab]">Add</button></li>
-		<li><button class="btn edit-node" title="Edit node [Shift+Enter]">Edit</button></li>
-  		<li><button class="btn delete-node" title="Delete node [Shift+D]">Delete</button></li>
-  		<li><button class="btn save-node">Save</button></li>
+		<li><button class="btn add-node btn-success" title="Add new node [Tab]">Add</button></li>
+		<li><button class="btn edit-node btn-default" title="Edit node [Shift+Enter]">Edit</button></li>
+  		<li><button class="btn delete-node btn-danger" title="Delete node [Shift+D]">Delete</button></li>
+  		<li><button class="btn save-node btn-primary">Save</button></li>
 	</ul>
 {% endblock %}
 

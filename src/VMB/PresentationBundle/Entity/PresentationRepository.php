@@ -45,7 +45,7 @@ class PresentationRepository extends EntityRepository
 		}
 		
 		if($search != null) {
-			$builder->andWhere('p.title LIKE :keyword')->setParameter('keyword', '%'.$search.'%');
+			$builder->andWhere('p.title LIKE :keyword OR p.description LIKE :keyword')->setParameter('keyword', '%'.$search.'%');
 		}
 
 		$query = $builder->getQuery();

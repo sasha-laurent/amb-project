@@ -230,6 +230,7 @@ class PresentationController extends Controller
 				$newPresentation->setOwner($this->getUser());
 				$newPresentation->setPublic(false);
 				$newPresentation->setOfficial(false);
+				$newPresentation->setSlug(null);
 				
 				// Checked Resources
 				$newCheckedResources = array();
@@ -253,6 +254,7 @@ class PresentationController extends Controller
 				
 				$request->getSession()->getFlashBag()->add('success', 'Copie de la présentation réussie');
 			} catch (\Exception $e) {
+				dump($e);
 				$request->getSession()->getFlashBag()->add('danger',"An error occured");
 			}
 			return $this->redirect($this->generateUrl('presentation_perso'));
@@ -373,7 +375,8 @@ class PresentationController extends Controller
 			if($nbResTotal > 0 && $nbResUsed == 0) {
 				$sortedResources = array($pov => $sortedResources[$pov]) + $sortedResources;
 			}
-			elseif($nbResTotal == 0) {
+			// We delete rows where all resources are already checked
+			elseif($nbResTotal == $nbResUsed) {
 				unset($sortedResources[$pov]);
 			}
 		}
@@ -400,7 +403,6 @@ class PresentationController extends Controller
 			$i++;
 		}
 		
-        
         return $this->render('VMBPresentationBundle:Presentation:complement.html.twig', array(
             'mainTitle' => 'Voir plus - '. $entity->getTitle(),
             'backButtonUrl' => $this->generateUrl('presentation_show', array('id' => $id)),

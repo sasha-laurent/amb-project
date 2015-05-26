@@ -401,6 +401,12 @@ header {
 	border-bottom: 0px;
 }
 
+#presentation_options .list-group-item.active, 
+#presentation_options .list-group-item.active:focus, 
+#presentation_options .list-group-item.active:hover {
+    border-color: #fff;
+}
+
 #browse_file .panel {
 	border-radius: 0px 0px 4px 4px;
 	height: 400px;

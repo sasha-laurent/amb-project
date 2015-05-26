@@ -35,7 +35,7 @@ class ResourceRepository extends EntityRepository
 		}
 		
 		if($search != null) {
-			$builder->andWhere('r.title LIKE :keyword')->setParameter('keyword', '%'.$search.'%');
+			$builder->andWhere('r.title LIKE :keyword OR r.keywords LIKE :keyword OR r.description LIKE :keyword')->setParameter('keyword', '%'.$search.'%');
 		}
 
 		$query = $builder->getQuery();
