@@ -22,10 +22,10 @@
 					<div class="col-md-2 text-right">
 						<a href="{{ path(app.request.get('_route'), {'topic':topic.id|default(null), 'default':((app.request.get('default') + 1) % 2)|default(1), 'official':app.request.get('official')|default(null), 'search':search|default(null)}) }}" class="switch">
 							{% if app.request.get('default')|default(0) == 0 %}
-								<span class="hidden-value glyphicon glyphicon-ok"></span>
+								<span class="hidden-value glyphicon glyphicon-ok checkedRes"></span>
 								<span class="shown-value glyphicon glyphicon-minus"></span>
 							{% else %}
-								<span class="shown-value glyphicon glyphicon-ok"></span>
+								<span class="shown-value glyphicon glyphicon-ok checkedRes"></span>
 								<span class="hidden-value glyphicon glyphicon-minus"></span>
 							{% endif %}
 						</a>
@@ -36,10 +36,10 @@
 					<div class="col-md-2 text-right">
 						<a href="{{ path(app.request.get('_route'), {'topic':topic.id|default(null), 'official':((app.request.get('official') + 1) % 2)|default(1), 'default':app.request.get('default')|default(null), 'search':search|default(null)}) }}" class="switch">
 							{% if app.request.get('official')|default(0) == 0 %}
-								<span class="hidden-value glyphicon glyphicon-ok"></span>
+								<span class="hidden-value glyphicon glyphicon-ok checkedRes"></span>
 								<span class="shown-value glyphicon glyphicon-minus"></span>
 							{% else %}
-								<span class="shown-value glyphicon glyphicon-ok"></span>
+								<span class="shown-value glyphicon glyphicon-ok checkedRes"></span>
 								<span class="hidden-value glyphicon glyphicon-minus"></span>
 							{% endif %}
 						</a>

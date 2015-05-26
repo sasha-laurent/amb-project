@@ -21,10 +21,10 @@
 					<div class="col-md-2 text-right">
 						<a href="{{ path(app.request.get('_route'), {'topic':topic.id|default(null), 'official':((app.request.get('official') + 1) % 2)|default(1), 'personal':app.request.get('personal')|default(null), 'search':search|default(null)}) }}" class="switch">
 							{% if app.request.get('official')|default(0) == 0 %}
-								<span class="hidden-value glyphicon glyphicon-ok"></span>
+								<span class="hidden-value glyphicon glyphicon-ok checkedRes"></span>
 								<span class="shown-value glyphicon glyphicon-minus"></span>
 							{% else %}
-								<span class="shown-value glyphicon glyphicon-ok"></span>
+								<span class="shown-value glyphicon glyphicon-ok checkedRes"></span>
 								<span class="hidden-value glyphicon glyphicon-minus"></span>
 							{% endif %}
 						</a>
@@ -34,10 +34,10 @@
 					<div class="col-md-2 text-right">
 						<a href="{{ path(app.request.get('_route'), {'topic':topic.id|default(null), 'personal':((app.request.get('personal') + 1) % 2)|default(1), 'official':app.request.get('official')|default(null), 'search':search|default(null)}) }}" class="switch">
 							{% if app.request.get('personal')|default(0) == 0 %}
-								<span class="hidden-value glyphicon glyphicon-ok"></span>
+								<span class="hidden-value glyphicon glyphicon-ok checkedRes"></span>
 								<span class="shown-value glyphicon glyphicon-minus"></span>
 							{% else %}
-								<span class="shown-value glyphicon glyphicon-ok"></span>
+								<span class="shown-value glyphicon glyphicon-ok checkedRes"></span>
 								<span class="hidden-value glyphicon glyphicon-minus"></span>
 							{% endif %}
 						</a>
@@ -72,12 +72,44 @@
 								<div class="btn-group" role="group" aria-label="...">
 									{% if is_granted('ROLE_ADMIN') or entity.isOwner(app.user) %}
 										<a href="{{ path('resource_edit', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>					
-										<a href="#" type="button" class="btn btn-default"><span class="glyphicon glyphicon-tags" aria-hidden="true"></span></a>					
+										<a href="#" type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-tag-{{ entity.id }}"><span class="glyphicon glyphicon-tags" aria-hidden="true"></span></a>					
 										<a href="{{ path('resource_delete', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>					
 									{% else %}
 										<a type="button" class="btn {% if app.user.resourceIsInCaddy(entity) %}btn-info{% else %}btn-default{% endif %} resourceAddToCaddy" data-id="{{ entity.id }}"><span class="glyphicon glyphicon-shopping-cart"></span></a>
 									{% endif %}
 								</div>
+							</div>
+							
+							<!-- Modal -->
+							<div class="modal fade" id="modal-tag-{{ entity.id }}" tabindex="-1" role="dialog" aria-labelledby="modal-tag-label-modal-tag-{{ entity.id }}" aria-hidden="true">
+							  <div class="modal-dialog">
+								<div class="modal-content">
+								  <div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									<h4 class="modal-title" id="modal-tag-label-{{ entity.id }}">Indexer une ressource</h4>
+								  </div>
+								  <div class="modal-body">
+									  Cliquez sur la structure de connaissance que vous souhaitez renseigner ci-dessous. Ces dernières sont classées par thématique. Seules les thématiques associées à la ressource vous sont présentées.
+									  <hr/>
+									  <ul>
+									  {% for t in entity.topic %}
+										<li>{{ t.title }}
+											<ul>
+											{% for o in t.ontologies %}
+												<li><a href="{{ path('ontology_index', {'video[]': entity.id, 'ontology': o.id}) }}">{{ o.name }}</a></li>
+											{% else %}
+												<li><em>Aucune structure de connaissance pour cette thématique</em></li>
+											{% endfor %}
+											</ul>
+										</li>
+									  {% endfor %}
+									  </ul>
+								  </div>
+								  <div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+								  </div>
+								</div>
+							  </div>
 							</div>
 						</div>
 					</a>

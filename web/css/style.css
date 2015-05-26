@@ -502,7 +502,7 @@ select[multiple="multiple"] {
 	margin-top: -4px;
 }
 
-.browse-topics .col-md-10 {
+.browse-topics [class^="col-"] {
 	padding: 0px;
 	font-size: 12px;
 }

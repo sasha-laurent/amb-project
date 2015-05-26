@@ -2,15 +2,13 @@
 {% for link in links %}
 	<li data-level="{{ link.lvl }}">			
 		<div class="row">
-			<div class="col-md-10">
+			<div class="col-md-12">
 				{% for i in 1..link.lvl if link.lvl > 0 %}&nbsp;&nbsp;{% endfor %}
-				<a href="{{ path("vmb_presentation_browse_topic", {'topic': link.id, 'official':app.request.get('official')|default(null), 'default':app.request.get('default')|default(null), 'search':search|default(null)}) }}" title="{{ link.title }}">
-					{{ link.title }} ({{ link.__children|length }})
-				</a>
-			</div>
-			<div class="col-md-2 text-right">
 				<a class="collapsed" data-toggle="collapse" href="#collapseListGroup{{ link.id }}" aria-expanded="false" aria-controls="collapseListGroup{{ link.id }}">
 					<span class="glyphicon glyphicon-chevron-down"></span>
+				</a>
+				<a href="{{ path("vmb_presentation_browse_topic", {'topic': link.id, 'official':app.request.get('official')|default(null), 'default':app.request.get('default')|default(null), 'search':search|default(null)}) }}" title="{{ link.title }}">
+					{{ link.title }} ({{ link.__children|length }})
 				</a>
 			</div>
 		</div>
