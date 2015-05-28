@@ -463,7 +463,7 @@ class PresentationController extends Controller
     {
         $presentation = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Presentation')->findWithSortedResources($id);
 
-		return $this->renderForm($presentation, true);
+		return $this->renderForm($presentation, true, $this->generateUrl('presentation_complementary', array('id' => $id)));
     }
 
     /**
@@ -472,7 +472,7 @@ class PresentationController extends Controller
     /**
     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
     */
-    protected function renderForm($presentation, $saveAsCopy = false)
+    protected function renderForm($presentation, $saveAsCopy = false, $backUrl = null)
     {
 		$request = $this->get('request');
 		
@@ -579,7 +579,7 @@ class PresentationController extends Controller
 			array(
 				'form' => $form->createView(),
 				'mainTitle' => ((!($presentation->toString())) ? 'Ajout d\'une présentation' : ($saveAsCopy ? 'Copie de ': '').$presentation->toString()),
-				'backButtonUrl' => $this->generateUrl('presentation'),
+				'backButtonUrl' => ($backUrl == null) ? $this->generateUrl('presentation') : $backUrl,
 				'copy' => $saveAsCopy,
 				'matrix' => $presentation->getMatrix(),
 				'presentation' => $shownPresentation,

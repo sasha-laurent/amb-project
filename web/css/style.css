@@ -356,7 +356,14 @@ header {
 	color: #FF9D22;
 }
 .glyphicon.teacherRes {
-	color: #00B7FF;
+	color: #EFEFEF;
+}
+
+.presentation-legend i {
+	display: inline-block;
+	padding: 6px;
+	color: white;
+	background-color: #333;
 }
 
 

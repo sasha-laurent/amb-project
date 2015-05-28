@@ -51,6 +51,12 @@
 			</div>
 		</div>
 	</div>
+	
+	{% if copy %}
+	<div class="text-center">
+		<a class="wide-btn btn btn-primary" role="button" type="button" href="{{ path('presentation_show', {'id': presentation.id}) }}"><span class="left glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Revenir à la présentation initiale</a>
+	</div>
+	{% endif %}
 	<hr/>
     <table style="width:{{ cellWidth*matrix.levels|length + 120}}px;" id="matrix" class="table table-bordered">
 		<tr class="compact_tr">
@@ -93,12 +99,17 @@
 		</tr>
 		{% endfor %}
 	</table>
-	<div class="text-center">
+	<div class="presentation-legend text-center">
 		<br/>
 		<i>
-			<span class="checkedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Ajoutée à la liste de lecture |
-			{% if copy %}<span class="teacherRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Sélection du professeur |{% endif %}
-			<span class="suggestedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Suggérée en complément
+			{% if copy %}
+				<span class="teacherRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Présentation initiale |
+				<span class="suggestedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Présentation suggérée |
+				<span class="checkedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Ma sélection
+			{% else %}
+				<span class="checkedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Ajoutée à la liste de lecture |
+				<span class="suggestedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Suggérée en complément
+			{% endif %}
 		</i>
 	</div>
 	{% if copy %}
@@ -476,12 +487,22 @@
 		{% if copy %}
 		$('#save_new_presentation').click(function(event) {
 			event.preventDefault();
-			$('#presentation_form').find('[type="submit"]').trigger('click');
+			if($('#file_list li').length > 0) {
+				$('#presentation_form').find('[type="submit"]').trigger('click');
+			}
+			else {
+				alert('Aucun élément dans la liste de lecture');
+			}
 		});
 		$('#submit_new_presentation').click(function(event) {
 			event.preventDefault();
-			$('#presentation_form').attr("action", "{{ path("presentation_show", {'id': presentation.id}) }}");
-			$('#presentation_form').submit();
+			if($('#file_list li').length > 0) {
+				$('#presentation_form').attr("action", "{{ path("presentation_show", {'id': presentation.id}) }}");
+				$('#presentation_form').submit();
+			}
+			else {
+				alert('Aucun élément dans la liste de lecture');
+			}
 		});
 		{% endif %}
 	</script>

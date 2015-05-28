@@ -14,12 +14,12 @@
 			<h4><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> Options de la présentation</h4>
 			<div id="presentation_options" class="list-group">
 				<a href="#" class="list-group-item active">
-					<h4 id="list-group-item-heading" class="list-group-item-heading">Présentation</h4>
+					<h4 id="list-group-item-heading" class="list-group-item-heading">Présentation initiale</h4>
 				</a>
 				
 				{% if hasSuggestions %}
 				<a href="#" class="list-group-item suggestion-item">
-					<h4 id="list-group-item-heading" class="list-group-item-heading">Suggestion du professeur</h4>
+					<h4 id="list-group-item-heading" class="list-group-item-heading">Présentation suggérée</h4>
 				</a>
 				{% endif %}
 			</div>
@@ -58,32 +58,34 @@
 			<button type="button" id="addContextualBtn" class="btn btn-primary">Générer du contenu contextuel</button>
 		</div>
 		<div class="col-sm-4 text-center">
-			<button id="submit_new_presentation" role="button" class="btn btn-success"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Lancer la nouvelle présentation</button>
+			<button type="button" id="submit_new_presentation" role="button" class="btn btn-success"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Lancer la nouvelle présentation</button>
 		</div>
     </div>
     </form>
     <hr/>
-    <h3>Détails de la présentation</h3>
-    <table class="table">
-		<tbody>
-			<tr>
-				<th width="120px">Titre</th>
-				<td>{{ entity.title }}</td>
-			</tr>
-			<tr>
-				<th width="120px">Description</th>
-				<td>{{ entity.description[:300] }} <span data-prototype="{{entity.description[300:]}}" class="showAll collapsed">...</span></td>
-			</tr>
-			<tr>
-				<th>Création</th>
-				<td>{{ entity.dateCreation|date('d/m/y') }}</td>
-			</tr>
-			<tr>
-				<th>Mise à jour</th>
-				<td>{{ entity.dateUpdate|date('d/m/y') }}</td>
-			</tr>
-		</tbody>
-	</table>
+    <h3 class="view-more-title"><a data-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">Détails de la présentation <span class="glyphicon glyphicon-chevron-down"></span></a></h3>
+    <div class="collapse" id="collapseDescription">
+		<table class="table">
+			<tbody>
+				<tr>
+					<th width="120px">Titre</th>
+					<td>{{ entity.title }}</td>
+				</tr>
+				<tr>
+					<th width="120px">Description</th>
+					<td>{{ entity.description[:300] }} <span data-prototype="{{entity.description[300:]}}" class="showAll collapsed">...</span></td>
+				</tr>
+				<tr>
+					<th>Création</th>
+					<td>{{ entity.dateCreation|date('d/m/y') }}</td>
+				</tr>
+				<tr>
+					<th>Mise à jour</th>
+					<td>{{ entity.dateUpdate|date('d/m/y') }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 {% endblock %}
 
 {% block script %}
@@ -220,7 +222,12 @@
 			});
 			
 			$("#submit_new_presentation").click(function() {
-				$("#new_presentation_form").submit();
+				if($('#file_list li').length > 0) {
+					$("#new_presentation_form").submit();
+				}
+				else {
+					alert('Aucun élément dans la liste de lecture');
+				}
 			});
 		});
 	</script>
