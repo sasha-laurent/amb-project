@@ -5,7 +5,7 @@
 		<div class="panel-heading">
 			<div class="row">
 				<div class="col-md-5">Titre</div>
-				<div class="col-md-2 text-center">Création</div>				
+				<div class="col-md-2 text-center">Thématique</div>				
 				<div class="col-md-2 text-center">Mise à jour</div>				
 				<div class="col-md-1 text-center">Taille</div>				
 				<div class="col-md-2 text-center">Action</div>
@@ -17,7 +17,7 @@
         {% for entity in entities %}
 			<li class="list-group-item row">
 				<div class="col-md-5"><a href="{{ path('matrix_show', { 'id': entity.id }) }}">{{ entity.title }}</a></div>
-                <div class="col-md-2 text-center">{% if entity.dateCreation %}{{ entity.dateCreation|date('d/m/y') }}{% endif %}</div>
+                <div class="col-md-2 text-center"><span class="label label-default">{{ entity.topic.title }}</span></div>
                 <div class="col-md-2 text-center">{% if entity.dateUpdate %}{{ entity.dateUpdate|date('d/m/y') }}{% endif %}</div>
                 <div class="col-md-1 text-center"><span class="label label-info">{{ entity.dimension }}</span></div>
                 <div class="col-md-2 text-center">

@@ -31,14 +31,8 @@ class MatrixController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 		
-		if($this->get('security.context')->isGranted('ROLE_ADMIN')) {
-			$entities = $em->getRepository('VMBPresentationBundle:Matrix')->findAll();
-			$mainTitle = 'Affichage des matrices';
-		}
-		else {
-			$entities = $em->getRepository('VMBPresentationBundle:Matrix')->findBy(array('owner' => $this->getUser()));
-			$mainTitle = 'Affichage de vos matrices de présentation';
-		}
+		$entities = $em->getRepository('VMBPresentationBundle:Matrix')->findAllWithTopics($this->getUser());
+		$mainTitle = 'Affichage de vos matrices de présentation';
 
         return $this->render('VMBPresentationBundle:Matrix:index.html.twig', array(
             'mainTitle' => $mainTitle,

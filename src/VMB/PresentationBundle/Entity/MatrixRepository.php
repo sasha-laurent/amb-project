@@ -12,6 +12,27 @@ use Doctrine\ORM\EntityRepository;
  */
 class MatrixRepository extends EntityRepository
 {
+	public function findAllWithTopics($user = null)
+	{
+		$qb = $this
+			->createQueryBuilder('m')
+			->innerJoin('m.povs', 'pov')
+			->addSelect('pov')
+			->innerJoin('m.levels', 'lvl')
+			->addSelect('lvl')
+			->innerJoin('m.topic', 'topic')
+			->addSelect('topic')
+		;
+		
+		if($user != null) {
+			$qb->andWhere('m.owner = :user')->setParameter('user', $user);
+		}
+
+		return $qb
+		->getQuery()
+		->getResult();
+	}
+	
 	public function getMatrixWithResources($id)
 	{
 		$qb = $this

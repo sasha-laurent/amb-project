@@ -47,6 +47,13 @@
 					{% endfor %}
 				{% endif %}
 			</ul>
+			<div class="presentation-controls text-center">
+				<div class="btn-group" role="group" aria-label="...">
+				  <button id="presentation-prev-btn" type="button" class="btn btn-default"><span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span></button>
+				  <button id="presentation-play-btn" type="button" class="btn btn-default"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
+				  <button id="presentation-next-btn" type="button" class="btn btn-default"><span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span></button>
+				</div>
+			</div>
 			<p class="text-center">
 				Durée totale : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
 			</p>
@@ -89,6 +96,9 @@
 {% block script %}
 	{{ parent() }}
 	<script>
+	playing = false;
+	clickOnPlayer = false;
+	currentTimeout = null;
 	
 	resourcesCollection = {
 		{% if alternativeResources|length == 0 %}
@@ -142,11 +152,19 @@
 	
 	{% include '::plyrSetup.html.twig' %}
 	
+	function setNextResourceTimeout(secDelay) {
+		if(currentTimeout != null) {
+			clearTimeout(currentTimeout);
+		}
+		currentTimeout = setTimeout(function() { nextResource(); }, secDelay*1000);
+	}
+	
 	function triggerNewRes(resId) {
+		res = resourcesCollection[resId];
 		if(selectedRes != resId) {
 			$('#addedRes_' + selectedRes).removeClass('active');
 			selectedRes = resId;
-			res = resourcesCollection[resId];
+			
 			stopAndHideAll(res['type']);
 			$('#addedRes_' + resId).addClass('active');
 			$('#current-res-title').html(res['title']);
@@ -155,7 +173,11 @@
 			$('#current-res-update').html(res['update']);
 			$('#current-res-description').html(res['description']);
 			
-			displayNewRes(res['src'], res['type'], true);
+			displayNewRes(res['src'], res['type'], playing);
+			// If it's a picture/file we trigger the countdown manually (since there is no player)
+			if(playing && res['type'] != 'audio' && res['type'] != 'video') {
+				setNextResourceTimeout(2);
+			}
 		}
 	}
 	
@@ -166,28 +188,94 @@
 		return -1;
 	}
 	
-	function nextResource() {
+	function prevResource() {
 		i = indexOf(resourcesOrder, selectedRes);
-		i++;
-		if(i < resourcesOrder.length) {
+		i--;
+		if(i >= 0) {
+			clearTimeout(currentTimeout);
 			triggerNewRes(resourcesOrder[i]);
 		}
 	}
 	
-	$('#file_list .list-group-item').click(function() {
-		triggerNewRes($(this).attr('data-id'));
-	});
+	function nextResource() {
+		i = indexOf(resourcesOrder, selectedRes);
+		i++;
+		if(i < resourcesOrder.length) {
+			clearTimeout(currentTimeout);
+			triggerNewRes(resourcesOrder[i]);
+		}
+	}
 	
-	var video = $('video')[0];
-	//$('.player').css('display', 'none');
-    video.onended = function(e) {
-		nextResource();
-    };
+	function playerPlayButton(play) {
+		playAction(play, true);
+	}
+	
+	function playAction(newValue = null, fromPlayerControls = false) {
+		oldValue = playing;
+		playing = (newValue != null) ? newValue : !playing;
+		
+		// In order to avoid an infinite loop of actions (playAction > onplaying > playAction > ...)
+		if(oldValue != playing) {
+			res = resourcesCollection[selectedRes];
+			
+			// If we want to play the resource
+			if(playing) {
+				span = $('#presentation-play-btn .glyphicon-play');
+				$(span).addClass('glyphicon-pause');
+				$(span).removeClass('glyphicon-play');
+				
+				if(res['type'] == 'video') {
+					videoPlayer = document.querySelectorAll(".player")[0].plyr;
+					if(!fromPlayerControls) { videoPlayer.play(); }
+				}
+				else if(res['type'] == 'audio') {
+					audioPlayer = document.querySelectorAll(".player")[1].plyr;		
+					if(!fromPlayerControls) { audioPlayer.play(); }
+				}
+				else {
+					setNextResourceTimeout(2);
+				}
+			}
+			else {
+				span = $('#presentation-play-btn .glyphicon-pause');
+				$(span).addClass('glyphicon-play');
+				$(span).removeClass('glyphicon-pause');
+				
+				if(res['type'] == 'video') {
+					videoPlayer = document.querySelectorAll(".player")[0].plyr;
+					if(!fromPlayerControls) { videoPlayer.pause(); }
+				}
+				else if(res['type'] == 'audio') {
+					audioPlayer = document.querySelectorAll(".player")[1].plyr;		
+					if(!fromPlayerControls) { audioPlayer.pause(); }
+				}
+				else {
+					clearTimeout(currentTimeout);
+				}
+			}
+		}
+	}
+	
+	$('#presentation-prev-btn').click(function() 	  { prevResource(); });
+	$('#presentation-play-btn').click(function() 	  { playAction(); });
+	$('#presentation-next-btn').click(function() 	  { nextResource(); });
+	$('#file_list .list-group-item').click(function() {	triggerNewRes($(this).attr('data-id'));	});
+	
+	function bindControls() {
+		var video = $('video')[0];
+		$(document.querySelectorAll(".player")[0]).bind('click',   function(e) { clickOnPlayer = true; });
+		$(video).bind('ended',   function(e) { nextResource(); });
+		$(video).bind('playing', function(e) { if(clickOnPlayer) { playerPlayButton(true); clickOnPlayer = false; } });
+		$(video).bind('pause',   function(e) { if(clickOnPlayer) { playerPlayButton(false); clickOnPlayer = false; } });
+		
+		var audio = $('audio')[0];
+		$(document.querySelectorAll(".player")[1]).bind('click',   function(e) { clickOnPlayer = true; });
+		$(audio).bind('ended',   function(e) { nextResource(); });
+		$(audio).bind('playing', function(e) { if(clickOnPlayer) { playerPlayButton(true); } });
+		$(audio).bind('pause',   function(e) { if(clickOnPlayer) { playerPlayButton(false); } });
+	}
+	
+	bindControls();
     
-    var audio = $('audio')[0];
-	//$('.player').css('display', 'none');
-    audio.onended = function(e) {
-		nextResource();
-    };
 	</script>
 {% endblock %}
