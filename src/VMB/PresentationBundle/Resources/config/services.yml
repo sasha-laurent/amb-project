@@ -1,1 +1,4 @@
-
+services:
+    vmb_presentation.previous_url:
+        class: VMB\PresentationBundle\PreviousUrl\VMBPreviousUrl
+        arguments: [@router]

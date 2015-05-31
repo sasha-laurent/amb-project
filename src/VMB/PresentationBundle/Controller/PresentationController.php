@@ -579,7 +579,7 @@ class PresentationController extends Controller
 			array(
 				'form' => $form->createView(),
 				'mainTitle' => ((!($presentation->toString())) ? 'Ajout d\'une présentation' : ($saveAsCopy ? 'Copie de ': '').$presentation->toString()),
-				'backButtonUrl' => ($backUrl == null) ? $this->generateUrl('presentation') : $backUrl,
+				'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('presentation')),
 				'copy' => $saveAsCopy,
 				'matrix' => $presentation->getMatrix(),
 				'presentation' => $shownPresentation,
