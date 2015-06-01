@@ -602,3 +602,5 @@ select[multiple="multiple"] {
 .complementResource {
 	background-color: #DFDFDF;
 }
+
+input[type="file"].form-control { height: auto; }

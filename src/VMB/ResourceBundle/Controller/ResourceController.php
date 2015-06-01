@@ -149,7 +149,7 @@ class ResourceController extends Controller
 		return $this->render('::Backend/delete.html.twig', array(
 			'entityTitle' => 'la ressource "'.$resource->getTitle().'"',
 			'mainTitle' => 'Suppression d\'une ressource '.$resource->getTitle(),
-			'backButtonUrl' => $this->generateUrl('resource')
+			'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('resource'))
 		));
     }
 

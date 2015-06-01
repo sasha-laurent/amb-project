@@ -55,7 +55,7 @@
     </div>
     <div class="row">
 		<div class="col-sm-5 text-center">
-			<button type="button" id="addContextualBtn" class="btn btn-primary">Générer du contenu contextuel</button>
+			<button type="button" id="addContextualBtn" class="btn btn-primary">Générer du contenu complémentaire</button>
 		</div>
 		<div class="col-sm-4 text-center">
 			<button type="button" id="submit_new_presentation" role="button" class="btn btn-success"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Lancer la nouvelle présentation</button>
@@ -101,8 +101,8 @@
 				'level': "{{ usedRes.level.title }}", 
 				'shortTitle': "{{ usedRes.resource.title[:20] }}", 
 				'glyphicon' : "{{ usedRes.resource.getGlyphicon }}",
-				'duration': {{ usedRes.resource.duration|default(0) }},
-				'duration_str': "{{ "%02d"|format(usedRes.resource.duration // 60) }}:{{ "%02d"|format(usedRes.resource.duration % 60) }}"
+				'duration': {{ usedRes.resource.duration|default(11) }},
+				'duration_str': "{{ "%02d"|format(usedRes.resource.duration|default(11) // 60) }}:{{ "%02d"|format(usedRes.resource.duration|default(11) % 60) }}"
 			},
 			{% endfor %}
 		};
@@ -151,7 +151,10 @@
 			addToDuration(-resourcesCollection[resId]['duration']);
 		}
 		
-		function addToPlaylist(resId, type, prepend=false) {
+		function addToPlaylist(resId, type, prepend) {
+			// Default values
+			preprend = prepend || false;
+			
 			addToDuration(resourcesCollection[resId]['duration']);
 			
 			newElt = '<li class="list-group-item ' + type + 'Resource" id="addedRes_' + resId + '" data-id="' + resId + '"> \

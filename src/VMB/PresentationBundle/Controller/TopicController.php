@@ -27,7 +27,7 @@ class TopicController extends Controller
         $entities = $em->getRepository('VMBPresentationBundle:Topic')->childrenHierarchy();
 
         return $this->render('VMBPresentationBundle:Topic:index.html.twig', array(
-            'mainTitle' => 'Affichage des thématiques',
+            'mainTitle' => 'Classification des thématiques',
 			'addButtonUrl' => $this->generateUrl('topic_new'),
             'entities' => $entities
         ));
@@ -90,13 +90,15 @@ class TopicController extends Controller
 			$form->handleRequest($request);
 			if ($form->isValid()) 
 			{
+				$flashMessage = ($topic->getId() == null) ? 'Thématique ajoutée' : 'Thématique modifiée';
+				
 				$em = $this->getDoctrine()->getManager();
 				$em->persist($topic);
 				$topic->preUpload();
 				$em->flush();
 				$topic->upload();
 
-				$flashMessage = !$topic->toString() ? 'Thématique ajoutée' : 'Thématique modifiée';
+				
 				$request->getSession()->getFlashBag()->add('success', $flashMessage);
 				return $this->redirect($this->generateUrl('topic'));
 			}

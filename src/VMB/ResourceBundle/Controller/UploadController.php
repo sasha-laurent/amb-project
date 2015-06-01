@@ -33,7 +33,7 @@ class UploadController extends Controller
                 $em->persist($resource);
                 $em->flush();
 
-                $flashMessage = ($resource->getTopic() == null) ? 'Ressource ajoutée' : 'Ressource modifiée';
+                $flashMessage = ($resource->getId() == null) ? 'Ressource ajoutée' : 'Ressource modifiée';
                 $request->getSession()->getFlashBag()->add('success', $flashMessage);
             
 				return $this->redirect($this->generateUrl('resource'));
@@ -43,8 +43,8 @@ class UploadController extends Controller
         return $this->render('::Backend/form.html.twig', 
             array(
                 'form' => $form->createView(),
-                'mainTitle' => (($resource->getTopic() == null) ? 'Ajout d\'une ressource' : 'Modification d\'une ressource'),
-                'backButtonUrl' => $this->generateUrl('resource')
+                'mainTitle' => (($resource->getId() == null) ? 'Ajout d\'une ressource' : 'Modification d\'une ressource'),
+                'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('resource'))
             ));
     }
 

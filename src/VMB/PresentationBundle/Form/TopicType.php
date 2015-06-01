@@ -15,7 +15,7 @@ class TopicType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', null, array('label'=>'Titre'))
+            ->add('title', null, array('label'=>'Titre', 'attr' => array('autofocus' => 1)))
             ->add('parent',  'entity', array(
 				'class' => 'VMB\PresentationBundle\Entity\Topic', 
 				'empty_value' => '+ Nouvelle racine',

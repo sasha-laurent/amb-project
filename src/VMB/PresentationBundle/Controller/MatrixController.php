@@ -65,7 +65,7 @@ class MatrixController extends Controller
 
 			return $this->render('VMBPresentationBundle:Matrix:show.html.twig', array(
 				'mainTitle' => $entity->getTitle(),
-				'backButtonUrl' => $this->generateUrl('matrix'),
+				'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('matrix')),
 				'editButtonUrl' => $this->generateUrl('matrix_edit', array('id' => $entity->getId())),
 				'delButtonUrl' => $this->generateUrl('matrix_delete', array('id' => $entity->getId())),
 				'entity' => $entity,
@@ -227,7 +227,7 @@ class MatrixController extends Controller
 			array(
 				'form' => $form->createView(),
 				'mainTitle' => ((!($matrix->toString())) ? 'Ajout d\'une matrice' : 'Modification d\'une matrice'),
-				'backButtonUrl' => $this->generateUrl('matrix')
+				'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('matrix')),
 			));
     }
     

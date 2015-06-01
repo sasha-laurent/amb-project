@@ -1,7 +1,16 @@
 {% extends '::layout.html.twig' %}
 
 {% block h1_title %}
-	{{ mainTitle }}
+	<div class="row">
+		<div class="col-md-9">
+			{{ mainTitle }}
+		</div>
+		<div class="col-md-3 text-right">
+			<a class="btn btn-default" href="{{ path('resource_new') }}">
+				Importer <span class="left glyphicon glyphicon-plus" aria-hidden="true"></span>
+			</a>
+		</div>
+	</div>
 {% endblock %}
 
 {% if page == 1 and nbPages == 0 %}
