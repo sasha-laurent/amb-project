@@ -24,7 +24,6 @@ class VMBPreviousUrl
 				$lastPath = substr($lastPath, 0, $pos);
 			}
 			
-			dump($lastPath);
 			try {
 				// If the route can not be matched, an exception is thrown
 				$this->router->match($lastPath);

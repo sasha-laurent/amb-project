@@ -481,6 +481,10 @@ class PresentationController extends Controller
     {
 		$request = $this->get('request');
 		
+		if($saveAsCopy) {
+			$presentation->setTitle($presentation->getTitle().' - Présentation personnelle');
+		}
+		
 		$form = $this
 			->get('form.factory')
 			->create(new PresentationType(), $presentation);
@@ -579,11 +583,11 @@ class PresentationController extends Controller
 		}
 		
 		$shownPresentation = (isset($workingPresentation)) ? $workingPresentation : $presentation;
-
+		
 		return $this->render('VMBPresentationBundle:Presentation:edit.html.twig', 
 			array(
 				'form' => $form->createView(),
-				'mainTitle' => ((!($presentation->toString())) ? 'Ajout d\'une présentation' : ($saveAsCopy ? 'Copie de ': '').$presentation->toString()),
+				'mainTitle' => ((!($presentation->toString())) ? 'Ajout d\'une présentation' : $presentation->toString()),
 				'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('presentation')),
 				'copy' => $saveAsCopy,
 				'matrix' => $presentation->getMatrix(),

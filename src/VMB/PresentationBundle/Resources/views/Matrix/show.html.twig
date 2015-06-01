@@ -26,7 +26,7 @@
 					<input type="hidden" name="{{ pov.id ~ "_" ~ level.id }}" value="{{ entity.sortedResources[pov.id][level.id].resource.id|default(0) }}" />
 					{% if entity.sortedResources[pov.id][level.id] is defined %}
 						<div class="usedResource" data-resource="{{ entity.sortedResources[pov.id][level.id].resource.id }}" style="background-image:url({{ asset(entity.sortedResources[pov.id][level.id].resource.getThumbsPath) }});">
-							<div class="resThumbnailHover"><span class="resTitle">{{ entity.sortedResources[pov.id][level.id].resource.title[:18] }}</span></div>
+							<div class="resThumbnailHover"><span class="resTitle">{{ entity.sortedResources[pov.id][level.id].resource.title|shortenText(10, true, '...') }}</span></div>
 						</div>
 					{% endif %}
 				</td>

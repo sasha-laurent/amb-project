@@ -2,3 +2,8 @@ services:
     vmb_presentation.previous_url:
         class: VMB\PresentationBundle\PreviousUrl\VMBPreviousUrl
         arguments: [@router]
+    
+    vmb_presentation.twig.shorten_text:
+        class: VMB\PresentationBundle\Twig\ShortenText
+        tags :
+            - { name: twig.extension }
