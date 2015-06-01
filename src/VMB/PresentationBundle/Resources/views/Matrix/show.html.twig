@@ -292,9 +292,11 @@
 	});
 	
 	$('html').keyup(function(e){
-		$('.usedResource.' + selectedClass).prev('input').val(0);
-		$('.usedResource.' + selectedClass).remove();
-		noticeUnsavedMatrix();
+		if(e.key == 'Delete') {
+			$('.usedResource.' + selectedClass).prev('input').val(0);
+			$('.usedResource.' + selectedClass).remove();
+			noticeUnsavedMatrix();
+		}
 	}) 
 	</script>
 {% endblock %}

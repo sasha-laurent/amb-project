@@ -3,7 +3,10 @@ body {
 	padding-bottom: 20px;
 	font-family: 'Open Sans';
 	background-color: #2C2C2C;
+	width: 100%;
+	height: 100%;
 }
+html { width: 100%; height: 100%; }
 
 /* Home page style */
 
@@ -529,6 +532,36 @@ select[multiple="multiple"] {
 
 #players_container {
 	min-height:445px;
+}
+
+#players_container.fullScreenPlayer {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	height: 100%;
+	z-index: 100;
+	width: 100%;
+	background-color: rgba(0, 0, 0, 0.7);
+}
+
+#players_container.fullScreenPlayer a {
+	display: none;
+}
+
+#players_container.fullScreenPlayer .image_player, #players_container.fullScreenPlayer .file_player {
+	width: 90%;
+	margin: auto;
+	margin-top: 5%;
+	max-height: 90%;
+}
+
+#players_container.fullScreenPlayer .file_player {
+	height: 80%;
+}
+
+#players_container.fullScreenPlayer .file_player iframe {
+	width: 100% !important;
+	height: 100% !important;
 }
 
 .block-browse {

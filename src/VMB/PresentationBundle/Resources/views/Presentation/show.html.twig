@@ -10,7 +10,7 @@
 		{% endfor %}
 	{% endif %}
 {% else %}
-	{% set firstResource = alternativeResources[0] %}
+	{% set firstResource = alternativeResources[0].usedResource %}
 {% endif %}
 
 {% block body %}
@@ -26,22 +26,22 @@
 				{% if alternativeResources|length == 0 %}
 					{% for res in entity.resources %}
 						{% if res.suggested == false %}
-							{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
+							{% set totalDuration = totalDuration + res.getDuration %}
 							<li class="list-group-item{% if firstLoop %} active{% set firstLoop = false %}{% endif %}" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
 								<div class="row">
 									<div class="col-sm-8"><span class="glyphicon glyphicon-{{ res.usedResource.resource.getGlyphicon }}" aria-hidden="true"></span> {{ res.usedResource.resource.title[:20] }}</div>
-									<div class="col-sm-4">{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}</div>
+									<div class="col-sm-4">{{ "%02d"|format(res.getDuration // 60) }}:{{ "%02d"|format(res.getDuration % 60) }}</div>
 								</div>
 							</li>
 						{% endif %}
 					{% endfor %}
 				{% else %}
-					{% for usedRes in alternativeResources %}
-						{% set totalDuration = totalDuration + usedRes.resource.duration %}
-						<li class="list-group-item{% if firstLoop %} active{% set firstLoop = false %}{% endif %}" id="addedRes_{{ usedRes.id }}" data-id="{{ usedRes.id }}">
+					{% for res in alternativeResources %}
+						{% set totalDuration = totalDuration + res.getDuration %}
+						<li class="list-group-item{% if firstLoop %} active{% set firstLoop = false %}{% endif %}" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
 							<div class="row">
-								<div class="col-sm-8"><span class="glyphicon glyphicon-{{usedRes.resource.getGlyphicon }}" aria-hidden="true"></span> {{ usedRes.resource.title[:20] }}</div>
-								<div class="col-sm-4">{{ "%02d"|format(usedRes.resource.duration // 60) }}:{{ "%02d"|format(usedRes.resource.duration % 60) }}</div>
+								<div class="col-sm-8"><span class="glyphicon glyphicon-{{ res.usedResource.resource.getGlyphicon }}" aria-hidden="true"></span> {{ res.usedResource.resource.title[:20] }}</div>
+								<div class="col-sm-4">{{ "%02d"|format(res.getDuration // 60) }}:{{ "%02d"|format(res.getDuration % 60) }}</div>
 							</div>
 						</li>
 					{% endfor %}
@@ -51,6 +51,7 @@
 				<div class="btn-group" role="group" aria-label="...">
 				  <button id="presentation-prev-btn" type="button" class="btn btn-default"><span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span></button>
 				  <button id="presentation-play-btn" type="button" class="btn btn-default"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
+				  <button id="presentation-fullscreen-btn" type="button" class="btn btn-default"><span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span></button>
 				  <button id="presentation-next-btn" type="button" class="btn btn-default"><span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span></button>
 				</div>
 			</div>
@@ -99,6 +100,7 @@
 	playing = false;
 	clickOnPlayer = false;
 	currentTimeout = null;
+	fullscreenMode = false;
 	
 	resourcesCollection = {
 		{% if alternativeResources|length == 0 %}
@@ -111,26 +113,26 @@
 						'description': "{{ res.usedResource.resource.description }}", 
 						'creation': "{{ res.usedResource.resource.dateCreate|date('d/m/y') }}", 
 						'update': "{{ res.usedResource.resource.dateUpdate|date('d/m/y') }}", 
-						'duration': {{ res.usedResource.resource.duration|default(0) }},
-						'duration_str': "{{ "%02d"|format(res.usedResource.resource.duration // 60) }}:{{ "%02d"|format(res.usedResource.resource.duration % 60) }}",
+						'duration': {{ res.getDuration|default(11) }},
+						'duration_str': "{{ "%02d"|format(res.getDuration // 60) }}:{{ "%02d"|format(res.getDuration % 60) }}",
 						'src': "{{ asset(res.usedResource.resource.getResourcePath) }}",
 						'type': "{{ res.usedResource.resource.type }}"
 					},
 				{% endif %}
 			{% endfor %}
 		{% else %}
-			{% for usedRes in alternativeResources %}
-				{{ usedRes.id }}: {
-					'pov': "{{ usedRes.pov.title }}", 
-					'level': "{{ usedRes.level.title }}", 
-					'title': "{{ usedRes.resource.title }}", 
-					'description': "{{ usedRes.resource.description }}", 
-					'creation': "{{ usedRes.resource.dateCreate|date('d/m/y') }}", 
-					'update': "{{ usedRes.resource.dateUpdate|date('d/m/y') }}", 
-					'duration': {{ usedRes.resource.duration|default(0) }},
-					'duration_str': "{{ "%02d"|format(usedRes.resource.duration // 60) }}:{{ "%02d"|format(usedRes.resource.duration % 60) }}",
-					'src': "{{ asset(usedRes.resource.getResourcePath) }}",
-					'type': "{{ usedRes.resource.type }}"
+			{% for res in alternativeResources %}
+				{{ res.usedResource.id }}: {
+					'pov': "{{ res.usedResource.pov.title }}", 
+					'level': "{{ res.usedResource.level.title }}", 
+					'title': "{{ res.usedResource.resource.title }}", 
+					'description': "{{ res.usedResource.resource.description }}", 
+					'creation': "{{ res.usedResource.resource.dateCreate|date('d/m/y') }}", 
+					'update': "{{ res.usedResource.resource.dateUpdate|date('d/m/y') }}", 
+					'duration': {{ res.getDuration|default(11) }},
+					'duration_str': "{{ "%02d"|format(res.getDuration // 60) }}:{{ "%02d"|format(res.getDuration % 60) }}",
+					'src': "{{ asset(res.usedResource.resource.getResourcePath) }}",
+					'type': "{{ res.usedResource.resource.type }}"
 				},
 			{% endfor %}
 		{% endif %}	
@@ -143,8 +145,8 @@
 				{% endif %}
 			{% endfor %}
 		{% else %}
-			{% for usedRes in alternativeResources %}
-				{{ usedRes.id }},
+			{% for res in alternativeResources %}
+				{{ res.usedResource.id }},
 			{% endfor %}
 		{% endif %} ];
 		
@@ -160,10 +162,19 @@
 	}
 	
 	function triggerNewRes(resId) {
-		res = resourcesCollection[resId];
 		if(selectedRes != resId) {
+			updateFullscreenValue();
+			res = resourcesCollection[resId];
+			
+			retoggleFullscreen = false;
+			if(fullscreenMode && resourcesCollection[selectedRes]['type'] == 'video' && res['type'] != 'video') {
+				retoggleFullscreen = true;
+			}
+			
 			$('#addedRes_' + selectedRes).removeClass('active');
 			selectedRes = resId;
+			
+			if(retoggleFullscreen) { toggleFullScreen(fullscreenMode); }
 			
 			stopAndHideAll(res['type']);
 			$('#addedRes_' + resId).addClass('active');
@@ -176,7 +187,7 @@
 			displayNewRes(res['src'], res['type'], playing);
 			// If it's a picture/file we trigger the countdown manually (since there is no player)
 			if(playing && res['type'] != 'audio' && res['type'] != 'video') {
-				setNextResourceTimeout(2);
+				setNextResourceTimeout(res['duration']);
 			}
 		}
 	}
@@ -206,11 +217,44 @@
 		}
 	}
 	
+	function updateFullscreenValue() {
+		res = resourcesCollection[selectedRes];
+		if(res['type'] == 'video') {
+			fullscreenMode = document.querySelectorAll(".player")[0].plyr.isFullscreen();
+		}
+	}
+	
+	function toggleFullScreen(fullscreen) {
+		// Default value
+		fullscreen = fullscreen || null;
+		
+		updateFullscreenValue();
+		res = resourcesCollection[selectedRes];
+
+		oldValue = fullscreenMode;
+		fullscreenMode = (fullscreen == null) ? !fullscreenMode : fullscreen;
+		
+		if(oldValue != fullscreenMode) {			
+			$('#players_container').toggleClass('fullScreenPlayer');
+		}
+		else if(fullscreenMode) {
+			$('#players_container').removeClass('fullScreenPlayer');
+			$('#players_container').addClass('fullScreenPlayer');
+		}
+		else {
+			$('#players_container').removeClass('fullScreenPlayer');
+		}
+	}
+	
 	function playerPlayButton(play) {
 		playAction(play, true);
 	}
 	
-	function playAction(newValue = null, fromPlayerControls = false) {
+	function playAction(newValue, fromPlayerControls) {
+		// Default value
+		newValue = newValue || null;
+		fromPlayerControls = fromPlayerControls || false;
+		
 		oldValue = playing;
 		playing = (newValue != null) ? newValue : !playing;
 		
@@ -233,7 +277,7 @@
 					if(!fromPlayerControls) { audioPlayer.play(); }
 				}
 				else {
-					setNextResourceTimeout(2);
+					setNextResourceTimeout(res['duration']);
 				}
 			}
 			else {
@@ -259,6 +303,7 @@
 	$('#presentation-prev-btn').click(function() 	  { prevResource(); });
 	$('#presentation-play-btn').click(function() 	  { playAction(); });
 	$('#presentation-next-btn').click(function() 	  { nextResource(); });
+	$('#presentation-fullscreen-btn').click(function() { toggleFullScreen(); });
 	$('#file_list .list-group-item').click(function() {	triggerNewRes($(this).attr('data-id'));	});
 	
 	function bindControls() {
@@ -275,7 +320,13 @@
 		$(audio).bind('pause',   function(e) { if(clickOnPlayer) { playerPlayButton(false); } });
 	}
 	
-	bindControls();
-    
+	$('html').keyup(function(e){
+		// This is not called if the video player is full screen (the event will be managed by the browser)
+		if(e.key == 'Escape') {
+			toggleFullScreen(false);
+		}
+	});
+	
+	bindControls();    
 	</script>
 {% endblock %}

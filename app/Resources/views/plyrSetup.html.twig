@@ -40,7 +40,10 @@
 		}
 	}
 	
-	function displayNewRes(src, type, play=false) {
+	function displayNewRes(src, type, play) {
+		// Default values
+		play = play || false;
+		
 		if(type == 'audio') {
 			$(document.querySelectorAll(".player")[1]).show();
 			player = document.querySelectorAll(".player")[1].plyr;

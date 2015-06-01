@@ -306,9 +306,14 @@ class PresentationController extends Controller
 			$matrix = $em->getRepository('VMBPresentationBundle:Matrix')->getMatrixWithResources($entity->getMatrix()->getId());
 
 			foreach($postValues as $key => $position) {
-				if(preg_match('`usedResource_([0-9]+)`', $key, $matches)) {
+				if(preg_match('`usedResource_([0-9]+)_([0-9]+)`', $key, $matches)) {
 					$resId = intval($matches[1]);
-					$newRes = $matrix->getUsedResourceById($resId);
+					$duration = intval($matches[2]);
+					
+					$newRes = new CheckedResource();
+					$newRes->setUsedResource($matrix->getUsedResourceById($resId));
+					$newRes->setDuration($duration);
+					
 					if($newRes != null) {
 						$alternativeResources[] = $newRes;
 					}

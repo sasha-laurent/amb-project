@@ -4,7 +4,7 @@
 
 <div id="players_container">
 	{% if playingResource != null %}
-	<div {% if playingResource.type != 'video' %}style="display: none;"{% endif %} class="player">
+	<div {% if playingResource.type != 'video' %}style="display: none;"{% endif %} id="video_player_container" class="player">
 		<video id="video_player" controls crossorigin>
 			<!-- Video files -->
 			{% if playingResource.type == 'video' %}
@@ -22,13 +22,11 @@
 	</div>
 	<div {% if playingResource.type != 'image' %}style="display: none;"{% endif %} class="image_player text-center">
 		{% if playingResource.type == 'image' %}
-		<a href="{{ asset(playingResource.getResourcePath) }}" target="_blank">Afficher ce fichier dans un autre onglet
-			<img style='width:100%;' src="{{ asset(playingResource.getResourcePath) }}" />
-		</a>
+		<a href="{{ asset(playingResource.getResourcePath) }}" target="_blank">Afficher ce fichier dans un autre onglet</a>
+		<img style='width:100%;' src="{{ asset(playingResource.getResourcePath) }}" />
 		{% else %}
-		<a href="#" target="_blank">Afficher ce fichier dans un autre onglet
-			<img style='width:100%;' />
-		</a>
+		<a href="#" target="_blank">Afficher ce fichier dans un autre onglet</a>
+		<img style='width:100%;' />
 		{% endif %}
 	</div>
 	<div {% if playingResource.type != 'text' and playingResource.type != 'application' %}style="display: none;"{% endif %} class="file_player text-center">
@@ -50,9 +48,8 @@
 		</audio>
 	</div>
 	<div style="display: none;" class="image_player text-center">
-		<a href="#" target="_blank">Afficher ce fichier dans un autre onglet
-			<img style='width:100%;' />
-		</a>
+		<a href="#" target="_blank">Afficher ce fichier dans un autre onglet</a>
+		<img style='width:100%;' />
 	</div>
 	<div style="display: none;" class="file_player text-center">
 		<a href="#" target="_blank">Afficher ce fichier dans un autre onglet</a>
