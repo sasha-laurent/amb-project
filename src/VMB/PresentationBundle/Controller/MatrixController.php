@@ -232,6 +232,56 @@ class MatrixController extends Controller
     }
     
     /**
+     * Set a matrix as official
+     *
+     */
+    /**
+    * @Security("is_granted('ROLE_TEACHER')")
+    */
+    public function officialAction(Request $request, $id)
+    {
+		$em = $this->getDoctrine()->getManager();
+        $matrix = $em->getRepository('VMBPresentationBundle:Matrix')->getMatrixWithResources($id);
+        if($matrix  == null) {
+			$request->getSession()->getFlashBag()->add('danger',"An error occured");
+			return $this->redirect($this->generateUrl('matrix'));
+		}
+
+		if ($request->isMethod('POST')) {
+			try {
+				
+				$valid = true;
+				$resourcesDenied = array();
+				foreach($matrix->getResources() as $usedResource) {
+					if(!$usedResource->getResource()->getTrusted()) {
+						$valid = false;
+						$resourcesDenied[] = $usedResource->getResource();
+					}
+				}
+				
+				if($valid) {
+					$matrix->setOfficial(true);
+					$em->flush();
+					
+					$request->getSession()->getFlashBag()->add('success', 'Matrice passée en officiel');
+				}
+				else {
+					$request->getSession()->getFlashBag()->add('danger',"Action impossible : les ressources utilisées ne sont pas toutes officielles");
+				}
+			} catch (\Exception $e) {
+				$request->getSession()->getFlashBag()->add('danger',"An error occured");
+			}
+			return $this->redirect($this->generateUrl('matrix'));
+		}
+
+		// Si la requête est en GET, on affiche une page de confirmation
+		return $this->render('VMBPresentationBundle:Matrix:official.html.twig', array(
+			'mainTitle' => 'Officialisation d\'une matrice',
+			'backButtonUrl' => $this->generateUrl('matrix')
+		));
+    }
+    
+    /**
      * Deletes a Matrix entity.
      *
      */

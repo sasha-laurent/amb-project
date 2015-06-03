@@ -97,7 +97,15 @@ class PresentationController extends Controller
 		$default = ($request->query->get('default') == 1) ? true : 'all';
 		$search = $request->query->get('search');
 		
-        $entities = $em->getRepository('VMBPresentationBundle:Presentation')->getPresentations($page, $nbPerPage, $topic, true, $official, $default, null, $search);
+		$publicMode = true;
+		$personal = null;
+		$privateEntities = null;
+		if($request->query->get('personal') == 1) {
+			$personal = $this->getUser();
+			$publicMode = 'all';
+		}
+		
+        $entities = $em->getRepository('VMBPresentationBundle:Presentation')->getPresentations($page, $nbPerPage, $topic, $publicMode, $official, $default, $personal, $search);
         
         // On calcule le nombre total de pages grâce au count($listAdverts) qui retourne le nombre total d'annonces
 		$nbPages = ceil(count($entities)/$nbPerPage);
@@ -584,16 +592,22 @@ class PresentationController extends Controller
 		
 		$shownPresentation = (isset($workingPresentation)) ? $workingPresentation : $presentation;
 		
-		return $this->render('VMBPresentationBundle:Presentation:edit.html.twig', 
-			array(
+		$parameters = array(
 				'form' => $form->createView(),
 				'mainTitle' => ((!($presentation->toString())) ? 'Ajout d\'une présentation' : $presentation->toString()),
-				'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('presentation')),
+				'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('vmb_presentation_browse')),
 				'copy' => $saveAsCopy,
 				'matrix' => $presentation->getMatrix(),
 				'presentation' => $shownPresentation,
 				'alertDismissible' => true
-			));
+			);
+			
+		if(!$saveAsCopy && $presentation->getId() != null) {
+			$parameters['delButtonUrl'] = $this->generateUrl('presentation_delete', array('id'=> $presentation->getId()));
+		}
+		
+		return $this->render('VMBPresentationBundle:Presentation:edit.html.twig', 
+			$parameters);
     }
     /**
      * Deletes a Presentation entity.
@@ -635,6 +649,20 @@ class PresentationController extends Controller
 			'backButtonUrl' => $this->generateUrl('presentation')
 		));
     }
+    
+    public function parameterAction(Request $request, $param, $id, $value) 
+	{
+		if($param == 'official') {
+			$this->setPresentationOfficialValue($id, $value);
+		}
+		elseif($param == 'default') {
+			$this->setPresentationDefaultValue($id, $value);
+		}
+		elseif($param == 'public') {
+			$this->setPresentationPublicValue($id, $value);
+		}
+		return $this->redirect($this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('vmb_presentation_browse')));
+	}
 
     /**
      * Retrieve an existing Presentation entity.

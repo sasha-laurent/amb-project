@@ -51,3 +51,11 @@ presentation_deep_copy:
     defaults: { _controller: "VMBPresentationBundle:Presentation:deepCopy" }
     requirements:
         id:   \d{1,}
+        
+presentation_parameter:
+    path:     /parameter/{param}/{id}/{value}
+    defaults: { _controller: "VMBPresentationBundle:Presentation:parameter" }
+    requirements:
+        id:   \d{1,}        
+        param: default|official|public
+        value: 0|1

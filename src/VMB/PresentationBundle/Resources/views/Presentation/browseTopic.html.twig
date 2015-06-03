@@ -1,7 +1,16 @@
 {% extends '::layout.html.twig' %}
 
 {% block h1_title %}
-	{{ mainTitle }}
+	<div class="row">
+		<div class="col-md-9">
+			{{ mainTitle }}
+		</div>
+		<div class="col-md-3 text-right">
+			<a class="btn btn-default" data-toggle="modal" data-target="#modalAddPresentation">
+				Créer <span class="left glyphicon glyphicon-plus" aria-hidden="true"></span>
+			</a>
+		</div>
+	</div>
 {% endblock %}
 
 {% if page == 1 and nbPages == 0 %}
@@ -13,14 +22,17 @@
 		<div class="col-md-3">
 			<div class="browse-topics">
 				<h3>Affiner par</h3>
-				<form action="{{ path(app.request.get('_route'), {'topic':topic.id|default(null), 'default':((app.request.get('default') + 1) % 2)|default(1), 'official':app.request.get('official')|default(null)}) }}" method="GET">
+				<form action="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')) }}" method="GET">
 					<div class="form-group"><input class="form-control" type="text" name="search" value="{{ search|default() }}" placeHolder="Recherche..." /></div>
+					{% for key, value in app.request.query.all if key != 'search' %}
+						<input type="hidden" value="{{ value }}" name="{{ key }}" />
+					{% endfor %}
 				</form>
 				<h4>Filtres</h4>
 				<div class="row">
 					<div class="col-md-10">Présentations par défaut :</div>
 					<div class="col-md-2 text-right">
-						<a href="{{ path(app.request.get('_route'), {'topic':topic.id|default(null), 'default':((app.request.get('default') + 1) % 2)|default(1), 'official':app.request.get('official')|default(null), 'search':search|default(null)}) }}" class="switch">
+						<a href="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'default':((app.request.get('default') + 1) % 2)|default(1)})) }}" class="switch">
 							{% if app.request.get('default')|default(0) == 0 %}
 								<span class="hidden-value glyphicon glyphicon-ok checkedRes"></span>
 								<span class="shown-value glyphicon glyphicon-minus"></span>
@@ -34,7 +46,7 @@
 				<div class="row">
 					<div class="col-md-10">Officielles uniquement :</div>
 					<div class="col-md-2 text-right">
-						<a href="{{ path(app.request.get('_route'), {'topic':topic.id|default(null), 'official':((app.request.get('official') + 1) % 2)|default(1), 'default':app.request.get('default')|default(null), 'search':search|default(null)}) }}" class="switch">
+						<a href="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'official':((app.request.get('official') + 1) % 2)|default(1)})) }}" class="switch">
 							{% if app.request.get('official')|default(0) == 0 %}
 								<span class="hidden-value glyphicon glyphicon-ok checkedRes"></span>
 								<span class="shown-value glyphicon glyphicon-minus"></span>
@@ -45,6 +57,22 @@
 						</a>
 					</div>
 				</div>
+
+				<div class="row">
+					<div class="col-md-10">Présentations personnelles :</div>
+					<div class="col-md-2 text-right">
+						<a href="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'personal':((app.request.get('personal') + 1) % 2)|default(1)})) }}" class="switch">
+							{% if app.request.get('personal')|default(0) == 0 %}
+								<span class="hidden-value glyphicon glyphicon-ok checkedRes"></span>
+								<span class="shown-value glyphicon glyphicon-minus"></span>
+							{% else %}
+								<span class="shown-value glyphicon glyphicon-ok checkedRes"></span>
+								<span class="hidden-value glyphicon glyphicon-minus"></span>
+							{% endif %}
+						</a>
+					</div>
+				</div>
+				
 				<h4>Thématiques</h4>
 				{% include "VMBPresentationBundle:Presentation:topicLink.html.twig" with {'links': topics, 'current': topic.id|default(null)} %}
 			</div>
@@ -54,7 +82,7 @@
 				{% for entity in entities %}
 				<div class="col-md-4">
 					<a class="thumbnail-link" href="{{ path('presentation_show', { 'id': entity.id }) }}">
-						<div class="thumbnail block-browse block-presentation{% if entity.default %} block-presentation-default{% endif %}">
+						<div class="thumbnail block-browse block-presentation{% if not entity.public %} block-presentation-private{% endif %}{% if entity.default %} block-presentation-default{% endif %}{% if entity.official %} block-presentation-official{% endif %}">
 							<div class="thumbnail-description">
 								<h4>Description</h4>
 								<hr/>
@@ -73,9 +101,63 @@
 								<span class="loading_indicator_inline loading_indicator_{{entity.id}}"></span>
 								
 								<div class="btn-group" role="group" aria-label="...">
-									<a class="btn {% if app.user.presentationIsInCaddy(entity) %}btn-info{% else %}btn-default{% endif %} presentationAddToCaddy" data-id="{{ entity.id }}"><span class="glyphicon glyphicon-shopping-cart"></span></a>
+									{% if is_granted('ROLE_ADMIN') or entity.isOwner(app.user) %}
+										<a href="{{ path('presentation_edit', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>					
+										<a href="#" type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-options-{{ entity.id }}"><span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span></a>					
+									{% else %}
+										<a class="btn {% if app.user.presentationIsInCaddy(entity) %}btn-info{% else %}btn-default{% endif %} presentationAddToCaddy" data-id="{{ entity.id }}"><span class="glyphicon glyphicon-star"></span></a>
+									{% endif %}
 									<a href="{{ path('presentation_create_copy', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>					
 								</div>
+							</div>
+							
+							<!-- Modal -->
+							<div class="modal fade" id="modal-options-{{ entity.id }}" tabindex="-1" role="dialog" aria-labelledby="modal-options-label-{{ entity.id }}" aria-hidden="true">
+							  <div class="modal-dialog">
+								<div class="modal-content">
+								  <div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									<h4 class="modal-title" id="modal-options-label-{{ entity.id }}">Paramètres de {{ entity.title }}</h4>
+								  </div>
+								  <div class="modal-body">
+										<div class="row">
+											<div class="col-md-3 text-right">Publique :</div>
+											<div class="col-md-9">
+												{% if entity.public %}
+													<span class="label label-success">oui</span> <a href="{{ path('presentation_parameter', {'id': entity.id, 'value':0, 'param': 'public'}) }}"><span class="label label-default">non</span></a>
+												{% else %}
+													<a href="{{ path('presentation_parameter', {'id': entity.id, 'value':1, 'param': 'public'}) }}"><span class="label label-default">oui</span></a> <span class="label label-danger">non</span>
+												{% endif %}
+											</div>
+										</div><br/>
+										{% if is_granted('ROLE_TEACHER') %}
+										<div class="row">
+											<div class="col-md-3 text-right">Officielle :</div>
+											<div class="col-md-9">
+												{% if entity.official %}
+													<span class="label label-success">oui</span> <a href="{{ path('presentation_parameter', {'id': entity.id, 'value':0, 'param': 'official'}) }}"><span class="label label-default">non</span></a>
+												{% else %}
+													<a href="{{ path('presentation_parameter', {'id': entity.id, 'value':1, 'param': 'official'}) }}"><span class="label label-default">oui</span></a> <span class="label label-danger">non</span>
+												{% endif %}
+											</div>
+										</div><br/>
+										<div class="row">
+											<div class="col-md-3 text-right">Par défaut :</div>
+											<div class="col-md-9">
+												{% if entity.default %}
+													<span class="label label-success">oui</span> <a href="{{ path('presentation_parameter', {'id': entity.id, 'value':0, 'param': 'official'}) }}"><span class="label label-default">non</span></a>
+												{% else %}
+													<a href="{{ path('presentation_parameter', {'id': entity.id, 'value':1, 'param': 'default'}) }}"><span class="label label-default">oui</span></a> <span class="label label-danger">non</span>
+												{% endif %}
+											</div>
+										</div>
+										{% endif %}
+								  </div>
+								  <div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+								  </div>
+								</div>
+							  </div>
 							</div>
 						</div>
 					</a>
@@ -93,6 +175,8 @@
 		</div>
     </div>  
     <br/>
+    
+    {% include 'VMBPresentationBundle:Presentation:modalAddButton.html.twig' %}
 {% endblock %}
 
 {% block script %}

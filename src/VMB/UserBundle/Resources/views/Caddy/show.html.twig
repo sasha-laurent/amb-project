@@ -26,6 +26,11 @@
 			<div class="col-md-3">
 				<a class="thumbnail-link" href="{{ path('presentation_show', { 'id': entity.id }) }}">
 					<div class="thumbnail block-browse block-presentation">
+						<div class="thumbnail-description">
+							<h4>Description</h4>
+							<hr/>
+							<p>{{ entity.description }}</p>
+						</div>
 						<img data-holder-rendered="true" src="{{ asset(entity.getThumbsPath) }}" style="height: 155px; width: 100%; display: block;" />
 					
 						<div class="caption">
@@ -33,7 +38,7 @@
 						</div>
 						
 						<div class="duration">
-							Durée : {{ entity.durationToString }}
+							{{ entity.durationToString }}
 						</div>
 						<div class="caddy-icon">
 							<span class="loading_indicator_inline loading_indicator_{{entity.id}}"></span>
@@ -56,6 +61,11 @@
 			<div class="col-md-3">
 				<a class="thumbnail-link" href="{{ path('resource_show', { 'id': entity.id }) }}">
 					<div class="thumbnail block-browse block-resource">
+						<div class="thumbnail-description">
+							<h4>Description</h4>
+							<hr/>
+							<p>{{ entity.description }}</p>
+						</div>
 						<img data-holder-rendered="true" src="{{ asset(entity.getThumbsPath) }}" style="height: 155px; width: 100%; display: block;" />
 					
 						<div class="caption">

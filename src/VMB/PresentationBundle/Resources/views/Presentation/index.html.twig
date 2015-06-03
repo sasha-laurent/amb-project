@@ -23,7 +23,7 @@
 	<ul class="list-group">
         {% for entity in entities %}
 			<li class="list-group-item row">
-				<div class="col-md-5"><a href="{{ path('presentation_show', { 'id': entity.id }) }}"><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> {{ entity.title }}</a></div>
+				<div class="col-md-5"><a href="{{ path('presentation_show', { 'id': entity.id }) }}"><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> {{ entity.title|shortenText(34, '...') }}</a></div>
                 <div class="col-md-2 text-center"><em>{{ entity.owner.username|default('unknown') }}</em></div>
                 <div class="col-md-1 text-center">
 					<a type="button" class="btn switch" href="{{ path('presentation', {'id': entity.id, 'public': (entity.public+1)%2}) }}">

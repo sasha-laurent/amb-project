@@ -129,6 +129,7 @@
 		</div>
 		<div class="col-sm-5">
 			{% set totalDuration = 0 %}
+			{% set totalDurationSuggestion = 0 %}
 			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Liste de lecture choisie</h4>
 			{% if not copy %}
 				<div role="tab-panel">
@@ -171,7 +172,7 @@
 							<ul class="list-group" id="suggestion_list">
 							{% for res in presentation.resources %}
 								{% if res.suggested == true %}
-									{% set totalDuration = totalDuration + res.usedResource.resource.duration %}
+									{% set totalDurationSuggestion = totalDurationSuggestion + res.duration %}
 									<li class="list-group-item playableResource suggestedRes_{{res.usedResource.id}}" id="suggestedRes_{{ res.usedResource.id }}" data-duration="{{ res.duration }}"  data-type="suggestion" data-id="{{ res.usedResource.id }}">
 										<div class="row">
 											<div class="col-sm-7"><span class="glyphicon glyphicon-{{ res.usedResource.resource.getGlyphicon }}"></span> {{ res.usedResource.resource.title }}</div>
@@ -188,6 +189,9 @@
 								{% endif %}
 							{% endfor %}
 							</ul>
+							<p class="text-right">
+								Durée totale : <span id="total_duration_suggestion">{{ "%02d"|format(totalDurationSuggestion // 60) }}:{{ "%02d"|format(totalDurationSuggestion % 60) }}</span>
+							</p>
 						</div>
 					</div><!-- .tab-content -->
 				</div><!-- role=tab-panel -->
@@ -249,12 +253,20 @@
 			return (pad(~~(value / 60), 2)) + ':' + pad((value % 60), 2);
 		}
 		
-		function addToDuration(value) {
+		function addToDuration(value, toSuggestions) {
+			// Default value
+			toSuggestions = toSuggestions || false;
+			
 			// conv base10
-			var current = $("#total_duration").html().split(":");
+			var container =  toSuggestions ? "#total_duration_suggestion" : "#total_duration";
+			
+			var current = $(container).html().split(":");
 			total = parseInt(current[0], 10)*60 + parseInt(current[1], 10) + value;
-			$("#total_duration").html(convertDurationToString(total));
-			$('#vmb_presentationbundle_presentation_duration').val(total);
+			$(container).html(convertDurationToString(total));
+			
+			if(!toSuggestions) {
+				$('#vmb_presentationbundle_presentation_duration').val(total);
+			}
 		}
 		
 		
@@ -267,9 +279,8 @@
 				newDuration = parseInt(newDuration, 10);
 				if(newDuration >= 5) {
 					oldDuration = parseInt(oldDuration, 10);
-					if(li.attr('data-type') == 'used') {
-						addToDuration(newDuration - oldDuration);
-					}
+					addToDuration(newDuration - oldDuration, li.attr('data-type') != 'used');
+
 					
 					li.attr('data-duration', newDuration + '');
 					li.find('.durationContainer').html(convertDurationToString(newDuration));
@@ -310,6 +321,13 @@
 				$('#suggestedRes_' + resId).remove();
 				$('#usedRes_' + resId).removeClass('suggestedRes');
 				sortAllItems('#suggestion_list li');
+				
+				if(duration == null)  {
+					addToDuration(-parseInt($('#suggestedRes_' + resId).attr('data-duration'), 10), true);
+				}
+				else {
+					addToDuration(-parseInt(duration, 10), true);
+				}
 			}
 		}
 		
@@ -330,6 +348,13 @@
 				$('#usedRes_' + resId).addClass('suggestedRes');
 				$('#suggestion_list').append(generateNewItem(resId, title, 'suggestion', duration));
 				$('#rmRes_' + resId).click(function(event) 	 { event.stopImmediatePropagation(); deleteFromPlaylist($(this).attr('data-id'), 'suggestion', $(this).closest('.playableResource').attr('data-duration')); });
+				
+				if(duration == null)  {
+					addToDuration(parseInt($('#suggestedRes_' + resId).attr('data-duration'), 10), true);
+				}
+				else {
+					addToDuration(parseInt(duration, 10), true);
+				}
 			}
 			$('.playableRes_' + resId).click(function() { triggerNewRes($(this).attr('data-id'));});
 			$('.playableRes_' + resId).find('.editTimeButton').click(function(event) { event.stopImmediatePropagation(); event.preventDefault(); editTime(this); });

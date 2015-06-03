@@ -10,9 +10,26 @@ class ShortenText extends \Twig_Extension
 		);
 	}
 	
-	public function shortenFilter($txt, $length = 50, $breakwords = false, $replace = '', $toggle = null)
+	public function shortenFilter($txt, $length = 50, $replace = '', $breakwords = false, $toggle = null)
 	{
-		return substr($txt, 0, $length - strlen($replace)).$replace;
+		if(strlen($txt) > $length)
+		{
+			$txt = substr($txt, 0, $length - strlen($replace));
+			
+			if(!$breakwords) {
+				$lastSpacePos = strrpos($txt,' ');
+				if($lastSpacePos) {
+					$txt = substr($txt, 0, $lastSpacePos).$replace;
+				}
+				else {
+					$txt .= $replace;
+				}
+			}
+			else {
+				$txt .= $replace;
+			}
+		}
+		return $txt;
 	}
 	
 	public function getName()

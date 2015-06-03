@@ -318,6 +318,10 @@ header {
 	border-bottom-color: #fff;
 }
 
+#matrix .tdOvered {
+	background-color: #FFBD70;
+}
+
 
 .usedResource, .usedResource .resThumbnailHover {
 	width: 100%;
@@ -548,6 +552,10 @@ select[multiple="multiple"] {
 	display: none;
 }
 
+.player-video {
+	background-color: #eee;
+}
+
 #players_container.fullScreenPlayer .image_player, #players_container.fullScreenPlayer .file_player {
 	width: 90%;
 	margin: auto;
@@ -568,13 +576,18 @@ select[multiple="multiple"] {
 	height: 249px;
 }
 
+.block-presentation-official img {
+	border-top: 4px solid #FF6225;	
+}
 .block-presentation-default img {
 	border-top: 4px solid #FFE525;	
+}
+.block-presentation-private {
+	background-color: #eee;
 }
 
 .block-browse h3.thumbnail-label {
 	font-size: 14px;
-	text-transform: uppercase;
 	margin: 0px;
 	height: 31px;
 }
