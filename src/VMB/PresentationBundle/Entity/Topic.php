@@ -178,11 +178,11 @@ class Topic
         $extension = strtolower(pathinfo($this->file->getClientOriginalName(), PATHINFO_EXTENSION));
         if(in_array($extension, array('jpg', 'jpeg'))) {
 			$path = str_replace('\\', '/', __DIR__).'/../../../../web/upload/topic/';
-			dump($path);
+			
 			$this->file->move($path, $this->getSlug().'.jpg');
 			
 			$uploadedfile = $path.$this->getSlug().'.jpg';
-			dump($uploadedfile);
+			
 			$src = imagecreatefromjpeg($uploadedfile);
 			
 			list($width,$height) = getimagesize($uploadedfile);

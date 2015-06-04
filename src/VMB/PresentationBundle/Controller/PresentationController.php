@@ -256,13 +256,11 @@ class PresentationController extends Controller
 				
 				$em->persist($newMatrix);
 				$em->persist($newPresentation);
-				dump($presentation);
-				dump($newPresentation);
+				
 				$em->flush();
 				
 				$request->getSession()->getFlashBag()->add('success', 'Copie de la présentation réussie');
 			} catch (\Exception $e) {
-				dump($e);
 				$request->getSession()->getFlashBag()->add('danger',"An error occured");
 			}
 			return $this->redirect($this->generateUrl('presentation_perso'));

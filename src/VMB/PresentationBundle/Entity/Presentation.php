@@ -530,11 +530,11 @@ class Presentation
         $extension = strtolower(pathinfo($this->file->getClientOriginalName(), PATHINFO_EXTENSION));
         if(in_array($extension, array('jpg', 'jpeg'))) {
 			$path = str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/';
-			dump($path);
+			
 			$this->file->move($path, $this->getId().'.jpg');
 			
 			$uploadedfile = $path.$this->getId().'.jpg';
-			dump($uploadedfile);
+			
 			$src = imagecreatefromjpeg($uploadedfile);
 			
 			list($width,$height) = getimagesize($uploadedfile);
