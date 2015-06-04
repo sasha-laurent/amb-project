@@ -63,32 +63,34 @@
     </div>
     <hr/>
     {% if firstResource != null %}
-    <h3 class="view-more-title"><a data-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">Détails de la ressource actuelle <span class="glyphicon glyphicon-chevron-down"></span></a></h3>
-	<div class="collapse" id="collapseDescription">
-		<table class="table">
-			<tbody>
-				<tr>
-					<th width="120px">Titre</th>
-					<td id="current-res-title">{{ firstResource.resource.title }}</td>
-				</tr>
-				<tr>
-					<th width="120px">Position</th>
-					<td id="current-res-position">{{ firstResource.pov.title }} - {{ firstResource.level.title }}</td>
-				</tr>
-				<tr>
-					<th width="120px">Description</th>
-					<td id="current-res-description">{{ firstResource.resource.description }}</td>
-				</tr>
-				<tr>
-					<th>Création</th>
-					<td id="current-res-creation">{{ firstResource.resource.dateCreate|date('d/m/y') }}</td>
-				</tr>
-				<tr>
-					<th>Mise à jour</th>
-					<td id="current-res-update">{{ firstResource.resource.dateUpdate|date('d/m/y') }}</td>
-				</tr>
-			</tbody>
-		</table>
+    <div id="additional-infos">
+		<h3 class="view-more-title"><a data-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">Détails de la ressource actuelle <span class="glyphicon glyphicon-chevron-down"></span></a></h3>
+		<div class="collapse" id="collapseDescription">
+			<table class="table">
+				<tbody>
+					<tr>
+						<th width="120px">Titre</th>
+						<td id="current-res-title">{{ firstResource.resource.title }}</td>
+					</tr>
+					<tr>
+						<th width="120px">Position</th>
+						<td id="current-res-position">{{ firstResource.pov.title }} - {{ firstResource.level.title }}</td>
+					</tr>
+					<tr>
+						<th width="120px">Description</th>
+						<td id="current-res-description">{{ firstResource.resource.description }}</td>
+					</tr>
+					<tr>
+						<th>Création</th>
+						<td id="current-res-creation">{{ firstResource.resource.dateCreate|date('d/m/y') }}</td>
+					</tr>
+					<tr>
+						<th>Mise à jour</th>
+						<td id="current-res-update">{{ firstResource.resource.dateUpdate|date('d/m/y') }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
 	{% endif %}
 {% endblock %}
@@ -220,7 +222,21 @@
 	function updateFullscreenValue() {
 		res = resourcesCollection[selectedRes];
 		if(res['type'] == 'video') {
+			oldVal = fullscreenMode;
 			fullscreenMode = document.querySelectorAll(".player")[0].plyr.isFullscreen();
+			if(oldVal != fullscreenMode) {
+				if(fullscreenMode) {
+					$('#players_container').removeClass('fullScreenPlayer');
+					$('#players_container').addClass('fullScreenPlayer');
+					$('#file_list').closest('.col-sm-3').hide();
+					$('#additional-infos').hide();
+				}
+				else {
+					$('#players_container').removeClass('fullScreenPlayer');
+					$('#file_list').closest('.col-sm-3').show();
+					$('#additional-infos').show();
+				}
+			}
 		}
 	}
 	
@@ -234,15 +250,20 @@
 		oldValue = fullscreenMode;
 		fullscreenMode = (fullscreen == null) ? !fullscreenMode : fullscreen;
 		
-		if(oldValue != fullscreenMode) {			
-			$('#players_container').toggleClass('fullScreenPlayer');
+		if(oldValue != fullscreenMode) {		
+			document.querySelectorAll(".player")[0].plyr.toggleFullscreen();
 		}
-		else if(fullscreenMode) {
+		
+		if(fullscreenMode) {
 			$('#players_container').removeClass('fullScreenPlayer');
 			$('#players_container').addClass('fullScreenPlayer');
+			$('#file_list').closest('.col-sm-3').hide();
+			$('#additional-infos').hide();
 		}
 		else {
 			$('#players_container').removeClass('fullScreenPlayer');
+			$('#file_list').closest('.col-sm-3').show();
+			$('#additional-infos').show();
 		}
 	}
 	
@@ -328,5 +349,6 @@
 	});
 	
 	bindControls();    
+	setInterval(function() { updateFullscreenValue(); }, 200);
 	</script>
 {% endblock %}
