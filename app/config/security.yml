@@ -30,4 +30,4 @@ security:
                 key:	%secret%			  
 
     access_control:
-        #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/_trans, roles: ROLE_ADMIN }

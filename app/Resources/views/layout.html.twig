@@ -63,7 +63,7 @@
 								{% endfor %}
 								{% if is_granted('ROLE_ADMIN') %}
 								<li role="presentation" class="divider"></li>
-								<li><a href="#">{{ 'Traduction'|trans }}</a></li>
+								<li><a href="{{ path('jms_translation_index') }}" target="_blank">{{ 'Traduction'|trans }}</a></li>
 								{% endif %}
 							</ul>
 						</div>

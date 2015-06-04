@@ -23,6 +23,9 @@ class AppKernel extends Kernel
             new FOS\UserBundle\FOSUserBundle(),
             new VMB\ResourceBundle\VMBResourceBundle(),
             new VMB\ContextualHelpBundle\VMBContextualHelpBundle(),
+            new JMS\TranslationBundle\JMSTranslationBundle(),
+            new JMS\DiExtraBundle\JMSDiExtraBundle($this),
+			new JMS\AopBundle\JMSAopBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

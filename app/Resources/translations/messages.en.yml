@@ -1,17 +1,17 @@
+'Aide contextuelle': 'Contextual help'
 Connexion: Login
 Consulter: Consult
-Gérer: Manage
-Présentations: Presentation
-Ressources: Resources
-Matrices: Matrixes
-Thématiques: Topics
-Mes présentations: My presentations
-Structure des connaissances: Knowledge structure
-Recherche: Search
 Fermer: Close
-Aide contextuelle: Contextual help
+Gérer: Manage
+Matrices: Matrixes
+'Mes présentations': 'My presentations'
+Présentations: Presentation
+Recherche: Search
+Ressources: Resources
+'Structure des connaissances': 'Knowledge structure'
+Thématiques: Topics
 Traduction: Translation
 en_flag: gb
-fr_flag: fr
 en_name: English
+fr_flag: fr
 fr_name: Français
