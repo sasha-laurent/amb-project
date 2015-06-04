@@ -101,6 +101,7 @@
                             
                             {% if is_granted('ROLE_TEACHER') %}
                             <li><a href="{{ path('ontology_main') }}">{{ 'Structure des connaissances'|trans }}</a></li>
+                            <li><a href="{{ path('help') }}">{{ 'Aides contextuelles'|trans }}</a></li>
                             {% endif %}
                         </ul>
 					</li>
@@ -138,13 +139,7 @@
 	<div class="modal fade" id="modalContextualHelp" tabindex="-1" role="dialog" aria-labelledby="modalContextualHelpLabel" aria-hidden="true">
 	  <div class="modal-dialog">
 		<div class="modal-content">
-		  <div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close'|trans }}"><span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title" id="modalContextualHelpLabel">{{ 'Aide contextuelle'|trans }}</h4>
-		  </div>
-		  <div class="modal-body">
-			...
-		  </div>
+		  {{ render(controller("VMBContextualHelpBundle:Help:help", {'route' : app.request.attributes.get('_route')})) }}
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-default" data-dismiss="modal">{{ 'Fermer'|trans }} <span class="glyphicon glyphicon-remove"></span></button>
 		  </div>
@@ -182,6 +177,26 @@
 			<script src="https://cdn.plyr.io/1.1.5/plyr.js"></script>
         	
         	<script>
+				// Setup the player
+				plyr.setup({
+					debug: 	true,
+					title: 	"Video demo",
+					captions: {
+						defaultActive: true
+					},
+					onSetup: function() {
+						var player 	= this,
+							type 	= player.media.tagName.toLowerCase(),
+							toggle 	= document.querySelector("[data-toggle='fullscreen']");
+
+						console.log("✓ Setup done for <" + type + ">");
+
+						if(type === "video" && toggle) {
+							toggle.addEventListener("click", player.toggleFullscreen, false);
+						}
+					}
+				});
+				
 				$( ".showAll" ).click(function() {
 					if($(this).hasClass('collapsed')) {
 						$(this).removeClass('collapsed');

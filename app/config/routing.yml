@@ -1,13 +1,13 @@
+vmb_contextual_help:
+    resource: "@VMBContextualHelpBundle/Resources/config/routing.yml"
+    prefix:   /
+
 vmb_resource:
     resource: "@VMBResourceBundle/Resources/config/routing.yml"
     prefix:   /
 
 vmb_presentation:
     resource: "@VMBPresentationBundle/Resources/config/routing.yml"
-    prefix:   /
-
-vmb_file:
-    resource: "@VMBFileBundle/Resources/config/routing.yml"
     prefix:   /
     
 vmb_user:
@@ -16,7 +16,7 @@ vmb_user:
     
 vmb_homepage:
     path:     /
-    defaults: { _controller: VMBPresentationBundle:Default:index, name: world }
+    defaults: { _controller: VMBPresentationBundle:Default:index }
 
 fos_user_security:
     resource: "@FOSUserBundle/Resources/config/routing/security.xml"

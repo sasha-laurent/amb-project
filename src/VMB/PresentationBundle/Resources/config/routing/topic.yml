@@ -18,7 +18,6 @@ topic_edit:
     requirements:
         id:   \d{1,}
       
-
 topic_delete:
     path:     /delete/{id}
     defaults: { _controller: "VMBPresentationBundle:Topic:delete" }

@@ -1,0 +1,3 @@
+vmb_contextual_help_help:
+    resource: "@VMBContextualHelpBundle/Resources/config/routing/help.yml"
+    prefix:   /help

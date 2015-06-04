@@ -1,0 +1,29 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-label="Close'|trans }}"><span aria-hidden="true">&times;</span></button>
+	<h4 class="modal-title" id="modalContextualHelpLabel">
+		{% if help %}
+			Aide - {{ help.title }}
+		{% else %}
+			{{ 'Aide contextuelle'|trans }}
+		{% endif %}
+	</h4>
+</div>
+<div class="modal-body">
+	{% if help %}
+		{{ help.text }}
+		{% if help.hasVideo %}
+			<hr/>
+			<div class="player">
+				<video controls crossorigin>
+					<source src="{{ asset(help.getVideoPath()) }}">
+				</video>
+			</div>
+		{% endif %}
+	{% else %}
+		<em>Aucune aide pour cette page</em>
+	{% endif %}
+</div>
+
+<script>
+	
+</script>

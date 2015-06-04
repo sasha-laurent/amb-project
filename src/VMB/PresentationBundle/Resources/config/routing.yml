@@ -13,10 +13,6 @@ vmb_presentation_matrix:
 vmb_presentation_ontology:
     resource: "@VMBPresentationBundle/Resources/config/routing/ontology.yml"
     prefix:   /ontology
-
-vmb_presentation_homepage:
-    path:     /
-    defaults: { _controller: VMBPresentationBundle:Default:index }
     
 vmb_presentation_browse:
     path:     /browse/{page}

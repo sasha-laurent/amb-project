@@ -1,0 +1,19 @@
+help:
+    path:     /
+    defaults: { _controller: "VMBContextualHelpBundle:Help:index" }
+
+help_new:
+    path:     /new
+    defaults: { _controller: "VMBContextualHelpBundle:Help:new" }
+
+help_edit:
+    path:     /edit/{id}
+    defaults: { _controller: "VMBContextualHelpBundle:Help:edit" }
+    requirements:
+        id:   \d{1,}
+
+help_delete:
+    path:     /delete/{id}
+    defaults: { _controller: "VMBContextualHelpBundle:Help:delete" }
+    requirements:
+        id:   \d{1,}

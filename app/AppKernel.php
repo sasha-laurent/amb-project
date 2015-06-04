@@ -19,10 +19,10 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new VMB\UserBundle\VMBUserBundle(),
-            new VMB\FileBundle\VMBFileBundle(),
             new VMB\PresentationBundle\VMBPresentationBundle(),
             new FOS\UserBundle\FOSUserBundle(),
             new VMB\ResourceBundle\VMBResourceBundle(),
+            new VMB\ContextualHelpBundle\VMBContextualHelpBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
