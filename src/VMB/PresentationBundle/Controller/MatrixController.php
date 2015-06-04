@@ -70,7 +70,7 @@ class MatrixController extends Controller
 				'delButtonUrl' => $this->generateUrl('matrix_delete', array('id' => $entity->getId())),
 				'entity' => $entity,
 				'resources' => array('official' => $validResources, 'personal' => $personalResources, 'unofficial' => $unofficialResources),
-				'alertDismissible' => true
+				'optionButtonModal' => '#modalEditRows'
 			));
 		}
 		else {
@@ -328,35 +328,22 @@ class MatrixController extends Controller
     */
     public function deleteRowAction(Request $request)
     {
-		$fieldId = $request->request->get('fieldId');
-		$url = $request->request->get('postAction');
+		$matrixId = $request->request->get('matrixId');
+		$matrix = $this->getMatrix($matrixId);
 		
-		// We search the corresponding matrix and the corresponding item since we only know its position and not its id
-		$regex = '`'.str_replace(0000000, '([0-9]+)', $this->generateUrl('matrix_edit', array('id' => 0000000))).'`';
-		if(preg_match($regex, $url, $matchesUrl)) {
-			$formType = new MatrixType();
-			if(preg_match('`'.$formType->getName().'_(povs|levels)_([0-9]+)`', $fieldId, $matchesField)) {
-				$matrixId = intval($matchesUrl[1]);
-				$type = $matchesField[1];
-				$position = intval($matchesField[2]);
+		if($this->get('security.context')->isGranted('ROLE_ADMIN') || $matrix->isOwner($this->getUser())) {	
+			if ($request->isMethod('POST')) {
+				$rowId = $request->request->get('rowId');
+				$type = $request->request->get('rowType');
+				
 				try {
-					$matrix = $this->getMatrix($matrixId);
-					if($this->get('security.context')->isGranted('ROLE_ADMIN') || $matrix->isOwner($this->getUser())) {	
-
-						if($type == 'povs') {
-							$elt = $matrix->removePovAtIndex($position);
-						}
-						else {
-							$elt = $matrix->removeLevelAtIndex($position);
-						}
-						
-						// If the element was found
-						if($elt !== false) {
-							$em = $this->getDoctrine()->getManager();
-							$em->remove($elt);
-							$em->flush();
-							return new Response('ok');	
-						}
+					$elt = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:'.$type)->find($id);
+					// If the element was found
+					if($elt !== null && $elt->getMatrix()->getId() == intval($matrixId)) {
+						$em = $this->getDoctrine()->getManager();
+						$em->remove($elt);
+						$em->flush();
+						return new Response('ok');	
 					}
 				} catch (\Exception $e) {
 					return new Response($e); 
@@ -364,7 +351,58 @@ class MatrixController extends Controller
 			}
 		}
 		return new Response('error');
-    }
+	}
+	
+	/**
+     * Edit a Matrix Row (level or Pov)
+     *
+     */
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
+    public function editRowAction(Request $request)
+    {
+		$matrixId = $request->request->get('matrixId');
+		$matrix = $this->getMatrix($matrixId);
+		
+		if($this->get('security.context')->isGranted('ROLE_ADMIN') || $matrix->isOwner($this->getUser())) {	
+			if ($request->isMethod('POST')) {
+				$rowId = intval($request->request->get('rowId'));
+				$type = $request->request->get('rowType');
+				$title = $request->request->get('title');
+				
+				try {
+					$em = $this->getDoctrine()->getManager();
+					if($rowId == 0) {
+						$elt = null;
+						if($type == 'Level' || $type == 'Pov') {
+							if($type == 'Pov') {
+								$elt = new Pov();
+							}
+							else {
+								$elt = new Level();
+							}
+							$elt->setMatrix($matrix);
+							$em->persist($elt);
+						}
+					}
+					else {
+						$elt = $em->getRepository('VMBPresentationBundle:'.$type)->find($id);
+					}
+					
+					// If the element was found
+					if($elt !== null && $elt->getMatrix()->getId() == intval($matrixId)) {
+						$elt->setTitle($title);
+						$em->flush();
+						return new Response('ok');	
+					}
+				} catch (\Exception $e) {
+					return new Response($e); 
+				}
+			}
+		}
+		return new Response('error');
+	}
 
     /**
      * Retrieve an existing Matrix entity.

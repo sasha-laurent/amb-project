@@ -621,3 +621,7 @@ input[type="file"].form-control { height: auto; }
 .popover-routes {
 	min-width: 300px;
 }
+
+li.list-group-item.row .form-control {
+	margin-top: 2px;
+}

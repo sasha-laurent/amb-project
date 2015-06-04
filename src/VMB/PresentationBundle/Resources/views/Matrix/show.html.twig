@@ -125,6 +125,47 @@
 
 	<div id="indicator" class="loading_indicator"></div>
 
+	<!-- Modal -->
+	<div class="modal fade" id="modalEditRows" tabindex="-1" role="dialog" aria-labelledby="modalEditRowsLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="{{ 'Close'|trans }}"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modalEditRowsLabel">Modifier les lignes et colonnes</h4>
+		  </div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-6">
+						<h4 class="text-center">Points de vues</h4>
+						<ul class="list-group">
+							{% for pov in entity.povs %}
+								<li class="list-group-item row" data-type="Pov" data-id="{{ pov.id }}">
+									<div class="col-md-10 matrix-row-title">{{ pov.title }}</div>
+									<div class="col-md-2 text-right"><span class="glyphicon glyphicon-remove"></span></div>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+					<div class="col-md-6">
+						<h4 class="text-center">Niveaux</h4>
+						<ul class="list-group">
+							{% for lvl in entity.levels %}
+								<li class="list-group-item row" data-type="Level" data-id="{{ lvl.id }}">
+									<div class="col-md-10 matrix-row-title">{{ lvl.title }}</div>
+									<div class="col-md-2 text-right"><span class="glyphicon glyphicon-remove"></span></div>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">{{ 'Fermer'|trans }} <span class="glyphicon glyphicon-remove"></span></button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+
 	<div id="myModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 	  <div class="modal-dialog modal-lg">
 		<div class="modal-content container">
@@ -308,6 +349,37 @@
 			$('.usedResource.' + selectedClass).remove();
 			noticeUnsavedMatrix();
 		}
-	}) 
+	});
+	
+	function updateTitle(id, type, title) {
+		$.ajax({
+			type: "POST",
+			url: "{{ path('matrix_edit_row') }}",
+			data: { rowId: id, matrixId: entity.id, title: title, rowType: type },
+			cache: false,
+			success: function(data){
+				if(data == 'ok') {
+					alert('ok');
+				}
+			}
+		});    
+		return false;
+	}
+	
+	$('.matrix-row-title').click(function(event) {
+		if(!$(this).hasClass('inputMode')) {
+			$(this).addClass('inputMode');
+			title = $(this).html();
+			$(this).html('<div class="input-group"> \
+			  <input type="text" class="form-control" value="' + title + '" />  \
+			  <span class="input-group-btn"> \
+				<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-ok"></span></button> \
+			  </span> \
+			</div>');
+			$(this).find('button').click(function(event) { 
+				updateTitle($(this).closest('li').attr('data-id'), $(this).closest('li').attr('data-type'), $(this).closest('li').find('input').val()); 
+			});
+		}
+	});
 	</script>
 {% endblock %}

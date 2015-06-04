@@ -29,20 +29,6 @@ class MatrixType extends AbstractType
            
         $builder
             ->add('description', null, array('label' => 'Description'))
-            ->add('povs', 'collection', array(
-				'by_reference' => false,
-				'label'		   => 'Points de vues',
-				'type'         => new PovType(),
-				'allow_add'    => true,
-				'allow_delete' => true
-			  ))
-			->add('levels', 'collection', array(
-				'by_reference' => false,
-				'label'		   => 'Niveaux',
-				'type'         => new LevelType(),
-				'allow_add'    => true,
-				'allow_delete' => true
-			  ))
 			->add('save', 'submit', array('label' => 'Sauvegarder'))
         ;
     }

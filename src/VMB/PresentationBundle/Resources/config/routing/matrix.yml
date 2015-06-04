@@ -42,3 +42,10 @@ matrix_delete_row:
     defaults: { _controller: "VMBPresentationBundle:Matrix:deleteRow" }
     requirements:
         _method: POST
+        
+
+matrix_edit_row:
+    path:     /editRow/
+    defaults: { _controller: "VMBPresentationBundle:Matrix:editRow" }
+    requirements:
+        _method: POST

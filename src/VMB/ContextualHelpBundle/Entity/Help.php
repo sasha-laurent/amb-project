@@ -62,7 +62,7 @@ class Help
     /**
      * @var string
      *
-     * @ORM\Column(name="extension", type="string", length=6)
+     * @ORM\Column(name="extension", type="string", length=6, nullable=true)
      */
     private $extension;
 

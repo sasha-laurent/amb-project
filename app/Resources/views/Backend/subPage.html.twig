@@ -45,6 +45,11 @@
 						<span class="left glyphicon glyphicon-pencil" aria-hidden="true"></span>
 					</a>
 				{% endif %}
+				{% if optionButtonModal is defined %}
+					<a title="Options" class="btn btn-default" data-toggle="modal" data-target="{{ optionButtonModal }}">
+						<span class="left glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
+					</a>
+				{% endif %}
 				{% if delButtonUrl is defined %}
 					<a title="Supprimer" class="btn btn-default" href="{{ delButtonUrl }}" >
 						<span class="left glyphicon glyphicon-remove" aria-hidden="true"></span>
