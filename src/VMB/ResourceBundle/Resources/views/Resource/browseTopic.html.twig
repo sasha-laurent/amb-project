@@ -28,7 +28,7 @@
 					{% endfor %}
 				</form>
 				<h4>Filtres</h4>
-				<div class="row">
+				<div class="row filter">
 					<div class="col-md-10">Officielles uniquement :</div>
 					<div class="col-md-2 text-right">
 						<a href="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'official':((app.request.get('official') + 1) % 2)|default(1)})) }}" class="switch">
@@ -41,7 +41,8 @@
 							{% endif %}
 						</a>
 					</div>
-						
+				</div>
+				<div class="row filter">
 					<div class="col-md-10">Ressources personnelles :</div>
 					<div class="col-md-2 text-right">
 						<a href="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'personal':((app.request.get('personal') + 1) % 2)|default(1)})) }}" class="switch">

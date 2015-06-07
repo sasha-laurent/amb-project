@@ -49,6 +49,13 @@
 			{# Génération de l'input. #}
 			{{ form_widget(form.file, {'attr': {'class': 'form-control'}}) }}
 			</div>
+			
+			{% if not copy %}
+				{% if presentation.hasThumbs() %}
+					<em>Miniature actuelle :</em> <img src="{{ asset(presentation.getThumbsPath()) }}" title="Miniature" /> <button id="delete_thumbs" type="button" role="button"><span class="glyphicon glyphicon-remove"></span></button>
+				{% endif %}
+				<input type="hidden" name="keepThumbs" id="keepThumbs" value="{% if presentation.hasThumbs() %}1{% else %}0{% endif %}" />
+			{% endif %}
 		</div>
 	</div>
 	
@@ -509,6 +516,13 @@
 			event.preventDefault();
 			$('#presentation_form').find('[type="submit"]').trigger('click');
 		});
+		$('#delete_thumbs').click(function(event) {
+			event.preventDefault();
+			$('#keepThumbs').val(0);
+			$('#presentation_form').find('[type="submit"]').trigger('click');
+		});
+		
+		
 		{% if copy %}
 		$('#save_new_presentation').click(function(event) {
 			event.preventDefault();

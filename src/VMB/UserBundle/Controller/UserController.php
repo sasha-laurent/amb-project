@@ -49,7 +49,7 @@ class UserController extends Controller
         $entities = $em->getRepository('VMBUserBundle:User')->findAll();
 
         return $this->render('VMBUserBundle:User:index.html.twig', array(
-            'mainTitle' => 'Affichage User',
+            'mainTitle' => 'Gestion des utilisateurs',
 			'addButtonUrl' => $this->generateUrl('fos_user_registration_register'),
             'entities' => $entities
         ));
@@ -79,8 +79,8 @@ class UserController extends Controller
 
 		// Si la requête est en GET, on affiche une page de confirmation avant de delete
 		return $this->render('::Backend/delete.html.twig', array(
-			'entityTitle' => 'le user "'.$user->toString().'"',
-			'mainTitle' => 'Suppression du user '.$user->toString(),
+			'entityTitle' => 'l\' utilisateur "'.$user->toString().'"',
+			'mainTitle' => 'Suppression de l\'utilisateur '.$user->toString(),
 			'backButtonUrl' => $this->generateUrl('admin_user')
 		));
     }

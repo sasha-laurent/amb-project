@@ -511,6 +511,10 @@ select[multiple="multiple"] {
 	margin: 0px;
 }
 
+.browse-topics .row.filter {
+	margin: 10px 0px;
+}
+
 .browse-topics h3 {
 	text-align: center;
 	margin-top: -4px;
@@ -583,7 +587,7 @@ select[multiple="multiple"] {
 	border-top: 4px solid #FFE525;	
 }
 .block-presentation-private {
-	background-color: #eee;
+	background-color: #e8e8e8;
 }
 
 .block-browse h3.thumbnail-label {

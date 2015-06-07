@@ -559,6 +559,16 @@ class Presentation
 		}
 		else return 'img/icon/default_topic_thumb.jpg';
 	}
+	
+	public function hasThumbs() {
+		return is_file(str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getId().'.jpg');
+	}
+	
+	public function deleteThumbs() {
+		if(is_file(str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getId().'.jpg')) {
+			unlink(str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getId().'.jpg');
+		}
+	}
 	    
     public function storeFilenameForRemove()
     {

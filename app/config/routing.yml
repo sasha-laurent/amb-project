@@ -16,7 +16,7 @@ vmb_user:
     
 vmb_homepage:
     path:     /
-    defaults: { _controller: VMBPresentationBundle:Default:index }
+    defaults: { _controller: VMBPresentationBundle:Presentation:browse, page: 1 }
 
 fos_user_security:
     resource: "@FOSUserBundle/Resources/config/routing/security.xml"

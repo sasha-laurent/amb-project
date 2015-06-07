@@ -501,8 +501,13 @@ class PresentationController extends Controller
 			if ($form->isValid()) 
 			{
 				$em = $this->getDoctrine()->getManager();
-				
 				$postValues = $request->request->all();
+				
+				// Delete thumbs if asked
+				if(!$saveAsCopy && intval($postValues['keepThumbs']) == 0) {
+					$presentation->deleteThumbs();
+				}
+				
 				
 				$workingPresentation = null;
 				// If it's a copy, we don't have to worry about modifiying existing objects
@@ -746,8 +751,13 @@ class PresentationController extends Controller
 				$newValue = intval($value);
 				if(in_array($newValue, array(0, 1))) {
 					// modification
-					$presentation->setOfficial($newValue);
-					$this->getDoctrine()->getManager()->flush();
+					if($presentation->getMatrix()->getOfficial()) {
+						$presentation->setOfficial($newValue);
+						$this->getDoctrine()->getManager()->flush();
+					}
+					else {
+						$this->get('request')->getSession()->getFlashBag()->add('danger', 'La matrice associée n\'est pas officielle');
+					}
 				}
 			}
 			elseif($flashBags) {

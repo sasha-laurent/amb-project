@@ -242,7 +242,7 @@
 	
 	function toggleFullScreen(fullscreen) {
 		// Default value
-		fullscreen = fullscreen || null;
+		fullscreen = null || fullscreen;
 		
 		updateFullscreenValue();
 		res = resourcesCollection[selectedRes];
