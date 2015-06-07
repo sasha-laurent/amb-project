@@ -64,7 +64,7 @@
 			<div class="row">
 				{% for entity in entities %}
 				<div class="col-md-4">
-					<a class="thumbnail-link" href="{{ path('resource_show', { 'id': entity.id }) }}">
+					<a class="thumbnail-link" href="{{ path('resource_show', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'page':null, 'position': nbPerPage*(page-1) + loop.index, 'id': entity.id })) }}">
 						<div class="thumbnail block-browse block-resource">
 							<div class="thumbnail-description">
 								<h4>Description</h4>

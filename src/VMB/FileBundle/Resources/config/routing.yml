@@ -1,3 +1,0 @@
-vmb_file_homepage:
-    path:     /hello/{name}
-    defaults: { _controller: VMBFileBundle:Default:index }

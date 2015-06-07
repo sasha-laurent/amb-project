@@ -71,6 +71,7 @@ class ResourceController extends Controller
             'topics' 	=> $topics,
             'search' 	=> $search,
             'entities' 	=> $entities,
+            'nbPerPage' => $nbPerPage,
 			'nbPages'  	=> $nbPages,
 			'page'     	=> $page
         ));
@@ -89,12 +90,34 @@ class ResourceController extends Controller
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Resource entity.');
         }
+        
+        $request = $this->get('request');
+		$official = ($request->query->get('official') == 1) ? true : 'all';
+		$personal = ($request->query->get('personal') == 1);
+		$search = $request->query->get('search');
+		$topic = $request->query->get('topic');
+		if($topic != null) {
+			$topic = $em->getRepository('VMBPresentationBundle:Topic')->find($topic);
+		}
+		
+		$prev = $next = null;
+		$position = intval($request->query->get('position'));
+		if($position > 0) {
+			if($position > 1) {
+				$prev = $em->getRepository('VMBResourceBundle:Resource')->getResources($position - 1, 1, $topic, $official, ($personal ? $this->getUser() : null), $search);
+			}
+			$next = $em->getRepository('VMBResourceBundle:Resource')->getResources($position + 1, 1, $topic, $official, ($personal ? $this->getUser() : null), $search);
+		}
+		
 
         return $this->render('VMBResourceBundle:Resource:show.html.twig', array(
             'entity'      => $entity,
             'mainTitle' => $entity->getTitle(),
             'saveToCaddy' => 'resource',
-            'inCaddy' => $this->getUser()->resourceIsInCaddy($entity)
+            'inCaddy' => $this->getUser()->resourceIsInCaddy($entity),
+            'prev' => $prev,
+            'next' => $next,
+            'position' => $position
         ));
     }
     

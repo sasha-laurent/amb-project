@@ -23,6 +23,27 @@
 					</tr>
 				</tbody>
 			</table>
+			<br/>
+			<nav>
+				<ul class="pager">
+					
+					{% if prev %}
+						{% for p in prev %}
+							<li class="previous"><a href="{{ path('resource_show', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'position': position - 1, 'id': p.id })) }}"><span aria-hidden="true">&larr;</span> Précédent</a></li>
+						{% endfor %}
+					{% else %}
+						<li class="previous disabled"><a href="#"><span aria-hidden="true">&larr;</span> Précédent</a></li>
+					{% endif %}
+					{% if next %}
+						{% for n in next %}
+							<li class="next"><a href="{{ path('resource_show', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'position': position + 1, 'id': n.id})) }}">Suivant <span aria-hidden="true">&rarr;</span></a></li>
+						{% else %}
+							<li class="next disabled"><a href="#"><span aria-hidden="true">&rarr;</span> Suivant</a></li>
+						{% endfor %}
+					{% endif %}
+					
+				</ul>
+			</nav>
 		</div>
 	</div>
 	<br/>

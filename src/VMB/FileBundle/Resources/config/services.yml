@@ -1,4 +1,0 @@
-services:
-#    vmb_file.example:
-#        class: VMB\FileBundle\Example
-#        arguments: [@service_id, "plain_value", %parameter%]
