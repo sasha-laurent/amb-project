@@ -4,38 +4,37 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h3 class="modal-title" id="myModalLabel">Ajouter une présentation</h3>
+        <h3 class="modal-title" id="myModalLabel">{{ 'presentation.add'|trans }}</h3>
       </div>
       <div class="modal-body">
-        <h4>Créer une présentation de zéro</h4>
+        <h4>{{ 'presentation.modal.from_scratch'|trans }}</h4>
         <p>
-			Créer une présentation s'effectue en 3 étapes :
+			{{ 'presentation.modal.from_scratch_0'|trans }}
 		</p>
 		<ul>
-			<li>Choisir dans quelle thématique votre présentation se situe</li>
-			<li>Définir une matrice de présentation utilisant les ressources de la thématique en question</li>
-			<li>Définir votre présentation à partir de votre matrice (en cliquant sur l'icone <span class="glyphicon glyphicon-blackboard"></span> dans la liste de vos matrices)</li>
+			<li>{{ 'presentation.modal.from_scratch_1'|trans }}</li>
+			<li>{{ 'presentation.modal.from_scratch_2'|trans }}</li>
+			<li>{{ 'presentation.modal.from_scratch_3'|trans }}</li>
 		</ul>	
 		<p>
-			<a href="{{ path('matrix_new') }}"><span class="glyphicon glyphicon-chevron-right"></span> Créer une matrice de présentation</a><br/>
-			<a href="{{ path('matrix') }}"><span class="glyphicon glyphicon-chevron-right"></span> Créer une présentation depuis vos matrices</a>
+			<a href="{{ path('matrix_new') }}"><span class="glyphicon glyphicon-chevron-right"></span> {{ 'presentation.modal.create_matrix'|trans }}</a><br/>
+			<a href="{{ path('matrix') }}"><span class="glyphicon glyphicon-chevron-right"></span> {{ 'presentation.modal.create_from_matrix'|trans }}</a>
         </p>
         <hr/>
-        <h4>Créer une présentation à partir d'une présentation existante</h4>
+        <h4>{{ 'presentation.modal.from_existing'|trans }}</h4>
         <p>
-			Si vous souhaitez créer une présentation sans avoir à définir vous même votre matrice de présentation, il est possible de partir d'une matrice existante.
-			Pour ce faire, il vous suffit de parcourir les présentations existantes et de vous rendre sur celle de votre choix. Une fois sur la page de la présentation, deux possibilités s'offrent à vous.
+			{{ 'presentation.modal.from_existing_0'|trans }}
 		</p>
 		<ul>
-			<li>Faire une copie de travail de la présentation ET de la matrice associée en cliquant sur <span class="glyphicon glyphicon-duplicate"></span> en haut à droite</li>
-			<li>Ou bien vous rendre dans "Voir plus" puis dans "Visualisation avancée" pour créer une présentation en conservant la matrice d'origine (vous ne pourrez donc pas modifier cette dernière ni ajouter de ressources)</li>
+			<li>{{ 'presentation.modal.from_existing_1'|trans }} <span class="glyphicon glyphicon-duplicate"></span></li>
+			<li>{{ 'presentation.modal.from_existing_2'|trans }}</li>
 		</ul>
 		<p>
-			<a href="{{ path('vmb_presentation_browse') }}"><span class="glyphicon glyphicon-chevron-right"></span> Parcourir les présentations existantes</a>
+			<a href="{{ path('vmb_presentation_browse') }}"><span class="glyphicon glyphicon-chevron-right"></span> {{ 'presentation.modal.browse_existing'|trans }}</a>
         </p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Fermer <span class="glyphicon glyphicon-remove"></span></button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'actions.close'|trans }} <span class="glyphicon glyphicon-remove"></span></button>
       </div>
     </div>
   </div>

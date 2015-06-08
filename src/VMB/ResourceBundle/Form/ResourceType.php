@@ -17,11 +17,11 @@ class ResourceType extends AbstractType
         $resource = $builder->getData();
 
         $builder
-            ->add('title', null, array('label' => 'Titre'))
-            ->add('description', null, array('label' => 'Description'))
-            ->add('keywords', null, array('label' => 'Mots-clés'));
+            ->add('title', null, array('label' => 'form.label.title'))
+            ->add('description', null, array('label' => 'form.label.description'))
+            ->add('keywords', null, array('label' => 'form.label.keywords'));
 		$builder->add('topic', 'entity', array(
-			'label' => 'Thématique',
+			'label' => 'form.label.topic',
 			'multiple' => true,
 			'class' => 'VMBPresentationBundle:Topic',
 			 'query_builder' => function(\Gedmo\Tree\Entity\Repository\NestedTreeRepository $repo) {
@@ -30,10 +30,10 @@ class ResourceType extends AbstractType
 		));
 		
 		if($resource->getId() == null) {
-			$builder->add('file', 'file', array('label' => 'Fichier'));
+			$builder->add('file', 'file', array('label' => 'form.label.file'));
 		}
 		
-		$builder->add('Sauvegarder', 'submit');
+		$builder->add('Sauvegarder', 'submit', array('label' => 'actions.save'));
     }
     
     /**

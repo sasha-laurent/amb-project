@@ -14,18 +14,18 @@
 			<h4><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> Options de la présentation</h4>
 			<div id="presentation_options" class="list-group">
 				<a href="#" class="list-group-item active">
-					<h4 id="list-group-item-heading" class="list-group-item-heading">Présentation initiale</h4>
+					<h4 id="list-group-item-heading" class="list-group-item-heading">{{ 'presentation.initial_presentation'|trans }}</h4>
 				</a>
 				
 				{% if hasSuggestions %}
 				<a href="#" class="list-group-item suggestion-item">
-					<h4 id="list-group-item-heading" class="list-group-item-heading">Présentation suggérée</h4>
+					<h4 id="list-group-item-heading" class="list-group-item-heading">{{ 'presentation.suggested_presentation'|trans }}</h4>
 				</a>
 				{% endif %}
 			</div>
 		</div>
 		<div class="col-sm-4">
-			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Nouvelle liste de lecture</h4>
+			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> {{ 'presentation.new_playlist'|trans }}</h4>
 			{% set totalDuration = 0 %}
 			<ul class="list-group" id="file_list">
 				{% for res in entity.resources %}
@@ -42,45 +42,45 @@
 				{% endfor %}
 			</ul>
 			<p class="text-center">
-				Durée totale : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
+				{{ 'show.total_duration'|trans }} : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
 				<input type="hidden" id="input_duration" name="input_duration" value ="{{totalDuration}}" />
 			</p>
 		</div>
 		<div class="col-sm-3">
 			<h4><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span> + d'options</h4>
-			<a href="{{ path('presentation_create_copy', {'id' : entity.id}) }}"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Visualisation avancée</a><br/>
-			<a href="{{ path('vmb_presentation_browse_topic',  {'topic': entity.topic.id}) }}"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Présentations de cette thématique</a><br/>		
-			<a href="{{ path('vmb_presentation_browse_topic',  {'topic': entity.topic.id, 'default':1}) }}"><span class="glyphicon glyphicon-education" aria-hidden="true"></span> Présentations par défaut sur cette thématique</a><br/>		
+			<a href="{{ path('presentation_create_copy', {'id' : entity.id}) }}"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> {{ 'presentation.advanced_visualisation'|trans }}</a><br/>
+			<a href="{{ path('vmb_presentation_browse_topic',  {'topic': entity.topic.id}) }}"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> {{ 'presentation.same_topic'|trans }}</a><br/>		
+			<a href="{{ path('vmb_presentation_browse_topic',  {'topic': entity.topic.id, 'default':1}) }}"><span class="glyphicon glyphicon-education" aria-hidden="true"></span> {{ 'presentation.default_topic'|trans }}</a><br/>		
 		</div>
     </div>
     <div class="row">
 		<div class="col-sm-5 text-center">
-			<button type="button" id="addContextualBtn" class="btn btn-primary">Générer du contenu complémentaire</button>
+			<button type="button" id="addContextualBtn" class="btn btn-primary">{{ 'presentation.generate_complement'|trans }}</button>
 		</div>
 		<div class="col-sm-4 text-center">
-			<button type="button" id="submit_new_presentation" role="button" class="btn btn-success"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Lancer la nouvelle présentation</button>
+			<button type="button" id="submit_new_presentation" role="button" class="btn btn-success"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> {{ 'presentation.play_selection'|trans }}</button>
 		</div>
     </div>
     </form>
     <hr/>
-    <h3 class="view-more-title"><a data-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">Détails de la présentation <span class="glyphicon glyphicon-chevron-down"></span></a></h3>
+    <h3 class="view-more-title"><a data-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">{{ 'presentation.details'|trans }} <span class="glyphicon glyphicon-chevron-down"></span></a></h3>
     <div class="collapse" id="collapseDescription">
 		<table class="table">
 			<tbody>
 				<tr>
-					<th width="120px">Titre</th>
+					<th width="120px">{{ 'table.title'|trans }}</th>
 					<td>{{ entity.title }}</td>
 				</tr>
 				<tr>
-					<th width="120px">Description</th>
+					<th width="120px">{{ 'table.description'|trans }}</th>
 					<td>{{ entity.description[:300] }} <span data-prototype="{{entity.description[300:]}}" class="showAll collapsed">...</span></td>
 				</tr>
 				<tr>
-					<th>Création</th>
+					<th>{{ 'table.creation'|trans }}</th>
 					<td>{{ entity.dateCreation|date('d/m/y') }}</td>
 				</tr>
 				<tr>
-					<th>Mise à jour</th>
+					<th>{{ 'table.update'|trans }}</th>
 					<td>{{ entity.dateUpdate|date('d/m/y') }}</td>
 				</tr>
 			</tbody>

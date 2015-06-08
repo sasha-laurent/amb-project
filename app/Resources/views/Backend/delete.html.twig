@@ -3,15 +3,15 @@
 {% block body %}
 
 	<div class="alert alert-danger" role="alert">
-	  <strong>Attention</strong> : Vous avez choisi de supprimer {{entityTitle}}, êtes-vous sûr ?<br/>
+	  <strong>{{ "message.title.warning"|trans|desc('Warning') }}</strong> : {{ "message.delete"|trans({'%title%': entityTitle})|desc('You chose to delete %title%, are you sure ?') }}<br/>
 	</div>
 
 	<form method="post">
 		<div class="btn-group">
-		  <a href="{{ backButtonUrl }}" class="btn btn-default">Annuler</a>
+		  <a href="{{ backButtonUrl }}" class="btn btn-default">{{ "actions.cancel"|trans|desc('Cancel') }}</a>
 		</div>
 		<div class="btn-group">
-			<input type="submit" class="btn btn-primary" value="Confirmer">
+			<input type="submit" class="btn btn-primary" value="{{ "actions.confirm"|trans|desc('Confirm') }}">
 		</div>
 	</form>
 	<br/>

@@ -50,13 +50,18 @@
 			{{ form_widget(form.file, {'attr': {'class': 'form-control'}}) }}
 			</div>
 			
-			{% if not copy %}
-				{% if presentation.hasThumbs() %}
-					<em>Miniature actuelle :</em> <img src="{{ asset(presentation.getThumbsPath()) }}" title="Miniature" /> <button id="delete_thumbs" type="button" role="button"><span class="glyphicon glyphicon-remove"></span></button>
-				{% endif %}
-				<input type="hidden" name="keepThumbs" id="keepThumbs" value="{% if presentation.hasThumbs() %}1{% else %}0{% endif %}" />
-			{% endif %}
 		</div>
+		{% if not copy %}
+			<div class="row">
+				<div class="col-sm-2"></div>
+				<div class="col-sm-10">
+					{% if presentation.hasThumbs() %}
+						<em>{{ 'form.label.current_thumbnail'|trans }} :</em> <img src="{{ asset(presentation.getThumbsPath()) }}" title="Miniature" /> <button class="btn btn-default" id="delete_thumbs" type="button" role="button"><span class="glyphicon glyphicon-remove"></span></button>
+					{% endif %}
+					<input type="hidden" name="keepThumbs" id="keepThumbs" value="{% if presentation.hasThumbs() %}1{% else %}0{% endif %}" />
+				</div>
+			</div>
+		{% endif %}
 	</div>
 	
 	{% if copy %}
@@ -110,39 +115,39 @@
 		<br/>
 		<i>
 			{% if copy %}
-				<span class="teacherRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Présentation initiale |
-				<span class="suggestedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Présentation suggérée |
-				<span class="checkedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Ma sélection
+				<span class="teacherRes glyphicon glyphicon-ok" aria-hidden="true"></span> = {{ 'presentation.initial_presentation'|trans }} |
+				<span class="suggestedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = {{ 'presentation.suggested_presentation'|trans }} |
+				<span class="checkedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = {{ 'presentation.my_selection'|trans }}
 			{% else %}
-				<span class="checkedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Ajoutée à la liste de lecture |
-				<span class="suggestedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = Suggérée en complément
+				<span class="checkedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = {{ 'presentation.added_to_playlist'|trans }} |
+				<span class="suggestedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = {{ 'presentation.suggested_as_complement'|trans }}
 			{% endif %}
 		</i>
 	</div>
 	{% if copy %}
 	<div class="text-center">
 		<br/>
-		<button id="save_new_presentation" class="wide-btn btn btn-info" role="button" type="button"><span class="left glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Sauvegarder ma sélection</button>
+		<button id="save_new_presentation" class="wide-btn btn btn-info" role="button" type="button"><span class="left glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> {{ 'presentation.save_selection'|trans }}</button>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<button id="submit_new_presentation" class="wide-btn btn btn-success" role="button" type="button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Lancer la nouvelle présentation</button>
+		<button id="submit_new_presentation" class="wide-btn btn btn-success" role="button" type="button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> {{ 'presentation.play_selection'|trans }}</button>
 	</div>
 	{% endif %}
 	<hr/>
 	<div class="row">
 		<div class="col-sm-7">
-			<h4><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> Aperçu du fichier sélectionné</h4>
+			<h4><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> {{ 'browse.preview_current_resource'|trans }}</h4>
 			{% include '::players.html.twig' %}
 			<br/>
 		</div>
 		<div class="col-sm-5">
 			{% set totalDuration = 0 %}
 			{% set totalDurationSuggestion = 0 %}
-			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Liste de lecture choisie</h4>
+			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> {{ 'show.playlist'|trans }}</h4>
 			{% if not copy %}
 				<div role="tab-panel">
 					<ul class="nav nav-tabs" role="tablist">
-						<li role="presentation" class="active" id="playlist-tab-toggle"><a href="#playlist_tab" aria-controls="playlist_tab" role="tab" data-toggle="tab">Liste de lecture</a></li>
-						<li role="presentation" id="suggestion-tab-toggle"><a href="#suggestion_tab" aria-controls="suggestion_tab" role="tab" data-toggle="tab">Suggestions</a></li>
+						<li role="presentation" class="active" id="playlist-tab-toggle"><a href="#playlist_tab" aria-controls="playlist_tab" role="tab" data-toggle="tab">{{ 'show.playlist'|trans }}</a></li>
+						<li role="presentation" id="suggestion-tab-toggle"><a href="#suggestion_tab" aria-controls="suggestion_tab" role="tab" data-toggle="tab">{{ 'presentation.suggestions'|trans }}</a></li>
 					</ul>
 					<div class="tab-content">
 						<div role="tabpanel" class="tab-pane active" id="playlist_tab">
@@ -170,7 +175,7 @@
 								{% endif %}
 							</ul>
 							<p class="text-right">
-								Durée totale : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
+								{{ 'show.total_duration'|trans }} : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
 							</p>
 						{% if not copy %}
 						</div>
@@ -197,7 +202,7 @@
 							{% endfor %}
 							</ul>
 							<p class="text-right">
-								Durée totale : <span id="total_duration_suggestion">{{ "%02d"|format(totalDurationSuggestion // 60) }}:{{ "%02d"|format(totalDurationSuggestion % 60) }}</span>
+								{{ 'show.total_duration'|trans }} : <span id="total_duration_suggestion">{{ "%02d"|format(totalDurationSuggestion // 60) }}:{{ "%02d"|format(totalDurationSuggestion % 60) }}</span>
 							</p>
 						</div>
 					</div><!-- .tab-content -->

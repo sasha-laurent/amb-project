@@ -46,7 +46,7 @@ class PresentationController extends Controller
 		}
         
         if ($page < 1) {
-			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
+			throw $this->createNotFoundException("The page ".$page." does not exist");
 		}
 
 		// Ici je fixe le nombre d'annonces par page à 3
@@ -61,11 +61,11 @@ class PresentationController extends Controller
 
 		// Si la page n'existe pas, on retourne une 404
 		if ($page > $nbPages  && $page != 1) {
-			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
+			throw $this->createNotFoundException("The page ".$page." does not exist");
 		}
 
         return $this->render('VMBPresentationBundle:Presentation:index.html.twig', array(
-            'mainTitle'=> 'Toutes les présentations',
+            'mainTitle'=> $this->get('translator')->trans('presentation.main_title'),
             'entities' => $entities,
 			'nbPages'  => $nbPages,
 			'page'     => $page
@@ -86,10 +86,10 @@ class PresentationController extends Controller
 		$topics = $em->getRepository('VMBPresentationBundle:Topic')->childrenHierarchy();
 		
 		
-		$mainTitle = 'Parcourir les présentations';
+		$mainTitle = $this->get('translator')->trans('presentation.browse');
 		if($topic != null) {
 			$topic = $em->getRepository('VMBPresentationBundle:Topic')->find($topic);
-			$mainTitle = $topic->getTitle().' - Présentations';
+			$mainTitle = $topic->getTitle().' - '.$this->get('translator')->trans('menu.presentation');
 		}
 		
 		$request = $this->get('request');
@@ -173,6 +173,7 @@ class PresentationController extends Controller
     */
     public function deepCopyAction(Request $request, $id)
     {
+		$translator = $this->get('translator');
 		$presentation = null;
 		if ($request->isMethod('POST')) {
 			try {
@@ -259,9 +260,9 @@ class PresentationController extends Controller
 				
 				$em->flush();
 				
-				$request->getSession()->getFlashBag()->add('success', 'Copie de la présentation réussie');
+				$request->getSession()->getFlashBag()->add('success', $translator->trans('presentation.copy_success'));
 			} catch (\Exception $e) {
-				$request->getSession()->getFlashBag()->add('danger',"An error occured");
+				$request->getSession()->getFlashBag()->add('danger', $translator->trans('message.error.occured'));
 			}
 			return $this->redirect($this->generateUrl('presentation_perso'));
 		}
@@ -272,7 +273,7 @@ class PresentationController extends Controller
 		// Si la requête est en GET, on affiche une page de confirmation avant de delete
 		return $this->render('VMBPresentationBundle:Presentation:copy.html.twig', array(
 			'entityTitle' => '"'.$presentation->toString().'"',
-			'mainTitle' => 'Copie de la présentation '.$presentation->toString(),
+			'mainTitle' => $translator->trans('presentation.copy_of').' '.$presentation->toString(),
 			'backButtonUrl' => $this->generateUrl('presentation_perso')
 		));
     }
@@ -301,7 +302,7 @@ class PresentationController extends Controller
         $entity = $em->getRepository('VMBPresentationBundle:Presentation')->findWithConcreteResources($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Presentation entity.');
+            throw $this->createNotFoundException($this->get('translator')->trans('message.error.entity_not_found', array('%class%' => 'Presentation')));
         }
         
         $alternativeResources = array();
@@ -360,7 +361,7 @@ class PresentationController extends Controller
         $matrix = $em->getRepository('VMBPresentationBundle:Matrix')->getMatrixWithSortedResources($entity->getMatrix()->getId());
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Presentation entity.');
+            throw $this->createNotFoundException($this->get('translator')->trans('message.error.entity_not_found', array('%class%' => 'Presentation')));
         }
         
         $checkedResourcesId = array();
@@ -415,7 +416,7 @@ class PresentationController extends Controller
 		}
 		
         return $this->render('VMBPresentationBundle:Presentation:complement.html.twig', array(
-            'mainTitle' => 'Voir plus - '. $entity->getTitle(),
+            'mainTitle' => $this->get('translator')->trans('presentation.see_more').' - '. $entity->getTitle(),
             'backButtonUrl' => $this->generateUrl('presentation_show', array('id' => $id)),
 			'entity' => $entity,
 			'matrix' => $matrix,
@@ -435,7 +436,7 @@ class PresentationController extends Controller
 		$matrix = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Matrix')->getMatrixWithResources($idMatrix);
 
 		if ($matrix == null) {
-			throw $this->createNotFoundException('Unable to find Matrix entity.');
+			throw $this->createNotFoundException($this->get('translator')->trans('message.error.entity_not_found', array('%class%' => 'Matrix')));
 		}
 		
         $presentation = new Presentation($matrix);
@@ -458,7 +459,7 @@ class PresentationController extends Controller
 			return $this->renderForm($presentation);
 		}
 		else {
-			$this->get('request')->getSession()->getFlashBag()->add('danger', 'Vous ne disposez pas des droits suffisants pour effectuer cette opération');
+			$this->get('request')->getSession()->getFlashBag()->add('danger', $this->get('translator')->trans('message.error.not_enough_rights'));
 			return $this->redirect($this->generateUrl('presentation_perso'));
 		}
     }
@@ -486,9 +487,10 @@ class PresentationController extends Controller
     protected function renderForm($presentation, $saveAsCopy = false, $backUrl = null)
     {
 		$request = $this->get('request');
+		$translator = $this->get('translator');
 		
 		if($saveAsCopy) {
-			$presentation->setTitle($presentation->getTitle().' - Présentation personnelle');
+			$presentation->setTitle($presentation->getTitle().' - '.$translator->trans('presentation.personal_presentation'));
 		}
 		
 		$form = $this
@@ -583,7 +585,7 @@ class PresentationController extends Controller
 				$em->flush();
 				$workingPresentation->upload();
 
-				$flashMessage = !$workingPresentation->toString() ? 'Présentation ajoutée' : 'Présentation modifiée';
+				$flashMessage = !$workingPresentation->toString() ? $translator->trans('presentation.added') : $translator->trans('presentation.modified');
 				$request->getSession()->getFlashBag()->add('success', $flashMessage);
 				
 				if($saveAsCopy) {
@@ -597,7 +599,7 @@ class PresentationController extends Controller
 		
 		$parameters = array(
 				'form' => $form->createView(),
-				'mainTitle' => ((!($presentation->toString())) ? 'Ajout d\'une présentation' : $presentation->toString()),
+				'mainTitle' => ((!($presentation->toString())) ? $translator->trans('presentation.add') : $presentation->toString()),
 				'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('vmb_presentation_browse')),
 				'copy' => $saveAsCopy,
 				'matrix' => $presentation->getMatrix(),
@@ -622,15 +624,7 @@ class PresentationController extends Controller
     public function deleteAction(Request $request, $id)
     {
         $presentation = $this->getPresentation($id);
-        
-        $lastUrl = preg_replace('`(.+)'. $this->generateUrl('vmb_presentation_homepage') .'`', '/', $request->headers->get('referer'));
-		$match = $this->get('router')->match($lastUrl);
-		$arr = array('route' => $match['_route'], 'args' => array());
-		foreach($match as $key => $value) {
-			if(substr($key, 0, 1) != '_') {
-				$arr['args'][$key] = $value;
-			}
-		}
+        $translator = $this->get('translator');
 
 		if ($request->isMethod('POST')) {
 			try {
@@ -638,9 +632,9 @@ class PresentationController extends Controller
 				$em->remove($presentation);
 				$em->flush();
 				
-				$request->getSession()->getFlashBag()->add('success', 'Presentation deleted');
+				$request->getSession()->getFlashBag()->add('success', $translator->trans('presentation.deleted'));
 			} catch (\Exception $e) {
-				$request->getSession()->getFlashBag()->add('danger',"An error occured");
+				$request->getSession()->getFlashBag()->add('danger', $translator->trans('message.error.occured'));
 			}
 			return $this->redirect($this->generateUrl('presentation_perso'));
 		}
@@ -648,8 +642,8 @@ class PresentationController extends Controller
 		// Si la requête est en GET, on affiche une page de confirmation avant de delete
 		return $this->render('::Backend/delete.html.twig', array(
 			'entityTitle' => '"'.$presentation->toString().'"',
-			'mainTitle' => 'Suppression de la présentation '.$presentation->toString(),
-			'backButtonUrl' => $this->generateUrl('presentation')
+			'mainTitle' => $translator->trans('presentation.delete'),
+			'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('vmb_presentation_browse')),
 		));
     }
     
@@ -702,11 +696,11 @@ class PresentationController extends Controller
 					}
 				}
 				elseif($flashBags) {
-					$this->get('request')->getSession()->getFlashBag()->add('danger', 'Vous ne disposez pas de droits suffisants pour effectuer cette opération');
+					$this->get('request')->getSession()->getFlashBag()->add('danger', $this->get('translator')->trans('message.error.not_enough_rights'));
 				}
 			}
 			elseif($flashBags) {
-				$this->get('request')->getSession()->getFlashBag()->add('danger', 'Une présentation non officielle ne peut être passée en présentation par défaut');
+				$this->get('request')->getSession()->getFlashBag()->add('danger', $this->get('translator')->trans('presentation.error.presentation_unofficial'));
 			}
 		}
     }
@@ -731,7 +725,7 @@ class PresentationController extends Controller
 				}
 			}
 			elseif($flashBags) {
-				$this->get('request')->getSession()->getFlashBag()->add('danger', 'Vous ne disposez pas de droits suffisants pour effectuer cette opération');
+				$this->get('request')->getSession()->getFlashBag()->add('danger', $this->get('translator')->trans('message.error.not_enough_rights'));
 			}
 		}
     }
@@ -756,12 +750,12 @@ class PresentationController extends Controller
 						$this->getDoctrine()->getManager()->flush();
 					}
 					else {
-						$this->get('request')->getSession()->getFlashBag()->add('danger', 'La matrice associée n\'est pas officielle');
+						$this->get('request')->getSession()->getFlashBag()->add('danger', $this->get('translator')->trans('presentation.error.matrix_unofficial'));
 					}
 				}
 			}
 			elseif($flashBags) {
-				$this->get('request')->getSession()->getFlashBag()->add('danger', 'Vous ne disposez pas de droits suffisants pour effectuer cette opération');
+				$this->get('request')->getSession()->getFlashBag()->add('danger', $this->get('translator')->trans('message.error.not_enough_rights'));
 			}
 		}
     }

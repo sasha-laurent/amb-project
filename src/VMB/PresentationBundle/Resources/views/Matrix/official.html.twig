@@ -3,12 +3,12 @@
 {% block body %}
 
 	<div class="alert alert-info" role="alert">
-	  <strong>Note</strong> : cette action ne rend pas automatiquement officielles les présentations issues de cette matrice<br/>
+	  <strong>{{ 'message.title.warning'|trans }}</strong> : {{ 'message.matrix.warning_official'|trans }}<br/>
 	</div>
 
 	<form method="post">
 		<div class="btn-group">
-		  <a href="{{ backButtonUrl }}" class="btn btn-default">Annuler</a>
+		  <a href="{{ backButtonUrl }}" class="btn btn-default">{{ 'actions.cancel'|trans }}</a>
 		</div>
 		<div class="btn-group">
 			<input type="submit" class="btn btn-primary" value="Confirmer">

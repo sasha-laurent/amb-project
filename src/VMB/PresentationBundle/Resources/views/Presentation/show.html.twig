@@ -19,7 +19,7 @@
 			{% include '::players.html.twig' %}
 		</div>
 		<div class="col-sm-3">
-			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Liste de lecture</h4>
+			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> {{ 'show.playlist'|trans }}</h4>
 			{% set totalDuration = 0 %}
 			<ul class="list-group" id="file_list">
 				{% set firstLoop = true %}
@@ -56,20 +56,20 @@
 				</div>
 			</div>
 			<p class="text-center">
-				Durée totale : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
+				{{ 'show.total_duration'|trans }} : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
 			</p>
-			<div class="text-center"><a href="{{ path('presentation_complementary', {'id': entity.id}) }}" type="button" class="btn btn-primary">Voir plus <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a></div>
+			<div class="text-center"><a href="{{ path('presentation_complementary', {'id': entity.id}) }}" type="button" class="btn btn-primary">{{ 'presentation.see_more'|trans }} <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a></div>
 		</div>
     </div>
     <hr/>
     {% if firstResource != null %}
     <div id="additional-infos">
-		<h3 class="view-more-title"><a data-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">Détails de la ressource actuelle <span class="glyphicon glyphicon-chevron-down"></span></a></h3>
+		<h3 class="view-more-title"><a data-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">{{ 'show.resource_details'|trans }} <span class="glyphicon glyphicon-chevron-down"></span></a></h3>
 		<div class="collapse" id="collapseDescription">
 			<table class="table">
 				<tbody>
 					<tr>
-						<th width="120px">Titre</th>
+						<th width="120px">{{ 'table.title'|trans }}</th>
 						<td id="current-res-title">{{ firstResource.resource.title }}</td>
 					</tr>
 					<tr>
@@ -77,15 +77,15 @@
 						<td id="current-res-position">{{ firstResource.pov.title }} - {{ firstResource.level.title }}</td>
 					</tr>
 					<tr>
-						<th width="120px">Description</th>
+						<th width="120px">{{ 'table.description'|trans }}</th>
 						<td id="current-res-description">{{ firstResource.resource.description }}</td>
 					</tr>
 					<tr>
-						<th>Création</th>
+						<th>{{ 'table.creation'|trans }}</th>
 						<td id="current-res-creation">{{ firstResource.resource.dateCreate|date('d/m/y') }}</td>
 					</tr>
 					<tr>
-						<th>Mise à jour</th>
+						<th>{{ 'table.update'|trans }}</th>
 						<td id="current-res-update">{{ firstResource.resource.dateUpdate|date('d/m/y') }}</td>
 					</tr>
 				</tbody>

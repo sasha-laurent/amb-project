@@ -11,16 +11,16 @@ class RegistrationFormType extends AbstractType
         // add your custom field
         $builder->remove('plainPassword');
         $builder->add('uniqueRole', 'choice', array(
-                'choices' => array('ROLE_ADMIN' => 'Administrateur',
-				'ROLE_TEACHER' => 'Professeur',
-				'ROLE_STUDENT' => 'Etudiant'),
-                'label' => 'Rôle :',
+                'choices' => array('ROLE_ADMIN' => 'user.role.admin',
+				'ROLE_TEACHER' => 'user.role.teacher',
+				'ROLE_STUDENT' => 'user.role.student'),
+                'label' => 'form.label.role',
                 'expanded' => false,
                 'multiple' => false,
                 'mapped' => false
             ))
             ->add('plainPassword', 'hidden', array('data' => 'defaultPwd'))
-            ->add('Ajouter', 'submit');
+            ->add('save', 'submit', array('label' => 'actions.add'));
     }
 
     public function getParent()

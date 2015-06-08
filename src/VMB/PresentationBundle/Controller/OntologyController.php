@@ -22,7 +22,7 @@ class OntologyController extends Controller
 
         return $this->render('VMBPresentationBundle:Ontology:main.html.twig',
             array(
-				'mainTitle' => 'Structure des connaissances',
+				'mainTitle' => $this->get('translator')->trans('menu.ontology'),
 				'addButtonUrl' => $this->generateUrl('ontology_edit'),
                 'ontologies' => $ontologies
             ));

@@ -15,11 +15,11 @@ class PresentationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', null, array('label'=> 'Titre'))
-            ->add('description', null, array('label'=> 'Description'))
+            ->add('title', null, array('label'=> 'form.label.title'))
+            ->add('description', null, array('label'=> 'form.label.description'))
             ->add('duration', 'hidden')
-            ->add('file', 'file', array('label' => 'Miniature', 'required' => false))
-            ->add('save', 'submit')
+            ->add('file', 'file', array('label' => 'form.label.thumbnail', 'required' => false))
+            ->add('save', 'submit', array('label' => 'actions.save'))
         ;
     }
     

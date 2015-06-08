@@ -4,9 +4,9 @@
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<div class="row">				
-				<div class="col-md-6">Titre</div>
-				<div class="col-md-4 text-center">Thématique associée</div>						
-				<div class="col-md-2 text-center">Action</div>
+				<div class="col-md-6">{{ 'table.title'|trans }}</div>
+				<div class="col-md-4 text-center">{{ 'table.topic'|trans }}</div>						
+				<div class="col-md-2 text-center">{{ 'table.action'|trans }}</div>
         	</div>
 		</div>
 	</div>
@@ -30,7 +30,7 @@
         {% else %}
 			<li class="list-group-item row">
 				<div class="col-md-12 text-center">
-					<em>Aucune structure des connaissance enregistrée</em>
+					<em>{{ 'message.no_elt_found'|trans }}</em>
 					<br/><br/>
 				</div>
 			</li>

@@ -14,11 +14,11 @@ class OntologyType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('name', null, array('label' => 'Titre'));
+        $builder->add('name', null, array('label' => 'form.label.title'));
            
         $ontology = $builder->getData();
 		$builder->add('topic', 'entity', array(
-		'label' => 'Thématique',
+		'label' => 'form.label.topic',
 		'multiple' => false,
 		'disabled' => ($ontology->getTopic() != null),
 		'class' => 'VMBPresentationBundle:Topic',

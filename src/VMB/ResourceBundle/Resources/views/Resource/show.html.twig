@@ -10,15 +10,15 @@
 			<table class="record_properties">
 				<tbody>
 					<tr>
-						<th>Type</th>
+						<th>{{ 'table.type'|trans }}</th>
 						<td>&nbsp;<span class="glyphicon glyphicon-{{ entity.getGlyphicon }}"></span> {{ entity.type }}</td>
 					</tr>
 					<tr>
-						<th>Création</th>
+						<th>{{ 'table.creation'|trans }}</th>
 						<td>&nbsp;{{ entity.dateCreate|date('d/m/y') }}</td>
 					</tr>
 					<tr>
-						<th>Mise à jour</th>
+						<th>{{ 'table.update'|trans }}</th>
 						<td>&nbsp;{{ entity.dateUpdate|date('d/m/y') }}</td>
 					</tr>
 				</tbody>
@@ -32,13 +32,13 @@
 							<li class="previous"><a href="{{ path('resource_show', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'position': position - 1, 'id': p.id })) }}"><span aria-hidden="true">&larr;</span> Précédent</a></li>
 						{% endfor %}
 					{% else %}
-						<li class="previous disabled"><a href="#"><span aria-hidden="true">&larr;</span> Précédent</a></li>
+						<li class="previous disabled"><a href="#"><span aria-hidden="true">&larr;</span> {{ 'actions.previous'|trans }}</a></li>
 					{% endif %}
 					{% if next %}
 						{% for n in next %}
 							<li class="next"><a href="{{ path('resource_show', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'position': position + 1, 'id': n.id})) }}">Suivant <span aria-hidden="true">&rarr;</span></a></li>
 						{% else %}
-							<li class="next disabled"><a href="#"><span aria-hidden="true">&rarr;</span> Suivant</a></li>
+							<li class="next disabled"><a href="#"><span aria-hidden="true">&rarr;</span> {{ 'actions.next'|trans }}</a></li>
 						{% endfor %}
 					{% endif %}
 					

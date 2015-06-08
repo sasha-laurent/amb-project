@@ -30,7 +30,7 @@ class HelpController extends Controller
         $entities = $em->getRepository('VMBContextualHelpBundle:Help')->findAll();
 
         return $this->render('VMBContextualHelpBundle:Help:index.html.twig', array(
-            'mainTitle' => 'Gestion des aides contextuelles',
+            'mainTitle' => $this->get('translator')->trans('help.main_title'),
 			'addButtonUrl' => $this->generateUrl('help_new'),
             'entities' => $entities,
             'routes' => $this->container->get('router')->getRouteCollection()->all()
@@ -92,7 +92,7 @@ class HelpController extends Controller
 			if ($form->isValid()) 
 			{
 				$em = $this->getDoctrine()->getManager();
-				$flashMessage = ($help->getId() == null) ? 'Aide ajoutée' : 'Aide modifiée';
+				$flashMessage = ($help->getId() == null) ? $this->get('translator')->trans('help.added') : $this->get('translator')->trans('help.edited');
 				$em->persist($help);
 				$em->flush();
 
@@ -104,7 +104,7 @@ class HelpController extends Controller
 		return $this->render('::Backend/form.html.twig', 
 			array(
 				'form' => $form->createView(),
-				'mainTitle' => (($help->getId() == null) ? 'Ajout d\'une aide' : 'Modification d\'une aide'),
+				'mainTitle' => (($help->getId() == null) ? $this->get('translator')->trans('help.add') : $this->get('translator')->trans('help.edit')),
 				'backButtonUrl' => $this->generateUrl('help')
 			));
     }
@@ -126,7 +126,7 @@ class HelpController extends Controller
 				$em->remove($help);
 				$em->flush();
 				
-				$request->getSession()->getFlashBag()->add('success', 'Aide supprimée');
+				$request->getSession()->getFlashBag()->add('success', $this->get('translator')->trans('help.deleted'));
 			} catch (\Exception $e) {
 				$request->getSession()->getFlashBag()->add('danger',"An error occured");
 			}
@@ -135,8 +135,8 @@ class HelpController extends Controller
 
 		// Si la requête est en GET, on affiche une page de confirmation avant de delete
 		return $this->render('::Backend/delete.html.twig', array(
-			'entityTitle' => 'l\'aide "'.$help->getTitle().'"',
-			'mainTitle' => 'Suppression de l\'aide "'.$help->getTitle().'"',
+			'entityTitle' => '"'.$help->getTitle().'"',
+			'mainTitle' => $this->get('translator')->trans('help.delete'),
 			'backButtonUrl' => $this->generateUrl('help')
 		));
     }

@@ -1,8 +1,8 @@
 <div class="modal-header">
-	<button type="button" class="close" data-dismiss="modal" aria-label="Close'|trans }}"><span aria-hidden="true">&times;</span></button>
+	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	<h4 class="modal-title" id="modalContextualHelpLabel">
 		{% if help %}
-			Aide - {{ help.title }}
+			{{ 'help'|trans }} - {{ help.title }}
 		{% else %}
 			{{ 'Aide contextuelle'|trans }}
 		{% endif %}
@@ -20,6 +20,6 @@
 			</div>
 		{% endif %}
 	{% else %}
-		<em>Aucune aide pour cette page</em>
+		<em>{{ 'help.no_help_for_this_page'|trans }}</em>
 	{% endif %}
 </div>

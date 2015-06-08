@@ -17,7 +17,7 @@ class UserType extends AbstractType
         $resource = $builder->getData();
 
         $builder
-            ->add('title', null, array('label' => 'Titre'))
+            ->add('title', null, array('label' => 'Titre'));
         $builder
 			->add('Sauvegarder', 'submit');
     }

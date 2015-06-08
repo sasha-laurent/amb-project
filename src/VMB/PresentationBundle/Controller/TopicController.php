@@ -27,7 +27,7 @@ class TopicController extends Controller
         $entities = $em->getRepository('VMBPresentationBundle:Topic')->childrenHierarchy();
 
         return $this->render('VMBPresentationBundle:Topic:index.html.twig', array(
-            'mainTitle' => 'Classification des thématiques',
+            'mainTitle' => $this->get('translator')->trans('topic.main_title'),
 			'addButtonUrl' => $this->generateUrl('topic_new'),
             'entities' => $entities
         ));
@@ -44,7 +44,7 @@ class TopicController extends Controller
         $entity = $em->getRepository('VMBPresentationBundle:Topic')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Topic entity.');
+            throw $this->createNotFoundException($this->get('translator')->trans('message.error.entity_not_found', array('%class%' => 'Topic')));
         }
 
         return $this->render('VMBPresentationBundle:Topic:show.html.twig', array(
@@ -80,6 +80,7 @@ class TopicController extends Controller
     protected function renderForm($topic)
     {
 		$request = $this->get('request');
+		$translator = $this->get('translator');
 		
 		$form = $this
 			->get('form.factory')
@@ -90,7 +91,7 @@ class TopicController extends Controller
 			$form->handleRequest($request);
 			if ($form->isValid()) 
 			{
-				$flashMessage = ($topic->getId() == null) ? 'Thématique ajoutée' : 'Thématique modifiée';
+				$flashMessage = ($topic->getId() == null) ? $translator->trans('topic.added') : $translator->trans('topic.modified');
 				
 				$em = $this->getDoctrine()->getManager();
 				$em->persist($topic);
@@ -107,7 +108,7 @@ class TopicController extends Controller
 		return $this->render('::Backend/form.html.twig', 
 			array(
 				'form' => $form->createView(),
-				'mainTitle' => ((!($topic->toString())) ? 'Ajout d\'une thématique' : 'Modification d\'une thématique '.$topic->toString()),
+				'mainTitle' => ((!($topic->toString())) ? $translator->trans('topic.add') : $translator->trans('topic.edit')),
 				'backButtonUrl' => $this->generateUrl('topic')
 			));
     }
@@ -118,6 +119,7 @@ class TopicController extends Controller
     public function deleteAction(Request $request, $id)
     {
         $topic = $this->getTopic($id);
+        $translator = $this->get('translator');
 
 		if ($request->isMethod('POST')) {
 			try {
@@ -125,18 +127,18 @@ class TopicController extends Controller
 				$em->remove($topic);
 				$em->flush();
 				
-				$request->getSession()->getFlashBag()->add('success', 'Thématique supprimée');
+				$request->getSession()->getFlashBag()->add('success', $translator->trans('topic.deleted'));
 			} catch (\Exception $e) {
 				dump($e);
-				$request->getSession()->getFlashBag()->add('danger',"An error occured");
+				$request->getSession()->getFlashBag()->add('danger', $translator->trans('message.error.occured'));
 			}
 			return $this->redirect($this->generateUrl('topic'));
 		}
 
 		// Si la requête est en GET, on affiche une page de confirmation avant de delete
 		return $this->render('::Backend/delete.html.twig', array(
-			'entityTitle' => 'la thématique "'.$topic->toString().'" [ATTENTION CELA SUPPRIMERA TOUTES LES MATRICES, RESSOURCES ET PRESENTATIONS LIEES]',
-			'mainTitle' => 'Suppression d\'une thématique',
+			'entityTitle' => $translator->trans('topic.deleteMessage', array('%title%' => $topic->toString())),
+			'mainTitle' => $translator->trans('topic.delete'),
 			'backButtonUrl' => $this->generateUrl('topic')
 		));
     }
@@ -149,7 +151,7 @@ class TopicController extends Controller
         $topic = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Topic')->find($id);
 
 		if ($topic == null) {
-			throw $this->createNotFoundException('Unable to find Topic entity.');
+			throw $this->createNotFoundException($this->get('translator')->trans('message.error.entity_not_found', array('%class%' => 'Topic')));
 		}
 
 		return $topic;

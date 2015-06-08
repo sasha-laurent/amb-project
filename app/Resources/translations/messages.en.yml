@@ -1,17 +1,252 @@
-'Aide contextuelle': 'Contextual help'
-Connexion: Login
-Consulter: Consult
-Fermer: Close
-Gérer: Manage
-Matrices: Matrixes
-'Mes présentations': 'My presentations'
-Présentations: Presentation
-Recherche: Search
-Ressources: Resources
-'Structure des connaissances': 'Knowledge structure'
-Thématiques: Topics
-Traduction: Translation
-en_flag: gb
-en_name: English
-fr_flag: fr
-fr_name: Français
+'Aide contextuelle': 'Aide contextuelle'
+Close: Close
+Fermer: Fermer
+Titre: Titre
+
+actions:
+    add: Add
+    cancel: Cancel
+    close: Close
+    confirm: Confirm
+    delete: Delete
+    duplicate: Duplicate
+    edit: Edit
+    import: actions.import
+    next: actions.next
+    options: Options
+    previous: actions.previous
+    save: Save
+    search: Search
+
+added: added
+
+admin:
+    user: admin.user
+    user.add: admin.user.add
+    user.added: admin.user.added
+    user.delete: admin.user.delete
+    user.manage: admin.user.manage
+
+browse:
+    default_presentations: browse.default_presentations
+    filters: browse.filters
+    no_presentation: browse.no_presentation
+    official_only: browse.official_only
+    parameters_title: browse.parameters_title
+    personal_presentation: browse.personal_presentation
+    personal_resources: browse.personal_resources
+    preview_current_resource: browse.preview_current_resource
+
+form:
+    label:
+        associated_routes: form.label.associated_routes
+        current_thumbnail: form.label.current_thumbnail   # FIXME
+        description: form.label.description
+        file: form.label.file
+        keywords: form.label.keywords
+        role: form.label.role
+        text: form.label.text
+        thumbnail: form.label.thumbnail
+        title: form.label.title
+        topic: form.label.topic
+        video: form.label.video
+
+help: help
+help.add: help.add
+help.added: help.added
+help.delete: help.delete
+help.deleted: help.deleted
+help.edit: help.edit
+help.edited: help.edited
+help.main_title: help.main_title
+help.no_help_for_this_page: help.no_help_for_this_page
+
+label:
+    'no': label.no
+    'yes': label.yes
+
+matrix:
+    add: matrix.add
+    added: matrix.added
+    delete: matrix.delete
+    deleted: matrix.deleted
+    edit: matrix.edit
+
+    error:
+        resource_unofficial_not_added: matrix.error.resource_unofficial_not_added
+
+    levels: matrix.levels
+    main_title: matrix.main_title
+    modified: matrix.modified
+    modify_structure: matrix.modify_structure
+    note_resource: matrix.note_resource
+    official_fail: matrix.official_fail
+    official_success: matrix.official_success
+    official_title: matrix.official_title
+    povs: matrix.povs
+
+menu:
+    bookmark: Bookmark
+    browse: Browse
+    connexion: Connexion
+    contextual_help: 'Contextual help'
+    homepage: Homepage
+    logout: Logout
+    manage: Manage
+    matrixes: Matrixes
+    ontologies: Ontologies
+    ontology: menu.ontology
+    presentation: menu.presentation
+    presentations: Presentations
+    resources: Resources
+    topics: Topics
+    translation: Translation
+    users_management: 'Users management'
+
+message:
+    delete: 'You chose to delete %title%, are you sure ?'
+
+    error:
+        entity_not_found: message.error.entity_not_found
+        not_enough_rights: message.error.not_enough_rights
+        occured: message.error.occured
+
+    matrix:
+        warning_official: message.matrix.warning_official
+
+    no_elt_found: message.no_elt_found
+
+    ontology:
+        modal: message.ontology.modal
+        none_for_this_topic: message.ontology.none_for_this_topic
+
+    presentation:
+        copy: message.presentation.copy
+
+    resource:
+        none_for_this_search: message.resource.none_for_this_search
+
+    save: message.save
+
+    title:
+        warning: Warning
+
+player:
+    new_tab: 'Display this file in a new tab'
+
+presentation:
+    add: presentation.add
+    added: presentation.added
+    added_to_playlist: presentation.added_to_playlist   # FIXME
+    advanced_visualisation: presentation.advanced_visualisation   # FIXME
+    browse: presentation.browse
+    copy_of: presentation.copy_of
+    copy_success: presentation.copy_success
+    default: presentation.default
+    default_topic: presentation.default_topic   # FIXME
+    delete: presentation.delete
+    deleted: presentation.deleted
+    details: presentation.details   # FIXME
+
+    error:
+        matrix_unofficial: presentation.error.matrix_unofficial
+        presentation_unofficial: presentation.error.presentation_unofficial
+
+    generate_complement: presentation.generate_complement   # FIXME
+    initial_presentation: presentation.initial_presentation   # FIXME
+    main_title: presentation.main_title
+
+    modal:
+        browse_existing: presentation.modal.browse_existing
+        create_from_matrix: presentation.modal.create_from_matrix
+        create_matrix: presentation.modal.create_matrix
+        from_existing: presentation.modal.from_existing
+        from_existing_0: presentation.modal.from_existing_0
+        from_existing_1: presentation.modal.from_existing_1
+        from_existing_2: presentation.modal.from_existing_2
+        from_scratch: presentation.modal.from_scratch
+        from_scratch_0: presentation.modal.from_scratch_0
+        from_scratch_1: presentation.modal.from_scratch_1
+        from_scratch_2: presentation.modal.from_scratch_2
+        from_scratch_3: presentation.modal.from_scratch_3
+
+    modified: presentation.modified
+    my_selection: presentation.my_selection   # FIXME
+    new_playlist: presentation.new_playlist   # FIXME
+    official: presentation.official
+    parameters: presentation.parameters
+    personal_presentation: presentation.personal_presentation
+    play_selection: presentation.play_selection   # FIXME
+    public: presentation.public
+    same_topic: presentation.same_topic   # FIXME
+    save_selection: presentation.save_selection   # FIXME
+    see_more: presentation.see_more
+    suggested_as_complement: presentation.suggested_as_complement   # FIXME
+    suggested_presentation: presentation.suggested_presentation   # FIXME
+    suggestions: presentation.suggestions   # FIXME
+
+removed: removed
+
+resource:
+    add: resource.add
+    added: resource.added
+    browse: resource.browse
+    delete: resource.delete
+    deleted: resource.deleted
+    edit: resource.edit
+    modified: resource.modified
+    none_found_in_this_space: resource.none_found_in_this_space
+    officials: resource.officials
+    personals: resource.personals
+    shared: resource.shared
+
+role:
+    prof: role.prof
+    stud: role.stud
+
+show:
+    playlist: show.playlist
+    resource_details: show.resource_details
+    total_duration: show.total_duration
+
+tab:
+    mail: tab.mail
+    password: tab.password
+    role: tab.role
+    user: tab.user
+    users: tab.users
+
+table:
+    action: table.action
+    created: table.created
+    creation: table.creation
+    description: table.description
+    duration: table.duration
+    official: table.official
+    routes: table.routes
+    size: table.size
+    title: table.title
+    topic: table.topic
+    type: table.type
+    update: table.update
+    video: table.video
+
+text:
+    password: text.password
+
+topic:
+    add: topic.add
+    added: topic.added
+    delete: topic.delete
+    deleteMessage: topic.deleteMessage
+    deleted: topic.deleted
+    edit: topic.edit
+    main_title: topic.main_title
+    modified: topic.modified
+    new_root: topic.new_root
+
+user:
+    role:
+        admin: user.role.admin
+        student: user.role.student
+        teacher: user.role.teacher

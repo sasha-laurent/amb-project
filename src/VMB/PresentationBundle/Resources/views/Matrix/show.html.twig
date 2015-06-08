@@ -38,16 +38,16 @@
 		<hr/>
 		<div class="row">
 			<div class="col-sm-7">
-				<h4><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Aperçu de la ressource courante</h4>
+				<h4><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> {{ 'browse.preview_current_resource'|trans }}</h4>
 				{% include '::players.html.twig' %}
 			</div>
 			<div class="col-sm-5">
-				<h4><span class="glyphicon glyphicon-open" aria-hidden="true"></span>  Parcourir les ressources{% if entity.official %} officielles{% endif %}</h4>
+				<h4><span class="glyphicon glyphicon-open" aria-hidden="true"></span>  {{ 'resource.browse'|trans }}{% if entity.official %} {{ 'resource.officials'|trans }}{% endif %}</h4>
 				<div id="browse_file" role="tab-panel">
 					<ul class="nav nav-tabs" role="tablist">
-						<li role="presentation" class="active"><a href="#personal" aria-controls="personal" role="tab" data-toggle="tab">Personnelles</a></li>
-						<li role="presentation"><a href="#official" aria-controls="official" role="tab" data-toggle="tab">Officielles</a></li>
-						{% if not entity.official %}<li role="presentation"><a href="#unofficial" aria-controls="unoffficial" role="tab" data-toggle="tab">Partagées</a></li>{% endif %}
+						<li role="presentation" class="active"><a href="#personal" aria-controls="personal" role="tab" data-toggle="tab">{{ 'resource.personals'|trans }}</a></li>
+						<li role="presentation"><a href="#official" aria-controls="official" role="tab" data-toggle="tab">{{ 'resource.officials'|trans }}</a></li>
+						{% if not entity.official %}<li role="presentation"><a href="#unofficial" aria-controls="unoffficial" role="tab" data-toggle="tab">{{ 'resource.shared'|trans }}</a></li>{% endif %}
 						<li role="presentation"><a href="{{ path('resource_new') }}"><span class="glyphicon glyphicon-plus"></span></a></li>
 					</ul>
 					<div class="tab-content">
@@ -59,8 +59,8 @@
 										<div style="" aria-expanded="true" class="panel-collapse">
 											<ul class="list-group">
 												<li class="list-group-item">
-													<em>Aucune ressource trouvée pour ce sujet dans cet espace
-													{% if entity.official %}<br/>Cette matrice étant officielle, seules les ressources officielles (et donc indexées) sont ici affichées{% endif %}</em>
+													<em>{{ 'resource.none_found_in_this_space'|trans }}
+													{% if entity.official %}<br/>{{ 'matrix.note_resource'|trans }}{% endif %}</em>
 												</li>
 											</ul>
 										</div>
@@ -108,15 +108,15 @@
 		<table class="table">
 			<tbody>
 				<tr>
-					<th>Description</th>
+					<th>{{ 'table.description'|trans }}</th>
 					<td>{{ entity.description }}</td>
 				</tr>
 				<tr>
-					<th>Création</th>
+					<th>{{ 'table.creation'|trans }}</th>
 					<td>{{ entity.dateCreation|date('d/m/y') }}</td>
 				</tr>
 				<tr>
-					<th>Mise à jour</th>
+					<th>{{ 'table.update'|trans }}</th>
 					<td>{{ entity.dateUpdate|date('d/m/y') }}</td>
 				</tr>
 			</tbody>
@@ -131,28 +131,28 @@
 		<div class="modal-content">
 		  <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-label="{{ 'Close'|trans }}"><span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title" id="modalEditRowsLabel">Modifier les lignes et colonnes</h4>
+			<h4 class="modal-title" id="modalEditRowsLabel">{{ 'matrix.modify_structure'|trans }}</h4>
 		  </div>
 			<div class="modal-body">
 				<div class="row">
 					<div class="col-md-6">
-						<h4 class="text-center">Points de vues</h4>
-						<ul class="list-group">
+						<h4 class="text-center">{{ 'matrix.povs'|trans }} <button class="btn btn-default" role="button" type="button" id="addPov"><span class="glyphicon glyphicon-plus"></span></button></h4>
+						<ul class="list-group Pov-list">
 							{% for pov in entity.povs %}
 								<li class="list-group-item row" data-type="Pov" data-id="{{ pov.id }}">
 									<div class="col-md-10 matrix-row-title">{{ pov.title }}</div>
-									<div class="col-md-2 text-right"><span class="glyphicon glyphicon-remove"></span></div>
+									<div class="col-md-2 text-right"><a class="rm-btn" type="button"><span class="glyphicon glyphicon-remove"></span></a></div>
 								</li>
 							{% endfor %}
 						</ul>
 					</div>
 					<div class="col-md-6">
-						<h4 class="text-center">Niveaux</h4>
-						<ul class="list-group">
+						<h4 class="text-center">{{ 'matrix.levels'|trans }} <button class="btn btn-default" role="button" type="button" id="addLevel"><span class="glyphicon glyphicon-plus"></span></button></h4>
+						<ul class="list-group Level-list">
 							{% for lvl in entity.levels %}
 								<li class="list-group-item row" data-type="Level" data-id="{{ lvl.id }}">
 									<div class="col-md-10 matrix-row-title">{{ lvl.title }}</div>
-									<div class="col-md-2 text-right"><span class="glyphicon glyphicon-remove"></span></div>
+									<div class="col-md-2 text-right"><a class="rm-btn" type="button"><span class="glyphicon glyphicon-remove"></span></a></div>
 								</li>
 							{% endfor %}
 						</ul>
@@ -177,6 +177,8 @@
 {% block script %}
 	{{ parent() }}
 	<script>
+	rowsUpdated = false;
+	
 	resourcesCollection = {
 		{% for key, subArrResources in resources %}
 			{% for elt in subArrResources %}
@@ -351,35 +353,111 @@
 		}
 	});
 	
-	function updateTitle(id, type, title) {
+	
+	// Matrix rows management
+	function updateTitle(item, id, type, title) {
 		$.ajax({
 			type: "POST",
 			url: "{{ path('matrix_edit_row') }}",
-			data: { rowId: id, matrixId: entity.id, title: title, rowType: type },
+			data: { rowId: id, matrixId: {{ entity.id }}, title: title, rowType: type },
 			cache: false,
 			success: function(data){
-				if(data == 'ok') {
-					alert('ok');
+				if($.isNumeric(data)) {
+					$(item).html(title);
+					$(item).removeClass('inputMode');
+					if(id == "0") {
+						$(item).closest('li').attr('data-id', data);
+					}
+					rowsUpdated = true;
+				}
+				else {
+					alert('Une erreur est survenue');
 				}
 			}
 		});    
 		return false;
 	}
 	
-	$('.matrix-row-title').click(function(event) {
-		if(!$(this).hasClass('inputMode')) {
-			$(this).addClass('inputMode');
-			title = $(this).html();
-			$(this).html('<div class="input-group"> \
-			  <input type="text" class="form-control" value="' + title + '" />  \
-			  <span class="input-group-btn"> \
-				<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-ok"></span></button> \
-			  </span> \
-			</div>');
-			$(this).find('button').click(function(event) { 
-				updateTitle($(this).closest('li').attr('data-id'), $(this).closest('li').attr('data-type'), $(this).closest('li').find('input').val()); 
-			});
+	function deleteRow(item, id, type) {
+		if(id == 0) {
+			$(item).remove();
+		}
+		else {
+			$.ajax({
+				type: "POST",
+				url: "{{ path('matrix_delete_row') }}",
+				data: { rowId: id, matrixId: {{ entity.id }}, rowType: type },
+				cache: false,
+				success: function(data){
+					if(data == 'ok') {
+						$(item).remove();
+						rowsUpdated = true;
+					}
+					else {
+						alert('Une erreur est survenue');
+					}
+				}
+			});    
+		}
+		return false;
+	}
+	
+	function addNewElt(type) {
+		$('.' + type + '-list').append('<li class="list-group-item row" data-type="' + type + '" data-id="0"> \
+									<div class="col-md-10 matrix-row-title inputMode"> \
+										<div class="input-group"> \
+										  <input type="text" class="form-control" value="Nouvelle ligne" />  \
+										  <span class="input-group-btn"> \
+											<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-ok"></span></button> \
+										  </span> \
+										</div> \
+									</div> \
+									<div class="col-md-2 text-right"><a class="rm-btn" type="button"><span class="glyphicon glyphicon-remove"></span></button></a> \
+								</li>');
+		newItem = $('.' + type + '-list li').last();
+		mapEditAction($(newItem).find('.matrix-row-title'));
+		mapUpdateAction($(newItem).find('.matrix-row-title button'));
+		mapDeleteAction($(newItem).find('.rm-btn'));
+	}
+	
+	function mapDeleteAction(buttonSelector) {
+		$(buttonSelector).click(function(event) {
+			deleteRow($(this).closest('li'), $(this).closest('li').attr('data-id'), $(this).closest('li').attr('data-type')); 
+		});
+	}
+	
+	function mapUpdateAction(buttonSelector) {
+		$(buttonSelector).click(function(event) {
+			updateTitle($(this).closest('.matrix-row-title'), $(this).closest('li').attr('data-id'), $(this).closest('li').attr('data-type'), $(this).closest('li').find('input').val()); 
+		});
+	}
+	
+	function mapEditAction(selector) {
+		$(selector).click(function(event) {
+			if(!$(this).hasClass('inputMode')) {
+				$(this).addClass('inputMode');
+				title = $(this).html();
+				$(this).html('<div class="input-group"> \
+				  <input type="text" class="form-control" value="' + title + '" />  \
+				  <span class="input-group-btn"> \
+					<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-ok"></span></button> \
+				  </span> \
+				</div>');
+				mapUpdateAction($(this).find('button'));
+			}
+		});
+	}
+	
+	mapDeleteAction($('.rm-btn'));
+	mapEditAction('.matrix-row-title');
+	$('#addPov').click(function(event) { addNewElt('Pov'); });
+	$('#addLevel').click(function(event) { addNewElt('Level'); });
+	
+	$('#modalEditRows').on('hide.bs.modal', function (event) {
+		if(rowsUpdated) {
+			location.reload();
 		}
 	});
+	
 	</script>
 {% endblock %}

@@ -1,0 +1,40 @@
+change_password:
+    submit: change_password.submit
+
+group:
+    edit:
+        submit: group.edit.submit
+
+    new:
+        submit: group.new.submit
+
+profile:
+    edit:
+        submit: profile.edit.submit
+
+registration:
+    back: registration.back
+    check_email: registration.check_email
+    confirmed: registration.confirmed
+
+    email:
+        message: registration.email.message
+        subject: registration.email.subject
+
+    submit: registration.submit
+
+resetting:
+    request:
+        invalid_username: resetting.request.invalid_username
+        submit: resetting.request.submit
+        username: resetting.request.username
+
+    reset:
+        submit: resetting.reset.submit
+
+security:
+    login:
+        password: security.login.password
+        remember_me: security.login.remember_me
+        submit: security.login.submit
+        username: security.login.username

@@ -4,12 +4,12 @@
     <div class="panel panel-default">
 		<div class="panel-heading">
 			<div class="row">
-				<div class="col-md-{% if is_granted('ROLE_TEACHER') %}4{% else %}5{% endif %}">Titre</div>
-				<div class="col-md-2 text-center">Thématique</div>				
-				<div class="col-md-2 text-center">Mise à jour</div>				
-				<div class="col-md-1 text-center">Taille</div>	
-				{% if is_granted('ROLE_TEACHER') %}<div class="col-md-1 text-center">Officielle</div>{% endif %}
-				<div class="col-md-2 text-center">Action</div>
+				<div class="col-md-{% if is_granted('ROLE_TEACHER') %}4{% else %}5{% endif %}">{{ 'table.title'|trans }}</div>
+				<div class="col-md-2 text-center">{{ 'table.topic'|trans }}</div>				
+				<div class="col-md-2 text-center">{{ 'table.update'|trans }}</div>				
+				<div class="col-md-1 text-center">{{ 'table.size'|trans }}</div>	
+				{% if is_granted('ROLE_TEACHER') %}<div class="col-md-1 text-center">{{ 'table.official'|trans }}</div>{% endif %}
+				<div class="col-md-2 text-center">{{ 'table.action'|trans }}</div>
         	</div>
 		</div>
 	</div>
@@ -24,11 +24,11 @@
                 {% if is_granted('ROLE_TEACHER') %}
                 <div class="col-md-1 text-center">
 					{% if entity.official %}
-						<span class="label label-success">oui</span>
+						<span class="label label-success">{{ 'label.yes'|trans }}</span>
 					{% else %}
 						<a href="{{ path('matrix_official', {'id' : entity.id}) }}" class="switch">
-							<span class="shown-value label label-danger">non</span>
-							<span class="hidden-value label label-success">oui</span>
+							<span class="shown-value label label-danger">{{ 'label.no'|trans }}</span>
+							<span class="hidden-value label label-success">{{ 'label.yes'|trans }}</span>
 						</a>
 					{% endif %}
 				</div>
@@ -43,7 +43,7 @@
             </li>
         {% else %}
 			<li class="list-group-item row">
-				<div class="col-md-12 text-center"><em>Aucune matrice n'a été créée pour le moment dans cet espace</em></div>
+				<div class="col-md-12 text-center"><em>{{ 'message.no_elt_found'|trans }}</em></div>
             </li>
         {% endfor %}
     </ul>

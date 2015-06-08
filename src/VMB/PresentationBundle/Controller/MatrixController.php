@@ -32,10 +32,9 @@ class MatrixController extends Controller
         $em = $this->getDoctrine()->getManager();
 		
 		$entities = $em->getRepository('VMBPresentationBundle:Matrix')->findAllWithTopics($this->getUser());
-		$mainTitle = 'Affichage de vos matrices de présentation';
 
         return $this->render('VMBPresentationBundle:Matrix:index.html.twig', array(
-            'mainTitle' => $mainTitle,
+            'mainTitle' => $this->get('translator')->trans('matrix.main_title'),
 			'addButtonUrl' => $this->generateUrl('matrix_new'),
             'entities' => $entities
         ));
@@ -55,7 +54,7 @@ class MatrixController extends Controller
         $entity = $em->getRepository('VMBPresentationBundle:Matrix')->getMatrixWithResources($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Matrix entity.');
+            throw $this->createNotFoundException($this->get('translator')->trans('message.error.entity_not_found', array('%class%' => 'Matrix')));
         }
         
         if($this->get('security.context')->isGranted('ROLE_ADMIN') || $entity->isOwner($this->getUser())) {					
@@ -74,7 +73,7 @@ class MatrixController extends Controller
 			));
 		}
 		else {
-			$this->get('request')->getSession()->getFlashBag()->add('danger', 'Vous ne disposez pas des droits suffisants pour effectuer cette opération');
+			$this->get('request')->getSession()->getFlashBag()->add('danger', $this->get('translator')->trans('message.error.not_enough_rights'));
 			return $this->redirect($this->generateUrl('matrix'));
 		}
     }
@@ -141,7 +140,7 @@ class MatrixController extends Controller
 						$nbAdd++;
 					}
 					else {
-						$request->getSession()->getFlashBag()->add('danger', 'Une ressource n\'a pu être ajoutée car elle n\'est pas officielle');
+						$request->getSession()->getFlashBag()->add('danger', $this->get('translator')->trans('matrix.error.resource_unofficial_not_added'));
 					}
 				}
 			}
@@ -149,7 +148,7 @@ class MatrixController extends Controller
 
 		$em->flush();
 		
-		$flashMessage = 'Matrice modifiée avec succès - '.$nbAdd.' ajouts | '.$nbRm.' retraits';
+		$flashMessage = $this->get('translator')->trans('matrix.modified').' - '.$nbAdd.' '. $this->get('translator')->trans('added') . ' | '.$nbRm.' '. $this->get('translator')->trans('removed');
 		$request->getSession()->getFlashBag()->add('success', $flashMessage);
 		return $this->redirect($this->generateUrl('matrix_show', array('id' => $id)));
     }
@@ -183,7 +182,7 @@ class MatrixController extends Controller
 			return $this->renderForm($matrix);
 		}
 		else {
-			$this->get('request')->getSession()->getFlashBag()->add('danger', 'Vous ne disposez pas des droits suffisants pour effectuer cette opération');
+			$this->get('request')->getSession()->getFlashBag()->add('danger', $this->get('translator')->trans('message.error.not_enough_rights'));
 			return $this->redirect($this->generateUrl('matrix'));
 		}
     }
@@ -198,6 +197,7 @@ class MatrixController extends Controller
     {
 		$request = $this->get('request');
 		$options = array();
+		$translator = $this->get('translator');
 		
 		if($matrix->getId() != null) {
 			$options = array('action'=> $this->generateUrl('matrix_edit', array('id' => $matrix->getId())));
@@ -217,7 +217,7 @@ class MatrixController extends Controller
 				$em->persist($matrix);
 				$em->flush();
 
-				$flashMessage = !$matrix->toString() ? 'Matrice ajoutée' : 'Matrice modifiée';
+				$flashMessage = !$matrix->toString() ? $translator->trans('matrix.added') : $translator->trans('matrix.modified');
 				$request->getSession()->getFlashBag()->add('success', $flashMessage);
 				return $this->redirect($this->generateUrl('matrix_show', array('id' => $matrix->getId())));
 			}
@@ -226,7 +226,7 @@ class MatrixController extends Controller
 		return $this->render('::Backend/form.html.twig', 
 			array(
 				'form' => $form->createView(),
-				'mainTitle' => ((!($matrix->toString())) ? 'Ajout d\'une matrice' : 'Modification d\'une matrice'),
+				'mainTitle' => ((!($matrix->toString())) ? $translator->trans('matrix.add') : $translator->trans('matrix.edit')),
 				'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('matrix')),
 			));
     }
@@ -240,10 +240,12 @@ class MatrixController extends Controller
     */
     public function officialAction(Request $request, $id)
     {
+		$translator = $this->get('translator');
+		
 		$em = $this->getDoctrine()->getManager();
         $matrix = $em->getRepository('VMBPresentationBundle:Matrix')->getMatrixWithResources($id);
         if($matrix  == null) {
-			$request->getSession()->getFlashBag()->add('danger',"An error occured");
+			$request->getSession()->getFlashBag()->add('danger', $translator->trans('message.error.occured'));
 			return $this->redirect($this->generateUrl('matrix'));
 		}
 
@@ -263,20 +265,20 @@ class MatrixController extends Controller
 					$matrix->setOfficial(true);
 					$em->flush();
 					
-					$request->getSession()->getFlashBag()->add('success', 'Matrice passée en officiel');
+					$request->getSession()->getFlashBag()->add('success', $translator->trans('matrix.official_success'));
 				}
 				else {
-					$request->getSession()->getFlashBag()->add('danger',"Action impossible : les ressources utilisées ne sont pas toutes officielles");
+					$request->getSession()->getFlashBag()->add('danger', $translator->trans('matrix.official_fail'));
 				}
 			} catch (\Exception $e) {
-				$request->getSession()->getFlashBag()->add('danger',"An error occured");
+				$request->getSession()->getFlashBag()->add('danger', $translator->trans('message.error.occured'));
 			}
 			return $this->redirect($this->generateUrl('matrix'));
 		}
 
 		// Si la requête est en GET, on affiche une page de confirmation
 		return $this->render('VMBPresentationBundle:Matrix:official.html.twig', array(
-			'mainTitle' => 'Officialisation d\'une matrice',
+			'mainTitle' => $translator->trans('matrix.official_title'),
 			'backButtonUrl' => $this->generateUrl('matrix')
 		));
     }
@@ -290,6 +292,7 @@ class MatrixController extends Controller
     */
     public function deleteAction(Request $request, $id)
     {
+		$translator = $this->get('translator');
         $matrix = $this->getMatrix($id);
         
         if($this->get('security.context')->isGranted('ROLE_ADMIN') || $matrix->isOwner($this->getUser())) {	
@@ -300,17 +303,17 @@ class MatrixController extends Controller
 					$em->remove($matrix);
 					$em->flush();
 					
-					$request->getSession()->getFlashBag()->add('success', 'Matrice supprimée');
+					$request->getSession()->getFlashBag()->add('success', $translator->trans('matrix.deleted'));
 				} catch (\Exception $e) {
-					$request->getSession()->getFlashBag()->add('danger',"An error occured");
+					$request->getSession()->getFlashBag()->add('danger', $translator->trans('message.error.occured'));
 				}
 				return $this->redirect($this->generateUrl('matrix'));
 			}
 
 			// Si la requête est en GET, on affiche une page de confirmation avant de delete
 			return $this->render('::Backend/delete.html.twig', array(
-				'entityTitle' => 'la matrice "'.$matrix->toString().'"',
-				'mainTitle' => 'Suppression d\'une matrice',
+				'entityTitle' => '"'.$matrix->toString().'"',
+				'mainTitle' => $translator->trans('matrix.delete'),
 				'backButtonUrl' => $this->generateUrl('matrix')
 			));
 		}
@@ -337,7 +340,7 @@ class MatrixController extends Controller
 				$type = $request->request->get('rowType');
 				
 				try {
-					$elt = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:'.$type)->find($id);
+					$elt = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:'.$type)->find($rowId);
 					// If the element was found
 					if($elt !== null && $elt->getMatrix()->getId() == intval($matrixId)) {
 						$em = $this->getDoctrine()->getManager();
@@ -387,14 +390,14 @@ class MatrixController extends Controller
 						}
 					}
 					else {
-						$elt = $em->getRepository('VMBPresentationBundle:'.$type)->find($id);
+						$elt = $em->getRepository('VMBPresentationBundle:'.$type)->find($rowId);
 					}
 					
 					// If the element was found
 					if($elt !== null && $elt->getMatrix()->getId() == intval($matrixId)) {
 						$elt->setTitle($title);
 						$em->flush();
-						return new Response('ok');	
+						return new Response($elt->getId());	
 					}
 				} catch (\Exception $e) {
 					return new Response($e); 
@@ -415,7 +418,7 @@ class MatrixController extends Controller
         $matrix = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Matrix')->find($id);
 
 		if ($matrix == null) {
-			throw $this->createNotFoundException('Unable to find Matrix entity.');
+			throw $this->createNotFoundException($this->get('translator')->trans('message.error.entity_not_found', array('%class%' => 'Matrix')));
 		}
 
 		return $matrix;

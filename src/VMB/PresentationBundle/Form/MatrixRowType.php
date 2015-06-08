@@ -15,7 +15,7 @@ class MatrixRowType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', null, array('label' => 'Titre'))
+            ->add('title', null, array('label' => 'form.label.title'))
         ;
     }
     

@@ -18,7 +18,7 @@ class CaddyController extends Controller
 	public function showAction($display)
 	{
 		return $this->render('VMBUserBundle:Caddy:show.html.twig', array(
-            'mainTitle' => 'Favoris',
+            'mainTitle' => $this->get('translator')->trans('menu.bookmark'),
             'display' => $display
         ));
 	} 

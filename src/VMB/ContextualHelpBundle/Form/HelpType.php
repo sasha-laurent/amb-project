@@ -29,15 +29,15 @@ class HelpType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', null, array('label' => 'Titre'))
-            ->add('text', null, array('label' => 'Texte'))
+            ->add('title', null, array('label' => 'form.label.title'))
+            ->add('text', null, array('label' => 'form.label.text'))
             ->add('route', 'choice', array(
-				'label' => 'Adresses associées', 
+				'label' => 'form.label.associated_routes', 
 				'choices' => $this->routes,
 				'multiple' => true
 			))
-			->add('file', 'file', array('label' => 'Vidéo', 'required' => false))
-            ->add('save', 'submit', array('label' => 'Sauvegarder'))
+			->add('file', 'file', array('label' => 'form.label.video', 'required' => false))
+            ->add('save', 'submit', array('label' => 'actions.save'))
         ;
     }
     

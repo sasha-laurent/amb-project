@@ -83,7 +83,7 @@
 			if(instantDelete)
 			{
 				// Création du lien
-				$deleteLink = $('<div class="col-sm-1"><a href="#" class="btn btn-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>');
+				$deleteLink = $('<div class="col-sm-1"><a href="#" title="{{ "actions.delete"|trans|desc('Delete') }}" class="btn btn-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>');
 
 				// Ajout du lien
 				$prototype.append($deleteLink);

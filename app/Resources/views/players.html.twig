@@ -22,10 +22,10 @@
 	</div>
 	<div {% if playingResource.type != 'image' %}style="display: none;"{% endif %} class="image_player text-center">
 		{% if playingResource.type == 'image' %}
-		<a href="{{ asset(playingResource.getResourcePath) }}" target="_blank">Afficher ce fichier dans un autre onglet</a>
+		<a href="{{ asset(playingResource.getResourcePath) }}" target="_blank">{{ "player.new_tab"|trans|desc('Display this file in a new tab') }}</a>
 		<img style='width:100%;' src="{{ asset(playingResource.getResourcePath) }}" />
 		{% else %}
-		<a href="#" target="_blank">Afficher ce fichier dans un autre onglet</a>
+		<a href="#" target="_blank">{{ "player.new_tab"|trans|desc('Display this file in a new tab') }}</a>
 		<img style='width:100%;' />
 		{% endif %}
 	</div>
@@ -34,7 +34,7 @@
 		<a href="{{ asset(playingResource.getResourcePath) }}" target="_blank">Afficher ce fichier dans un autre onglet</a>
 		<iframe src="{{ asset(playingResource.getResourcePath) }}" width="542" height="400" align="middle"></iframe>
 		{% else %}
-		<a href="#" target="_blank">Afficher ce fichier dans un autre onglet</a>
+		<a href="#" target="_blank">{{ "player.new_tab"|trans|desc('Display this file in a new tab') }}</a>
 		<iframe style="visibility:hidden;" width="542" height="400" align="middle"></iframe>
 		{% endif %}
 	</div>
@@ -48,11 +48,11 @@
 		</audio>
 	</div>
 	<div style="display: none;" class="image_player text-center">
-		<a href="#" target="_blank">Afficher ce fichier dans un autre onglet</a>
+		<a href="#" target="_blank">{{ "player.new_tab"|trans|desc('Display this file in a new tab') }}</a>
 		<img style='width:100%;' />
 	</div>
 	<div style="display: none;" class="file_player text-center">
-		<a href="#" target="_blank">Afficher ce fichier dans un autre onglet</a>
+		<a href="#" target="_blank">{{ "player.new_tab"|trans|desc('Display this file in a new tab') }}</a>
 		<iframe style="visibility:hidden;" width="542" height="400" align="middle"></iframe>
 	</div>
 	{% endif %}

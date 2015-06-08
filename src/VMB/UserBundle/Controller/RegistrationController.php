@@ -71,7 +71,7 @@ class RegistrationController extends BaseController
 			$this->get('mailer')->send($message);
 
             if (null === $response = $event->getResponse()) {
-				$flashMessage = 'Utilisateur ajouté avec succès';
+				$flashMessage = $this->get('translator')->trans('admin.user.added');
 				$request->getSession()->getFlashBag()->add('success', $flashMessage);
                 return $this->redirect($this->generateUrl('admin_user'));
             }
@@ -84,7 +84,7 @@ class RegistrationController extends BaseController
         return $this->render('::Backend/form.html.twig', 
 			array(
 				'form' => $form->createView(),
-				'mainTitle' => 'Ajout d\'un utilisateur',
+				'mainTitle' => $this->get('translator')->trans('admin.user.add'),
 				'backButtonUrl' => $this->generateUrl('admin_user')
 			));
     }

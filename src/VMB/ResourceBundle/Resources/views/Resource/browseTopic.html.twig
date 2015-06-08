@@ -7,7 +7,7 @@
 		</div>
 		<div class="col-md-3 text-right">
 			<a class="btn btn-default" href="{{ path('resource_new') }}">
-				Importer <span class="left glyphicon glyphicon-plus" aria-hidden="true"></span>
+				{{ 'actions.import'|trans }} <span class="left glyphicon glyphicon-plus" aria-hidden="true"></span>
 			</a>
 		</div>
 	</div>
@@ -27,9 +27,9 @@
 						<input type="hidden" value="{{ value }}" name="{{ key }}" />
 					{% endfor %}
 				</form>
-				<h4>Filtres</h4>
+				<h4>{{ 'browse.filters'|trans }}</h4>
 				<div class="row filter">
-					<div class="col-md-10">Officielles uniquement :</div>
+					<div class="col-md-10">{{ 'browse.official_only'|trans }} :</div>
 					<div class="col-md-2 text-right">
 						<a href="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'official':((app.request.get('official') + 1) % 2)|default(1)})) }}" class="switch">
 							{% if app.request.get('official')|default(0) == 0 %}
@@ -43,7 +43,7 @@
 					</div>
 				</div>
 				<div class="row filter">
-					<div class="col-md-10">Ressources personnelles :</div>
+					<div class="col-md-10">{{ 'browse.personal_resources'|trans }} :</div>
 					<div class="col-md-2 text-right">
 						<a href="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'personal':((app.request.get('personal') + 1) % 2)|default(1)})) }}" class="switch">
 							{% if app.request.get('personal')|default(0) == 0 %}
@@ -56,7 +56,7 @@
 						</a>
 					</div>
 				</div>
-				<h4>Thématiques</h4>
+				<h4>{{ 'menu.topics'|trans }}</h4>
 				{% include "VMBResourceBundle:Resource:topicLink.html.twig" with {'links': topics, 'current': topic.id|default(null)} %}
 			</div>
 		</div>
@@ -67,7 +67,7 @@
 					<a class="thumbnail-link" href="{{ path('resource_show', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'page':null, 'position': nbPerPage*(page-1) + loop.index, 'id': entity.id })) }}">
 						<div class="thumbnail block-browse block-resource">
 							<div class="thumbnail-description">
-								<h4>Description</h4>
+								<h4>{{ 'form.label.description'|trans }}</h4>
 								<hr/>
 								<p>{{ entity.description }}</p>
 							</div>
@@ -102,7 +102,7 @@
 									<h4 class="modal-title" id="modal-tag-label-{{ entity.id }}">Indexer une ressource</h4>
 								  </div>
 								  <div class="modal-body">
-									  Cliquez sur la structure de connaissance que vous souhaitez renseigner ci-dessous. Ces dernières sont classées par thématique. Seules les thématiques associées à la ressource vous sont présentées.
+									  {{ 'message.ontology.modal'|trans }}
 									  <hr/>
 									  <ul>
 									  {% for t in entity.topic %}
@@ -111,7 +111,7 @@
 											{% for o in t.ontologies %}
 												<li><a href="{{ path('ontology_index', {'video[]': entity.id, 'ontology': o.id}) }}">{{ o.name }}</a></li>
 											{% else %}
-												<li><em>Aucune structure de connaissance pour cette thématique</em></li>
+												<li><em>{{ 'message.ontology.none_for_this_topic'|trans }}</em></li>
 											{% endfor %}
 											</ul>
 										</li>
@@ -119,7 +119,7 @@
 									  </ul>
 								  </div>
 								  <div class="modal-footer">
-									<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+									<button type="button" class="btn btn-default" data-dismiss="modal">{{ 'actions.close'|trans }}</button>
 								  </div>
 								</div>
 							  </div>
@@ -129,7 +129,7 @@
 				</div>
 				{% else %}
 					<div class="col-md-12 text-center">
-						<em>Aucune ressource dans cet espace pour ces paramètres de recherche</em>
+						<em>{{ 'message.resource.none_for_this_search'|trans }}</em>
 						<br/><br/>
 					</div>
 				{% endfor %}

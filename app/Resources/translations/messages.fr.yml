@@ -1,17 +1,252 @@
-Connexion: Connexion
-Consulter: Consulter
-Gérer: Gérer
-Présentations: Présentations
-Ressources: Ressources
-Matrices: Matrices
-Thématiques: Thématiques
-Mes présentations: Mes présentations
-Structure des connaissances: Structure des connaissances
-Recherche: Recherche
+'Aide contextuelle': 'Aide contextuelle'
+Close: Close
 Fermer: Fermer
-Aide contextuelle: Aide contextuelle
-Traduction: Traduction
-en_flag: gb
-fr_flag: fr
-en_name: English
-fr_name: Français
+Titre: Titre
+
+actions:
+    add: Ajouter
+    cancel: Annuler
+    close: Fermer
+    confirm: Confirmer
+    delete: Supprimer
+    duplicate: Dupliquer
+    edit: Modifier
+    import: Importer
+    next: Suivant
+    options: Options
+    previous: Précédent
+    save: Sauvegarder
+    search: Rechercher
+
+added: Ajouts
+
+admin:
+    user: 'l''utilisateur'
+    user.add: 'Ajout d''un utilisateur'
+    user.added: 'Utilisateur ajoutée'
+    user.delete: 'Suppression d''un utilisateur'
+    user.manage: 'Gestion des utilisateurs'
+
+browse:
+    default_presentations: 'Par défaut'
+    filters: Filtres
+    no_presentation: 'Aucune présentation publique dans cet espace pour ces paramètres de recherche'
+    official_only: 'Officielles uniquement'
+    parameters_title: 'Affiner par'
+    personal_presentation: 'Présentations personnelles'
+    personal_resources: 'Ressources personnelles'
+    preview_current_resource: 'Aperçu de la ressource courante'
+
+form:
+    label:
+        associated_routes: 'Adresses associées'
+        current_thumbnail: form.label.current_thumbnail
+        description: Description
+        file: Fichier
+        keywords: Mots-clés
+        role: Rôle
+        text: Texte
+        thumbnail: Miniature
+        title: Titre
+        topic: Thématique
+        video: Vidéo
+
+help: Aide
+help.add: 'Ajouter une aide'
+help.added: 'Aide ajoutée'
+help.delete: 'Suppression d''une aide'
+help.deleted: 'Aide supprimée'
+help.edit: 'Modification d''une aide'
+help.edited: 'Aide modifiée'
+help.main_title: 'Gestion des aides contextuelles'
+help.no_help_for_this_page: 'Aucune aide contextuelle pour cette page'
+
+label:
+    'no': non
+    'yes': oui
+
+matrix:
+    add: 'Ajout d''une matrice'
+    added: 'Matrice ajoutée'
+    delete: 'Suppression d''une matrice'
+    deleted: 'Matrice supprimée'
+    edit: 'Modification d''une matrice'
+
+    error:
+        resource_unofficial_not_added: 'Une ressource n''a pu être ajoutée car elle n''est pas officielle'
+
+    levels: Niveaux
+    main_title: 'Gestion de vos matrices de présentation'
+    modified: 'Matrice modifiée'
+    modify_structure: 'Modifier la structure de la matrice'
+    note_resource: 'Cette matrice étant officielle, seules les ressources officielles (et donc indexées) sont ici affichées'
+    official_fail: 'Action impossible : les ressources utilisées ne sont pas toutes officielles'
+    official_success: 'Matrice passée en officiel'
+    official_title: 'Officialisation d''une matrice'
+    povs: 'Points de vue'
+
+menu:
+    bookmark: Favoris
+    browse: Consulter
+    connexion: Connexion
+    contextual_help: 'Aide contextuelle'
+    homepage: Accueil
+    logout: Déconnexion
+    manage: Gérer
+    matrixes: Matrices
+    ontologies: 'Structure des connaissances'
+    ontology: 'Structure des connaissances'
+    presentation: menu.presentation
+    presentations: Présentations
+    resources: Ressources
+    topics: Thématiques
+    translation: Traduction
+    users_management: 'Gestion des utilisateurs'
+
+message:
+    delete: 'Vous avez choisi de supprimer %title%, êtes-vous sûr ?'
+
+    error:
+        entity_not_found: 'L''entité %class% n''a pu être trouvée'
+        not_enough_rights: 'Vous ne disposez pas des droits suffisants pour effectuer cette opération'
+        occured: 'Une erreur est survenue'
+
+    matrix:
+        warning_official: 'cette action ne rend pas automatiquement officielles les présentations issues de cette matrice'
+
+    no_elt_found: 'Aucun élément n''a été trouvé'
+
+    ontology:
+        modal: 'Cliquez sur la structure de connaissance que vous souhaitez renseigner ci-dessous. Ces dernières sont classées par thématique. Seules les thématiques associées à la ressource vous sont présentées.'
+        none_for_this_topic: 'Aucune structure de connaissance pour cette thématique'
+
+    presentation:
+        copy: 'Vous avez choisi de copier la présentation %title%, cette opération entraînera la copie de la présentation ainsi que de la matrice associée dans votre espace personnel, êtes-vous sûr ?'
+
+    resource:
+        none_for_this_search: 'Aucune ressource trouvée pour ces paramètres de recherche'
+
+    save: Sauvegarder
+
+    title:
+        warning: Attention
+
+player:
+    new_tab: 'Afficher ce fichier dans un nouvel onglet'
+
+presentation:
+    add: 'Ajout d''une présentation'
+    added: 'Présentation ajoutée'
+    added_to_playlist: 'Ajoutée à la liste de lecture'
+    advanced_visualisation: 'Visualisation avancée'
+    browse: 'Parcourir les présentations'
+    copy_of: 'Copie de la présentation'
+    copy_success: 'Copie effectuée avec succès'
+    default: 'Par défaut'
+    default_topic: 'Présentations par défaut sur cette thématique'
+    delete: 'Suppression d''une présentation'
+    deleted: 'Présentation supprimée'
+    details: 'Détails de la présentation'
+
+    error:
+        matrix_unofficial: 'La matrice associée n''est pas officielle'
+        presentation_unofficial: 'Une présentation non officielle ne peut être passée en présentation par défaut'
+
+    generate_complement: 'Générer du contenu complémentaire'
+    initial_presentation: 'Présentation initiale'
+    main_title: 'Toutes les présentations'
+
+    modal:
+        browse_existing: 'Parcourir les présentations existantes'
+        create_from_matrix: 'Créer une présentation depuis vos matrices'
+        create_matrix: 'Créer une matrice de présentation'
+        from_existing: 'Créer une présentation à partir d''une présentation existante'
+        from_existing_0: "Si vous souhaitez créer une présentation sans avoir à définir vous même votre matrice de présentation, il est possible de partir d'une matrice existante.\n\t\t\tPour ce faire, il vous suffit de parcourir les présentations existantes et de vous rendre sur celle de votre choix. Une fois sur la page de la présentation, deux possibilités s'offrent à vous."
+        from_existing_1: 'Faire une copie de travail de la présentation ET de la matrice associée en cliquant sur'
+        from_existing_2: 'Ou bien vous rendre dans "Voir plus" puis dans "Visualisation avancée" pour créer une présentation en conservant la matrice d''origine (vous ne pourrez donc pas modifier cette dernière ni ajouter de ressources)'
+        from_scratch: 'Créer une présentation de zéro'
+        from_scratch_0: 'Créer une présentation s''effectue en 3 étapes :'
+        from_scratch_1: 'Choisir dans quelle thématique votre présentation se situe'
+        from_scratch_2: 'Définir une matrice de présentation utilisant les ressources de la thématique en question'
+        from_scratch_3: 'Définir votre présentation à partir de votre matrice'
+
+    modified: 'Présentation modifiée'
+    my_selection: 'Ma sélection'
+    new_playlist: 'Nouvelle liste de lecture'
+    official: Officielle
+    parameters: 'Paramètres de %title%'
+    personal_presentation: 'Présentation personnelle'
+    play_selection: 'Lancer la nouvelle présentation'
+    public: Publique
+    same_topic: 'Présentations de cette thématique'
+    save_selection: 'Sauvegarder ma sélection'
+    see_more: 'Voir plus'
+    suggested_as_complement: 'Suggérée en complément'
+    suggested_presentation: 'Présentation suggérée'
+    suggestions: Suggestions
+
+removed: Retraits
+
+resource:
+    add: 'Ajout d''une ressource'
+    added: 'Ressource ajoutée'
+    browse: 'Parcourir les ressources'
+    delete: 'Suppression d''une ressource'
+    deleted: 'Ressource supprimée'
+    edit: 'Modification d''une ressource'
+    modified: 'Ressource modifiée'
+    none_found_in_this_space: 'Aucune ressource trouvée pour ce sujet dans cet espace'
+    officials: Officielles
+    personals: Personnelles
+    shared: Partagées
+
+role:
+    prof: role.prof
+    stud: role.stud
+
+show:
+    playlist: 'Liste de lecture'
+    resource_details: 'Détails de la ressource'
+    total_duration: 'Durée totale'
+
+tab:
+    mail: tab.mail
+    password: tab.password
+    role: tab.role
+    user: tab.user
+    users: tab.users
+
+table:
+    action: Action
+    created: Créé
+    creation: Création
+    description: Description
+    duration: Durée
+    official: Officiel
+    routes: Routes
+    size: Taille
+    title: Titre
+    topic: Thématique
+    type: Type
+    update: 'Mise à jour'
+    video: Vidéo
+
+text:
+    password: text.password
+
+topic:
+    add: 'Ajouter une thématique'
+    added: 'Thématique ajoutée'
+    delete: 'Suppression d''une thématique'
+    deleteMessage: 'la thématique "%title%" [ATTENTION CELA SUPPRIMERA TOUTES LES MATRICES, RESSOURCES ET PRESENTATIONS LIEES]'
+    deleted: 'Thématique supprimée'
+    edit: 'Thématique modifiée'
+    main_title: 'Classification des thématiques'
+    modified: 'Thématique modifiée'
+    new_root: '+ Nouvelle racine'
+
+user:
+    role:
+        admin: Administrateur
+        student: Étudiant
+        teacher: Professeur

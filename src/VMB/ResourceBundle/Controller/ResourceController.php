@@ -27,7 +27,7 @@ class ResourceController extends Controller
         $entities = $em->getRepository('VMBResourceBundle:Resource')->findAll();
 
         return $this->render('VMBResourceBundle:Resource:index.html.twig', array(
-            'mainTitle' => 'Parcourir les ressources',
+            'mainTitle' => $this->get('translator')->trans('resource.browse'),
 			'addButtonUrl' => $this->generateUrl('resource_new'),
             'entities' => $entities
         ));
@@ -44,10 +44,10 @@ class ResourceController extends Controller
 		$topics = $em->getRepository('VMBPresentationBundle:Topic')->childrenHierarchy();
 		
 		
-		$mainTitle = 'Parcourir les ressources';
+		$mainTitle = $this->get('translator')->trans('resource.browse');
 		if($topic != null) {
 			$topic = $em->getRepository('VMBPresentationBundle:Topic')->find($topic);
-			$mainTitle = $topic->getTitle().' - Ressources';
+			$mainTitle = $topic->getTitle().' - '.$this->get('translator')->trans('menu.resources');
 		}
 		
 		$request = $this->get('request');
@@ -161,7 +161,7 @@ class ResourceController extends Controller
 				$em->remove($resource);
 				$em->flush();
 				
-				$request->getSession()->getFlashBag()->add('success', 'Ressource supprimée');
+				$request->getSession()->getFlashBag()->add('success', $this->get('translator')->trans('resource.deleted'));
 			} catch (\Exception $e) {
 				$request->getSession()->getFlashBag()->add('danger',"An error occured");
 			}
@@ -170,8 +170,8 @@ class ResourceController extends Controller
 
 		// Si la requête est en GET, on affiche une page de confirmation avant de delete
 		return $this->render('::Backend/delete.html.twig', array(
-			'entityTitle' => 'la ressource "'.$resource->getTitle().'"',
-			'mainTitle' => 'Suppression d\'une ressource '.$resource->getTitle(),
+			'entityTitle' => '"'.$resource->getTitle().'"',
+			'mainTitle' => $this->get('translator')->trans('resource.delete'),
 			'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('resource'))
 		));
     }

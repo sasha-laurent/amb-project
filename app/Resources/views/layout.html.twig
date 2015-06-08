@@ -35,18 +35,18 @@
 					<div class="pull-right">
 						{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
 							<div class="btn-group">
-								<a class="btn btn-default" href="{{ path('caddy_show_presentation') }}">
+								<a title="{{ "menu.bookmark"|trans|desc('Bookmark') }}" class="btn btn-default" href="{{ path('caddy_show_presentation') }}">
 									<span class="glyphicon glyphicon-star"></span>
 								</a>
 								<a class="btn btn-default">
 									<span class="header-user">{{ app.user.username }}</span> 
 								</a>
-								<a class="btn btn-default" href="{{ path('fos_user_security_logout') }}">
+								<a title="{{ "menu.logout"|trans|desc('Logout') }}" class="btn btn-default" href="{{ path('fos_user_security_logout') }}">
 									<span class="glyphicon glyphicon-off" aria-hidden="true"></span>
 								</a>
 							</div>
 						{% else %}
-							<a class="btn btn-success" href="{{ path('fos_user_security_login') }}">{{ 'Connexion'|trans }}</a>
+							<a class="btn btn-success" href="{{ path('fos_user_security_login') }}">{{ "menu.connexion"|trans|desc('Connexion') }}</a>
 						{% endif %}
 						
 						<div class="btn-group">
@@ -58,12 +58,16 @@
 							<ul class="dropdown-menu" role="menu">
 								{% for locale in ['en', 'fr'] %}
 									{% if app.request.getLocale != locale %}
-										<li><a href="{{ path(app.request.get('_route'), app.request.get('_route_params')|merge({'_locale' : locale})) }}"><span class="flag flag-icon flag-icon-{{ (locale ~ '_flag')|trans }}"></span> {{ (locale ~ '_name')|trans }}</a></li>
+										<li>
+											<a href="{{ path(app.request.get('_route'), app.request.get('_route_params')|merge({'_locale' : locale})) }}">
+												<span class="flag flag-icon flag-icon-{% if locale == 'en' %}gb{% else %}fr{% endif %}"></span> {% if locale == 'en' %}English{% else %}Français{% endif %}
+											</a>
+										</li>
 									{% endif %}
 								{% endfor %}
 								{% if is_granted('ROLE_ADMIN') %}
 								<li role="presentation" class="divider"></li>
-								<li><a href="{{ path('jms_translation_index') }}" target="_blank">{{ 'Traduction'|trans }}</a></li>
+								<li><a href="{{ path('jms_translation_index') }}" target="_blank">{{ "menu.translation"|trans|desc('Translation') }}</a></li>
 								{% endif %}
 							</ul>
 						</div>
@@ -75,43 +79,41 @@
 						</div>
 					</div>
 				</div>
-				<h3><a href="{{ path('vmb_homepage') }}"><img src="{{ asset('img/vmb.png') }}" alt="VMB" title="Accueil" /></a></h3>
+				<h3><a href="{{ path('vmb_homepage') }}"><img src="{{ asset('img/vmb.png') }}" alt="VMB" title="{{ "menu.homepage"|trans|desc('Homepage') }}" /></a></h3>
 				
 				
 				{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
 				<ul class="header-nav left" role="navigation">
 					<li class="dropdown header-nav-item">
-						<a data-toggle="dropdown" class="dropdown-toggle header-nav-link" href="#">{{ 'Consulter'|trans }} <b class="caret"></b></a>
+						<a data-toggle="dropdown" class="dropdown-toggle header-nav-link" href="#">{{ "menu.browse"|trans|desc('Browse') }} <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="{{ path('vmb_presentation_browse') }}">{{ 'Présentations'|trans }}</a></li>
-                            <li><a href="{{ path('vmb_resource_browse') }}">{{ 'Ressources'|trans }}</a></li>
+                            <li><a href="{{ path('vmb_presentation_browse') }}">{{ "menu.presentations"|trans|desc('Presentations') }}</a></li>
+                            <li><a href="{{ path('vmb_resource_browse') }}">{{ "menu.resources"|trans|desc('Resources') }}</a></li>
                         </ul>
 					</li>
 					<li class="dropdown header-nav-item">
-						<a data-toggle="dropdown" class="dropdown-toggle header-nav-link" href="#">{{ 'Gérer'|trans }} <b class="caret"></b></a>
+						<a data-toggle="dropdown" class="dropdown-toggle header-nav-link" href="#">{{ "menu.manage"|trans|desc('Manage') }} <b class="caret"></b></a>
                         <ul class="dropdown-menu">		
 							{% if is_granted('ROLE_ADMIN') %}
-								<li><a href="{{ path('topic') }}">{{ 'Thématiques'|trans }}</a></li>
-								<li><a href="{{ path('matrix') }}">{{ 'Matrices'|trans }}</a></li>
-                            {% else %}
-								<li><a href="{{ path('matrix') }}">{{ 'Matrices'|trans }}</a></li>
+								<li><a href="{{ path('topic') }}">{{ "menu.topics"|trans|desc('Topics') }}</a></li>
                             {% endif %}	
                             
-							<li><a href="{{ path('vmb_presentation_browse', {'personal': 1}) }}">{{ 'Présentations'|trans }}</a></li>	
-							<li><a href="{{ path('vmb_resource_browse', {'personal': 1}) }}">{{ 'Ressources'|trans }}</a></li>
+							<li><a href="{{ path('matrix') }}">{{ "menu.matrixes"|trans|desc('Matrixes') }}</a></li>
+							<li><a href="{{ path('vmb_presentation_browse', {'personal': 1}) }}">{{ "menu.presentations"|trans|desc('Presentations') }}</a></li>	
+							<li><a href="{{ path('vmb_resource_browse', {'personal': 1}) }}">{{ "menu.resources"|trans|desc('Resources') }}</a></li>
                             
                             {% if is_granted('ROLE_TEACHER') %}
-								<li><a href="{{ path('ontology_main') }}">{{ 'Structure des connaissances'|trans }}</a></li>
-								<li><a href="{{ path('help') }}">{{ 'Aides contextuelles'|trans }}</a></li>
+								<li><a href="{{ path('ontology_main') }}">{{ "menu.ontologies"|trans|desc('Ontologies') }}</a></li>
+								<li><a href="{{ path('help') }}">{{ "menu.contextual_help"|trans|desc('Contextual help') }}</a></li>
                             {% endif %}
                             {% if is_granted('ROLE_ADMIN') %}
-								<li><a href="{{ path('admin_user') }}">{{ 'Gestion des utilisateurs'|trans }}</a></li>
+								<li><a href="{{ path('admin_user') }}">{{ "menu.users_management"|trans|desc('Users management') }}</a></li>
                             {% endif %}
                         </ul>
 					</li>
 				</ul>
 				<form class="top-search-form" accept-charset="UTF-8" action="{{ path('vmb_presentation_browse') }}" method="get">
-					<input class="form-control search-input" name="search" placeholder="{{ 'Recherche'|trans }}" type="text">
+					<input class="form-control search-input" name="search" placeholder="{{ "actions.search"|trans|desc('Search') }}" type="text">
 				</form>
 				{% else %}
 				<ul class="header-nav left" role="navigation"></ul>
@@ -126,7 +128,7 @@
 				{% for flash in flashes %}
 					<div class="alert alert-{{ label }}{{ alertDismissible|default(true) ? ' alert-dismissible' : '' }}">
 						{% if (alertDismissible|default(true)) %}
-							<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<button type="button" class="close" data-dismiss="alert" aria-label="{{ "actions.close"|trans|desc('Close') }}"><span aria-hidden="true">&times;</span></button>
 						{% endif %}
 						{{ flash }}
 					</div>
@@ -145,7 +147,7 @@
 		<div class="modal-content">
 		  {{ render(controller("VMBContextualHelpBundle:Help:help", {'route' : app.request.attributes.get('_route')})) }}
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-default" data-dismiss="modal">{{ 'Fermer'|trans }} <span class="glyphicon glyphicon-remove"></span></button>
+			<button type="button" class="btn btn-default" data-dismiss="modal">{{ "actions.close"|trans|desc('Close') }} <span class="glyphicon glyphicon-remove"></span></button>
 		  </div>
 		</div>
 	  </div>
