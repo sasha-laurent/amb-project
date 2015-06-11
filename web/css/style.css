@@ -552,6 +552,10 @@ select[multiple="multiple"] {
 	background-color: rgba(0, 0, 0, 0.7);
 }
 
+#players_container.fullScreenPlayer img {
+	max-height: 100%;
+}
+
 #players_container.fullScreenPlayer a {
 	display: none;
 }
