@@ -24,7 +24,21 @@ class MatrixType extends AbstractType
 			'class' => 'VMBPresentationBundle:Topic',
 			 'query_builder' => function(\Gedmo\Tree\Entity\Repository\NestedTreeRepository $repo) {
 				return $repo->getNodesHierarchyQueryBuilder();
-			  }));
+			  })) 
+			  ->add('povs', 'collection', array(
+				'by_reference' => false,
+				'label'		   => 'Points de vues',
+				'type'         => new PovType(),
+				'allow_add'    => true,
+				'allow_delete' => true
+			  ))
+			->add('levels', 'collection', array(
+				'by_reference' => false,
+				'label'		   => 'Niveaux',
+				'type'         => new LevelType(),
+				'allow_add'    => true,
+				'allow_delete' => true
+			  ));
 		}
            
         $builder
