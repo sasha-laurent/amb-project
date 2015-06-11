@@ -2,7 +2,12 @@
 {% set saveButton = 'true' %}
 {% extends '::Backend/subPage.html.twig' %}
 
-{% set cellWidth = (830 / entity.levels|length) %}
+{% set lvlLength = entity.levels|length %}
+{% if lvlLength == 0 %}
+	{% set lvlLength = 1 %}
+{% endif %}	
+
+{% set cellWidth = (830 / lvlLength) %}
 	{% if cellWidth > 120 %}
 		{% set cellWidth = 120 %}
 	{% endif %}

@@ -37,9 +37,9 @@ class MatrixRepository extends EntityRepository
 	{
 		$qb = $this
 			->createQueryBuilder('m')
-			->innerJoin('m.povs', 'pov')
+			->leftJoin('m.povs', 'pov')
 			->addSelect('pov')
-			->innerJoin('m.levels', 'lvl')
+			->leftJoin('m.levels', 'lvl')
 			->addSelect('lvl')
 			->leftJoin('m.resources', 'usedR')
 			->addSelect('usedR')
