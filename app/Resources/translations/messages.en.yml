@@ -28,8 +28,8 @@ admin:
     user.manage: admin.user.manage
 
 browse:
-    default_presentations: browse.default_presentations
-    filters: browse.filters
+    default_presentations: 'Default presentations'
+    filters: Filters
     no_presentation: browse.no_presentation
     official_only: browse.official_only
     parameters_title: browse.parameters_title
@@ -40,7 +40,7 @@ browse:
 form:
     label:
         associated_routes: form.label.associated_routes
-        current_thumbnail: form.label.current_thumbnail   # FIXME
+        current_thumbnail: form.label.current_thumbnail
         description: form.label.description
         file: form.label.file
         keywords: form.label.keywords
@@ -137,23 +137,23 @@ player:
 presentation:
     add: presentation.add
     added: presentation.added
-    added_to_playlist: presentation.added_to_playlist   # FIXME
-    advanced_visualisation: presentation.advanced_visualisation   # FIXME
+    added_to_playlist: presentation.added_to_playlist
+    advanced_visualisation: presentation.advanced_visualisation
     browse: presentation.browse
     copy_of: presentation.copy_of
     copy_success: presentation.copy_success
     default: presentation.default
-    default_topic: presentation.default_topic   # FIXME
+    default_topic: presentation.default_topic
     delete: presentation.delete
     deleted: presentation.deleted
-    details: presentation.details   # FIXME
+    details: presentation.details
 
     error:
         matrix_unofficial: presentation.error.matrix_unofficial
         presentation_unofficial: presentation.error.presentation_unofficial
 
-    generate_complement: presentation.generate_complement   # FIXME
-    initial_presentation: presentation.initial_presentation   # FIXME
+    generate_complement: presentation.generate_complement
+    initial_presentation: presentation.initial_presentation
     main_title: presentation.main_title
 
     modal:
@@ -171,19 +171,19 @@ presentation:
         from_scratch_3: presentation.modal.from_scratch_3
 
     modified: presentation.modified
-    my_selection: presentation.my_selection   # FIXME
-    new_playlist: presentation.new_playlist   # FIXME
+    my_selection: presentation.my_selection
+    new_playlist: presentation.new_playlist
     official: presentation.official
     parameters: presentation.parameters
     personal_presentation: presentation.personal_presentation
-    play_selection: presentation.play_selection   # FIXME
+    play_selection: presentation.play_selection
     public: presentation.public
-    same_topic: presentation.same_topic   # FIXME
-    save_selection: presentation.save_selection   # FIXME
+    same_topic: presentation.same_topic
+    save_selection: presentation.save_selection
     see_more: presentation.see_more
-    suggested_as_complement: presentation.suggested_as_complement   # FIXME
-    suggested_presentation: presentation.suggested_presentation   # FIXME
-    suggestions: presentation.suggestions   # FIXME
+    suggested_as_complement: presentation.suggested_as_complement
+    suggested_presentation: presentation.suggested_presentation
+    suggestions: presentation.suggestions
 
 removed: removed
 

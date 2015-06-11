@@ -1,5 +1,5 @@
 change_password:
-    submit: change_password.submit
+    submit: 'changer le mot de passe'
 
 group:
     edit:
@@ -10,7 +10,7 @@ group:
 
 profile:
     edit:
-        submit: profile.edit.submit
+        submit: 'edition du profil'
 
 registration:
     back: registration.back
@@ -34,7 +34,7 @@ resetting:
 
 security:
     login:
-        password: security.login.password
-        remember_me: security.login.remember_me
+        password: 'mot de passe'
+        remember_me: 'se souvenir de moi'
         submit: security.login.submit
-        username: security.login.username
+        username: 'nom d''utilisateur'

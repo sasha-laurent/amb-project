@@ -30,11 +30,11 @@ resetting:
         username: resetting.request.username
 
     reset:
-        submit: resetting.reset.submit
+        submit: reset
 
 security:
     login:
-        password: security.login.password
-        remember_me: security.login.remember_me
-        submit: security.login.submit
-        username: security.login.username
+        password: 'login password'
+        remember_me: 'remember me'
+        submit: 'login submit'
+        username: username
