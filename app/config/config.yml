@@ -27,6 +27,7 @@ framework:
 
 # Twig Configuration
 twig:
+    autoescape: true # Nécessaire contre le XSS
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
     form:
