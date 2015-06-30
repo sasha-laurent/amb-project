@@ -22,15 +22,16 @@ security:
             provider:  main
             form_login:
                 login_path: fos_user_security_login
+                csrf_provider: security.csrf.token_manager
                 check_path: fos_user_security_check
             logout:
                 path:   fos_user_security_logout
-
-
                 target: /
             remember_me:
                 key:	%secret%			  
 
     access_control:
-        - { path: ^/_trans, roles: ROLE_ADMIN }
-        - { path: ^/admin, roles: ROLE_SUPER_ADMIN}
+        # On peut ajouter ici les routeurs /login, /register et /resetting pour anon.
+        # role: IS_AUTHENTICATED_ANONYMOUSLY            
+        - { path: ^/_trans, role: ROLE_ADMIN }
+        - { path: ^/admin, role: ROLE_SUPER_ADMIN}

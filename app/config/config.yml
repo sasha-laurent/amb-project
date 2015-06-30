@@ -11,7 +11,7 @@ framework:
         resource: "%kernel.root_dir%/config/routing.yml"
         strict_requirements: ~
     form:            ~
-    csrf_protection: ~
+    csrf_protection: true
     validation:      { enable_annotations: true }
     templating:
         engines: ['twig']
@@ -22,6 +22,7 @@ framework:
     session:
         # handler_id set to null will use default session handler from php.ini
         handler_id:  ~
+        cookie_lifetime: 0 # La session expire lorsque l'utilisateur ferme son navigateur.
     fragments:       ~
     http_method_override: true
 

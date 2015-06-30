@@ -38,7 +38,7 @@
 								<a title="{{ "menu.bookmark"|trans|desc('Bookmark') }}" class="btn btn-default" href="{{ path('caddy_show_presentation') }}">
 									<span class="glyphicon glyphicon-star"></span>
 								</a>
-								<a class="btn btn-default">
+								<a title="{{ "user.profile"|trans|desc('Profile') }}" class="btn btn-default" href="{{path('fos_user_profile_show')}}">
 									<span class="header-user">{{ app.user.username }}</span> 
 								</a>
 								<a title="{{ "menu.logout"|trans|desc('Logout') }}" class="btn btn-default" href="{{ path('fos_user_security_logout') }}">
@@ -73,7 +73,7 @@
 						</div>
 						
 						<div class="btn-group">
-							<a class="btn btn-default" data-toggle="modal" data-target="#modalContextualHelp">
+							<a title="{{ "menu.help"|trans|desc('Help') }}" class="btn btn-default" data-toggle="modal" data-target="#modalContextualHelp">
 								<span class="glyphicon glyphicon-question-sign"></span>
 							</a>
 						</div>
