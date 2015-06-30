@@ -4,6 +4,7 @@ namespace VMB\UserBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 use VMB\UserBundle\Entity\User;
 use VMB\UserBundle\Form\UserType;
