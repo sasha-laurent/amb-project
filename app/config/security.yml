@@ -25,9 +25,12 @@ security:
                 check_path: fos_user_security_check
             logout:
                 path:   fos_user_security_logout
+
+
                 target: /
             remember_me:
                 key:	%secret%			  
 
     access_control:
         - { path: ^/_trans, roles: ROLE_ADMIN }
+        - { path: ^/admin, roles: ROLE_SUPER_ADMIN}

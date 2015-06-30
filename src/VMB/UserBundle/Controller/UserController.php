@@ -17,6 +17,7 @@ class UserController extends Controller
 
     /**
      * Lists all User entities.
+     * @Security("has_role('ROLE_ADMIN')")
      *
      */
     public function indexAction(Request $request)
@@ -58,6 +59,7 @@ class UserController extends Controller
 
     /**
      * Deletes a User entity.
+     * @Security("has_role('ROLE_SUPER_ADMIN')")
      *
      */
     public function deleteAction(Request $request, $id)
