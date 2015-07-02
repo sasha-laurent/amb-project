@@ -7,9 +7,15 @@
 				<a class="collapsed" data-toggle="collapse" href="#collapseListGroup{{ link.id }}" aria-expanded="false" aria-controls="collapseListGroup{{ link.id }}">
 					<span class="glyphicon glyphicon-chevron-down"></span>
 				</a>
-				<a href="{{ path("vmb_resource_browse_topic", app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'topic': link.id })) }}" title="{{ link.title }}">
-					{{ link.title }} ({{ link.__children|length }})
-				</a>
+				
+				{% if app.request.get('_route') == 'vmb_resource_indexation' %}
+					<a href="{{ path("vmb_resource_indexation", app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'topic': link.id })) }}" title="{{ link.title }}">
+				{% else %}
+					<a href="{{ path("vmb_resource_browse_topic", app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'topic': link.id })) }}" title="{{ link.title }}">
+				{% endif %}
+						{{ link.title }} ({{ link.__children|length }})
+					</a>
+					
 			</div>
 		</div>
 	</li>

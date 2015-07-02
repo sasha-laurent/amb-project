@@ -1,0 +1,108 @@
+{% extends '::layout.html.twig' %}
+
+{% block h1_title %}
+	<div class="row">
+		<div class="col-md-9">
+			{{ mainTitle }}
+		</div>
+		<div class="col-md-3 text-right">
+			<a class="btn btn-info" href="#" data-toggle="modal" data-target="#modal-tag">
+				{{ 'actions.index'|trans }}&nbsp; <span class="left glyphicon glyphicon-tags" aria-hidden="true"></span>
+			</a>
+		</div>
+	</div>
+{% endblock %}
+
+{% block body %}
+	<div class="row">
+		<div class="col-md-3">
+			{% include "VMBResourceBundle:Resource:browsePanel.html.twig" %}
+		</div>
+		<div class="col-md-9">
+			<div class="row">
+				{% for entity in entities %}
+				<div class="col-md-4 resource-col">
+					<p data-id="{{ entity.id }}">
+						<span class="glyphicon glyphicon-{{ entity.getGlyphicon }}"></span> {{ entity.title }}
+					</p>
+				</div>
+				{% else %}
+					<div class="col-md-12 text-center">
+						<em>{{ 'message.resource.none_for_this_search'|trans }}</em>
+						<br/><br/>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+    </div>  
+    <br/>
+    <!-- Modal -->
+	<div class="modal fade" id="modal-tag" tabindex="-1" role="dialog" aria-labelledby="modal-tag-label-modal-tag" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modal-tag-label">Indexer plusieurs ressources</h4>
+		  </div>
+		  <div class="modal-body">
+			  {{ 'message.ontology.modal'|trans }}
+			  <hr/>
+				<ul>
+				{% for o in topic.ontologies %}
+					<li><a href="#" class="index-btn" data-id="{{ o.id }}">{{ o.name }}</a></li>
+				{% else %}
+					<li><em>{{ 'message.ontology.none_for_this_topic'|trans }}</em></li>
+				{% endfor %}
+				</ul>
+			  </ul>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">{{ 'actions.close'|trans }}</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+{% endblock %}
+
+{% block script %}
+	{{ parent() }}
+	<script>
+	selection = [];
+		
+	$(function() {
+		if($('.collapse.in').length) {
+			currentElt = $('.collapse.in');
+			while($(currentElt).attr('data-level') != "0") {
+				currentElt = $(currentElt).parent().closest('.collapse');
+				currentElt.addClass('in');
+			}
+		}
+
+		$('.resource-col p').on('click', function() { 
+			$(this).toggleClass('bg-primary');
+			dataId = $(this).attr('data-id');
+			
+			var idx = $.inArray(dataId, selection);
+			if (idx == -1) {
+				// add
+				selection.push(dataId);
+			} else {
+				// remove
+				selection.splice(idx, 1);
+			}
+			
+		});
+		
+		$('.index-btn').on('click', function() {
+			if(selection.length > 0) {
+				dataId = $(this).attr('data-id');
+				url = "{{ path('ontology_index') }}?ontology=" + dataId;
+				for(i=0; i < selection.length; i++) {
+					url += "&video[]=" + selection[i];
+				}
+				window.location.replace(url);
+			}
+		});
+	});
+	</script>
+{% endblock %}

@@ -1,6 +1,8 @@
 'Aide contextuelle': 'Aide contextuelle'
 Close: Close
 Fermer: Fermer
+Niveaux: Niveaux
+'Points de vues': 'Points de vues'
 Titre: Titre
 
 actions:
@@ -12,6 +14,7 @@ actions:
     duplicate: Duplicate
     edit: Edit
     import: actions.import
+    index: actions.index   # FIXME
     next: actions.next
     options: Options
     previous: actions.previous
@@ -28,8 +31,11 @@ admin:
     user.manage: admin.user.manage
 
 browse:
+    advanced_search: browse.advanced_search
     default_presentations: 'Default presentations'
     filters: Filters
+    multiple_indexation: browse.multiple_indexation   # FIXME
+    mutliple_indexation: browse.mutliple_indexation
     no_presentation: browse.no_presentation
     official_only: browse.official_only
     parameters_title: browse.parameters_title
@@ -99,6 +105,7 @@ menu:
     presentation: menu.presentation
     presentations: Presentations
     resources: Resources
+    tools: menu.tools
     topics: Topics
     translation: Translation
     users_management: 'Users management'
@@ -237,9 +244,13 @@ text:
 topic:
     add: topic.add
     added: topic.added
+
+    # Desc: Delete
     delete: topic.delete
     deleteMessage: topic.deleteMessage
     deleted: topic.deleted
+
+    # Desc: Edit
     edit: topic.edit
     main_title: topic.main_title
     modified: topic.modified
