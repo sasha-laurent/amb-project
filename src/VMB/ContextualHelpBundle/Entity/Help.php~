@@ -62,7 +62,7 @@ class Help
     /**
      * @var string
      *
-     * @ORM\Column(name="extension", type="string", length=6)
+     * @ORM\Column(name="extension", type="string", length=6, nullable=true)
      */
     private $extension;
 
@@ -209,7 +209,7 @@ class Help
     public function storeFilenameForRemove()
     {
 		if($this->hasVideo) {
-			$this->filenameForRemove = $this->getVideoPath();
+			$this->filenameForRemove = str_replace('\\', '/', __DIR__).'/../../../../web/.'.$this->getVideoPath();
 		}
     }
 
@@ -249,6 +249,29 @@ class Help
     }
     
     public function getVideoPath() {
-		return str_replace('\\', '/', __DIR__).'/../../../../web/upload/help/'.$this->getId().'.'.$this->extension;
+		return 'upload/help/'.$this->getId().'.'.$this->extension;
 	}
+
+    /**
+     * Set extension
+     *
+     * @param string $extension
+     * @return Help
+     */
+    public function setExtension($extension)
+    {
+        $this->extension = $extension;
+
+        return $this;
+    }
+
+    /**
+     * Get extension
+     *
+     * @return string 
+     */
+    public function getExtension()
+    {
+        return $this->extension;
+    }
 }

@@ -155,11 +155,8 @@ class MatrixController extends Controller
 
     /**
      * Displays a form to create a new Matrix entity.
-     *
+     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
      */
-    /**
-    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
-    */
     public function newAction()
     {
         $matrix = new Matrix();
@@ -169,11 +166,8 @@ class MatrixController extends Controller
 
     /**
      * Displays a form to edit an existing Matrix entity.
-     *
+     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
      */
-    /**
-    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
-    */
     public function editAction($id)
     {
         $matrix = $this->getMatrix($id);
@@ -189,10 +183,8 @@ class MatrixController extends Controller
 
     /**
      * Finds and displays a Matrix entity.
+     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
      */
-    /**
-    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
-    */
     protected function renderForm($matrix)
     {
 		$request = $this->get('request');

@@ -9,11 +9,11 @@ vmb_resource:
 vmb_presentation:
     resource: "@VMBPresentationBundle/Resources/config/routing.yml"
     prefix:   /
-    
+
 vmb_user:
     resource: "@VMBUserBundle/Resources/config/routing.yml"
     prefix:   /
-    
+
 vmb_homepage:
     path:     /
     defaults: { _controller: VMBPresentationBundle:Presentation:browse, page: 1 }

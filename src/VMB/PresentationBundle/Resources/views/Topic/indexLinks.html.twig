@@ -2,9 +2,14 @@
 {% for link in links %}
 	<li class="list-group-item row" data-level="{{ link.lvl }}">			
 		<div class="col-md-10">
-			<a class="collapsed" data-toggle="collapse" href="#collapseListGroup{{ link.id }}" aria-expanded="false" aria-controls="collapseListGroup{{ link.id }}">
-				<span class="badge">{{ link.__children|length }}</span>&nbsp; {{ link.title }}
-			</a>
+			{% if link.__children is not empty %}
+				<a class="collapsed" data-toggle="collapse" href="#collapseListGroup{{ link.id }}" aria-expanded="false" aria-controls="collapseListGroup{{ link.id }}">
+				<span class="glyphicon glyphicon-triangle-right"></span>
+				{{ link.title }}
+				</a> 
+			{% else %}		
+				&nbsp;&nbsp;&nbsp;&nbsp; {{ link.title }}
+			{% endif %}
 		</div>
 		<div class="col-md-2 text-center">				
 			<div class="btn-group" role="group" aria-label="...">
@@ -13,8 +18,10 @@
 			</div>
 		</div>
 	</li>
+	{% if link.__children is not empty %}
 	<div id="collapseListGroup{{ link.id }}" class="panel-collapse collapse" data-level="{{ link.lvl }}" role="tabpanel" aria-labelledby="collapseListGroupHeading{{ link.id }}">
 	{% include "VMBPresentationBundle:Topic:indexLinks.html.twig" with {'links': link.__children} %}
 	</div>
+	{% endif %}
 {% endfor %}
 </ul>

@@ -40,16 +40,16 @@ browse:
 form:
     label:
         associated_routes: form.label.associated_routes
-        current_thumbnail: form.label.current_thumbnail
+        current_thumbnail: Current Thumbnail
         description: form.label.description
         file: form.label.file
         keywords: form.label.keywords
         role: form.label.role
         text: form.label.text
-        thumbnail: form.label.thumbnail
-        title: form.label.title
-        topic: form.label.topic
-        video: form.label.video
+        thumbnail: Thumbnail
+        title: Title
+        topic: Topic
+        video: Video
 
 help: help
 help.add: help.add
@@ -201,8 +201,8 @@ resource:
     shared: resource.shared
 
 role:
-    prof: role.prof
-    stud: role.stud
+    prof: Teacher
+    stud: Student
 
 show:
     playlist: show.playlist
@@ -217,15 +217,15 @@ tab:
     users: tab.users
 
 table:
-    action: table.action
-    created: table.created
+    action: Actions
+    created: Table was successfuly created
     creation: table.creation
     description: table.description
     duration: table.duration
     official: table.official
     routes: table.routes
     size: table.size
-    title: table.title
+    title: Titles
     topic: table.topic
     type: table.type
     update: table.update
@@ -235,15 +235,15 @@ text:
     password: text.password
 
 topic:
-    add: topic.add
-    added: topic.added
-    delete: topic.delete
-    deleteMessage: topic.deleteMessage
-    deleted: topic.deleted
-    edit: topic.edit
-    main_title: topic.main_title
-    modified: topic.modified
-    new_root: topic.new_root
+    add: 'Add new topic'
+    added: 'Topic was created'
+    delete: 'Delete a Topic'
+    deleteMessage: %title%
+    deleted: 'Topic was successfuly deleted'
+    edit: 'Edit Topic'
+    main_title: 'Topics'
+    modified: 'Topic was modified'
+    new_root: '+ Define as root'
 
 user:
     role:

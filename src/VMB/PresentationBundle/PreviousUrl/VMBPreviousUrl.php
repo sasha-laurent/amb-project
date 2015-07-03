@@ -12,11 +12,14 @@ class VMBPreviousUrl
 	
 	public function getPreviousUrl($request, $default = '#')
 	{
+		$pos = null;
         $referer = $request->headers->get('referer');
-        $baseUrl = $request->getBaseUrl();
-
+        $baseUrl = $request->getBaseUrl(); # root url from which $request is exec
+        if(!empty($baseUrl)){
+	        $pos = strpos($referer, $baseUrl);
+        }
         // If it's an intern url
-        if($pos = strpos($referer, $baseUrl)) {
+        if($pos != null && $pos !== false) {
 			$lastPath = substr($referer, $pos + strlen($baseUrl));
 			
 			// If there are request parameters not included in the "base" url

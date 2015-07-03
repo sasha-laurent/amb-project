@@ -4,9 +4,10 @@ namespace VMB\PresentationBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\File\File;
-
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Controller\Exception;
 use VMB\PresentationBundle\Entity\Topic;
 use VMB\PresentationBundle\Form\TopicType;
 
@@ -69,6 +70,8 @@ class TopicController extends Controller
      */
     public function editAction($id)
     {
+        $em = $this->getDoctrine()->getManager();
+
         $topic = $this->getTopic($id);
 
 		return $this->renderForm($topic);
@@ -84,24 +87,29 @@ class TopicController extends Controller
 		
 		$form = $this
 			->get('form.factory')
-			->create(new TopicType(), $topic);
+			->create(new TopicType(), $topic); #array('topic.parent' => $topic->getParent())
 			
 		if ($request->isMethod('POST')) 
 		{
 			$form->handleRequest($request);
 			if ($form->isValid()) 
 			{
-				$flashMessage = ($topic->getId() == null) ? $translator->trans('topic.added') : $translator->trans('topic.modified');
-				
-				$em = $this->getDoctrine()->getManager();
-				$em->persist($topic);
-				$topic->preUpload();
-				$em->flush();
-				$topic->upload();
+                if($topic->getParent() != $topic){
+    				$flashMessage = ($topic->getId() == null) ? 
+                        $translator->trans('topic.added') : $translator->trans('topic.modified');
+    				$topic->setOwner($this->getUser());
+    				$em = $this->getDoctrine()->getManager();
+    				$em->persist($topic);
+    				$topic->preUpload();
+    				$em->flush();
+    				$topic->upload();
 
 				
-				$request->getSession()->getFlashBag()->add('success', $flashMessage);
-				return $this->redirect($this->generateUrl('topic'));
+				    $request->getSession()->getFlashBag()->add('success', $flashMessage);
+				    return $this->redirect($this->generateUrl('topic'));
+                } else {
+                    $request->getSession()->getFlashBag()->add('danger', $translator->trans('message.error.occured'));
+                }
 			}
 		}
 
@@ -114,7 +122,8 @@ class TopicController extends Controller
     }
     /**
      * Deletes a Topic entity.
-     *
+     * A user can only delete his own topics, admins excepted.
+     * 
      */
     public function deleteAction(Request $request, $id)
     {
@@ -124,13 +133,20 @@ class TopicController extends Controller
 		if ($request->isMethod('POST')) {
 			try {
 				$em = $this->getDoctrine()->getManager();
-				$em->remove($topic);
-				$em->flush();
-				
-				$request->getSession()->getFlashBag()->add('success', $translator->trans('topic.deleted'));
+                if($this->getUser() == $topic->getOwner()
+                    || $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')){
+                    $em->remove($topic);
+                    $em->flush();
+                    $request->getSession()->getFlashBag()->add('success', 
+                        $translator->trans('topic.deleted'));   
+                } else {
+                    $request->getSession()->getFlashBag()->add('danger', 
+                        $translator->trans('message.error.not_enough_rights'));
+				}
 			} catch (\Exception $e) {
 				dump($e);
-				$request->getSession()->getFlashBag()->add('danger', $translator->trans('message.error.occured'));
+				$request->getSession()->getFlashBag()->add('danger', 
+                    $translator->trans('message.error.occured'));
 			}
 			return $this->redirect($this->generateUrl('topic'));
 		}
