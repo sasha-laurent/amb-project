@@ -188,9 +188,31 @@
 		  while($(currentElt).attr('data-level') != "0") {
 			  currentElt = $(currentElt).parent().closest('.collapse');
 			  currentElt.addClass('in');
+			  var id = $(currentElt).attr("id").split("collapseListGroup")[1];
+			  $('a[href="#collapseListGroup'+id+'"] > span')
+			  .removeClass('glyphicon-chevron-right')
+			  .addClass('glyphicon-chevron-down')
 		  }
 	  }
 	});
+
+	var group_ids = [];
+		{% for e in topics if e.__children is not empty %}
+			group_ids.push({{e.id}});
+		{% endfor %}
+		$.each(group_ids, function(i, v){		
+			var c = $('#collapseListGroup'+v);
+			c.on('show.bs.collapse', function(){
+				$('a[href="#collapseListGroup'+v+'"] > span')
+				.removeClass('glyphicon-chevron-right')
+				.addClass('glyphicon-chevron-down');
+			});
+			c.on('hide.bs.collapse', function(){
+				$('a[href="#collapseListGroup'+v+'"] > span')
+				.removeClass('glyphicon-chevron-down')
+				.addClass('glyphicon-chevron-right');			
+			});
+		});
 	</script>
 	{% include '::addToCaddy.html.twig' %}
 {% endblock %}
