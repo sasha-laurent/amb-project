@@ -17,6 +17,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * use repository for handy tree functions
  * @ORM\Entity(repositoryClass="Gedmo\Tree\Entity\Repository\NestedTreeRepository")
  * @ORM\HasLifecycleCallbacks
+ * 
  */
 class Topic
 {
@@ -442,4 +443,5 @@ class Topic
     {
         return $this->owner;
     }
+
 }

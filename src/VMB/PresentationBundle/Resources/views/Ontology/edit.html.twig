@@ -1,10 +1,21 @@
 {# app/Resources/views/Admin/Ontology/edit.html.twig #}
 {% extends 'VMBPresentationBundle:Ontology:base.html.twig' %}
 
-{% block h1_title %}Edit Ontology{% endblock %}
+{% block h1_title %}
+	<div class="row">
+		<div class="col-md-10">
+			{% if backButtonUrl is defined %}
+				<a title="{{"actions.back"|trans|desc('Go Back')}}" class="btn btn-default" href="{{ backButtonUrl }}" >
+					<span class="left glyphicon glyphicon-chevron-left" aria-hidden="true" >
+					</span>
+				</a>
+			{% endif %}
+			{{ mainTitle }}
+		</div>
+{% endblock %}
 
 {% block customScript %}
-$('.miller-container').taxonomyBrowser({
+var tax = $('.miller-container').taxonomyBrowser({
   columns: 4,
   columnheight: 450,    
   json         : '{{ asset("bundles/telecomvmb/json/"~file~"?p="~random()~"") }}',
@@ -13,14 +24,19 @@ $('.miller-container').taxonomyBrowser({
   ontologyMode : 'edit',
   id		   : '{{id}}'          
 });
+
+{# Autosave function - TODO: regarder si il les donnees ont change avant d'envoyer la requete afin de ne pas prendre de bande passante inutilement #}
+window.setInterval(function(){
+	$.fn.taxonomyBrowser.ajax_save();
+}, 3*60*1000);
 {% endblock %}
 
 {% block buttons %}
 	<ul class = "main-top-menu">
-		<li><button class="btn add-node btn-success" title="Add new node [Tab]">{{ 'actions.add'|trans }}</button></li>
+		<li><button class="btn add-node btn-default" title="Add new node [Tab]">{{ 'actions.add'|trans }}</button></li>
 		<li><button class="btn edit-node btn-default" title="Edit node [Shift+Enter]">{{ 'actions.edit'|trans }}</button></li>
   		<li><button class="btn delete-node btn-danger" title="Delete node [Shift+D]">{{ 'actions.delete'|trans }}</button></li>
-  		<li><button class="btn save-node btn-primary">Save</button></li>
+  		<li><button class="btn save-node btn-primary"  title="Save node [Shift+S]">Save</button></li>
 	</ul>
 {% endblock %}
 

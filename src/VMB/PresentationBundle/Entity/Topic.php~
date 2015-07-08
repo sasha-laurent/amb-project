@@ -91,6 +91,12 @@ class Topic
 	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Ontology", mappedBy="topic", cascade={"remove", "persist", "detach"})
 	*/
 	private $ontologies;
+
+    /**
+    * @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Presentation", mappedBy="topic")
+    * @ORM\Column(name="presentations_count", type="integer")
+    */
+    private $presentations_count = null;
     
     /**
      * @Assert\File(maxSize="128000000000")

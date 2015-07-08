@@ -388,21 +388,23 @@
 			$(item).remove();
 		}
 		else {
-			$.ajax({
-				type: "POST",
-				url: "{{ path('matrix_delete_row') }}",
-				data: { rowId: id, matrixId: {{ entity.id }}, rowType: type },
-				cache: false,
-				success: function(data){
-					if(data == 'ok') {
-						$(item).remove();
-						rowsUpdated = true;
+			if(confirm('Etes-vous sûr(e) de vouloir supprimer cette ligne? Cette action est irréversible et détruit le contenu associé.')){
+				$.ajax({
+					type: "POST",
+					url: "{{ path('matrix_delete_row') }}",
+					data: { rowId: id, matrixId: {{ entity.id }}, rowType: type },
+					cache: false,
+					success: function(data){
+						if(data == 'ok') {
+							$(item).remove();
+							rowsUpdated = true;
+						}
+						else {
+							alert('Une erreur est survenue');
+						}
 					}
-					else {
-						alert('Une erreur est survenue');
-					}
-				}
-			});    
+				});
+			}    
 		}
 		return false;
 	}

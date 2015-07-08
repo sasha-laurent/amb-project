@@ -26,7 +26,7 @@ class TopicController extends Controller
     {
 		$em = $this->getDoctrine()->getManager();
         $entities = $em->getRepository('VMBPresentationBundle:Topic')->childrenHierarchy();
-
+        # TODO: Add counts
         return $this->render('VMBPresentationBundle:Topic:index.html.twig', array(
             'mainTitle' => $this->get('translator')->trans('topic.main_title'),
 			'addButtonUrl' => $this->generateUrl('topic_new'),

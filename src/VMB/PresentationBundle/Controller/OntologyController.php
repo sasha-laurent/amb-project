@@ -76,7 +76,9 @@ class OntologyController extends Controller
             'name' => $name,
             'file' => $file,
             'id'   => $id,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'backButtonUrl' => $this->generateUrl('ontology_main'),
+            'mainTitle' => $this->get('translator')->trans('ontology.edit')
             ));
     }
 

@@ -237,23 +237,42 @@
         * @method Selector(.save-node)
         */
         $(".save-node").click(function( event ) { 
-          $.ajax ({
-                type: "POST",
-                async: false,
-                url: base.options.save,
-                data: { data: JSON.stringify(base.taxonomy),
-                        id: base.options.id,
-						title: $('#vmb_presentationbundle_ontology_name').val(),
-						topic: $('#vmb_presentationbundle_ontology_topic').val()
-                       },
-                success: function (data) {
-				  base.options.id = data;
-                  base.safeExit = true;
-                  alert("Saved"); 
-                },
-                failure: function() {alert("Error");}
-            });
+          base.ajax_save();
         });
+
+        base.ajax_save = function(){
+          $.ajax ({
+            type: "POST",
+            async: true,
+            url: base.options.save,
+            beforeSend: function(){
+              $(".save-node").html('Saving...');
+            },
+            data: { 
+              data: JSON.stringify(base.taxonomy),
+              id: base.options.id,
+              title: $('#vmb_presentationbundle_ontology_name').val(),
+              topic: $('#vmb_presentationbundle_ontology_topic').val()
+            },
+            success: function (data) {
+              base.options.id = data;
+              base.safeExit = true;
+              $(".save-node").html('Saved!').removeClass('btn-primary').addClass('btn-info');
+              setTimeout(function(){ 
+                $(".save-node").html('Save').removeClass('btn-info').addClass('btn-primary'); 
+              }, 2000);
+            },
+            failure: function() {
+                  $('.main-top-menu').append('<div class="alert alert-danger alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button><strong>Error while saving.</strong></div>');
+                  setTimeout(function(){
+                    $('.alert-danger').alert('close');
+                  }, 3000);
+                }
+              });
+        }
+        // Expose function
+        $.fn.taxonomyBrowser.ajax_save = base.ajax_save;
+
 
         $(".search-button").click(function( event ) {
           if (base.finalSearchVideo.length > 0) {

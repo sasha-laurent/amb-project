@@ -117,6 +117,7 @@ message:
     no_elt_found: message.no_elt_found
 
     ontology:
+        edit: 'Edit ontology'
         modal: message.ontology.modal
         none_for_this_topic: message.ontology.none_for_this_topic
 
@@ -218,7 +219,7 @@ tab:
 
 table:
     action: Actions
-    created: Table was successfuly created
+    created: Table creation date
     creation: table.creation
     description: table.description
     duration: table.duration

@@ -75,7 +75,7 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
-    
+
 fos_user:
     db_driver:     orm                       # Le type de BDD à utiliser, nous utilisons l'ORM Doctrine depuis le début
     firewall_name: main                      # Le nom du firewall derrière lequel on utilisera ces utilisateurs
@@ -83,7 +83,7 @@ fos_user:
     registration:
         form:
             type: vmb_user_registration
-    
+
 # Stof\DoctrineExtensionBundle configuration
 stof_doctrine_extensions:
     orm:
@@ -92,7 +92,7 @@ stof_doctrine_extensions:
             sortable: true
             timestampable: true
             tree: true
-            
+
 jms_translation:
     configs:
         app:
