@@ -37,6 +37,10 @@ browse:
     personal_resources: browse.personal_resources
     preview_current_resource: browse.preview_current_resource
 
+caddy:
+    add: 'Add to bookmarks'
+    remove: 'Remove from bookmarks'
+
 form:
     label:
         associated_routes: form.label.associated_routes
@@ -118,14 +122,14 @@ message:
 
     ontology:
         edit: 'Edit ontology'
-        modal: message.ontology.modal
-        none_for_this_topic: message.ontology.none_for_this_topic
+        modal: message.ontology.moda
+        none_for_this_topic: 'No ontologies correspond to this topic.'
 
     presentation:
         copy: message.presentation.copy
 
     resource:
-        none_for_this_search: message.resource.none_for_this_search
+        none_for_this_search: 'No resource match your search.'
 
     save: message.save
 
@@ -192,9 +196,10 @@ resource:
     add: resource.add
     added: resource.added
     browse: resource.browse
-    delete: resource.delete
+    delete: 'Delete resource'
     deleted: resource.deleted
-    edit: resource.edit
+    edit: 'Edit resource'
+    index: 'Index resource'
     modified: resource.modified
     none_found_in_this_space: resource.none_found_in_this_space
     officials: resource.officials

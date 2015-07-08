@@ -13,7 +13,7 @@
 	</div>
 {% endblock %}
 
-{% if page == 1 and nbPages == 0 %}
+{% if page == 1 and nbPages == 0 or nbPages == 1 %}
 	{% set skipPagination = true %}
 {% endif %}
 
@@ -76,17 +76,18 @@
 							<div class="caption">
 								<h3 class="thumbnail-label"><span class="glyphicon glyphicon-{{ entity.getGlyphicon }}"></span> {{ entity.title }}</h3>
 							</div>
-							
+							{% if entity.getGlyphicon == "film" %}
 							<div class="duration">
 								{{ entity.durationToString }}
 							</div>
+							{% endif %}
 							<div class="caddy-icon">
 								<span class="loading_indicator_inline loading_indicator_{{entity.id}}"></span>
-								<div class="btn-group" role="group" aria-label="...">
+								<div class="btn-group align-right" role="group" aria-label="...">
 									{% if is_granted('ROLE_ADMIN') or entity.isOwner(app.user) %}
-										<a href="{{ path('resource_edit', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>					
-										<a href="#" type="button" class="btn btn-{% if entity.indexed %}success{% else %}default{% endif %}" data-toggle="modal" data-target="#modal-tag-{{ entity.id }}"><span class="glyphicon glyphicon-tags" aria-hidden="true"></span></a>					
-										<a href="{{ path('resource_delete', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>					
+										<a title="{{"resource.edit"|trans|desc('Edit')}}" href="{{ path('resource_edit', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>					
+										<a title="{{"resource.index"|trans|desc('Index')}}" href="#" type="button" class="btn btn-{% if entity.indexed %}success{% else %}default{% endif %}" data-toggle="modal" data-target="#modal-tag-{{ entity.id }}"><span class="glyphicon glyphicon-tags" aria-hidden="true"></span></a>					
+										<a title="{{"resource.delete"|trans|desc('Delete')}}" href="{{ path('resource_delete', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>					
 									{% else %}
 										<a type="button" class="btn {% if app.user.resourceIsInCaddy(entity) %}btn-info{% else %}btn-default{% endif %} resourceAddToCaddy" data-id="{{ entity.id }}"><span class="glyphicon glyphicon-star"></span></a>
 									{% endif %}
@@ -145,15 +146,37 @@
 {% block script %}
 	{{ parent() }}
 	<script>
-	$(function() {
-	  if($('.collapse.in').length) {
-		  currentElt = $('.collapse.in');
-		  while($(currentElt).attr('data-level') != "0") {
-			  currentElt = $(currentElt).parent().closest('.collapse');
-			  currentElt.addClass('in');
-		  }
-	  }
-	});
-	</script>
-	{% include '::addToCaddy.html.twig' %}
+		$(function() {
+			if($('.collapse.in').length) {
+				currentElt = $('.collapse.in');
+				while($(currentElt).attr('data-level') != "0") {
+					currentElt = $(currentElt).parent().closest('.collapse');
+					currentElt.addClass('in');
+					var id = $(currentElt).attr("id").split("collapseListGroup")[1];
+					$('a[href="#collapseListGroup'+id+'"] > span')
+					.removeClass('glyphicon-chevron-right')
+					.addClass('glyphicon-chevron-down')
+				}
+			}
+			var group_ids = [];
+			{% for e in topics if e.__children is not empty %}
+			group_ids.push({{e.id}});
+			{% endfor %}
+			$.each(group_ids, function(i, v){		
+				var c = $('#collapseListGroup'+v);
+				c.on('show.bs.collapse', function(){
+					$('a[href="#collapseListGroup'+v+'"] > span')
+					.removeClass('glyphicon-chevron-right')
+					.addClass('glyphicon-chevron-down');
+				});
+				c.on('hide.bs.collapse', function(){
+					$('a[href="#collapseListGroup'+v+'"] > span')
+					.removeClass('glyphicon-chevron-down')
+					.addClass('glyphicon-chevron-right');			
+				});
+			});
+
+		});
+</script>
+{% include '::addToCaddy.html.twig' %}
 {% endblock %}

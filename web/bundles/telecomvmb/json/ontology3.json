@@ -1,1 +1,1 @@
-[{"id":"1","label":"rthrfh","parent":null,"type":"simple"},{"id":"2","label":"hdrfyhdfgh","parent":"1","type":"simple"}]
+[{"id":"1","label":"Nods","parent":null,"type":"simple"},{"id":"2","label":"Yalla","parent":"1","type":"simple"},{"id":"3","label":"YallaFils","parent":"2","type":"date"},{"id":"4","label":"YallaFilsFils","parent":"3","type":"simple"},{"id":"5","label":"YallaFilsBis","parent":"3","type":"date"},{"id":"6","label":"Node","parent":null,"type":"date"}]

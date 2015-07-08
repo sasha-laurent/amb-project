@@ -254,21 +254,22 @@
               title: $('#vmb_presentationbundle_ontology_name').val(),
               topic: $('#vmb_presentationbundle_ontology_topic').val()
             },
-            success: function (data) {
+            success: function(data) {
               base.options.id = data;
               base.safeExit = true;
               $(".save-node").html('Saved!').removeClass('btn-primary').addClass('btn-info');
               setTimeout(function(){ 
                 $(".save-node").html('Save').removeClass('btn-info').addClass('btn-primary'); 
               }, 2000);
-            },
-            failure: function() {
-                  $('.main-top-menu').append('<div class="alert alert-danger alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button><strong>Error while saving.</strong></div>');
-                  setTimeout(function(){
-                    $('.alert-danger').alert('close');
-                  }, 3000);
-                }
-              });
+            } ,
+            failure: function () {
+              $('.main-top-menu').append('<li><div class="alert alert-danger alert-dismissible fade in" role="alert" style="padding: 6px 12px"><strong>Error while saving.</strong></div></li>');
+              $(".save-node").html('Save');
+              setTimeout(function(){
+              $('.alert-danger').alert('close');
+              }, 3000);
+            }
+          });
         }
         // Expose function
         $.fn.taxonomyBrowser.ajax_save = base.ajax_save;

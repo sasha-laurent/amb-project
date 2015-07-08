@@ -2,19 +2,22 @@
 {% for link in links %}
 	<li data-level="{{ link.lvl }}">			
 		<div class="row">
-			<div class="col-md-12">
-				{% for i in 1..link.lvl if link.lvl > 0 %}&nbsp;&nbsp;{% endfor %}
-				<a class="collapsed" data-toggle="collapse" href="#collapseListGroup{{ link.id }}" aria-expanded="false" aria-controls="collapseListGroup{{ link.id }}">
-					<span class="glyphicon glyphicon-chevron-down"></span>
-				</a>
-				<a href="{{ path("vmb_resource_browse_topic", app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'topic': link.id })) }}" title="{{ link.title }}">
-					{{ link.title }} ({{ link.__children|length }})
+			<div class="col-md-12 {% if link.lvl > 0 %}col-md-offset-{{link.lvl}}{% endif %}">
+				{% if link.__children is not empty or link.lvl == 0 %}
+					<a class="collapsed" data-toggle="collapse" href="#collapseListGroup{{ link.id }}" aria-expanded="false" aria-controls="collapseListGroup{{ link.id }}">
+					<span class="glyphicon glyphicon-chevron-right"></span>
+					</a>
+				{% else %}
+					<span class="glyphicon glyphicon-minus"></span>
+				{% endif %}
+				<a href="{{ path("vmb_presentation_browse_topic", app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'topic': link.id })) }}" title="{{ link.title }}">
+					{{ link.title }} {#({{ link.__children|length }})#}
 				</a>
 			</div>
 		</div>
 	</li>
 	<div id="collapseListGroup{{ link.id }}" class="panel-collapse collapse{% if link.id == current %} in{% endif %}" data-level="{{ link.lvl }}" role="tabpanel" aria-labelledby="collapseListGroupHeading{{ link.id }}">
-	{% include "VMBResourceBundle:Resource:topicLink.html.twig" with {'links': link.__children, 'current': current} %}
+	{% include "VMBPresentationBundle:Presentation:topicLink.html.twig" with {'links': link.__children, 'current': current} %}
 	</div>
 {% endfor %}
 </ul>

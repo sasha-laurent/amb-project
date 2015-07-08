@@ -13,7 +13,7 @@
 	</div>
 {% endblock %}
 
-{% if page == 1 and nbPages == 0 %}
+{% if page == 1 and nbPages == 0 or nbPages == 1 %}
 	{% set skipPagination = true %}
 {% endif %}
 
@@ -101,12 +101,12 @@
 								
 								<div class="btn-group" role="group" aria-label="...">
 									{% if is_granted('ROLE_ADMIN') or entity.isOwner(app.user) %}
-										<a href="{{ path('presentation_edit', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>					
-										<a href="#" type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-options-{{ entity.id }}"><span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span></a>					
+										<a title="{{"presentation.edit"|trans|desc('Edit')}}"href="{{ path('presentation_edit', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>					
+										<a title="{{"presentation.parameters"|trans|desc('Options')}}" href="#" type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-options-{{ entity.id }}"><span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span></a>					
 									{% else %}
-										<a class="btn {% if app.user.presentationIsInCaddy(entity) %}btn-info{% else %}btn-default{% endif %} presentationAddToCaddy" data-id="{{ entity.id }}"><span class="glyphicon glyphicon-star"></span></a>
+										<a title="{{"caddy.add"|trans|desc('Bookmark')}}" class="btn {% if app.user.presentationIsInCaddy(entity) %}btn-info{% else %}btn-default{% endif %} presentationAddToCaddy" data-id="{{ entity.id }}"><span class="glyphicon glyphicon-star"></span></a>
 									{% endif %}
-									<a href="{{ path('presentation_create_copy', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>					
+									<a title="{{"presentation.copy_of"|trans|desc('Copy')}}" href="{{ path('presentation_create_copy', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>					
 								</div>
 							</div>
 							
@@ -182,36 +182,36 @@
 	{{ parent() }}
 	
 	<script>
-	$(function() {
-	  if($('.collapse.in').length) {
-		  currentElt = $('.collapse.in');
-		  while($(currentElt).attr('data-level') != "0") {
-			  currentElt = $(currentElt).parent().closest('.collapse');
-			  currentElt.addClass('in');
-			  var id = $(currentElt).attr("id").split("collapseListGroup")[1];
-			  $('a[href="#collapseListGroup'+id+'"] > span')
-			  .removeClass('glyphicon-chevron-right')
-			  .addClass('glyphicon-chevron-down')
-		  }
-	  }
-	});
-
-	var group_ids = [];
-		{% for e in topics if e.__children is not empty %}
+		$(function() {
+			if($('.collapse.in').length) {
+				currentElt = $('.collapse.in');
+				while($(currentElt).attr('data-level') != "0") {
+					currentElt = $(currentElt).parent().closest('.collapse');
+					currentElt.addClass('in');
+					var id = $(currentElt).attr("id").split("collapseListGroup")[1];
+					$('a[href="#collapseListGroup'+id+'"] > span')
+					.removeClass('glyphicon-chevron-right')
+					.addClass('glyphicon-chevron-down')
+				}
+			}
+			var group_ids = [];
+			{% for e in topics if e.__children is not empty %}
 			group_ids.push({{e.id}});
-		{% endfor %}
-		$.each(group_ids, function(i, v){		
-			var c = $('#collapseListGroup'+v);
-			c.on('show.bs.collapse', function(){
-				$('a[href="#collapseListGroup'+v+'"] > span')
-				.removeClass('glyphicon-chevron-right')
-				.addClass('glyphicon-chevron-down');
+			{% endfor %}
+			$.each(group_ids, function(i, v){		
+				var c = $('#collapseListGroup'+v);
+				c.on('show.bs.collapse', function(){
+					$('a[href="#collapseListGroup'+v+'"] > span')
+					.removeClass('glyphicon-chevron-right')
+					.addClass('glyphicon-chevron-down');
+				});
+				c.on('hide.bs.collapse', function(){
+					$('a[href="#collapseListGroup'+v+'"] > span')
+					.removeClass('glyphicon-chevron-down')
+					.addClass('glyphicon-chevron-right');			
+				});
 			});
-			c.on('hide.bs.collapse', function(){
-				$('a[href="#collapseListGroup'+v+'"] > span')
-				.removeClass('glyphicon-chevron-down')
-				.addClass('glyphicon-chevron-right');			
-			});
+
 		});
 	</script>
 	{% include '::addToCaddy.html.twig' %}

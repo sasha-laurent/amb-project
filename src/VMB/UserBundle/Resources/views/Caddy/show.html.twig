@@ -76,9 +76,9 @@
 							{{ entity.durationToString }}
 						</div>
 						<div class="caddy-icon">
-							<span class="loading_indicator_inline loading_indicator_{{entity.id}}"></span>
+							<span class="loading_indictaor_inline loading_indicator_{{entity.id}}"></span>
 							<form action="{{ path('caddy_resource_remove') }}" method="post">
-								<button class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+								<button title="{{"caddy.remove"|trans}}" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
 								<input type="hidden" name="id" value="{{ entity.id }}" />
 							</form>
 						</div>
@@ -100,4 +100,3 @@
 	{{ parent() }}
 	{% include '::addToCaddy.html.twig' %}
 {% endblock %}
-
