@@ -5,11 +5,11 @@
 			{% if link.__children is not empty %}
 				<a class="collapsed" data-toggle="collapse" href="#collapseListGroup{{ link.id }}" aria-expanded="false" aria-controls="collapseListGroup{{ link.id }}">
 				<span class="glyphicon glyphicon-triangle-right"></span>
-				{{ link.title }}
+				{{ link.title | shortenText(100, "...")}}
 				</a> 
 			{% else %}		
 				<span class="glyphicon glyphicon-triangle-right"></span>
-				{{ link.title }}
+				{{ link.title | shortenText(100, "...") }}
 			{% endif %}
 		</div>
 		<div class="col-md-2 {% if link.lvl != 0 %}col-md-offset-{{link.lvl}}{% endif %} text-center">				

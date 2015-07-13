@@ -31,7 +31,7 @@ browse:
     default_presentations: 'Par défaut'
     filters: Filtres
     no_presentation: 'Aucune présentation publique dans cet espace pour ces paramètres de recherche'
-    official_only: 'Officielles uniquement'
+    official: 'Officielles'
     parameters_title: 'Affiner par'
     personal_presentation: 'Présentations personnelles'
     personal_resources: 'Ressources personnelles'
@@ -198,6 +198,7 @@ resource:
     none_found_in_this_space: 'Aucune ressource trouvée pour ce sujet dans cet espace'
     officials: Officielles
     personals: Personnelles
+    bookmarks: Favoris
     shared: Partagées
 
 role:
@@ -219,7 +220,7 @@ tab:
 table:
     action: Action
     created: Créé
-    creation: Création
+    creation: 'Date de création'
     description: Description
     duration: Durée
     official: Officiel
@@ -237,6 +238,7 @@ text:
 topic:
     add: 'Ajouter une thématique'
     added: 'Thématique ajoutée'
+    all: 'Toutes les thématiques'
     delete: 'Suppression d''une thématique'
     deleteMessage: 'la thématique "%title%" [ATTENTION CELA SUPPRIMERA TOUTES LES MATRICES, RESSOURCES ET PRESENTATIONS LIEES]'
     deleted: 'Thématique supprimée'

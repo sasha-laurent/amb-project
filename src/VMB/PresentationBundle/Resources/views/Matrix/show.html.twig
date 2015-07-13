@@ -39,8 +39,8 @@
 			</tr>
 			{% endfor %}
 		</table>
-		</form>
-		<hr/>
+	</form>
+	<hr/>
 		<div class="row">
 			<div class="col-sm-7">
 				<h4><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> {{ 'browse.preview_current_resource'|trans }}</h4>
@@ -52,6 +52,7 @@
 					<ul class="nav nav-tabs" role="tablist">
 						<li role="presentation" class="active"><a href="#personal" aria-controls="personal" role="tab" data-toggle="tab">{{ 'resource.personals'|trans }}</a></li>
 						<li role="presentation"><a href="#official" aria-controls="official" role="tab" data-toggle="tab">{{ 'resource.officials'|trans }}</a></li>
+						<li role="presentation"><a href="#bookmarks" aria-controls="bookmarks" role="tab" data-toggle="tab">{{ 'resource.bookmarks'|trans }}</a></li>
 						{% if not entity.official %}<li role="presentation"><a href="#unofficial" aria-controls="unoffficial" role="tab" data-toggle="tab">{{ 'resource.shared'|trans }}</a></li>{% endif %}
 						<li role="presentation"><a href="{{ path('resource_new') }}"><span class="glyphicon glyphicon-plus"></span></a></li>
 					</ul>
@@ -107,25 +108,16 @@
 			</div>
 		</div>
 	</div>
-	
-	<h3 class="view-more-title"><a data-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">Détails de la matrice <span class="glyphicon glyphicon-chevron-down"></span></a></h3>
-	<div class="collapse" id="collapseDescription">
-		<table class="table">
-			<tbody>
-				<tr>
-					<th>{{ 'table.description'|trans }}</th>
-					<td>{{ entity.description }}</td>
-				</tr>
-				<tr>
-					<th>{{ 'table.creation'|trans }}</th>
-					<td>{{ entity.dateCreation|date('d/m/y') }}</td>
-				</tr>
-				<tr>
-					<th>{{ 'table.update'|trans }}</th>
-					<td>{{ entity.dateUpdate|date('d/m/y') }}</td>
-				</tr>
-			</tbody>
-		</table>
+
+	<div class="row">
+		<div class="col-md-8">
+			<h4 class="view-more-title"><a data-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">Détails de la matrice <span class="glyphicon glyphicon-chevron-right"></span></a></h4>
+			<div class="collapse" id="collapseDescription">
+			<strong>{{ 'table.creation'|trans }} {{ entity.dateCreation|date('d/m/y') }}</strong>
+			{% if entity.dateCreation != entity.dateUpdate %}  ({{ 'table.update'|trans }}:{{ entity.dateUpdate|date('d/m/y') }}){% endif %}
+			<p>{{ entity.description }} </p>
+			</div>
+		</div>
 	</div>
 
 	<div id="indicator" class="loading_indicator"></div>
@@ -465,6 +457,12 @@
 			location.reload();
 		}
 	});
-	
+
+	$('#collapseDescription').on('show.bs.collapse', function(){
+				$('a[href="#collapseDescription"] > span').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');
+			})
+							.on('hide.bs.collapse', function(){
+				$('a[href="#collapseDescription"] > span').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
+			});
 	</script>
 {% endblock %}

@@ -21,15 +21,11 @@
 	<div class="row">
 		<div class="col-md-3">
 			<div class="browse-topics">
-				<form action="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')) }}" method="GET">
-					<div class="form-group"><input class="form-control" type="text" name="search" value="{{ search|default() }}" placeHolder="Rechercher..." /></div>
-					{% for key, value in app.request.query.all if key != 'search' %}
-						<input type="hidden" value="{{ value }}" name="{{ key }}" />
-					{% endfor %}
-				</form>
+				<h3>{{ 'browse.parameters_title'|trans }}</h3>
+				<hr/>
 				<h4>{{ 'browse.filters'|trans }}</h4>
 				<div class="row filter">
-					<div class="col-md-10">{{ 'browse.official_only'|trans }} :</div>
+					<div class="col-md-10">{{ 'browse.official_only'|trans }} </div>
 					<div class="col-md-2 text-right">
 						<a href="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'official':((app.request.get('official') + 1) % 2)|default(1)})) }}" class="switch">
 							{% if app.request.get('official')|default(0) == 0 %}
@@ -43,7 +39,7 @@
 					</div>
 				</div>
 				<div class="row filter">
-					<div class="col-md-10">{{ 'browse.personal_resources'|trans }} :</div>
+					<div class="col-md-10">{{ 'browse.personal_resources'|trans }} </div>
 					<div class="col-md-2 text-right">
 						<a href="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'personal':((app.request.get('personal') + 1) % 2)|default(1)})) }}" class="switch">
 							{% if app.request.get('personal')|default(0) == 0 %}
@@ -69,12 +65,12 @@
 							<div class="thumbnail-description">
 								<h4>{{ 'form.label.description'|trans }}</h4>
 								<hr/>
-								<p>{{ entity.description }}</p>
+								<p>{{ entity.description | shortenText(160, "...")  }}</p>
 							</div>
 							<img data-holder-rendered="true" src="{{ asset(entity.getThumbsPath) }}" style="height: 155px; width: 100%; display: block;" />
 						
 							<div class="caption">
-								<h3 class="thumbnail-label"><span class="glyphicon glyphicon-{{ entity.getGlyphicon }}"></span> {{ entity.title }}</h3>
+								<h3 class="thumbnail-label"><span class="glyphicon glyphicon-{{ entity.getGlyphicon }}"></span> {{ entity.title | shortenText(60, "...") }}</h3>
 							</div>
 							{% if entity.getGlyphicon == "film" %}
 							<div class="duration">

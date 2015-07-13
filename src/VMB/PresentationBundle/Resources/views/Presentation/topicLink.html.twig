@@ -1,4 +1,13 @@
 <ul>
+	{% if current is defined and link is not defined and app.request.attributes.get('_route_params')["topic"] is defined %}
+		<li>
+			<a href="{{ path("vmb_presentation_browse", app.request.attributes.get('_route_params')|slice(0,1)|merge(app.request.query.all)) }}" title="{{"topic.all"|trans}}"> {# Pass all params except "topic" #}
+			<span class="glyphicon glyphicon-chevron-left"></span>
+			<small>	{{"topic.all"|trans }}</small>
+				
+			</a>
+		</li>
+{% endif %}
 {% for link in links %}
 	<li data-level="{{ link.lvl }}">			
 		<div class="row">

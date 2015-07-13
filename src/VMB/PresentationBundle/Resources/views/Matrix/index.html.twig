@@ -17,7 +17,7 @@
 	<ul class="list-group" id="sortable">
         {% for entity in entities %}
 			<li class="list-group-item row">
-				<div class="col-md-{% if is_granted('ROLE_TEACHER') %}4{% else %}5{% endif %}"><a href="{{ path('presentation_new', {'idMatrix' : entity.id }) }}">{{ entity.title|shortenText(34, '...') }}</a></div>
+				<div class="col-md-{% if is_granted('ROLE_TEACHER') %}4{% else %}5{% endif %}"><a title="{{ "matrix.show"|trans|desc('Show') }}" href="{{ path('matrix_show', {'id' : entity.id }) }}">{{ entity.title|shortenText(34, '...') }}</a></div>
                 <div class="col-md-2 text-center"><span class="label label-default">{{ entity.topic.title }}</span></div>
                 <div class="col-md-2 text-center">{% if entity.dateUpdate %}{{ entity.dateUpdate|date('d/m/y') }}{% endif %}</div>
                 <div class="col-md-1 text-center"><span class="label label-info">{{ entity.dimension }}</span></div>

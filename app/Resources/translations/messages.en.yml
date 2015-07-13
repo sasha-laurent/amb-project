@@ -31,7 +31,7 @@ browse:
     default_presentations: 'Default presentations'
     filters: Filters
     no_presentation: browse.no_presentation
-    official_only: browse.official_only
+    official: Official
     parameters_title: browse.parameters_title
     personal_presentation: browse.personal_presentation
     personal_resources: browse.personal_resources
@@ -75,10 +75,8 @@ matrix:
     delete: matrix.delete
     deleted: matrix.deleted
     edit: matrix.edit
-
     error:
         resource_unofficial_not_added: matrix.error.resource_unofficial_not_added
-
     levels: matrix.levels
     main_title: matrix.main_title
     modified: matrix.modified
@@ -88,6 +86,7 @@ matrix:
     official_success: matrix.official_success
     official_title: matrix.official_title
     povs: matrix.povs
+    show: "Matrix Overview"
 
 menu:
     bookmark: Bookmark
@@ -204,6 +203,7 @@ resource:
     none_found_in_this_space: resource.none_found_in_this_space
     officials: resource.officials
     personals: resource.personals
+    bookmarks: Bookmarks
     shared: resource.shared
 
 role:
@@ -224,8 +224,8 @@ tab:
 
 table:
     action: Actions
-    created: Table creation date
-    creation: table.creation
+    created: 'Created on'
+    creation: 'Creation date'
     description: table.description
     duration: table.duration
     official: table.official
@@ -234,7 +234,7 @@ table:
     title: Titles
     topic: table.topic
     type: table.type
-    update: table.update
+    update: Updated on
     video: table.video
 
 text:
@@ -243,6 +243,7 @@ text:
 topic:
     add: 'Add new topic'
     added: 'Topic was created'
+    all: 'All topics'
     delete: 'Delete a Topic'
     deleteMessage: %title%
     deleted: 'Topic was successfuly deleted'

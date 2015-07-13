@@ -113,7 +113,7 @@
 					</li>
 				</ul>
 				<form class="top-search-form" accept-charset="UTF-8" action="{{ path('vmb_presentation_browse') }}" method="get">
-					<input class="form-control search-input" name="search" placeholder="{{ "actions.search"|trans|desc('Search') }}" type="text">
+					<input class="form-control search-input" name="search" placeholder="{{ "actions.search"|trans|desc('Search') }}" type="text" {% if app.request.query.get('search') is defined %} value="{{app.request.query.get('search')}}"{% endif %}>
 				</form>
 				{% else %}
 				<ul class="header-nav left" role="navigation"></ul>
