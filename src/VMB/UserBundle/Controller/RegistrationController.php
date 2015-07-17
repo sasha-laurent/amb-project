@@ -6,6 +6,7 @@ use FOS\UserBundle\Event\FormEvent;
 use FOS\UserBundle\Event\GetResponseUserEvent;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -14,16 +15,22 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use FOS\UserBundle\Model\UserInterface;
 
 use FOS\UserBundle\Controller\RegistrationController as BaseController;
+use VMB\UserBundle\Form\Type\RegistrationFormType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 class RegistrationController extends BaseController
 {
-	
+ 
 	/**
-	* @Security("has_role('ROLE_ADMIN')")
+	* Create and process the new users' registration form.
+    * TODO:
+    * - If user is authenticated redirect to homepage.
+    * - Role choice / Title+links customization in the form if user is granted admin rights.
+    * - Ability for the user to set his own password..
 	*/
     public function registerAction(Request $request)
     {
+        $has_admin_rights = $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN');
         /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
         $formFactory = $this->get('fos_user.registration.form.factory');
         /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
@@ -41,7 +48,8 @@ class RegistrationController extends BaseController
             return $event->getResponse();
         }
 
-        $form = $formFactory->createForm();
+        $opts = array('is_admin' => $has_admin_rights);
+        $form = $formFactory->createForm(new RegistrationFormType(), $user, $opts);
         $form->setData($user);
 
         $form->handleRequest($request);
@@ -49,11 +57,17 @@ class RegistrationController extends BaseController
         if ($form->isValid()) {
             $event = new FormEvent($form, $request);
             $dispatcher->dispatch(FOSUserEvents::REGISTRATION_SUCCESS, $event);
-
-            $role = $this->get('request')->request->get('uniqueRole');
-            if(!in_array($role, array('ROLE_ADMIN', 'ROLE_STUDENT', 'ROLE_TEACHER'))) {
-				$role = 'ROLE_STUDENT';
+            
+            $form_role = $form->getData()->getRoles();
+            $role = 'ROLE_STUDENT';
+            // Only admins can define a user's role
+            if( isset($form_role) 
+                && $has_admin_rights 
+                && in_array($form_role, array('ROLE_ADMIN', 'ROLE_STUDENT', 'ROLE_TEACHER')))
+            {
+                    $role = $form_role;
 			}
+
             $user->addRole($role);
             
             $tokenGenerator = $this->get('fos_user.util.token_generator');
@@ -71,21 +85,29 @@ class RegistrationController extends BaseController
 			$this->get('mailer')->send($message);
 
             if (null === $response = $event->getResponse()) {
-				$flashMessage = $this->get('translator')->trans('admin.user.added');
-				$request->getSession()->getFlashBag()->add('success', $flashMessage);
-                return $this->redirect($this->generateUrl('admin_user'));
+                if($has_admin_rights){
+    				$flashMessage = $this->get('translator')->trans('admin.user.added');
+    				$request->getSession()->getFlashBag()->add('success', $flashMessage);
+                    $url = $this->generateUrl('admin_user');
+                } else {
+                    $url = $this->generateUrl('fos_user_registration_confirmed');
+                }
+                $response = new RedirectResponse($url);
             }
 
             //$dispatcher->dispatch(FOSUserEvents::REGISTRATION_COMPLETED, new FilterUserResponseEvent($user, $request, $response));
-
+            
             return $response;
         }
 
-        return $this->render('::Backend/form.html.twig', 
-			array(
-				'form' => $form->createView(),
-				'mainTitle' => $this->get('translator')->trans('admin.user.add'),
-				'backButtonUrl' => $this->generateUrl('admin_user')
-			));
+        $form_params = array('form' => $form->createView());
+        if($has_admin_rights){
+            $form_params['mainTitle'] = $this->get('translator')->trans('admin.user.add');
+            $form_params['backButtonUrl'] = $this->generateUrl('admin_user');
+        } else {
+            $form_params['mainTitle'] = $this->get('translator')->trans('registration.register');
+        }
+        return $this->render('::Backend/form.html.twig', $form_params);
+			
     }
 }	

@@ -5,7 +5,7 @@
 	<div class="row">
 		<div class="col-md-10">
 			{% if backButtonUrl is defined %}
-				<a title="{{"actions.back"|trans|desc('Go Back')}}" class="btn btn-default" href="{{ backButtonUrl }}" >
+				<a title="{{"actions.back"|trans}}" class="btn btn-default" href="{{ backButtonUrl }}" >
 					<span class="left glyphicon glyphicon-chevron-left" aria-hidden="true" >
 					</span>
 				</a>
@@ -33,10 +33,10 @@ window.setInterval(function(){
 
 {% block buttons %}
 	<ul class = "main-top-menu">
-		<li><button class="btn add-node btn-success" title="Add new node [Tab]">{{ 'actions.add'|trans }}</button></li>
-		<li><button class="btn edit-node btn-default" title="Edit node [Shift+Enter]">{{ 'actions.edit'|trans }}</button></li>
-  		<li><button class="btn delete-node btn-danger" title="Delete node [Shift+D]">{{ 'actions.delete'|trans }}</button></li>
-  		<li><button class="btn save-node btn-primary"  title="Save node [Shift+S]">Save</button></li>
+		<li><button class="btn add-node btn-default glyphicon glyphicon-plus" title="{{ "ontology.add_node"|trans }} [Tab]"></button></li>
+		<li><button class="btn edit-node btn-default glyphicon glyphicon-pencil" title="{{ "ontology.edit_node"|trans }} [Shift+Enter]"></button></li>
+  		<li><button class="btn delete-node btn-danger glyphicon glyphicon-remove" title="{{ "ontology.delete_node"|trans }} [Shift+D]"></button></li>
+  		<li><button class="btn save-node btn-primary glyphicon glyphicon-floppy-disk"  title="{{ "ontology.save_node"|trans }} [Shift+S]"></button></li>
 	</ul>
 {% endblock %}
 

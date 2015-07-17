@@ -21,7 +21,7 @@
 					</span>
 				</a>
 			{% endif %}
-			{{ mainTitle }}
+			{{ mainTitle | shortenText(46, "...")}}
 		</div>
 		<div class="col-md-{{ colWidth }} text-right">
 			{% if (saveButton is defined) or (saveToCaddy is defined) %}

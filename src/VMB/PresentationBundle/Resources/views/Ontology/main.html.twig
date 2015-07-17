@@ -15,7 +15,9 @@
 		{% for ontology in ontologies %}
 			<li class="list-group-item row">
 				<div class="col-md-6">
+					<a href="{{ path('ontology_edit', {'ontology' : ontology.id}) }}">
 					{{ ontology.name }}
+					</a>
 				</div>
 				<div class="col-md-4 text-center">
 					{{ ontology.topic.title }}

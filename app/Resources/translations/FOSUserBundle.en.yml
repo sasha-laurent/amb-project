@@ -13,6 +13,7 @@ profile:
         submit: profile.edit.submit
 
 registration:
+    register: 'Sign up'
     back: registration.back
     check_email: registration.check_email
     confirmed: registration.confirmed
@@ -25,6 +26,7 @@ registration:
 
 resetting:
     request:
+        request_reset: 'Forgot your password?' 
         invalid_username: resetting.request.invalid_username
         submit: resetting.request.submit
         username: resetting.request.username
@@ -34,7 +36,7 @@ resetting:
 
 security:
     login:
-        password: 'login password'
-        remember_me: 'remember me'
-        submit: 'login submit'
-        username: username
+        password: Password
+        remember_me: 'Keep me logged in'
+        submit: 'Log In'
+        username: Username

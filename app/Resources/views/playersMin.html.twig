@@ -1,0 +1,38 @@
+{% if playingResource is defined and playingResource is not null %}
+<div id="players_container">
+	{% if playingResource.type == 'video' %}
+	{# Audio files #}
+	<div id="video_player_container" class="player">
+		<video id="video_player" controls crossorigin>
+			<source src="{{ asset(playingResource.getResourcePath) }}">
+		</video>
+	</div>
+	{# Audio files #}
+	{% elseif playingResource.type == 'audio' %}
+	<div class="player">
+		<audio id="audio_player" controls>
+			<source src="{{ asset(playingResource.getResourcePath) }}">
+		</audio>
+	</div>
+	{% elseif playingResource.type == 'image' %}
+	<div class="image_player text-center">
+		<img style='width:100%;' src="{{ asset(playingResource.getResourcePath) }}" />
+	</div>
+	{# Very dangerous to include arbitrary "application" type in iFrames... #}
+	{% elseif playingResource.type == 'text' or playingResource.type == 'application' %}
+	<div class="file_player text-center">
+		<iframe src="{{ asset(playingResource.getResourcePath) }}" width="542" height="400" align="middle"></iframe>
+	</div>
+	{% else %}
+	<p class="bg-warning">
+		{{"resource.type_error" | trans }}
+	</p>
+	{% endif %}
+</div>
+{% else %}
+<div id="players_container">
+	<p class="bg-warning">
+		{{"resource.none_found_in_this_space" | trans }}
+	</p>
+</div>
+{% endif %}

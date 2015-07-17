@@ -3,7 +3,7 @@
 {% block body -%}
 	<div class="row">
 		<div class="col-md-9">
-			{% include '::players.html.twig' with{'playingResource': entity} %}
+			{% include '::playersMin.html.twig' with {'playingResource': entity} %}
 		</div>
 		<div class="col-md-3">
 			{{ entity.description }}<br/><br/>
@@ -17,32 +17,37 @@
 						<th>{{ 'table.creation'|trans }}</th>
 						<td>&nbsp;{{ entity.dateCreate|date('d/m/y') }}</td>
 					</tr>
+					{% if entity.dateUpdate != entity.dateCreate %}
 					<tr>
 						<th>{{ 'table.update'|trans }}</th>
 						<td>&nbsp;{{ entity.dateUpdate|date('d/m/y') }}</td>
 					</tr>
+					{% endif %}
 				</tbody>
 			</table>
 			<br/>
 			<nav>
 				<ul class="pager">
-					
 					{% if prev %}
 						{% for p in prev %}
-							<li class="previous"><a href="{{ path('resource_show', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'position': position - 1, 'id': p.id })) }}"><span aria-hidden="true">&larr;</span> Précédent</a></li>
+							<li class="previous"><a href="{{ path('resource_show', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'position': position - 1, 'id': p.id })) }}#title"><span aria-hidden="true">&larr;</span> Précédent</a></li>
 						{% endfor %}
 					{% else %}
 						<li class="previous disabled"><a href="#"><span aria-hidden="true">&larr;</span> {{ 'actions.previous'|trans }}</a></li>
 					{% endif %}
 					{% if next %}
 						{% for n in next %}
-							<li class="next"><a href="{{ path('resource_show', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'position': position + 1, 'id': n.id})) }}">Suivant <span aria-hidden="true">&rarr;</span></a></li>
+							<li class="next"><a href="{{ path('resource_show', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'position': position + 1, 'id': n.id})) }}#title">Suivant <span aria-hidden="true">&rarr;</span></a></li>
 						{% else %}
 							<li class="next disabled"><a href="#"><span aria-hidden="true">&rarr;</span> {{ 'actions.next'|trans }}</a></li>
 						{% endfor %}
 					{% endif %}
 				</ul>
 			</nav>
+			<br/>
+			<a href="{{asset(entity.getResourcePath) }}" target="_blank">
+				<span class="glyphicon glyphicon-new-window"></span> {{ "player.new_tab"|trans }}
+			</a>
 		</div>
 	</div>
 	<br/>
@@ -59,14 +64,14 @@
 					window.location = "{{ path('resource_show', 
 						app.request.attributes.get('_route_params')
 						|merge(app.request.query.all)
-						|merge({'position': position - 1, 'id': attribute( prev|first, 'id')})) }}";
+						|merge({'position': position - 1, 'id': attribute( prev|first, 'id')})) }}#title";
 				}
 			{% elseif next is defined and next is not empty %}
 				if(event.which == KEYRIGHT){
 					window.location = "{{ path('resource_show', 
 						app.request.attributes.get('_route_params')
 						|merge(app.request.query.all)
-						|merge({'position': position + 1, 'id': attribute(next|first, 'id')})) }}";
+						|merge({'position': position + 1, 'id': attribute(next|first, 'id')})) }}#title";
 				}
 			{% endif %}
 		});

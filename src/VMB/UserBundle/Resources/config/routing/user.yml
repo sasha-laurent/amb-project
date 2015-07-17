@@ -2,6 +2,10 @@ admin_user:
     path:     /
     defaults: { _controller: "VMBUserBundle:User:index" }
 
+admin_user_create:
+    path: /create
+    defaults: { _controller: "VMBUserBundle:Registration:register"}
+
 admin_user_delete:
     path:     /delete/{id}
     defaults: { _controller: "VMBUserBundle:User:delete" }

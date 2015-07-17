@@ -45,8 +45,11 @@
 									<span class="glyphicon glyphicon-off" aria-hidden="true"></span>
 								</a>
 							</div>
+						{% elseif is_granted("IS_AUTHENTICATED_ANONYMOUSLY") 
+						and app.request.attributes.get('_route') ==  "fos_user_registration_register" %}
+							{# Lien "deja inscrit? connectez-vous -> et show formulaire #}				
+							<a class="btn btn-success" href="{{ path('fos_user_security_login') }}">{{ "menu.login"|trans }}</a>		
 						{% else %}
-							<a class="btn btn-success" href="{{ path('fos_user_security_login') }}">{{ "menu.connexion"|trans|desc('Connexion') }}</a>
 						{% endif %}
 						
 						<div class="btn-group">
@@ -79,7 +82,7 @@
 						</div>
 					</div>
 				</div>
-				<h3><a href="{{ path('vmb_homepage') }}"><img src="{{ asset('img/vmb.png') }}" alt="VMB" title="{{ "menu.homepage"|trans|desc('Homepage') }}" /></a></h3>
+				<h3><a href="{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}{{ path('vmb_presentation_browse') }}{% else %} / {% endif %}"><img src="{{ asset('img/vmb.png') }}" alt="VMB" title="{{ "menu.homepage"|trans|desc('Homepage') }}" /></a></h3>
 				
 				
 				{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
@@ -115,15 +118,22 @@
 				<form class="top-search-form" accept-charset="UTF-8" action="{{ path('vmb_presentation_browse') }}" method="get">
 					<input class="form-control search-input" name="search" placeholder="{{ "actions.search"|trans|desc('Search') }}" type="text" {% if app.request.query.get('search') is defined %} value="{{app.request.query.get('search')}}"{% endif %}>
 				</form>
-				{% else %}
-				<ul class="header-nav left" role="navigation"></ul>
+				{% elseif is_granted("IS_AUTHENTICATED_ANONYMOUSLY")
+				and app.request.attributes.get('_route') !=  ("fos_user_registration_register" or "_welcome") %} 
+				<ul class="header-nav left" role="navigation">
+					<a class="btn btn-success" href="{{ path('fos_user_registration_register') }}">{{ "user.register"|trans }}</a>
+				</ul>
+				{% elseif is_granted("IS_AUTHENTICATED_ANONYMOUSLY") 
+						and app.request.attributes.get('_route') ==  "_welcome" %}
+						{% include 'VMBUserBundle::Security/tableLogin.html.twig' %}
+							{# Formulaire de connexion avec lien vers mdp perdu, boutton option rester connecté #}
 				{% endif %}
 			</div>
 		</header>
       
 		<div class="container main_body">
 			{% if stripBodyHeader is not defined %}
-			<h1 class="page-header">{% block h1_title %}{% endblock %}</h1>			
+			<h1 class="page-header" id="title">{% block h1_title %}{% endblock %}</h1>			
 			{% for label, flashes in app.session.flashbag.all %}
 				{% for flash in flashes %}
 					<div class="alert alert-{{ label }}{{ alertDismissible|default(true) ? ' alert-dismissible' : '' }}">

@@ -94,6 +94,7 @@ menu:
     connexion: Connexion
     contextual_help: 'Contextual help'
     homepage: Homepage
+    login: Login
     logout: Logout
     manage: Manage
     matrixes: Matrixes
@@ -118,9 +119,7 @@ message:
         warning_official: message.matrix.warning_official
 
     no_elt_found: message.no_elt_found
-
     ontology:
-        edit: 'Edit ontology'
         modal: message.ontology.moda
         none_for_this_topic: 'No ontologies correspond to this topic.'
 
@@ -135,8 +134,15 @@ message:
     title:
         warning: Warning
 
+ontology:
+    add_node: 'Add Node'
+    edit_node: 'Edit node'
+    delete_node: 'Delete node'
+    save_node: 'Save Node'
+    edit: 'Edit ontology'
+
 player:
-    new_tab: 'Display this file in a new tab'
+    new_tab: 'Show this file in a new tab'
 
 presentation:
     add: presentation.add
@@ -200,11 +206,12 @@ resource:
     edit: 'Edit resource'
     index: 'Index resource'
     modified: resource.modified
-    none_found_in_this_space: resource.none_found_in_this_space
+    none_found_in_this_space: 'No resource found in this space'
     officials: resource.officials
     personals: resource.personals
     bookmarks: Bookmarks
     shared: resource.shared
+    type_error: 'Unrecognized resource type.'
 
 role:
     prof: Teacher
@@ -257,3 +264,4 @@ user:
         admin: user.role.admin
         student: user.role.student
         teacher: user.role.teacher
+    register: 'Sign up'

@@ -87,7 +87,7 @@ class TopicController extends Controller
 		
 		$form = $this
 			->get('form.factory')
-			->create(new TopicType(), $topic); #array('topic.parent' => $topic->getParent())
+			->create(new TopicType(), $topic);
 			
 		if ($request->isMethod('POST')) 
 		{

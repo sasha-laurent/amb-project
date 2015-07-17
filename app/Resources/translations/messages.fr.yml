@@ -91,6 +91,7 @@ menu:
     connexion: Connexion
     contextual_help: 'Aide contextuelle'
     homepage: Accueil
+    login: Connexion
     logout: Déconnexion
     manage: Gérer
     matrixes: Matrices
@@ -131,8 +132,15 @@ message:
     title:
         warning: Attention
 
+ontology:
+    add_node: 'Ajouter un élément'
+    edit_node: 'Modifier l''élément'
+    delete_node: 'Effacer l''élément'
+    save_node: 'Sauvegarder'
+    edit: 'Modifier l''ontologie'
+
 player:
-    new_tab: 'Afficher ce fichier dans un nouvel onglet'
+    new_tab: 'Afficher dans un nouvel onglet'
 
 presentation:
     add: 'Ajout d''une présentation'
@@ -200,6 +208,7 @@ resource:
     personals: Personnelles
     bookmarks: Favoris
     shared: Partagées
+    type_error: "Type de ressource non reconnu."
 
 role:
     prof: role.prof
@@ -252,3 +261,4 @@ user:
         admin: Administrateur
         student: Étudiant
         teacher: Professeur
+    register: 'S''inscrire'

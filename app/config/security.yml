@@ -17,12 +17,14 @@ security:
             security: false
         main:
             pattern:   ^/
-            anonymous: true
+            anonymous: ~
             provider:  main
             form_login:
                 login_path: fos_user_security_login
                 csrf_provider: security.csrf.token_manager
                 check_path: fos_user_security_check
+                default_target_path: /browse
+                always_use_default_target_path: true
             logout:
                 path:   fos_user_security_logout
                 target: /
@@ -30,10 +32,10 @@ security:
                 key:	%secret%
 
     access_control:
-        # On peut ajouter ici les routeurs /login, /register et /resetting pour anon.
+        # On peut remplacer les routes en brut par leur equivalents logiques: /resetting -> fos_user_resetting etc..
+        - { path: ^/$, role: IS_AUTHENTICATED_ANONYMOUSLY}
         - {path: /login, role: IS_AUTHENTICATED_ANONYMOUSLY}
         - {path: /resetting, role: IS_AUTHENTICATED_ANONYMOUSLY}
         - {path: /register, role: IS_AUTHENTICATED_ANONYMOUSLY}
-        - { path: ^/, role: IS_AUTHENTICATED_REMEMBERED}
         - { path: ^/_trans, role: ROLE_ADMIN }
         - { path: ^/admin, role: ROLE_SUPER_ADMIN}

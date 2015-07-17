@@ -246,7 +246,7 @@
             async: true,
             url: base.options.save,
             beforeSend: function(){
-              $(".save-node").html('Saving...');
+              $(".main-top-menu").append('<li><div class="loading_indicator_inline"></div></li>');
             },
             data: { 
               data: JSON.stringify(base.taxonomy),
@@ -257,14 +257,17 @@
             success: function(data) {
               base.options.id = data;
               base.safeExit = true;
-              $(".save-node").html('Saved!').removeClass('btn-primary').addClass('btn-info');
+              // $(".main-top-menu") remove loading indicator
+              $(".save-node").removeClass('btn-primary').addClass('btn-info');
+              $(".save-node").removeClass('glyphicon-floppy-disk').addClass('glyphicon-floppy-saved');
               setTimeout(function(){ 
-                $(".save-node").html('Save').removeClass('btn-info').addClass('btn-primary'); 
+                $(".save-node").removeClass('btn-info').addClass('btn-primary');
+                $(".save-node").removeClass('glyphicon-floppy-saved').addClass('glyphicon-floppy-disk');
               }, 2000);
             } ,
             failure: function () {
+              // $(".main-top-menu") remove loading indicator
               $('.main-top-menu').append('<li><div class="alert alert-danger alert-dismissible fade in" role="alert" style="padding: 6px 12px"><strong>Error while saving.</strong></div></li>');
-              $(".save-node").html('Save');
               setTimeout(function(){
               $('.alert-danger').alert('close');
               }, 3000);
