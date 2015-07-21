@@ -54,7 +54,14 @@
 						<li role="presentation"><a href="#official" aria-controls="official" role="tab" data-toggle="tab">{{ 'resource.officials'|trans }}</a></li>
 						<li role="presentation"><a href="#bookmarks" aria-controls="bookmarks" role="tab" data-toggle="tab">{{ 'resource.bookmarks'|trans }}</a></li>
 						{% if not entity.official %}<li role="presentation"><a href="#unofficial" aria-controls="unoffficial" role="tab" data-toggle="tab">{{ 'resource.shared'|trans }}</a></li>{% endif %}
-						<li role="presentation"><a href="{{ path('resource_new') }}"><span class="glyphicon glyphicon-plus"></span></a></li>
+						<li role="presentation"> 
+							{# Modal resource add reference html here, with minimal modal form beneath.
+								AJAX request with success means it becomes available immediately,
+								upload in progress with some kind of indicator would be a plus,
+								failure means fail gracefully with error message and keep on working. #}
+							<a href="{{ path('resource_new') }}">
+								<span class="glyphicon glyphicon-plus"></span>
+							</a></li>
 					</ul>
 					<div class="tab-content">
 						{% for key, subArrResources in resources %}
@@ -114,7 +121,7 @@
 			<h4 class="view-more-title"><a data-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">Détails de la matrice <span class="glyphicon glyphicon-chevron-right"></span></a></h4>
 			<div class="collapse" id="collapseDescription">
 			<strong>{{ 'table.creation'|trans }} {{ entity.dateCreation|date('d/m/y') }}</strong>
-			{% if entity.dateCreation != entity.dateUpdate %}  ({{ 'table.update'|trans }}:{{ entity.dateUpdate|date('d/m/y') }}){% endif %}
+			{% if entity.dateCreation != entity.dateUpdate %}  ({{ 'table.update'|trans }} : {{ entity.dateUpdate|date('d/m/y') }}){% endif %}
 			<p>{{ entity.description }} </p>
 			</div>
 		</div>
@@ -321,10 +328,10 @@
 			}
 		});
 	});
-	
+	// TODO: Show var could depend on trailing URL parameter to be set by link in matrix index list
 	$('#myModal').modal({
         show: false,
-        remote: "{{ path('matrix_edit', {'id': entity.id}) }}"
+        remote: "{{ path('matrix_edit', {'id': entity.id, 'is_modal': true}) }}"
 	});
 	$('#myModal').on('show.bs.modal', function (e) {
 		$('#indicator').show();
@@ -332,11 +339,10 @@
 	$('#myModal').on('shown.bs.modal', function (e) {
 		$('#indicator').hide();
 	});
-	
+
 	$('#save-btn').click(function(event) {
 		if($("#save-btn").hasClass('btn-info')) {
 			$(".loading_indicator_inline").css('display', 'inline-block');
-
 			event.preventDefault();
 			$('#matrix_form').submit();
 		}
@@ -454,6 +460,7 @@
 	
 	$('#modalEditRows').on('hide.bs.modal', function (event) {
 		if(rowsUpdated) {
+			// ajax req. here
 			location.reload();
 		}
 	});

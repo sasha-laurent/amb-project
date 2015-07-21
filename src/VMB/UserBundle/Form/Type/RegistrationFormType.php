@@ -8,11 +8,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RegistrationFormType extends AbstractType
 {
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if(array_key_exists("is_admin", $options) 
-            && $options["is_admin"] == true)
+            && $options['is_admin'] == true)
         {
             $builder->add('uniqueRole', 'choice', array(
                 'choices' => array('ROLE_ADMIN' => 'user.role.admin',
@@ -24,7 +23,7 @@ class RegistrationFormType extends AbstractType
                 'mapped' => false
                 ));
         } else {
-            // dump($options);
+            dump($options);
             // as default value set, options[admin] always equals to false
         }
         // add your custom field

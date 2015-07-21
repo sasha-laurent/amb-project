@@ -6,6 +6,7 @@ Titre: Titre
 actions:
     add: Ajouter
     cancel: Annuler
+    create: Créer
     close: Fermer
     confirm: Confirmer
     delete: Supprimer

@@ -18,16 +18,16 @@ use FOS\UserBundle\Controller\RegistrationController as BaseController;
 use VMB\UserBundle\Form\Type\RegistrationFormType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
+    /**
+    * Create and process the new users' registration form.
+    * TODO:
+    * - If the user is already authenticated, redirect him/her to the homepage.
+    * - Role choice customization in the form if user is granted admin rights.
+    * - Ability for the user to set his own password? E-mail and password confirmation (in form)?
+    */
+    
 class RegistrationController extends BaseController
 {
- 
-	/**
-	* Create and process the new users' registration form.
-    * TODO:
-    * - If user is authenticated redirect to homepage.
-    * - Role choice / Title+links customization in the form if user is granted admin rights.
-    * - Ability for the user to set his own password..
-	*/
     public function registerAction(Request $request)
     {
         $has_admin_rights = $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN');
@@ -48,8 +48,9 @@ class RegistrationController extends BaseController
             return $event->getResponse();
         }
 
-        $opts = array('is_admin' => $has_admin_rights);
-        $form = $formFactory->createForm(new RegistrationFormType(), $user, $opts);
+        // For some reason $opts cannot be resolved in our RegistrationForm class
+        $form = $formFactory->createForm(new RegistrationFormType(), $user, 
+            array("is_admin" => $has_admin_rights));
         $form->setData($user);
 
         $form->handleRequest($request);
@@ -58,9 +59,13 @@ class RegistrationController extends BaseController
             $event = new FormEvent($form, $request);
             $dispatcher->dispatch(FOSUserEvents::REGISTRATION_SUCCESS, $event);
             
+            /*
+             * Role Definition
+             * Only admins can define a user's role
+            **/
+
             $form_role = $form->getData()->getRoles();
             $role = 'ROLE_STUDENT';
-            // Only admins can define a user's role
             if( isset($form_role) 
                 && $has_admin_rights 
                 && in_array($form_role, array('ROLE_ADMIN', 'ROLE_STUDENT', 'ROLE_TEACHER')))
@@ -70,27 +75,38 @@ class RegistrationController extends BaseController
 
             $user->addRole($role);
             
+            /*
+             * Password auto-generation
+            **/
+
             $tokenGenerator = $this->get('fos_user.util.token_generator');
 			$password = substr($tokenGenerator->generateToken(), 0, 8); // 8 chars
-
             $user->setPlainPassword($password);
+
+
             $userManager->updateUser($user);
             
+            /*
+             * Sending registration mail 
+            **/
             $message = \Swift_Message::newInstance()
 				->setSubject('Inscription à VMB')
 				->setFrom('vmb@vmb.com')
 				->setTo($user->getEmail())
 				->setBody($this->renderView('VMBUserBundle:User:registrationMail.txt.twig', array('username' => $user->getUsername(), 'password' => $password)))
-			;
+            ;
 			$this->get('mailer')->send($message);
 
+            /*
+             * User redirect logic
+            **/
             if (null === $response = $event->getResponse()) {
                 if($has_admin_rights){
     				$flashMessage = $this->get('translator')->trans('admin.user.added');
     				$request->getSession()->getFlashBag()->add('success', $flashMessage);
                     $url = $this->generateUrl('admin_user');
                 } else {
-                    $url = $this->generateUrl('fos_user_registration_confirmed');
+                    $url = $this->generateUrl('fos_user_registration_check_email');
                 }
                 $response = new RedirectResponse($url);
             }
