@@ -61,6 +61,7 @@ class MatrixController extends Controller
 			$validResources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic(), true);
 			$personalResources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic(), ($entity->getOfficial() ? true : null), $this->getUser());
 			$unofficialResources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic(), false, $this->getUser(), true);
+			$caddyResources = $this->getUser()->getResource();
 
 			return $this->render('VMBPresentationBundle:Matrix:show.html.twig', array(
 				'mainTitle' => $entity->getTitle(),
@@ -68,7 +69,7 @@ class MatrixController extends Controller
 				'editButtonUrl' => $this->generateUrl('matrix_edit', array('id' => $entity->getId())),
 				'delButtonUrl' => $this->generateUrl('matrix_delete', array('id' => $entity->getId())),
 				'entity' => $entity,
-				'resources' => array('official' => $validResources, 'personal' => $personalResources, 'unofficial' => $unofficialResources),
+				'resources' => array('official' => $validResources, 'personal' => $personalResources, 'unofficial' => $unofficialResources, 'bookmarks' => $caddyResources),
 				'optionButtonModal' => '#modalEditRows'
 			));
 		}
@@ -155,11 +156,8 @@ class MatrixController extends Controller
 
     /**
      * Displays a form to create a new Matrix entity.
-     *
+     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
      */
-    /**
-    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
-    */
     public function newAction()
     {
         $matrix = new Matrix();
@@ -169,11 +167,8 @@ class MatrixController extends Controller
 
     /**
      * Displays a form to edit an existing Matrix entity.
-     *
+     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
      */
-    /**
-    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
-    */
     public function editAction($id)
     {
         $matrix = $this->getMatrix($id);
@@ -189,10 +184,8 @@ class MatrixController extends Controller
 
     /**
      * Finds and displays a Matrix entity.
+     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
      */
-    /**
-    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
-    */
     protected function renderForm($matrix)
     {
 		$request = $this->get('request');

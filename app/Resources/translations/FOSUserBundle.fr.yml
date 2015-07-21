@@ -13,6 +13,7 @@ profile:
         submit: 'edition du profil'
 
 registration:
+    register: 'S''inscrire'
     back: registration.back
     check_email: registration.check_email
     confirmed: registration.confirmed
@@ -25,6 +26,7 @@ registration:
 
 resetting:
     request:
+        request_reset: 'Mot de passe oublié?'
         invalid_username: resetting.request.invalid_username
         submit: resetting.request.submit
         username: resetting.request.username
@@ -34,7 +36,7 @@ resetting:
 
 security:
     login:
-        password: 'mot de passe'
-        remember_me: 'se souvenir de moi'
-        submit: security.login.submit
-        username: 'nom d''utilisateur'
+        password: 'Mot de passe'
+        remember_me: 'Se souvenir de moi'
+        submit: 'Se connecter'
+        username: 'Nom d''utilisateur'

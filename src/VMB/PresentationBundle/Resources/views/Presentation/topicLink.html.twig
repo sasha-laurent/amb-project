@@ -1,14 +1,26 @@
 <ul>
+	{% if current is defined and link is not defined and app.request.attributes.get('_route_params')["topic"] is defined %}
+		<li>
+			<a href="{{ path("vmb_presentation_browse", app.request.attributes.get('_route_params')|slice(0,1)|merge(app.request.query.all)) }}" title="{{"topic.all"|trans}}"> {# Pass all params except "topic" #}
+			<span class="glyphicon glyphicon-chevron-left"></span>
+			<small>	{{"topic.all"|trans }}</small>
+				
+			</a>
+		</li>
+{% endif %}
 {% for link in links %}
 	<li data-level="{{ link.lvl }}">			
 		<div class="row">
-			<div class="col-md-12">
-				{% for i in 1..link.lvl if link.lvl > 0 %}&nbsp;&nbsp;{% endfor %}
-				<a class="collapsed" data-toggle="collapse" href="#collapseListGroup{{ link.id }}" aria-expanded="false" aria-controls="collapseListGroup{{ link.id }}">
-					<span class="glyphicon glyphicon-chevron-down"></span>
-				</a>
+			<div class="col-md-12 {% if link.lvl > 0 %}col-md-offset-{{link.lvl}}{% endif %}">
+				{% if link.__children is not empty or link.lvl == 0 %}
+					<a class="collapsed" data-toggle="collapse" href="#collapseListGroup{{ link.id }}" aria-expanded="false" aria-controls="collapseListGroup{{ link.id }}">
+					<span class="glyphicon glyphicon-chevron-right"></span>
+					</a>
+				{% else %}
+					<span class="glyphicon glyphicon-minus"></span>
+				{% endif %}
 				<a href="{{ path("vmb_presentation_browse_topic", app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'topic': link.id })) }}" title="{{ link.title }}">
-					{{ link.title }} ({{ link.__children|length }})
+					{{ link.title }} {#({{ link.__children|length }})#}
 				</a>
 			</div>
 		</div>

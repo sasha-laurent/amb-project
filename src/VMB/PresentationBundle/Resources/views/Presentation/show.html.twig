@@ -15,10 +15,10 @@
 
 {% block body %}
     <div class="row">
-		<div class="col-sm-9">
+		<div class="col-sm-8">
 			{% include '::players.html.twig' %}
 		</div>
-		<div class="col-sm-3">
+		<div class="col-sm-4">
 			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> {{ 'show.playlist'|trans }}</h4>
 			{% set totalDuration = 0 %}
 			<ul class="list-group" id="file_list">
@@ -29,8 +29,8 @@
 							{% set totalDuration = totalDuration + res.getDuration %}
 							<li class="list-group-item{% if firstLoop %} active{% set firstLoop = false %}{% endif %}" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
 								<div class="row">
-									<div class="col-sm-8"><span class="glyphicon glyphicon-{{ res.usedResource.resource.getGlyphicon }}" aria-hidden="true"></span> {{ res.usedResource.resource.title[:20] }}</div>
-									<div class="col-sm-4">{{ "%02d"|format(res.getDuration // 60) }}:{{ "%02d"|format(res.getDuration % 60) }}</div>
+									<div class="col-sm-9"><span class="glyphicon glyphicon-{{ res.usedResource.resource.getGlyphicon }}" aria-hidden="true"></span> <small>{{ res.usedResource.resource.title | shortenText(70, "...") }}</small></div>
+									<div class="col-sm-3">{{ "%02d"|format(res.getDuration // 60) }}:{{ "%02d"|format(res.getDuration % 60) }}</div>
 								</div>
 							</li>
 						{% endif %}
@@ -40,8 +40,8 @@
 						{% set totalDuration = totalDuration + res.getDuration %}
 						<li class="list-group-item{% if firstLoop %} active{% set firstLoop = false %}{% endif %}" id="addedRes_{{ res.usedResource.id }}" data-id="{{ res.usedResource.id }}">
 							<div class="row">
-								<div class="col-sm-8"><span class="glyphicon glyphicon-{{ res.usedResource.resource.getGlyphicon }}" aria-hidden="true"></span> {{ res.usedResource.resource.title[:20] }}</div>
-								<div class="col-sm-4">{{ "%02d"|format(res.getDuration // 60) }}:{{ "%02d"|format(res.getDuration % 60) }}</div>
+								<div class="col-sm-9"><span class="glyphicon glyphicon-{{ res.usedResource.resource.getGlyphicon }}" aria-hidden="true"></span> <small>{{ res.usedResource.resource.title | shortenText(70, "...")}}</small></div>
+								<div class="col-sm-3">{{ "%02d"|format(res.getDuration // 60) }}:{{ "%02d"|format(res.getDuration % 60) }}</div>
 							</div>
 						</li>
 					{% endfor %}

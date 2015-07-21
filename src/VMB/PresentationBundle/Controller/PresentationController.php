@@ -454,7 +454,8 @@ class PresentationController extends Controller
     */
     public function newAction($idMatrix)
     {
-		$matrix = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Matrix')->getMatrixWithResources($idMatrix);
+    	$em = $this->getDoctrine()->getManager();
+		$matrix = $em->getRepository('VMBPresentationBundle:Matrix')->getMatrixWithResources($idMatrix);
 
 		if ($matrix == null) {
 			throw $this->createNotFoundException($this->get('translator')->trans('message.error.entity_not_found', array('%class%' => 'Matrix')));

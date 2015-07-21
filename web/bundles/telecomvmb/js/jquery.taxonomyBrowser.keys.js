@@ -23,7 +23,8 @@
             KEYRIGHT = 39,
             KEYTAB = 9, //vmb added
             KEYENTER = 13, //vmb added
-            KEYDELETE = 68; // vmb d key
+            KEYDELETE = 68, // vmb del key
+            KEYSAVE = 83; // vmb s key
         
         
         // Add a reverse reference to the DOM object
@@ -142,6 +143,12 @@
                   }
                     break;
 
+                case KEYSAVE:
+                  if(event.shiftKey){
+                    $.fn.taxonomyBrowser.ajax_save();
+                  }
+                    break;
+
               };
 
 
@@ -156,6 +163,8 @@
                   event.which == KEYTAB || // vmb added
                   event.which == KEYENTER ||
                   event.which == KEYDELETE){ // vmb added
+                // We can't prevent KEYSAVE as it corresponds to the 'S' key -
+                // needed for content creation
 
                 event.preventDefault();
               }

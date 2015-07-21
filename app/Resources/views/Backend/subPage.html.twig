@@ -16,14 +16,18 @@
 	<div class="row">
 		<div class="col-md-{{ 12 - colWidth }}">
 			{% if backButtonUrl is defined %}
-				<a title="{{"actions.back"|trans|desc('Go Back')}}"class="btn btn-default" href="{{ backButtonUrl }}" >
-					<span class="left glyphicon glyphicon-chevron-left" aria-hidden="true" ></span>
+				<a title="{{"actions.back"|trans|desc('Go Back')}}" class="btn btn-default" href="{{ backButtonUrl }}" >
+					<span class="left glyphicon glyphicon-chevron-left" aria-hidden="true" >
+					</span>
 				</a>
 			{% endif %}
-			{{ mainTitle }}
+			{{ mainTitle | shortenText(46, "...")}}
 		</div>
 		<div class="col-md-{{ colWidth }} text-right">
-			{% if (saveButton is defined) or (saveToCaddy is defined) %}<span class="loading_indicator_inline loading_indicator_{{entity.id}}"></span>{% endif %}
+			{% if (saveButton is defined) or (saveToCaddy is defined) %}
+				<span class="loading_indicator_inline loading_indicator_{{entity.id}}">
+				</span>
+			{% endif %}
 			<div class="btn-group" role="group" aria-label="...">
 				{% if saveToCaddy is defined %}
 					<a title="{{ "menu.bookmark"|trans }}" class="btn {% if inCaddy %}btn-info{% else %}btn-default{% endif %} {{ saveToCaddy }}AddToCaddy" data-id="{{ entity.id }}" id="caddy-btn">

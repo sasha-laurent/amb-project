@@ -17,6 +17,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * use repository for handy tree functions
  * @ORM\Entity(repositoryClass="Gedmo\Tree\Entity\Repository\NestedTreeRepository")
  * @ORM\HasLifecycleCallbacks
+ * 
  */
 class Topic
 {
@@ -75,6 +76,12 @@ class Topic
      */
     private $parent;
 
+    /**
+    * @ORM\ManyToOne(targetEntity="VMB\UserBundle\Entity\User")
+    * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+    */
+    private $owner;
+    
     /**
      * @ORM\OneToMany(targetEntity="Topic", mappedBy="parent")
      * @ORM\OrderBy({"lft" = "ASC"})
@@ -413,4 +420,28 @@ class Topic
     {
         return $this->ontologies;
     }
+
+    /**
+     * Set owner
+     *
+     * @param \VMB\UserBundle\Entity\User $owner
+     * @return Topic
+     */
+    public function setOwner(\VMB\UserBundle\Entity\User $owner = null)
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * Get owner
+     *
+     * @return \VMB\UserBundle\Entity\User 
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
 }

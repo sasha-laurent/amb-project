@@ -226,6 +226,24 @@ class Matrix
     {
         $this->povs->removeElement($povs);
     }
+    
+    /**
+     * Remove a pov at a certain index
+     *
+     * @param int position
+     */
+    public function removePovAtIndex($position)
+    {
+		$i = 0;
+        foreach($this->povs as $value) {
+			if($i == $position) {
+				$this->removePov($value);
+				return $value;
+			}
+			$i++;
+		}
+		return false;
+    }
 
     /**
      * Get povs
@@ -264,6 +282,24 @@ class Matrix
     public function removeLevel(\VMB\PresentationBundle\Entity\Level $levels)
     {
         $this->levels->removeElement($levels);
+    }
+    
+    /**
+     * Remove a level at a certain index
+     *
+     * @param int position
+     */
+    public function removeLevelAtIndex($position)
+    {
+		$i = 0;
+        foreach($this->levels as $value) {
+			if($i == $position) {
+				$this->removeLevel($value);
+				return $value;
+			}
+			$i++;
+		}
+		return false;
     }
 
     /**

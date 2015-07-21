@@ -68,7 +68,7 @@
 			  .replace(/__name__/g, indexes[indexPos]).replace(/col-sm-2/g, 'col-sm-1'));
 
 		  // On ajoute au prototype un lien pour pouvoir supprimer la catégorie
-		  addDeleteLink($prototype, $container, true);
+		  addDeleteLink($prototype, $container, false);
 
 		  // On ajoute le prototype modifié à la fin de la balise <div>
 		  $container.append($prototype);

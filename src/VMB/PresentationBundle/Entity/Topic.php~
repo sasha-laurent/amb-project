@@ -76,6 +76,12 @@ class Topic
     private $parent;
 
     /**
+    * @ORM\ManyToOne(targetEntity="VMB\UserBundle\Entity\User")
+    * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+    */
+    private $owner;
+    
+    /**
      * @ORM\OneToMany(targetEntity="Topic", mappedBy="parent")
      * @ORM\OrderBy({"lft" = "ASC"})
      */
@@ -85,6 +91,12 @@ class Topic
 	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Ontology", mappedBy="topic", cascade={"remove", "persist", "detach"})
 	*/
 	private $ontologies;
+
+    /**
+    * @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Presentation", mappedBy="topic")
+    * @ORM\Column(name="presentations_count", type="integer")
+    */
+    private $presentations_count = null;
     
     /**
      * @Assert\File(maxSize="128000000000")
@@ -379,5 +391,61 @@ class Topic
     public function getChildren()
     {
         return $this->children;
+    }
+
+    /**
+     * Add ontologies
+     *
+     * @param \VMB\PresentationBundle\Entity\Ontology $ontologies
+     * @return Topic
+     */
+    public function addOntology(\VMB\PresentationBundle\Entity\Ontology $ontologies)
+    {
+        $this->ontologies[] = $ontologies;
+
+        return $this;
+    }
+
+    /**
+     * Remove ontologies
+     *
+     * @param \VMB\PresentationBundle\Entity\Ontology $ontologies
+     */
+    public function removeOntology(\VMB\PresentationBundle\Entity\Ontology $ontologies)
+    {
+        $this->ontologies->removeElement($ontologies);
+    }
+
+    /**
+     * Get ontologies
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getOntologies()
+    {
+        return $this->ontologies;
+    }
+
+    /**
+     * Set owner
+     *
+     * @param \VMB\UserBundle\Entity\User $owner
+     * @return Topic
+     */
+    public function setOwner(\VMB\UserBundle\Entity\User $owner = null)
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * Get owner
+     *
+     * @return \VMB\UserBundle\Entity\User 
+     */
+    public function getOwner()
+    {
+        return $this->owner;
     }
 }

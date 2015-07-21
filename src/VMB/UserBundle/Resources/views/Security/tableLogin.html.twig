@@ -1,0 +1,39 @@
+{% trans_default_domain 'FOSUserBundle' %}
+	
+<div class="pull-right">
+	<form class="form-inline" action="{{ path("fos_user_security_check") }}"  method="post">
+		<input type="hidden" name="_csrf_token" value="{{ fos_csrf_provider.generateCsrfToken('authenticate') }}" />
+		<table style="border-collapse: separate; border-spacing: 10px; margin-top: -10px;">
+			<tbody>
+				<tr>
+					<td>
+						<div class="form-group">
+						<label class="sr-only" for="username">{{ 'security.login.username'|trans }}</label>
+						<input class="form-control" type="text" id="username" name="_username" placeholder="{{ 'security.login.username'|trans }}" required="required" />
+						</div>
+					</td>
+					<td>
+						<div class="form-group">
+						<label class="sr-only" for="password">{{ 'security.login.password'|trans }}</label>
+						<input class="form-control" type="password" id="password" name="_password" placeholder="{{ 'security.login.password'|trans }}" required="required" />
+						</div>
+					</td>
+					<td>
+						<div class="form-group">
+						<input class="btn btn-primary" type="submit" id="_submit" name="_submit" value="{{ 'security.login.submit'|trans }}" />
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td class="checkbox">
+						<input type="checkbox" id="remember_me" name="_remember_me" value="on" />
+						<label for="remember_me">{{ 'security.login.remember_me'|trans }}</label>
+					</td>
+					<td>
+						<a href="{{path('fos_user_resetting_request')}}">{{'resetting.request.request_reset' | trans}}</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>

@@ -9,6 +9,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use VMB\UserBundle\Entity\User;
 use VMB\UserBundle\Form\UserType;
 
+use FOS\UserBundle\FOSUserEvents;
+use FOS\UserBundle\Event\FormEvent;
+use FOS\UserBundle\Event\GetResponseUserEvent;
+use FOS\UserBundle\Event\FilterUserResponseEvent;
+
 /**
  * User controller.
  *
@@ -52,7 +57,7 @@ class UserController extends Controller
 
         return $this->render('VMBUserBundle:User:index.html.twig', array(
             'mainTitle' => $this->get('translator')->trans('admin.user.manage'),
-			'addButtonUrl' => $this->generateUrl('fos_user_registration_register'),
+			'addButtonUrl' => $this->generateUrl('admin_user_create'),
             'entities' => $entities
         ));
         

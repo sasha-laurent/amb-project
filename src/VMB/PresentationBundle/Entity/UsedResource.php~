@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UsedResource
  *
- * @ORM\Table()
+ * @ORM\Table(name="usedresource",uniqueConstraints={@ORM\UniqueConstraint(name="uniq_resource_per_lvl_pov", columns={"pov_id", "level_id", "matrix_id"})})
  * @ORM\Entity(repositoryClass="VMB\PresentationBundle\Entity\UsedResourceRepository")
  */
 class UsedResource
@@ -23,21 +23,25 @@ class UsedResource
     
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\ResourceBundle\Entity\Resource")
+	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
 	*/
 	private $resource;
 
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Level")
+	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
 	*/
 	private $level;
 
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Pov")
+	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
 	*/
 	private $pov;
 	
 	/**
-	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Matrix")
+	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Matrix", inversedBy="resources")
+	* @ORM\JoinColumn(nullable=false)
 	*/
 	private $matrix;
 	
@@ -126,5 +130,28 @@ class UsedResource
     public function getMatrix()
     {
         return $this->matrix;
+    }
+
+    /**
+     * Set resource
+     *
+     * @param \VMB\ResourceBundle\Entity\Resource $resource
+     * @return UsedResource
+     */
+    public function setResource(\VMB\ResourceBundle\Entity\Resource $resource = null)
+    {
+        $this->resource = $resource;
+
+        return $this;
+    }
+
+    /**
+     * Get resource
+     *
+     * @return \VMB\ResourceBundle\Entity\Resource 
+     */
+    public function getResource()
+    {
+        return $this->resource;
     }
 }

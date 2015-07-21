@@ -37,25 +37,29 @@ browse:
     multiple_indexation: browse.multiple_indexation   # FIXME
     mutliple_indexation: browse.mutliple_indexation
     no_presentation: browse.no_presentation
-    official_only: browse.official_only
+    official: Official
     parameters_title: browse.parameters_title
     personal_presentation: browse.personal_presentation
     personal_resources: browse.personal_resources
     preview_current_resource: browse.preview_current_resource
 
+caddy:
+    add: 'Add to bookmarks'
+    remove: 'Remove from bookmarks'
+
 form:
     label:
         associated_routes: form.label.associated_routes
-        current_thumbnail: form.label.current_thumbnail
+        current_thumbnail: Current Thumbnail
         description: form.label.description
         file: form.label.file
         keywords: form.label.keywords
         role: form.label.role
         text: form.label.text
-        thumbnail: form.label.thumbnail
-        title: form.label.title
-        topic: form.label.topic
-        video: form.label.video
+        thumbnail: Thumbnail
+        title: Title
+        topic: Topic
+        video: Video
 
 help: help
 help.add: help.add
@@ -77,10 +81,8 @@ matrix:
     delete: matrix.delete
     deleted: matrix.deleted
     edit: matrix.edit
-
     error:
         resource_unofficial_not_added: matrix.error.resource_unofficial_not_added
-
     levels: matrix.levels
     main_title: matrix.main_title
     modified: matrix.modified
@@ -90,6 +92,7 @@ matrix:
     official_success: matrix.official_success
     official_title: matrix.official_title
     povs: matrix.povs
+    show: "Matrix Overview"
 
 menu:
     bookmark: Bookmark
@@ -97,6 +100,7 @@ menu:
     connexion: Connexion
     contextual_help: 'Contextual help'
     homepage: Homepage
+    login: Login
     logout: Logout
     manage: Manage
     matrixes: Matrixes
@@ -122,24 +126,30 @@ message:
         warning_official: message.matrix.warning_official
 
     no_elt_found: message.no_elt_found
-
     ontology:
-        modal: message.ontology.modal
-        none_for_this_topic: message.ontology.none_for_this_topic
+        modal: message.ontology.moda
+        none_for_this_topic: 'No ontologies correspond to this topic.'
 
     presentation:
         copy: message.presentation.copy
 
     resource:
-        none_for_this_search: message.resource.none_for_this_search
+        none_for_this_search: 'No resource match your search.'
 
     save: message.save
 
     title:
         warning: Warning
 
+ontology:
+    add_node: 'Add Node'
+    edit_node: 'Edit node'
+    delete_node: 'Delete node'
+    save_node: 'Save Node'
+    edit: 'Edit ontology'
+
 player:
-    new_tab: 'Display this file in a new tab'
+    new_tab: 'Show this file in a new tab'
 
 presentation:
     add: presentation.add
@@ -198,18 +208,21 @@ resource:
     add: resource.add
     added: resource.added
     browse: resource.browse
-    delete: resource.delete
+    delete: 'Delete resource'
     deleted: resource.deleted
-    edit: resource.edit
+    edit: 'Edit resource'
+    index: 'Index resource'
     modified: resource.modified
-    none_found_in_this_space: resource.none_found_in_this_space
+    none_found_in_this_space: 'No resource found in this space'
     officials: resource.officials
     personals: resource.personals
+    bookmarks: Bookmarks
     shared: resource.shared
+    type_error: 'Unrecognized resource type.'
 
 role:
-    prof: role.prof
-    stud: role.stud
+    prof: Teacher
+    stud: Student
 
 show:
     playlist: show.playlist
@@ -224,40 +237,38 @@ tab:
     users: tab.users
 
 table:
-    action: table.action
-    created: table.created
-    creation: table.creation
+    action: Actions
+    created: 'Created on'
+    creation: 'Creation date'
     description: table.description
     duration: table.duration
     official: table.official
     routes: table.routes
     size: table.size
-    title: table.title
+    title: Titles
     topic: table.topic
     type: table.type
-    update: table.update
+    update: Updated on
     video: table.video
 
 text:
     password: text.password
 
 topic:
-    add: topic.add
-    added: topic.added
-
-    # Desc: Delete
-    delete: topic.delete
-    deleteMessage: topic.deleteMessage
-    deleted: topic.deleted
-
-    # Desc: Edit
-    edit: topic.edit
-    main_title: topic.main_title
-    modified: topic.modified
-    new_root: topic.new_root
+    add: 'Add new topic'
+    added: 'Topic was created'
+    all: 'All topics'
+    delete: 'Delete a Topic'
+    deleteMessage: %title%
+    deleted: 'Topic was successfuly deleted'
+    edit: 'Edit Topic'
+    main_title: 'Topics'
+    modified: 'Topic was modified'
+    new_root: '+ Define as root'
 
 user:
     role:
         admin: user.role.admin
         student: user.role.student
         teacher: user.role.teacher
+    register: 'Sign up'

@@ -1,3 +1,9 @@
+_welcome:
+    path:     /
+    defaults: 
+        _controller: FrameworkBundle:Template:template
+        template: views/default/index.html.twig
+
 vmb_contextual_help:
     resource: "@VMBContextualHelpBundle/Resources/config/routing.yml"
     prefix:   /
@@ -9,14 +15,10 @@ vmb_resource:
 vmb_presentation:
     resource: "@VMBPresentationBundle/Resources/config/routing.yml"
     prefix:   /
-    
+
 vmb_user:
     resource: "@VMBUserBundle/Resources/config/routing.yml"
     prefix:   /
-    
-vmb_homepage:
-    path:     /
-    defaults: { _controller: VMBPresentationBundle:Presentation:browse, page: 1 }
 
 fos_user_security:
     resource: "@FOSUserBundle/Resources/config/routing/security.xml"

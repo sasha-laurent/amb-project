@@ -237,23 +237,46 @@
         * @method Selector(.save-node)
         */
         $(".save-node").click(function( event ) { 
-          $.ajax ({
-                type: "POST",
-                async: false,
-                url: base.options.save,
-                data: { data: JSON.stringify(base.taxonomy),
-                        id: base.options.id,
-						title: $('#vmb_presentationbundle_ontology_name').val(),
-						topic: $('#vmb_presentationbundle_ontology_topic').val()
-                       },
-                success: function (data) {
-				  base.options.id = data;
-                  base.safeExit = true;
-                  alert("Saved"); 
-                },
-                failure: function() {alert("Error");}
-            });
+          base.ajax_save();
         });
+
+        base.ajax_save = function(){
+          $.ajax ({
+            type: "POST",
+            async: true,
+            url: base.options.save,
+            beforeSend: function(){
+              $(".main-top-menu").append('<li><div class="loading_indicator_inline"></div></li>');
+            },
+            data: { 
+              data: JSON.stringify(base.taxonomy),
+              id: base.options.id,
+              title: $('#vmb_presentationbundle_ontology_name').val(),
+              topic: $('#vmb_presentationbundle_ontology_topic').val()
+            },
+            success: function(data) {
+              base.options.id = data;
+              base.safeExit = true;
+              // $(".main-top-menu") remove loading indicator
+              $(".save-node").removeClass('btn-primary').addClass('btn-info');
+              $(".save-node").removeClass('glyphicon-floppy-disk').addClass('glyphicon-floppy-saved');
+              setTimeout(function(){ 
+                $(".save-node").removeClass('btn-info').addClass('btn-primary');
+                $(".save-node").removeClass('glyphicon-floppy-saved').addClass('glyphicon-floppy-disk');
+              }, 2000);
+            } ,
+            failure: function () {
+              // $(".main-top-menu") remove loading indicator
+              $('.main-top-menu').append('<li><div class="alert alert-danger alert-dismissible fade in" role="alert" style="padding: 6px 12px"><strong>Error while saving.</strong></div></li>');
+              setTimeout(function(){
+              $('.alert-danger').alert('close');
+              }, 3000);
+            }
+          });
+        }
+        // Expose function
+        $.fn.taxonomyBrowser.ajax_save = base.ajax_save;
+
 
         $(".search-button").click(function( event ) {
           if (base.finalSearchVideo.length > 0) {

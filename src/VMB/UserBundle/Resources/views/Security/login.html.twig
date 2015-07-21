@@ -6,7 +6,7 @@
 {% if error %}
     <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
 {% endif %}
-<div class="well">
+<div class="well col-md-4 col-md-offset-4">
 	<form action="{{ path("fos_user_security_check") }}" method="post">
 		<input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
 		<div class="form-group">

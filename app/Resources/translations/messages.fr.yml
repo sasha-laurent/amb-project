@@ -37,7 +37,7 @@ browse:
     multiple_indexation: 'Indexation multiple'
     mutliple_indexation: 'Indexation multiple'
     no_presentation: 'Aucune présentation publique dans cet espace pour ces paramètres de recherche'
-    official_only: 'Officielles uniquement'
+    official: 'Officielles'
     parameters_title: 'Affiner par'
     personal_presentation: 'Présentations personnelles'
     personal_resources: 'Ressources personnelles'
@@ -97,6 +97,7 @@ menu:
     connexion: Connexion
     contextual_help: 'Aide contextuelle'
     homepage: Accueil
+    login: Connexion
     logout: Déconnexion
     manage: Gérer
     matrixes: Matrices
@@ -138,8 +139,15 @@ message:
     title:
         warning: Attention
 
+ontology:
+    add_node: 'Ajouter un élément'
+    edit_node: 'Modifier l''élément'
+    delete_node: 'Effacer l''élément'
+    save_node: 'Sauvegarder'
+    edit: 'Modifier l''ontologie'
+
 player:
-    new_tab: 'Afficher ce fichier dans un nouvel onglet'
+    new_tab: 'Afficher dans un nouvel onglet'
 
 presentation:
     add: 'Ajout d''une présentation'
@@ -205,7 +213,9 @@ resource:
     none_found_in_this_space: 'Aucune ressource trouvée pour ce sujet dans cet espace'
     officials: Officielles
     personals: Personnelles
+    bookmarks: Favoris
     shared: Partagées
+    type_error: "Type de ressource non reconnu."
 
 role:
     prof: role.prof
@@ -226,7 +236,7 @@ tab:
 table:
     action: Action
     created: Créé
-    creation: Création
+    creation: 'Date de création'
     description: Description
     duration: Durée
     official: Officiel
@@ -244,6 +254,7 @@ text:
 topic:
     add: 'Ajouter une thématique'
     added: 'Thématique ajoutée'
+    all: 'Toutes les thématiques'
     delete: 'Suppression d''une thématique'
     deleteMessage: 'la thématique "%title%" [ATTENTION CELA SUPPRIMERA TOUTES LES MATRICES, RESSOURCES ET PRESENTATIONS LIEES]'
     deleted: 'Thématique supprimée'
@@ -257,3 +268,4 @@ user:
         admin: Administrateur
         student: Étudiant
         teacher: Professeur
+    register: 'S''inscrire'

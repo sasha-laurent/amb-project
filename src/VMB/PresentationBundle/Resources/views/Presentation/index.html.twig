@@ -2,7 +2,7 @@
 {% set addButtonUrl = 'true' %}
 {% extends '::Backend/subPage.html.twig' %}
 
-{% if page == 1 and nbPages == 0 %}
+{% if page == 1 and nbPages == 0 or nbPages == 1 %}
 	{% set skipPagination = true %}
 {% endif %}
 

@@ -55,7 +55,7 @@ class Presentation
     /**
      * @var boolean
      *
-     * @ORM\Column(name="default", type="boolean", options={"default":0})
+     * @ORM\Column(name="`default`", type="boolean", options={"default":0})
      */
     private $default = 0;
 
@@ -117,7 +117,7 @@ class Presentation
 	/**
      * @var string
      *
-     * @Gedmo\Slug(fields={"title"},updatable=false)
+     * @Gedmo\Slug(fields={"id", "title"},updatable=true, unique=true)
      * @ORM\Column(name="slug", type="string", length=128, unique=true)
      * */
     private $slug;
@@ -148,7 +148,7 @@ class Presentation
      */
     public function isOwner(\VMB\UserBundle\Entity\User $user = null)
     {
-        return $user && $user->getId() == $this->getOwner()->getId();
+        return $user && $this->getOwner() && $user->getId() == $this->getOwner()->getId();
     }
 
     /**
@@ -275,6 +275,11 @@ class Presentation
     {
         return $this->duration;
     }
+    
+    public function durationToString()
+    {
+		return sprintf("%02d", floor($this->duration / 60)).':'.sprintf("%02d", floor($this->duration % 60));
+	}
 
     /**
      * Set updateMessage
@@ -526,9 +531,9 @@ class Presentation
         if(in_array($extension, array('jpg', 'jpeg'))) {
 			$path = str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/';
 			
-			$this->file->move($path, $this->getSlug().'.jpg');
+			$this->file->move($path, $this->getId().'.jpg');
 			
-			$uploadedfile = $path.$this->getSlug().'.jpg';
+			$uploadedfile = $path.$this->getId().'.jpg';
 			
 			$src = imagecreatefromjpeg($uploadedfile);
 			
@@ -549,13 +554,25 @@ class Presentation
     
     public function getThumbsPath()
     {
-		$path = 'upload/presentation/';
-		return $path.$this->getSlug().'.jpg';
+		if(is_file(str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getId().'.jpg')) {
+			return 'upload/presentation/'.$this->getId().'.jpg';
+		}
+		else return 'img/icon/default_topic_thumb.jpg';
+	}
+	
+	public function hasThumbs() {
+		return is_file(str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getId().'.jpg');
+	}
+	
+	public function deleteThumbs() {
+		if(is_file(str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getId().'.jpg')) {
+			unlink(str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getId().'.jpg');
+		}
 	}
 	    
     public function storeFilenameForRemove()
     {
-        $this->filenameForRemove = str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getSlug().'.jpg';
+        $this->filenameForRemove = str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getId().'.jpg';
     }
 
     /**
@@ -569,5 +586,28 @@ class Presentation
 			}
            
         }
+    }
+
+    /**
+     * Set default
+     *
+     * @param boolean $default
+     * @return Presentation
+     */
+    public function setDefault($default)
+    {
+        $this->default = $default;
+
+        return $this;
+    }
+
+    /**
+     * Get default
+     *
+     * @return boolean 
+     */
+    public function getDefault()
+    {
+        return $this->default;
     }
 }

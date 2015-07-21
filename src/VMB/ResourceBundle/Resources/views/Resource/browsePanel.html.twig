@@ -1,13 +1,9 @@
 <div class="browse-topics">
-	<form action="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')) }}" method="GET">
-		<div class="form-group"><input class="form-control" type="text" name="search" value="{{ search|default() }}" placeHolder="Rechercher..." /></div>
-		{% for key, value in app.request.query.all if key != 'search' %}
-			<input type="hidden" value="{{ value }}" name="{{ key }}" />
-		{% endfor %}
-	</form>
+	<h3>{{ 'browse.parameters_title'|trans }}</h3>
+	<hr/>
 	<h4>{{ 'browse.filters'|trans }}</h4>
 	<div class="row filter">
-		<div class="col-md-10">{{ 'browse.official_only'|trans }} :</div>
+		<div class="col-md-10">{{ 'browse.official_only'|trans }} </div>
 		<div class="col-md-2 text-right">
 			<a href="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'official':((app.request.get('official') + 1) % 2)|default(1)})) }}" class="switch">
 				{% if app.request.get('official')|default(0) == 0 %}
@@ -20,6 +16,7 @@
 			</a>
 		</div>
 	</div>
+	
 	
 	{% if app.request.get('_route') != 'vmb_resource_indexation' %}
 	<div class="row filter">
@@ -36,7 +33,7 @@
 			</a>
 		</div>
 	</div>
-	{% endif %}
+	{% endif %}	
 	
 	<h4>{{ 'menu.topics'|trans }}</h4>
 	{% include "VMBResourceBundle:Resource:topicLink.html.twig" with {'links': topics, 'current': topic.id|default(null)} %}

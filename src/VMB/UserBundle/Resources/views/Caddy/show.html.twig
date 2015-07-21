@@ -23,32 +23,29 @@
     <div class="row">
 		{% if display == 'presentation' %}
 			{% for entity in app.user.presentation %}
-			<div class="col-md-3">
+			<div class="col-md-3" id="presentation{{entity.id}}">
 				<a class="thumbnail-link" href="{{ path('presentation_show', { 'id': entity.id }) }}">
 					<div class="thumbnail block-browse block-presentation">
 						<div class="thumbnail-description">
 							<h4>Description</h4>
 							<hr/>
-							<p>{{ entity.description }}</p>
+							<p>{{ entity.description | shortenText(160, "...") }}</p>
 						</div>
 						<img data-holder-rendered="true" src="{{ asset(entity.getThumbsPath) }}" style="height: 155px; width: 100%; display: block;" />
-					
-						<div class="caption">
-							<h3 class="thumbnail-label">{{ entity.title }}</h3>
-						</div>
-						
-						<div class="duration">
+							<div class="caption">
+								<h3 class="thumbnail-label">{{ entity.title | shortenText(60, "...") }}</h3>
+							</div>
+							<div class="duration">
 							{{ entity.durationToString }}
-						</div>
-						<div class="caddy-icon">
-							<span class="loading_indicator_inline loading_indicator_{{entity.id}}"></span>
-							<form action="{{ path('caddy_presentation_remove') }}" method="post">
-								<button class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
-								<input type="hidden" name="id" value="{{ entity.id }}" />
-							</form>
+							</div>
+				</a>
+							<div class="caddy-icon" id="{{entity.id}}">
+								<button title="{{"caddy.remove"|trans}}" class="btn btn-danger" onclick="askConfirm('presentation', {{entity.id}})">
+									<span class="glyphicon glyphicon-remove"></span>
+								</button>
 						</div>
 					</div>
-				</a>
+				
 			</div>
 			{% else %}
 				<div class="col-md-12 text-center">
@@ -58,36 +55,36 @@
 			{% endfor %}
 		{% else %}
 			{% for entity in app.user.resource %}
-			<div class="col-md-3">
-				<a class="thumbnail-link" href="{{ path('resource_show', { 'id': entity.id }) }}">
+			<div class="col-md-3" id="resource{{entity.id}}">
 					<div class="thumbnail block-browse block-resource">
+						<a class="thumbnail-link" href="{{ path('resource_show', { 'id': entity.id }) }}">
 						<div class="thumbnail-description">
 							<h4>Description</h4>
 							<hr/>
-							<p>{{ entity.description }}</p>
+							<p>{{ entity.description | shortenText(160, "...")  }}</p>
 						</div>
+
+				
 						<img data-holder-rendered="true" src="{{ asset(entity.getThumbsPath) }}" style="height: 155px; width: 100%; display: block;" />
 					
 						<div class="caption">
-							<h3 class="thumbnail-label"><span class="glyphicon glyphicon-{{ entity.getGlyphicon }}"></span> {{ entity.title }}</h3>
+							<h3 class="thumbnail-label"><span class="glyphicon glyphicon-{{ entity.getGlyphicon }}"></span> {{ entity.title | shortenText(70, "...") }}</h3>
 						</div>
+						</a>
 						
-						<div class="duration">
-							{{ entity.durationToString }}
-						</div>
-						<div class="caddy-icon">
-							<span class="loading_indicator_inline loading_indicator_{{entity.id}}"></span>
-							<form action="{{ path('caddy_resource_remove') }}" method="post">
-								<button class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
-								<input type="hidden" name="id" value="{{ entity.id }}" />
-							</form>
+						{% if entity.getGlyphicon == "film" %}
+							<div class="duration">
+								{{ entity.durationToString }}
+							</div>
+						{% endif %}
+						<div class="caddy-icon {% if entity.getGlyphicon != "film" %}col-md-offset-3{% endif %}" id="{{entity.id}}">
+							<button title="{{"caddy.remove"|trans}}" class="btn btn-danger" onclick="askConfirm('resource', {{entity.id}})"><span class="glyphicon glyphicon-remove"></span></button>
 						</div>
 					</div>
-				</a>
-			</div>
+				</div>
 			{% else %}
 				<div class="col-md-12 text-center">
-					<em>Aucune ressource dans cet espace</em>
+					<em>{{"resource.none_found_in_this_space" | trans}}</em>
 					<br/><br/>
 				</div>
 			{% endfor %}
@@ -99,5 +96,41 @@
 {% block script %}
 	{{ parent() }}
 	{% include '::addToCaddy.html.twig' %}
+	<script>
+		function askConfirm(type, id)
+		{
+			$("#"+id+" > button").hide();
+			$("#"+id).append('<a onclick="deleteBookmark('+'\''+type+'\','+id+')">{{"actions.delete"|trans}}</a> <strong>/</strong> <a onclick="showDelButton(\''+id+'\')">{{"actions.cancel"|trans}}</a>');
+		}
+		// TODO: show "empty space" message when all bookmarks have been deleted
+		function deleteBookmark(typ, idd)
+		{
+			var u = typ == "resource" ? 
+			"{{ path('caddy_resource_remove')}}" : "{{ path('caddy_presentation_remove')}}";
+			// ajax request and re-arrange UI without vignette
+			$.ajax({
+				type: "POST",
+				url: u,
+				data: { id: idd },
+				cache: false,
+				success: function(data){
+					if(data == 'ok') {
+						$('#'+typ+idd).hide();
+					} else { 
+						// data is 'unknown' but we can't add ressource back based on that
+						showDelButton(idd);
+					}
+				},
+				failure: function(data){
+					showDelButton(idd);
+				}
+			});    
+			return false;
+		}
+		function showDelButton(id){
+			$('#'+id+' > a').remove();
+			$('#'+id+' > strong').remove();
+			$('#'+id+' > button').show();
+		}
+	</script>
 {% endblock %}
-

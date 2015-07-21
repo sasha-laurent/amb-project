@@ -13,3 +13,21 @@
 	{% include "VMBPresentationBundle:Topic:indexLinks.html.twig" with {'links': entities} %}
     
 {% endblock %}
+{% block script %}
+	{{ parent() }}
+	<script>
+		var group_ids = [];
+		{% for e in entities %}
+			group_ids.push({{e.id}});
+		{% endfor %}
+		$.each(group_ids, function(i, v){		
+			var c = $('#collapseListGroup'+v);
+			c.on('show.bs.collapse', function(){
+				$('a[href="#collapseListGroup'+v+'"] > span').removeClass('glyphicon-triangle-right').addClass('glyphicon-triangle-bottom');
+			});
+			c.on('hide.bs.collapse', function(){
+				$('a[href="#collapseListGroup'+v+'"] > span').removeClass('glyphicon-triangle-bottom').addClass('glyphicon-triangle-right');			
+			});
+		});
+	</script>
+{% endblock %}
