@@ -85,8 +85,8 @@
 				{% if matrix.sortedResources[pov.id][level.id] is defined %}
 					<div class="usedResource" style="background-image:url({{ asset(matrix.sortedResources[pov.id][level.id].resource.getThumbsPath) }});">
 						{% if copy %}
-						<div class="resThumbnailHover" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="{{ matrix.sortedResources[pov.id][level.id].resource.duration|default(11) }}" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
-							<span class="resTitle">{{ matrix.sortedResources[pov.id][level.id].resource.title[:18] }}</span>
+						<div class="resThumbnailHover" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="{{ matrix.sortedResources[pov.id][level.id].resource.duration|default(11) }}" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title | shortenText(80, "...")}}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description | shortenText(140, "...")}}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
+							<span class="resTitle">{{ matrix.sortedResources[pov.id][level.id].resource.title[:30] }}</span>
 							<span class="resCheckBox">
 								{% if presentation.isChecked(matrix.sortedResources[pov.id][level.id].id) %}
 									<span class="glyphicon glyphicon-ok teacherRes" aria-hidden="true"></span>
@@ -99,9 +99,18 @@
 							</span>
 						</div>
 						{% else %}
-						<div class="resThumbnailHover{% if presentation.isChecked(matrix.sortedResources[pov.id][level.id].id) %} checkedRes{% elseif presentation.isSuggested(matrix.sortedResources[pov.id][level.id].id) %} suggestedRes{% endif %}" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="{{ matrix.sortedResources[pov.id][level.id].resource.duration|default(11) }}" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description }}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
-							<span class="resTitle">{{ matrix.sortedResources[pov.id][level.id].resource.title[:18] }}</span>
-							<span class="resCheckBox"><span class="user-glyphicon glyphicon glyphicon-ok" aria-hidden="true"></span></span>
+						<div class="resThumbnailHover
+						{% if presentation.isChecked(matrix.sortedResources[pov.id][level.id].id) %} checkedRes
+						{% elseif presentation.isSuggested(matrix.sortedResources[pov.id][level.id].id) %} suggestedRes
+						{% endif %}" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="{{ matrix.sortedResources[pov.id][level.id].resource.duration|default(11) }}" title="{{ matrix.sortedResources[pov.id][level.id].resource.title | shortenText(80, "...") }}"
+						data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" 
+						data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description | 
+							shortenText(140, "...") }}" 
+						data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
+							<span class="resTitle">{{ matrix.sortedResources[pov.id][level.id].resource.title[:30] }}</span>
+							<span class="resCheckBox">
+								<span class="user-glyphicon glyphicon glyphicon-ok" aria-hidden="true"></span>
+							</span>
 						</div>
 						{% endif %}
 					</div>
@@ -135,7 +144,7 @@
 	<hr/>
 	<div class="row">
 		<div class="col-sm-7">
-			<h4><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> {{ 'browse.preview_current_resource'|trans }}</h4>
+			<h4><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> {{ 'browse.preview_current_resource'|trans }}</h4>
 			{% include '::players.html.twig' %}
 			<br/>
 		</div>
@@ -446,7 +455,9 @@
 				}
 			});
 			
-			$('[data-toggle="popover"]').popover();
+			$('[data-toggle="popover"]').popover({
+				container:'body'
+			});
 			$('#file_list').sortable({
 				out: function (event, ui) {
 					//workaround for bug http://bugs.jqueryui.com/ticket/6259
@@ -532,7 +543,7 @@
 		$('#save_new_presentation').click(function(event) {
 			event.preventDefault();
 			if($('#file_list li').length > 0) {
-				$('#presentation_form').find('[type="submit"]').trigger('click');
+				$('#presentation_form)'.find('[type="submit"]').trigger('click');
 			}
 			else {
 				alert('Aucun élément dans la liste de lecture');

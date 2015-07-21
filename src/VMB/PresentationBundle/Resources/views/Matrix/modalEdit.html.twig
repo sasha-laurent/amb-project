@@ -1,0 +1,128 @@
+{% extends "::Backend/subPage.html.twig" %}
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{# Modification doesn't work #}
+{% block form_label_class %}
+{% endblock form_label_class %}
+
+{# TODO: Notifications, undo actions could go in H1 header center row?#}
+{% block body %}
+<div class="well">
+	{{ form_start(form) }}
+	<div class="form-group">
+		{{form_label(form.title)}}
+		<div class="col-sm-10">
+		{{form_widget(form.title)}}
+		</div>
+	</div>
+	<div class="form-group">
+		{{form_label(form.topic)}}
+		<div class="col-sm-10">
+		{{form_widget(form.topic)}}
+		</div>
+	</div>
+	<div class="form-group">
+		{{form_label(form.description)}}
+		<div class="col-sm-10">
+		{{form_widget(form.description)}}
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-md-6">
+			<ul class="list-group Pov-list">
+				<li class="list-group-item row">
+					<div class="col-md-10 matrix-row-title">
+						<h4 class="text-center">{{form.povs.vars.label}}</h4>
+					</div>
+					<div class="col-md-2 text-right">
+						<button type="button" class="btn btn-default pull-right" onclick="addRow('Pov')">
+							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+						</button>
+					</div>
+				</li>
+			{% for pov in form.povs %}
+				<li class="list-group-item row">
+				<div class="col-md-8 matrix-row-title">{{ form_widget(pov.title) }}</div>
+				<div class="col-md-4 text-right">
+					<button type="button" class="btn btn-danger" onclick="removeRow(this)">
+						<span class="glyphicon glyphicon-remove"></span>
+					</button>
+				</div>
+				</li>
+			{% endfor %}
+			</ul>
+		</div>
+		<div class="col-md-6">
+			<ul class="list-group Level-list">				
+				<li class="list-group-item row">
+					<div class="col-md-10 matrix-row-title">
+						<h4 class="text-center">{{form.levels.vars.label}}</h4>
+					</div>
+					<div class="col-md-2 text-right">
+						<button type="button" class="btn btn-default pull-right" onclick="addRow('Level')">
+							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+						</button>
+					</div>
+				</li>
+			{% for lvl in form.levels %}
+				<li class="list-group-item row">
+				<div class="col-md-8 matrix-row-title">{{ form_widget(lvl.title) }}</div>
+				<div class="col-md-4 text-right">
+					<button type="button" class="btn btn-danger" onclick="removeRow(this)">
+						<span class="glyphicon glyphicon-remove"></span>
+					</button>
+				</div>
+				</li>
+			{% endfor %}
+			</ul>
+		</div>
+	</div>
+	{% if is_modal is defined %}
+		{{ form_widget(form._token) }}
+	{% else %}
+		{{ form_end(form) }}
+	{% endif %}
+</div>
+{% endblock %}
+
+
+{% block script %}
+	{{ parent() }}
+	<script type="text/javascript">
+	$(document).ready(function(){
+		/* 
+		** TODO: Declare action list, helper functions to manage it
+		** 		- Make sure indexes are consistent with database repr. 
+		** (for example when something is deleted it should be put back at its original index, 
+		** not at a new index value, and next input names changed accordingly)
+		**		- Prep. batch request (which would help minimize server diff processing) to persist at matrix/update
+		**		- Add hook to persistChanges (modal dialog floppy-disk button)
+		*/	
+		// Loop through symfony-baked content to populate 
+		$("#vmb_presentationbundle_matrix_povs, #vmb_presentationbundle_matrix_levels").each(function(index, elt) {
+		});
+		// 
+	});
+	/*
+	** Helper Functions for modal dialog
+	*/
+	function addRow(type){
+		var ul_container =  $("."+type+"-list");
+		var typ_str = type.toLowerCase()+"s";
+		var nxt_id = $(ul_container).children().length - 1;
+		console.log(ul_container, nxt_id);
+		$(ul_container).append('<li class="list-group-item row"><div class="col-md-8 matrix-row-title"><input type="text" id="vmb_presentationbundle_matrix_'+typ_str+'_'+nxt_id+'_title" name="vmb_presentationbundle_matrix['+typ_str+']['+nxt_id+'][title]" required="required" maxlength="64" class="form-control"></div><div class="col-md-4 text-right"><button type="button" class="btn btn-danger" onclick="removeRow(this)"><span class="glyphicon glyphicon-remove"></span></button></div></li>');
+	}
+	function removeRow(elt){
+		var row_elt = $(elt).parentsUntil("ul")[1];
+		$(row_elt).remove();
+		// save elt in undo-list before del
+	}
+
+	// TODO: Calculate diff if deletions, notify user of cascade consequences? 
+	// (list of content that would be deleted)
+	function persistChanges(){
+	$.ajax();
+	}
+	</script>
+{% endblock %}

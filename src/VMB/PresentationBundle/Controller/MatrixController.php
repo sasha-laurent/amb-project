@@ -42,11 +42,8 @@ class MatrixController extends Controller
 
     /**
      * Finds and displays a Matrix entity.
-     *
+     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
      */
-    /**
-    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
-    */
     public function showAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
@@ -63,14 +60,15 @@ class MatrixController extends Controller
 			$unofficialResources = $em->getRepository('VMBResourceBundle:Resource')->findByTopicSortedByType($entity->getTopic(), false, $this->getUser(), true);
 			$caddyResources = $this->getUser()->getResource();
 
+
 			return $this->render('VMBPresentationBundle:Matrix:show.html.twig', array(
 				'mainTitle' => $entity->getTitle(),
 				'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('matrix')),
 				'editButtonUrl' => $this->generateUrl('matrix_edit', array('id' => $entity->getId())),
 				'delButtonUrl' => $this->generateUrl('matrix_delete', array('id' => $entity->getId())),
 				'entity' => $entity,
-				'resources' => array('official' => $validResources, 'personal' => $personalResources, 'unofficial' => $unofficialResources, 'bookmarks' => $caddyResources),
-				'optionButtonModal' => '#modalEditRows'
+				'resources' => array('official' => $validResources, 'personal' => $personalResources, 'unofficial' => $unofficialResources, 'bookmarks' => $caddyResources)
+				// ,'optionButtonModal' => '#modalEditRows'
 			));
 		}
 		else {
@@ -168,16 +166,19 @@ class MatrixController extends Controller
     /**
      * Displays a form to edit an existing Matrix entity.
      * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+     * TODO: Modal parameter? Would mean no back button, but close button in subPage instead.
      */
-    public function editAction($id)
+    public function editAction($id, $is_modal = false)
     {
         $matrix = $this->getMatrix($id);
 
-		if($this->get('security.context')->isGranted('ROLE_ADMIN') || $matrix->isOwner($this->getUser())) {		
-			return $this->renderForm($matrix);
-		}
-		else {
-			$this->get('request')->getSession()->getFlashBag()->add('danger', $this->get('translator')->trans('message.error.not_enough_rights'));
+		if($this->get('security.context')->isGranted('ROLE_ADMIN') 
+			|| $matrix->isOwner($this->getUser())) 
+		{		
+			return $this->renderForm($matrix, $is_modal);
+		} else {
+			$this->get('request')->getSession()->getFlashBag()->add('danger', 
+				$this->get('translator')->trans('message.error.not_enough_rights'));
 			return $this->redirect($this->generateUrl('matrix'));
 		}
     }
@@ -186,7 +187,7 @@ class MatrixController extends Controller
      * Finds and displays a Matrix entity.
      * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
      */
-    protected function renderForm($matrix)
+    protected function renderForm($matrix, $is_modal = false)
     {
 		$request = $this->get('request');
 		$options = array();
@@ -210,18 +211,27 @@ class MatrixController extends Controller
 				$em->persist($matrix);
 				$em->flush();
 
-				$flashMessage = !$matrix->toString() ? $translator->trans('matrix.added') : $translator->trans('matrix.modified');
+				$flashMessage = !$matrix->toString() ? 
+					$translator->trans('matrix.added') : $translator->trans('matrix.modified');
 				$request->getSession()->getFlashBag()->add('success', $flashMessage);
 				return $this->redirect($this->generateUrl('matrix_show', array('id' => $matrix->getId())));
 			}
 		}
-
-		return $this->render('::Backend/form.html.twig', 
-			array(
+		$render_opts = array(
 				'form' => $form->createView(),
-				'mainTitle' => ((!($matrix->toString())) ? $translator->trans('matrix.add') : $translator->trans('matrix.edit')),
-				'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('matrix')),
-			));
+				'mainTitle' => ((!($matrix->toString())) ? 
+					$translator->trans('matrix.add') : $translator->trans('matrix.edit')));
+
+		if($is_modal){
+				$render_opts['saveButton'] = true;		
+				$render_opts['is_modal'] = true;		
+				$render_opts['delButtonUrl'] = '#" data-dismiss="modal"';
+				return $this->render('VMBPresentationBundle:Matrix:modalEdit.html.twig', $render_opts);	
+		} else {
+				$render_opts['backButtonUrl'] = $this->container->get('vmb_presentation.previous_url')
+				->getPreviousUrl($request, $this->generateUrl('matrix'));
+				return $this->render('::Backend/form.html.twig', $render_opts);
+		}
     }
     
     /**
@@ -304,10 +314,11 @@ class MatrixController extends Controller
 			}
 
 			// Si la requête est en GET, on affiche une page de confirmation avant de delete
+			// TODO: Fix previous url call (doesn't redirect back to matrix/show/{id} )
 			return $this->render('::Backend/delete.html.twig', array(
 				'entityTitle' => '"'.$matrix->toString().'"',
 				'mainTitle' => $translator->trans('matrix.delete'),
-				'backButtonUrl' => $this->generateUrl('matrix')
+				'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('matrix'))
 			));
 		}
 		else {

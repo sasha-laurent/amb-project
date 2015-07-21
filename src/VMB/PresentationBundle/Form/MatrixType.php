@@ -15,19 +15,19 @@ class MatrixType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('title', null, array('label' => 'form.label.title'));
-        
-        $matrix = $builder->getData();
-        if($matrix->getTopic() == null) {
+        //$matrix = $builder->getData();
+        //if($matrix->getTopic() == null) {
 			$builder->add('topic', 'entity', array(
 			'label' => 'form.label.topic',
 			'multiple' => false,
 			'class' => 'VMBPresentationBundle:Topic',
 			 'query_builder' => function(\Gedmo\Tree\Entity\Repository\NestedTreeRepository $repo) {
 				return $repo->getNodesHierarchyQueryBuilder();
-			  })) 
+			  }))
+              ->add('description', null, array('label' => 'form.label.description'))
 			  ->add('povs', 'collection', array(
 				'by_reference' => false,
-				'label'		   => 'Points de vues',
+				'label'		   => 'Points de vue',
 				'type'         => new PovType(),
 				'allow_add'    => true,
 				'allow_delete' => true
@@ -39,12 +39,9 @@ class MatrixType extends AbstractType
 				'allow_add'    => true,
 				'allow_delete' => true
 			  ));
-		}
+		//}
            
-        $builder
-            ->add('description', null, array('label' => 'form.label.description'))
-			->add('save', 'submit', array('label' => 'actions.save'))
-        ;
+        $builder->add('save', 'submit', array('label' => 'actions.save'));
     }
     
     /**

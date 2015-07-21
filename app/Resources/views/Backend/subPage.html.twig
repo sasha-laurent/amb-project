@@ -21,11 +21,11 @@
 					</span>
 				</a>
 			{% endif %}
-			{{ mainTitle | shortenText(46, "...")}}
+			{{ mainTitle | shortenText(42, "...")}}
 		</div>
 		<div class="col-md-{{ colWidth }} text-right">
 			{% if (saveButton is defined) or (saveToCaddy is defined) %}
-				<span class="loading_indicator_inline loading_indicator_{{entity.id}}">
+				<span class="loading_indicator_inline {% if entity is defined %}loading_indicator_{{entity.id}}{% endif %}">
 				</span>
 			{% endif %}
 			<div class="btn-group" role="group" aria-label="...">
@@ -40,12 +40,22 @@
 					</a>
 				{% endif %}
 				{% if addButtonUrl is defined %}
-					<a title="{{ "actions.add"|trans|desc('Add') }}" class="btn btn-default" {% if addModal is defined %} data-toggle="modal" data-target="{{ addModal }}" {% else %} href="{{ addButtonUrl }}" {% endif %} >
+					<a title="{{ "actions.add"|trans|desc('Add') }}" class="btn btn-default" 
+					{% if addModal is defined %} 
+						data-toggle="modal" data-target="{{ addModal }}" 
+					{% else %} 
+						href="{{ addButtonUrl }}" 
+					{% endif %} >
 						<span class="left glyphicon glyphicon-plus" aria-hidden="true"></span>
 					</a>
 				{% endif %}
 				{% if editButtonUrl is defined %}
-					<a title="{{ "actions.edit"|trans|desc('Edit') }}" class="btn btn-default" {% if editModal is defined %} data-toggle="modal" data-target="{{ editModal }}" {% else %} href="{{ editButtonUrl }}" {% endif %} >
+					<a title="{{ "actions.edit"|trans|desc('Edit') }}" class="btn btn-default" 
+					{% if editModal is defined %} 
+						data-toggle="modal" data-target="{{ editModal }}" 
+					{% else %} 
+						href="{{ editButtonUrl }}" 
+					{% endif %} >
 						<span class="left glyphicon glyphicon-pencil" aria-hidden="true"></span>
 					</a>
 				{% endif %}
@@ -55,7 +65,7 @@
 					</a>
 				{% endif %}
 				{% if delButtonUrl is defined %}
-					<a title="{{ "actions.delete"|trans|desc('Delete') }}" class="btn btn-default" href="{{ delButtonUrl }}" >
+					<a title="{{ "actions.delete"|trans }}" class="btn btn-default" href="{{ delButtonUrl | raw }}" >
 						<span class="left glyphicon glyphicon-remove" aria-hidden="true"></span>
 					</a>
 				{% endif %}
