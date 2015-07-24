@@ -97,7 +97,6 @@ class TopicController extends Controller
                 if($topic->getParent() != $topic){
     				$flashMessage = ($topic->getId() == null) ? 
                         $translator->trans('topic.added') : $translator->trans('topic.modified');
-    				$topic->setOwner($this->getUser());
     				$em = $this->getDoctrine()->getManager();
     				$em->persist($topic);
     				$topic->preUpload();
@@ -122,7 +121,7 @@ class TopicController extends Controller
     }
     /**
      * Deletes a Topic entity.
-     * A user can only delete his own topics, admins excepted.
+     * @Security("is_granted('ROLE_ADMIN')")
      * 
      */
     public function deleteAction(Request $request, $id)
@@ -133,16 +132,10 @@ class TopicController extends Controller
 		if ($request->isMethod('POST')) {
 			try {
 				$em = $this->getDoctrine()->getManager();
-                if($this->getUser() == $topic->getOwner()
-                    || $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')){
                     $em->remove($topic);
                     $em->flush();
                     $request->getSession()->getFlashBag()->add('success', 
                         $translator->trans('topic.deleted'));   
-                } else {
-                    $request->getSession()->getFlashBag()->add('danger', 
-                        $translator->trans('message.error.not_enough_rights'));
-				}
 			} catch (\Exception $e) {
 				dump($e);
 				$request->getSession()->getFlashBag()->add('danger', 

@@ -75,14 +75,6 @@ class Topic
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $parent;
-
-    /**
-    * @ORM\ManyToOne(targetEntity="VMB\UserBundle\Entity\User")
-    * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-    * C'est l'utilisateur Créateur de la thématique, l'ayant droit sur sa suppression
-    * (en plus du super-admin)
-    */
-    private $owner;
     
     /**
      * @ORM\OneToMany(targetEntity="Topic", mappedBy="parent")

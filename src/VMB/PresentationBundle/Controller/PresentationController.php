@@ -621,7 +621,8 @@ class PresentationController extends Controller
 		
 		$parameters = array(
 				'form' => $form->createView(),
-				'mainTitle' => ((!($presentation->toString())) ? $translator->trans('presentation.add') : $presentation->toString()),
+				'mainTitle' => ((!($presentation->toString())) ? 
+					$translator->trans('presentation.add') : $presentation->toString()),
 				'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('vmb_presentation_browse')),
 				'copy' => $saveAsCopy,
 				'matrix' => $presentation->getMatrix(),

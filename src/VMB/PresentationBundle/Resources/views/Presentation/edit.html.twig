@@ -325,7 +325,7 @@
 			});
 		}
 		
-		function deleteFromPlaylist(resId, type, duration = null) {
+		function deleteFromPlaylist(resId, type, duration) {
 			if(type == 'used') {
 				$('#addedRes_' + resId).remove();
 				$('#usedRes_' + resId).removeClass('checkedRes');
@@ -352,7 +352,7 @@
 			}
 		}
 		
-		function addToPlaylist(resId, title, type, duration = null) {
+		function addToPlaylist(resId, title, type, duration) {
 			if(type == 'used') {
 				$('#usedRes_' + resId).addClass('checkedRes');
 				$('#file_list').append(generateNewItem(resId, title, 'used', duration));
@@ -381,7 +381,7 @@
 			$('.playableRes_' + resId).find('.editTimeButton').click(function(event) { event.stopImmediatePropagation(); event.preventDefault(); editTime(this); });
 		}
 		
-		function generateNewItem(id, title, type, duration = null) {
+		function generateNewItem(id, title, type, duration) {
 			var resourceData = resourcesCollection[id];
 			if(duration == null)  {
 				duration = resourceData['duration'];
@@ -528,10 +528,10 @@
 		
 		$('.editTimeButton').click(function(event) { event.stopImmediatePropagation(); event.preventDefault(); editTime(this); });
 		
-		$('#save-btn').click(function(event) {
-			event.preventDefault();
+		$('#save-btn').click(function() {
 			$('#presentation_form').submit();
 		});
+
 		$('#delete_thumbs').click(function(event) {
 			event.preventDefault();
 			$('#keepThumbs').val(0);
