@@ -1,11 +1,86 @@
-{% extends "::Backend/subPage.html.twig" %}
 {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 
-{% block body %}
-
-<div class="well">
-	<form action="#" method="post" {{ form_enctype(form) }}>
-    {{ form_widget(form) }}
+<form action="#" method="post" id="modal_res_add" class="form-horizontal" {{ form_enctype(form) }}>
+<h3 class="page-header" style="margin-top:20px;padding-bottom:20px">
+	{{"resource.add"|trans}}
+	<div class="btn-group pull-right">
+		<button id="modal_save_btn" type="submit" title="Save" class="btn btn-default">
+			<span class="glyphicon glyphicon-floppy-disk"></span>
+		</button>
+		<button type="button" title="Discard" class="btn btn-default" data-dismiss="modal">
+			<span class="glyphicon glyphicon-remove"></span>
+		</button>
+	</div>
+	<span id="modal_loading" style="margin-right:10px;margin-top:9px" class="loading_indicator_inline pull-right"></span>
+</h3>
+<div class="well" style="margin-bottom:10px;padding-bottom:9px;">
+		<div class="form-group">{{form_label(form.title)}}<div class="col-sm-10">{{form_widget(form.title)}}</div></div>
+		<div class="form-group">{{form_label(form.description)}}<div class="col-sm-10">{{form_widget(form.description)}}</div></div>
+		<div class="form-group">{{form_label(form.keywords)}}<div class="col-sm-10">{{form_widget(form.keywords)}}</div></div>
+		<div class="form-group">{{form_label(form.topic)}}<div class="col-sm-10">{{form_widget(form.topic)}}</div></div>
+		<div class="form-group">{{form_label(form.file)}}<div class="col-sm-10" style="margin-top:5px;">{{form_widget(form.file)}}</div></div>
+	    {{ form_widget(form._token) }}
 </div>
+</form>
+<script type="text/javascript">
+	$("#modal_res_add").on('submit', function(evt){
 
-{% endblock %}
+		/*
+		** Prevent automatic form submit
+		*/
+		evt.stopPropagation();
+		evt.preventDefault();
+
+		/*
+		** Serialize Data
+		*/
+		var formData = new FormData();
+		var form_fields = $(this).serializeArray();
+		jQuery.each(form_fields, function(i, field_obj){
+			formData.append(field_obj.name, field_obj.value);
+		});
+		var file_selector = $("#vmb_resourcebundle_resource_file")[0].files[0];
+		formData.append("vmb_resourcebundle_resource[file]", file_selector);
+
+		/*
+		** Actually make the Ajax call and implement response handlers
+		*/
+		$.ajax({
+			url: "{{path('resource_new')}}",
+			method: "POST",
+			data: formData,
+			beforeSend: function(){
+				$("#modal_loading").css('display', 'inline-block');
+			},
+			complete: function(){
+				$("#modal_loading").css('display', 'none');				
+			},
+			success: function(data, textStatus, jqXHR){
+				$("#modal_save_btn").removeClass("btn-default").addClass("btn-info")
+				$("#modal_save_btn > span").removeClass("glyphicon-floppy-disk").addClass("glyphicon-floppy-saved")
+				setTimeout(function(){$("#modalResourceAdd").modal('hide')}, 500);
+				$('.drag_container').before('<div class="alert alert-success col-sm-6 col-sm-offset-3 alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>'+textStatus+'</div>');
+/* TODO: Async load resource in: #collapseListGroup_personal_image > ul
+Template HTML to use:
+<li class="list-group-item addableResource addableRes_{id} ui-draggable ui-draggable-handle" data-resource="{id}" data-title="{title}" data-thumb="{thumbnail-path}">
+<div class="row">
+<div class="col-sm-10">{Title}</div>
+<div class="col-sm-2"></div>
+</div>
+</li>
+*/
+			},
+			error: function(jqXHR, textStatus, errorThrown){
+				$('.drag_container').before('<div class="alert alert-danger col-sm-6 col-sm-offset-3 alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>'+textStatus+'</div>');
+			},
+			/*
+			** jQuery options
+			** contentType is "multipart/form-data"
+			** but we set it to false or jQuery auto-setting gets it wrong
+			*/
+			contentType: false, 
+			cache: false,
+			processData: false
+		});
+	});
+</script>

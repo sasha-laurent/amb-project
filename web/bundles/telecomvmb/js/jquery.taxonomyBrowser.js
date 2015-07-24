@@ -218,17 +218,30 @@
           }
           $.ajax ({
               type: "POST",
-              async: false,
+              async: true,
               url: base.options.save,
               data: { data: JSON.stringify(base.tags),
                       id: base.options.id,
                       videoID: base.options.videoID
                      },
+              beforeSend: function(){
+                $(".loading_indicator_inline").css('display', 'inline-block');;
+              },
               success: function () {
                 base.safeExit = true;
-                alert("Saved"); 
+               $(".save-tags").removeClass('btn-default').addClass('btn-info');
+                $(".save-tags").removeClass('glyphicon-floppy-disk').addClass('glyphicon-floppy-saved');
+                setTimeout(function(){ 
+                  $(".save-tags").removeClass('btn-info').addClass('btn-default');
+                  $(".save-tags").removeClass('glyphicon-floppy-saved').addClass('glyphicon-floppy-disk');
+                }, 500);
               },
-              failure: function() {alert("Error");}
+              failure: function() {
+                $('.main-top-menu').html('<div class="alert alert-danger alert-dismissible fade in" role="alert" style="padding: 6px 12px"><strong>Error while saving.</strong></div>');
+              },
+              complete: function(){
+                $(".loading_indicator_inline").css('display', 'none');;
+              }
           });
         });
 
@@ -245,32 +258,33 @@
             type: "POST",
             async: true,
             url: base.options.save,
-            beforeSend: function(){
-              $(".main-top-menu").append('<li><div class="loading_indicator_inline"></div></li>');
-            },
             data: { 
               data: JSON.stringify(base.taxonomy),
               id: base.options.id,
               title: $('#vmb_presentationbundle_ontology_name').val(),
               topic: $('#vmb_presentationbundle_ontology_topic').val()
             },
+            beforeSend: function(){
+              $(".loading_indicator_inline").css('display', 'inline-block');;
+            },
             success: function(data) {
               base.options.id = data;
               base.safeExit = true;
-              // $(".main-top-menu") remove loading indicator
-              $(".save-node").removeClass('btn-primary').addClass('btn-info');
+              $(".save-node").removeClass('btn-default').addClass('btn-info');
               $(".save-node").removeClass('glyphicon-floppy-disk').addClass('glyphicon-floppy-saved');
               setTimeout(function(){ 
-                $(".save-node").removeClass('btn-info').addClass('btn-primary');
+                $(".save-node").removeClass('btn-info').addClass('btn-default');
                 $(".save-node").removeClass('glyphicon-floppy-saved').addClass('glyphicon-floppy-disk');
-              }, 2000);
+              }, 500);
             } ,
-            failure: function () {
-              // $(".main-top-menu") remove loading indicator
+            error: function () {
               $('.main-top-menu').append('<li><div class="alert alert-danger alert-dismissible fade in" role="alert" style="padding: 6px 12px"><strong>Error while saving.</strong></div></li>');
               setTimeout(function(){
               $('.alert-danger').alert('close');
               }, 3000);
+            },
+            complete: function(){
+              $(".loading_indicator_inline").css('display', 'none');;
             }
           });
         }

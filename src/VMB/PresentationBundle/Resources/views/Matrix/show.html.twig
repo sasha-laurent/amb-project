@@ -55,13 +55,9 @@
 						<li role="presentation"><a href="#bookmarks" aria-controls="bookmarks" role="tab" data-toggle="tab">{{ 'resource.bookmarks'|trans }}</a></li>
 						{% if not entity.official %}<li role="presentation"><a href="#unofficial" aria-controls="unoffficial" role="tab" data-toggle="tab">{{ 'resource.shared'|trans }}</a></li>{% endif %}
 						<li role="presentation"> 
-							{# Modal resource add reference html here, with minimal modal form beneath.
-								AJAX request with success means it becomes available immediately,
-								upload in progress with some kind of indicator would be a plus,
-								failure means fail gracefully with error message and keep on working. #}
-							<a href="{{ path('resource_new') }}">
-								<span class="glyphicon glyphicon-plus"></span>
-							</a></li>
+						{# Modal resource add reference html here, with minimal modal form beneath.AJAX request with success means it becomes available immediately, upload in progress could feature a progress bar (@Future), failure means fail gracefully with an error message and let the user to keep on working. #}
+						<a title="{{"resource.add"|trans}}" data-toggle="modal" data-target="#modalResourceAdd"><span class="glyphicon glyphicon-plus"></span></a>
+						</li>
 					</ul>
 					<div class="tab-content">
 						{% for key, subArrResources in resources %}
@@ -130,45 +126,13 @@
 	<div id="indicator" class="loading_indicator"></div>
 
 	<!-- Modal -->
-	<div class="modal fade" id="modalEditRows" tabindex="-1" role="dialog" aria-labelledby="modalEditRowsLabel" aria-hidden="true">
-	  <div class="modal-dialog">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-label="{{ 'Close'|trans }}"><span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title" id="modalEditRowsLabel">{{ 'matrix.modify_structure'|trans }}</h4>
-		  </div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-md-6">
-						<h4 class="text-center">{{ 'matrix.povs'|trans }} <button class="btn btn-default" role="button" type="button" id="addPov"><span class="glyphicon glyphicon-plus"></span></button></h4>
-						<ul class="list-group Pov-list">
-							{% for pov in entity.povs %}
-								<li class="list-group-item row" data-type="Pov" data-id="{{ pov.id }}">
-									<div class="col-md-10 matrix-row-title">{{ pov.title }}</div>
-									<div class="col-md-2 text-right"><a class="rm-btn" type="button"><span class="glyphicon glyphicon-remove"></span></a></div>
-								</li>
-							{% endfor %}
-						</ul>
-					</div>
-					<div class="col-md-6">
-						<h4 class="text-center">{{ 'matrix.levels'|trans }} <button class="btn btn-default" role="button" type="button" id="addLevel"><span class="glyphicon glyphicon-plus"></span></button></h4>
-						<ul class="list-group Level-list">
-							{% for lvl in entity.levels %}
-								<li class="list-group-item row" data-type="Level" data-id="{{ lvl.id }}">
-									<div class="col-md-10 matrix-row-title">{{ lvl.title }}</div>
-									<div class="col-md-2 text-right"><a class="rm-btn" type="button"><span class="glyphicon glyphicon-remove"></span></a></div>
-								</li>
-							{% endfor %}
-						</ul>
-					</div>
-				</div>
-			</div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-default" data-dismiss="modal">{{ 'Fermer'|trans }} <span class="glyphicon glyphicon-remove"></span></button>
-		  </div>
+
+	<div id="modalResourceAdd" class="modal fade bs-example-modal" tabindex="-1" role="dialog" aria-labelledby="modalResourceAdd">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content container-fluid">
 		</div>
 	  </div>
-	</div>
+	</div>	
 
 	<div id="myModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 	  <div class="modal-dialog modal-lg">
@@ -181,7 +145,7 @@
 {% block script %}
 	{{ parent() }}
 	<script>
-	rowsUpdated = false;
+	var rowsUpdated = false;
 	
 	resourcesCollection = {
 		{% for key, subArrResources in resources %}
@@ -271,8 +235,7 @@
 	
 	$(function() {
 		bindCustomDraggable($(".usedResource"));
-		// Script to deferentiate a click from a mousedown for drag event
-		
+		// Script to differentiate a click from a mousedown for drag event		
 		
 		$('.addableResource').draggable({
 			zIndex: 1000,
@@ -328,17 +291,29 @@
 			}
 		});
 	});
-	// TODO: Show var could depend on trailing URL parameter to be set by link in matrix index list
-	$('#myModal').modal({
-        show: false,
-        remote: "{{ path('matrix_edit', {'id': entity.id, 'is_modal': true}) }}"
-	});
+
+	// For forward compatibility we call jQuery.load() and inject content in the modal container instead of using "remote" parameter in the modal.js
 	$('#myModal').on('show.bs.modal', function (e) {
+		console.log(this);
 		$('#indicator').show();
+		var modal_content = $(this).find(".modal-dialog > .modal-content");
+		$(modal_content).load("{{ path('matrix_edit', {'id': entity.id, 'is_modal': true}) }}", function(){
+			$('#indicator').hide();
+		});		
 	});
-	$('#myModal').on('shown.bs.modal', function (e) {
-		$('#indicator').hide();
+
+	$('#modalResourceAdd').modal({ show: false });
+	$('#modalResourceAdd').on('show.bs.modal', function(e){
+		$('#indicator').show();
+		var modal_content = $(this).find(".modal-dialog > .modal-content");
+		$(modal_content).load("{{ path('resource_new', {'is_modal':true}) }}", function(){
+			$('#indicator').hide();
+		});		
 	});
+	// on hide, if resource upload is pending then show a small tab on the bottom right
+	$('#modalResourceAdd').on('hide.bs.modal', function(e){
+	});
+
 
 	$('#save-btn').click(function(event) {
 		if($("#save-btn").hasClass('btn-info')) {
@@ -406,70 +381,18 @@
 		}
 		return false;
 	}
-	
-	function addNewElt(type) {
-		$('.' + type + '-list').append('<li class="list-group-item row" data-type="' + type + '" data-id="0"> \
-									<div class="col-md-10 matrix-row-title inputMode"> \
-										<div class="input-group"> \
-										  <input type="text" class="form-control" value="Nouvelle ligne" />  \
-										  <span class="input-group-btn"> \
-											<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-ok"></span></button> \
-										  </span> \
-										</div> \
-									</div> \
-									<div class="col-md-2 text-right"><a class="rm-btn" type="button"><span class="glyphicon glyphicon-remove"></span></button></a> \
-								</li>');
-		newItem = $('.' + type + '-list li').last();
-		mapEditAction($(newItem).find('.matrix-row-title'));
-		mapUpdateAction($(newItem).find('.matrix-row-title button'));
-		mapDeleteAction($(newItem).find('.rm-btn'));
-	}
-	
-	function mapDeleteAction(buttonSelector) {
-		$(buttonSelector).click(function(event) {
-			deleteRow($(this).closest('li'), $(this).closest('li').attr('data-id'), $(this).closest('li').attr('data-type')); 
-		});
-	}
-	
-	function mapUpdateAction(buttonSelector) {
-		$(buttonSelector).click(function(event) {
-			updateTitle($(this).closest('.matrix-row-title'), $(this).closest('li').attr('data-id'), $(this).closest('li').attr('data-type'), $(this).closest('li').find('input').val()); 
-		});
-	}
-	
-	function mapEditAction(selector) {
-		$(selector).click(function(event) {
-			if(!$(this).hasClass('inputMode')) {
-				$(this).addClass('inputMode');
-				title = $(this).html();
-				$(this).html('<div class="input-group"> \
-				  <input type="text" class="form-control" value="' + title + '" />  \
-				  <span class="input-group-btn"> \
-					<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-ok"></span></button> \
-				  </span> \
-				</div>');
-				mapUpdateAction($(this).find('button'));
-			}
-		});
-	}
-	
-	mapDeleteAction($('.rm-btn'));
-	mapEditAction('.matrix-row-title');
-	$('#addPov').click(function(event) { addNewElt('Pov'); });
-	$('#addLevel').click(function(event) { addNewElt('Level'); });
-	
-	$('#modalEditRows').on('hide.bs.modal', function (event) {
-		if(rowsUpdated) {
-			// ajax req. here
-			location.reload();
-		}
-	});
 
+	// Description arrow show dynamics
 	$('#collapseDescription').on('show.bs.collapse', function(){
 				$('a[href="#collapseDescription"] > span').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');
 			})
 							.on('hide.bs.collapse', function(){
 				$('a[href="#collapseDescription"] > span').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
 			});
+
+	// Show on document initialize depends on trailing URL anchor set by link in matrix index list
+	var possible_anchor = decodeURIComponent(window.location.href).split("#")[1];
+	show_modal_edit = (possible_anchor == "show_edit") ? true : false;
+	$('#myModal').modal({ show : show_modal_edit });
 	</script>
 {% endblock %}

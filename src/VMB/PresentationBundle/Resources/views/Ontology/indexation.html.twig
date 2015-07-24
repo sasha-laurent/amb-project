@@ -1,5 +1,23 @@
 {% extends 'VMBPresentationBundle:Ontology:base.html.twig' %}
 
+
+{% block h1_title %}
+	<div class="row">
+		<div class="col-md-10">
+			{% if backButtonUrl is defined %}
+				<a title="{{"actions.back"|trans}}" class="btn btn-default" href="{{ backButtonUrl }}" >
+					<span class="left glyphicon glyphicon-chevron-left" aria-hidden="true" >
+					</span>
+				</a>
+			{% endif %}
+			{{ mainTitle }}
+		</div>
+		<div class="col-md-2">
+			<button class="btn save-tags btn-default glyphicon glyphicon-floppy-disk pull-right"  title="{{ "action.save_node"|trans }}"></button>
+			<span class="loading_indicator_inline pull-right" style="margin-right:10px;margin-top:9px"></span>
+		</div>
+{% endblock %}
+
 {% block customScript %}
 $('.miller-container').taxonomyBrowser({
   columns: 4,
@@ -16,9 +34,8 @@ $('.miller-container').taxonomyBrowser({
 
 {% block buttons %}
 	<div style="display:block; clear:both;">
-		<ul class = "main-top-menu">
-  			<li><button class="btn btn-primary save-tags">{{ 'actions.save'|trans }}</button></li>
-		</ul>
+		<div class = "main-top-menu">	
+		</div>
 	</div>
 	
 	<div style="display:block; clear:both;">

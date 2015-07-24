@@ -89,7 +89,7 @@ class PresentationController extends Controller
 		$mainTitle = $this->get('translator')->trans('presentation.browse');
 		if($topic != null) {
 			$topic = $em->getRepository('VMBPresentationBundle:Topic')->find($topic);
-			$mainTitle = $topic->getTitle().' - '.$this->get('translator')->trans('menu.presentation');
+			$mainTitle = $topic->getTitle().' - '.$this->get('translator')->trans('menu.presentations');
 		}
 		
 		$request = $this->get('request');
@@ -491,7 +491,7 @@ class PresentationController extends Controller
 		$translator = $this->get('translator');
 		
 		if($saveAsCopy) {
-			$presentation->setTitle($presentation->getTitle().' - '.$translator->trans('presentation.personal_presentation'));
+			$presentation->setTitle($presentation->getTitle().' - '.$translator->trans('presentation.personal_copy'));
 		}
 		
 		$form = $this

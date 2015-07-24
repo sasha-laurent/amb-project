@@ -187,7 +187,7 @@ class MatrixController extends Controller
      * Finds and displays a Matrix entity.
      * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
      */
-    protected function renderForm($matrix, $is_modal = false)
+    protected function renderForm($matrix, $is_modal_dialog = false)
     {
 		$request = $this->get('request');
 		$options = array();
@@ -218,19 +218,19 @@ class MatrixController extends Controller
 			}
 		}
 		$render_opts = array(
-				'form' => $form->createView(),
-				'mainTitle' => ((!($matrix->toString())) ? 
-					$translator->trans('matrix.add') : $translator->trans('matrix.edit')));
+			'form' => $form->createView(),
+			'mainTitle' => ((!($matrix->toString())) ? 
+				$translator->trans('matrix.add') : $translator->trans('matrix.edit')));
 
-		if($is_modal){
-				$render_opts['saveButton'] = true;		
-				$render_opts['is_modal'] = true;		
-				$render_opts['delButtonUrl'] = '#" data-dismiss="modal"';
-				return $this->render('VMBPresentationBundle:Matrix:modalEdit.html.twig', $render_opts);	
+		if($is_modal_dialog){
+			$render_opts['saveButton'] = true;		
+			$render_opts['is_modal'] = true;		
+			$render_opts['delButtonUrl'] = '#" data-dismiss="modal"';
+			return $this->render('VMBPresentationBundle:Matrix:modalEdit.html.twig', $render_opts);	
 		} else {
-				$render_opts['backButtonUrl'] = $this->container->get('vmb_presentation.previous_url')
-				->getPreviousUrl($request, $this->generateUrl('matrix'));
-				return $this->render('::Backend/form.html.twig', $render_opts);
+			$render_opts['backButtonUrl'] = $this->container->get('vmb_presentation.previous_url')
+			->getPreviousUrl($request, $this->generateUrl('matrix'));
+			return $this->render('::Backend/form.html.twig', $render_opts);
 		}
     }
     

@@ -8,80 +8,80 @@
 {# TODO: Notifications, undo actions could go in H1 header center row?#}
 {% block body %}
 <div class="well">
-	{{ form_start(form) }}
-	<div class="form-group">
-		{{form_label(form.title)}}
-		<div class="col-sm-10">
-		{{form_widget(form.title)}}
-		</div>
+{{ form_start(form) }}
+<div class="form-group">
+	{{form_label(form.title)}}
+	<div class="col-sm-10">
+	{{form_widget(form.title)}}
 	</div>
-	<div class="form-group">
-		{{form_label(form.topic)}}
-		<div class="col-sm-10">
-		{{form_widget(form.topic)}}
-		</div>
+</div>
+<div class="form-group">
+	{{form_label(form.topic)}}
+	<div class="col-sm-10">
+	{{form_widget(form.topic)}}
 	</div>
-	<div class="form-group">
-		{{form_label(form.description)}}
-		<div class="col-sm-10">
-		{{form_widget(form.description)}}
-		</div>
+</div>
+<div class="form-group">
+	{{form_label(form.description)}}
+	<div class="col-sm-10">
+	{{form_widget(form.description)}}
 	</div>
-	<div class="form-group">
-		<div class="col-md-6">
-			<ul class="list-group Pov-list">
-				<li class="list-group-item row">
-					<div class="col-md-10 matrix-row-title">
-						<h4 class="text-center">{{form.povs.vars.label}}</h4>
-					</div>
-					<div class="col-md-2 text-right">
-						<button type="button" class="btn btn-default pull-right" onclick="addRow('Pov')">
-							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-						</button>
-					</div>
-				</li>
-			{% for pov in form.povs %}
-				<li class="list-group-item row">
-				<div class="col-md-8 matrix-row-title">{{ form_widget(pov.title) }}</div>
-				<div class="col-md-4 text-right">
-					<button type="button" class="btn btn-danger" onclick="removeRow(this)">
-						<span class="glyphicon glyphicon-remove"></span>
+</div>
+<div class="form-group">
+	<div class="col-md-6">
+		<ul class="list-group Pov-list">
+			<li class="list-group-item row">
+				<div class="col-md-10 matrix-row-title">
+					<h4 class="text-center">{{form.povs.vars.label}}</h4>
+				</div>
+				<div class="col-md-2 text-right">
+					<button type="button" class="btn btn-default pull-right" onclick="addRow('Pov')">
+						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 					</button>
 				</div>
-				</li>
-			{% endfor %}
-			</ul>
-		</div>
-		<div class="col-md-6">
-			<ul class="list-group Level-list">				
-				<li class="list-group-item row">
-					<div class="col-md-10 matrix-row-title">
-						<h4 class="text-center">{{form.levels.vars.label}}</h4>
-					</div>
-					<div class="col-md-2 text-right">
-						<button type="button" class="btn btn-default pull-right" onclick="addRow('Level')">
-							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-						</button>
-					</div>
-				</li>
-			{% for lvl in form.levels %}
-				<li class="list-group-item row">
-				<div class="col-md-8 matrix-row-title">{{ form_widget(lvl.title) }}</div>
-				<div class="col-md-4 text-right">
-					<button type="button" class="btn btn-danger" onclick="removeRow(this)">
-						<span class="glyphicon glyphicon-remove"></span>
+			</li>
+		{% for pov in form.povs %}
+			<li class="list-group-item row">
+			<div class="col-md-8 matrix-row-title">{{ form_widget(pov.title) }}</div>
+			<div class="col-md-4 text-right">
+				<button type="button" class="btn btn-danger" onclick="removeRow(this)">
+					<span class="glyphicon glyphicon-remove"></span>
+				</button>
+			</div>
+			</li>
+		{% endfor %}
+		</ul>
+	</div>
+	<div class="col-md-6">
+		<ul class="list-group Level-list">				
+			<li class="list-group-item row">
+				<div class="col-md-10 matrix-row-title">
+					<h4 class="text-center">{{form.levels.vars.label}}</h4>
+				</div>
+				<div class="col-md-2 text-right">
+					<button type="button" class="btn btn-default pull-right" onclick="addRow('Level')">
+						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 					</button>
 				</div>
-				</li>
-			{% endfor %}
-			</ul>
-		</div>
+			</li>
+		{% for lvl in form.levels %}
+			<li class="list-group-item row">
+			<div class="col-md-8 matrix-row-title">{{ form_widget(lvl.title) }}</div>
+			<div class="col-md-4 text-right">
+				<button type="button" class="btn btn-danger" onclick="removeRow(this)">
+					<span class="glyphicon glyphicon-remove"></span>
+				</button>
+			</div>
+			</li>
+		{% endfor %}
+		</ul>
 	</div>
-	{% if is_modal is defined %}
-		{{ form_widget(form._token) }}
-	{% else %}
-		{{ form_end(form) }}
-	{% endif %}
+</div>
+{% if is_modal is defined %}
+	{{ form_widget(form._token) }}
+{% else %}
+	{{ form_end(form) }}
+{% endif %}
 </div>
 {% endblock %}
 
@@ -101,7 +101,6 @@
 		// Loop through symfony-baked content to populate 
 		$("#vmb_presentationbundle_matrix_povs, #vmb_presentationbundle_matrix_levels").each(function(index, elt) {
 		});
-		// 
 	});
 	/*
 	** Helper Functions for modal dialog

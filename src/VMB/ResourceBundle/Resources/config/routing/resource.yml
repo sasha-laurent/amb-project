@@ -9,8 +9,8 @@ resource_show:
         id: \d{1,}
 
 resource_new:
-    path:     /new
-    defaults: { _controller: "VMBResourceBundle:Upload:new" }
+    path:     /new/{is_modal}
+    defaults: { _controller: "VMBResourceBundle:Upload:new", is_modal:false }
 
 resource_edit:
     path:     /edit/{id}
@@ -23,7 +23,7 @@ resource_delete:
     defaults: { _controller: "VMBResourceBundle:Resource:delete" }
     requirements:
         id:   \d{1,}
-        
+
 resource_search:
     path:     /search
     defaults: { _controller: "VMBResourceBundle:Resource:search" }

@@ -52,19 +52,19 @@ form:
         topic: Thématique
         video: Vidéo
 
-help: Aide
-help.add: 'Ajouter une aide'
-help.added: 'Aide ajoutée'
-help.delete: 'Suppression d''une aide'
-help.deleted: 'Aide supprimée'
-help.edit: 'Modification d''une aide'
-help.edited: 'Aide modifiée'
-help.main_title: 'Gestion des aides contextuelles'
-help.no_help_for_this_page: 'Aucune aide contextuelle pour cette page'
+help:
+    add: 'Ajouter une aide'
+    added: 'Aide ajoutée'
+    delete: 'Suppression d''une aide'
+    deleted: 'Aide supprimée'
+    edit: 'Modification d''une aide'
+    edited: 'Aide modifiée'
+    main_title: 'Gestion des aides contextuelles'
+    no_help_for_this_page: 'Aucune aide contextuelle pour cette page'
 
 label:
-    'no': non
-    'yes': oui
+    no: Non
+    yes: Oui
 
 matrix:
     add: 'Ajout d''une matrice'
@@ -72,10 +72,8 @@ matrix:
     delete: 'Suppression d''une matrice'
     deleted: 'Matrice supprimée'
     edit: 'Modification d''une matrice'
-
     error:
         resource_unofficial_not_added: 'Une ressource n''a pu être ajoutée car elle n''est pas officielle'
-
     levels: Niveaux
     main_title: 'Gestion de vos matrices de présentation'
     modified: 'Matrice modifiée'
@@ -139,6 +137,7 @@ ontology:
     delete_node: 'Effacer l''élément'
     save_node: 'Sauvegarder'
     edit: 'Modifier l''ontologie'
+    create_index: 'Ajouter des éléments à l''index'
 
 player:
     new_tab: 'Afficher dans un nouvel onglet'
@@ -185,6 +184,7 @@ presentation:
     official: Officielle
     parameters: 'Paramètres de %title%'
     personal_presentation: 'Présentation personnelle'
+    personal_copy: 'Copie personnelle'
     play_selection: 'Lancer la nouvelle présentation'
     public: Publique
     same_topic: 'Présentations de cette thématique'
@@ -210,6 +210,7 @@ resource:
     bookmarks: Favoris
     shared: Partagées
     type_error: "Type de ressource non reconnu."
+    upload_error: 'Echec lors de l''import. Veuillez ré-essayer.'
 
 role:
     prof: role.prof

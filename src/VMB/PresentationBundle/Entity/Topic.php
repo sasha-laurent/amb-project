@@ -79,6 +79,8 @@ class Topic
     /**
     * @ORM\ManyToOne(targetEntity="VMB\UserBundle\Entity\User")
     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+    * C'est l'utilisateur Créateur de la thématique, l'ayant droit sur sa suppression
+    * (en plus du super-admin)
     */
     private $owner;
     

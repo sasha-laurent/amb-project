@@ -15,10 +15,9 @@ use VMB\ResourceBundle\Form\ResourceType;
 class UploadController extends Controller
 {
     
-    protected function renderForm($resource)
+    protected function renderForm($resource, $is_modal_dialog = false)
     {
         $request = $this->get('request');
-        
         $form = $this
             ->get('form.factory')
             ->create(new ResourceType(), $resource);
@@ -28,31 +27,64 @@ class UploadController extends Controller
             $form->handleRequest($request);
             if ($form->isValid()) 
             {
-                $em = $this->getDoctrine()->getManager();
-                
-                $em->persist($resource);
-                $em->flush();
+                try{
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($resource);
+                    $em->flush();   
+                } catch (\Doctrine\ORM\ORMException $e){
+                    $err_str = $this->get('translator')
+                        ->trans('resource.upload_error');
+                     if($request->isXmlHttpRequest()){       
+                        return new Response($err_str, 500);
+                    } else {
+                        $request->getSession()->getFlashBag()->add('error', $err_str);
 
-                $flashMessage = ($resource->getId() == null) ? $this->get('translator')->trans('resource.added') : $this->get('translator')->trans('resource.modified');
-                $request->getSession()->getFlashBag()->add('success', $flashMessage);
-            
-				return $this->redirect($this->generateUrl('resource'));
+                        return $this->redirect($this->generateUrl('resource'));
+                    }        
+                } catch(\Exception $e){
+                    // TODO: 
+                    // Log $e->getMessage() in $this->get('logger')
+                    // with some customization
+                }
+
+                if($request->isXmlHttpRequest()){ 
+                    $added_str = $this->get('translator')->trans('resource.added');
+                    return new Response($added_str);
+                } else {
+                    $flashMessage = ($resource->getId() == null) ? $this->get('translator')->trans('resource.added') : $this->get('translator')->trans('resource.modified');
+                    $request->getSession()->getFlashBag()->add('success', $flashMessage);
+
+                    return $this->redirect($this->generateUrl('resource'));
+                }
+            } else {
+                if($request->isXmlHttpRequest()){ 
+                // if a form is not submitted (submit button pressed) it is considered invalid
+                //$err_str = (string) $form->getErrors(true); //debug
+                    $err_str = $this->get('translator')
+                    ->trans('resource.upload_error');
+                    return new Response($err_str, 400);
+                }
             }
         }
 
-        return $this->render('::Backend/form.html.twig', 
-            array(
-                'form' => $form->createView(),
-                'mainTitle' => (($resource->getId() == null) ? $this->get('translator')->trans('resource.add') : $this->get('translator')->trans('resource.edit')),
-                'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('resource'))
-            ));
+        $render_opts = array(
+            'form' => $form->createView(),
+            'mainTitle' => (($resource->getId() == null) ? 
+                $this->get('translator')->trans('resource.add') : $this->get('translator')->trans('resource.edit')));
+
+        if($is_modal_dialog){
+            return $this->render('VMBResourceBundle:Upload:form.html.twig', $render_opts);            
+        } else {
+            $render_opts['backButtonUrl'] = $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('resource'));
+            return $this->render('::Backend/form.html.twig', $render_opts);
+        }
     }
 
-    public function newAction(Request $request)
+    public function newAction(Request $request, $is_modal = false)
     {
         $resource = new Resource();
         $resource->setOwner($this->getUser());
-        return $this->renderForm($resource);
+        return $this->renderForm($resource, $is_modal);
     }
 
     public function editAction($id)

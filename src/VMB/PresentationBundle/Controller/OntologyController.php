@@ -101,7 +101,9 @@ class OntologyController extends Controller
             'ontologieName' => $ontology->getName(),
             'indexFile' => $ontology->getIndexFile($id),
             'ontologyFile' => $ontology->getOntologyFile($id),
-            'id'           => $id
+            'id'           => $id,
+            'backButtonUrl' => $this->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('vmb_resource_browse')),
+            'mainTitle' => $this->get('translator')->trans('ontology.create_index')
         ));
     }
 

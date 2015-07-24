@@ -7,12 +7,12 @@ actions:
     add: Add
     cancel: Cancel
     close: Close
-    create: Create
     confirm: Confirm
+    create: Create
     delete: Delete
     duplicate: Duplicate
     edit: Edit
-    import: actions.import
+    import: Import
     next: actions.next
     options: Options
     previous: actions.previous
@@ -44,31 +44,31 @@ caddy:
 
 form:
     label:
-        associated_routes: form.label.associated_routes
-        current_thumbnail: Current Thumbnail
-        description: form.label.description
-        file: form.label.file
-        keywords: form.label.keywords
-        role: form.label.role
-        text: form.label.text
+        associated_routes: 'Associated Routes'
+        current_thumbnail: 'Current Thumbnail'
+        description: Description
+        file: File
+        keywords: Keywords
+        role: Role
+        text: Text
         thumbnail: Thumbnail
         title: Title
         topic: Topic
         video: Video
 
-help: help
-help.add: help.add
-help.added: help.added
-help.delete: help.delete
-help.deleted: help.deleted
-help.edit: help.edit
-help.edited: help.edited
-help.main_title: help.main_title
-help.no_help_for_this_page: help.no_help_for_this_page
+help:
+    add: help.add
+    added: help.added
+    delete: help.delete
+    deleted: help.deleted
+    edit: help.edit
+    edited: help.edited
+    main_title: help.main_title
+    no_help_for_this_page: help.no_help_for_this_page
 
 label:
-    'no': label.no
-    'yes': label.yes
+    'no': 'no'
+    'yes': 'yes'
 
 matrix:
     add: matrix.add
@@ -76,8 +76,10 @@ matrix:
     delete: matrix.delete
     deleted: matrix.deleted
     edit: matrix.edit
+
     error:
         resource_unofficial_not_added: matrix.error.resource_unofficial_not_added
+
     levels: matrix.levels
     main_title: matrix.main_title
     modified: matrix.modified
@@ -87,7 +89,7 @@ matrix:
     official_success: matrix.official_success
     official_title: matrix.official_title
     povs: matrix.povs
-    show: "Matrix Overview"
+    show: 'Matrix Overview'
 
 menu:
     bookmark: Bookmark
@@ -120,6 +122,7 @@ message:
         warning_official: message.matrix.warning_official
 
     no_elt_found: message.no_elt_found
+
     ontology:
         modal: message.ontology.moda
         none_for_this_topic: 'No ontologies correspond to this topic.'
@@ -137,10 +140,11 @@ message:
 
 ontology:
     add_node: 'Add Node'
-    edit_node: 'Edit node'
     delete_node: 'Delete node'
-    save_node: 'Save Node'
     edit: 'Edit ontology'
+    edit_node: 'Edit node'
+    save_node: 'Save Node'
+    create_index: 'Add tags to index'
 
 player:
     new_tab: 'Show this file in a new tab'
@@ -186,7 +190,8 @@ presentation:
     new_playlist: presentation.new_playlist
     official: presentation.official
     parameters: presentation.parameters
-    personal_presentation: presentation.personal_presentation
+    personal_presentation: 'Personal presentation'
+    personal_copy: 'Personal copy'
     play_selection: presentation.play_selection
     public: presentation.public
     same_topic: presentation.same_topic
@@ -199,20 +204,21 @@ presentation:
 removed: removed
 
 resource:
-    add: resource.add
-    added: resource.added
-    browse: resource.browse
+    add: 'Add new resource'
+    added: 'Resource successfuly added'
+    bookmarks: Bookmarks
+    browse: 'Browse resources'
     delete: 'Delete resource'
-    deleted: resource.deleted
+    deleted: 'Resource was deleted'
     edit: 'Edit resource'
     index: 'Index resource'
-    modified: resource.modified
+    modified: 'Resource was modified'
     none_found_in_this_space: 'No resource found in this space'
-    officials: resource.officials
-    personals: resource.personals
-    bookmarks: Bookmarks
-    shared: resource.shared
+    officials: Official
+    personals: Personal
+    shared: Shared
     type_error: 'Unrecognized resource type.'
+    upload_error: 'Upload failed. Please try again.'
 
 role:
     prof: Teacher
@@ -242,7 +248,7 @@ table:
     title: Titles
     topic: table.topic
     type: table.type
-    update: Updated on
+    update: 'Updated on'
     video: table.video
 
 text:
@@ -253,16 +259,17 @@ topic:
     added: 'Topic was created'
     all: 'All topics'
     delete: 'Delete a Topic'
-    deleteMessage: %title%
+    deleteMessage: '%title%'
     deleted: 'Topic was successfuly deleted'
     edit: 'Edit Topic'
-    main_title: 'Topics'
+    main_title: Topics
     modified: 'Topic was modified'
     new_root: '+ Define as root'
 
 user:
+    register: 'Sign up'
+
     role:
         admin: user.role.admin
         student: user.role.student
         teacher: user.role.teacher
-    register: 'Sign up'

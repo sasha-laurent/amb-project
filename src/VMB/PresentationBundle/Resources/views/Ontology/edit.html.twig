@@ -32,12 +32,17 @@ window.setInterval(function(){
 {% endblock %}
 
 {% block buttons %}
-	<ul class = "main-top-menu">
-		<li><button class="btn add-node btn-default glyphicon glyphicon-plus" title="{{ "ontology.add_node"|trans }} [Tab]"></button></li>
-		<li><button class="btn edit-node btn-default glyphicon glyphicon-pencil" title="{{ "ontology.edit_node"|trans }} [Shift+Enter]"></button></li>
-  		<li><button class="btn delete-node btn-danger glyphicon glyphicon-remove" title="{{ "ontology.delete_node"|trans }} [Shift+D]"></button></li>
-  		<li><button class="btn save-node btn-primary glyphicon glyphicon-floppy-disk"  title="{{ "ontology.save_node"|trans }} [Shift+S]"></button></li>
-	</ul>
+	<div class = "main-top-menu">
+		<div class="btn-group">
+		<button class="btn add-node btn-default glyphicon glyphicon-plus" title="{{ "ontology.add_node"|trans }} [Tab]"></button>
+		<button class="btn edit-node btn-default glyphicon glyphicon-pencil" title="{{ "ontology.edit_node"|trans }} [Shift+Enter]"></button>
+		<button class="btn delete-node btn-danger glyphicon glyphicon-remove" title="{{ "ontology.delete_node"|trans }} [Shift+D]"></button>
+  		</div>
+  		<div class="pull-right">
+  			<span class="loading_indicator_inline" style="margin-top:9px"></span>
+  			<button class="btn save-node btn-default glyphicon glyphicon-floppy-disk"  title="{{ "ontology.save_node"|trans }} [Shift+S]"></button>
+  		</div>
+	</div>
 {% endblock %}
 
 {% block formBody %}

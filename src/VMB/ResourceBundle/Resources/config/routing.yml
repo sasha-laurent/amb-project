@@ -7,7 +7,7 @@ vmb_resource_browse:
     defaults: { _controller: "VMBResourceBundle:Resource:browse", page: 1 }
     requirements:
         page: \d*
-        
+
 vmb_resource_browse_topic:
     path:     /resource/browse/topic/{topic}/{page}
     defaults: { _controller: "VMBResourceBundle:Resource:browse", page: 1 }

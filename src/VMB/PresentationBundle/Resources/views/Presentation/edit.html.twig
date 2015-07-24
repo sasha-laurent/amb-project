@@ -530,7 +530,7 @@
 		
 		$('#save-btn').click(function(event) {
 			event.preventDefault();
-			$('#presentation_form').find('[type="submit"]').trigger('click');
+			$('#presentation_form').submit();
 		});
 		$('#delete_thumbs').click(function(event) {
 			event.preventDefault();

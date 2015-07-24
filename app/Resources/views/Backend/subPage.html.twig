@@ -21,7 +21,7 @@
 					</span>
 				</a>
 			{% endif %}
-			{{ mainTitle | shortenText(42, "...")}}
+			{{ mainTitle | shortenText(100, "...")}}
 		</div>
 		<div class="col-md-{{ colWidth }} text-right">
 			{% if (saveButton is defined) or (saveToCaddy is defined) %}
@@ -29,6 +29,16 @@
 				</span>
 			{% endif %}
 			<div class="btn-group" role="group" aria-label="...">
+				{% if editButtonUrl is defined %}
+					<a title="{{ "actions.edit"|trans|desc('Edit') }}" class="btn btn-default" 
+					{% if editModal is defined %} 
+						data-toggle="modal" data-target="{{ editModal }}" 
+						{% else %} 
+						href="{{ editButtonUrl }}" 
+					{% endif %} >
+					<span class="left glyphicon glyphicon-pencil" aria-hidden="true"></span>
+				</a>
+				{% endif %}
 				{% if saveToCaddy is defined %}
 					<a title="{{ "menu.bookmark"|trans }}" class="btn {% if inCaddy %}btn-info{% else %}btn-default{% endif %} {{ saveToCaddy }}AddToCaddy" data-id="{{ entity.id }}" id="caddy-btn">
 						<span class="left glyphicon glyphicon-star" aria-hidden="true"></span>
@@ -49,16 +59,6 @@
 						<span class="left glyphicon glyphicon-plus" aria-hidden="true"></span>
 					</a>
 				{% endif %}
-				{% if editButtonUrl is defined %}
-					<a title="{{ "actions.edit"|trans|desc('Edit') }}" class="btn btn-default" 
-					{% if editModal is defined %} 
-						data-toggle="modal" data-target="{{ editModal }}" 
-					{% else %} 
-						href="{{ editButtonUrl }}" 
-					{% endif %} >
-						<span class="left glyphicon glyphicon-pencil" aria-hidden="true"></span>
-					</a>
-				{% endif %}
 				{% if optionButtonModal is defined %}
 					<a title="{{ "actions.options"|trans|desc('Options') }}" class="btn btn-default" data-toggle="modal" data-target="{{ optionButtonModal }}">
 						<span class="left glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
@@ -71,7 +71,13 @@
 				{% endif %}
 				{% if forkButtonUrl is defined %}
 					<a title="{{ "actions.duplicate"|trans|desc('Duplicate') }}" class="btn btn-default" href="{{ forkButtonUrl }}" >
-						<span class="left glyphicon glyphicon-duplicate" aria-hidden="true"></span>
+						{#<span class="left glyphicon glyphicon-duplicate" aria-hidden="true"></span> #}
+						<img width="10px" height="16px" src="{{asset('img/git-branch.svg')}}"></img>
+					</a>
+				{% endif %}
+				{% if exportAssetUrl is defined %}
+					<a href="{{ asset(exportAssetUrl) }}" title="{{ "player.new_tab"|trans|desc('Display file in a new tab') }}" target="_blank" class="btn btn-default">
+						<span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
 					</a>
 				{% endif %}
 			</div>

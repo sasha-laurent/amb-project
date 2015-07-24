@@ -33,7 +33,7 @@ class ResourceType extends AbstractType
 			$builder->add('file', 'file', array('label' => 'form.label.file'));
 		}
 		
-		$builder->add('Sauvegarder', 'submit', array('label' => 'actions.save'));
+		$builder->add('save', 'submit', array('label' => 'actions.save'));
     }
     
     /**
