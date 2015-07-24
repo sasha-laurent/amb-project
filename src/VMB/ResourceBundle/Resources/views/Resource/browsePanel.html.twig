@@ -1,0 +1,48 @@
+<div class="browse-topics">
+	<h3>{{ 'browse.parameters_title'|trans }}</h3>
+	<hr/>
+	<h4>{{ 'browse.filters'|trans }}</h4>
+	<div class="row filter">
+		<div class="col-md-10">{{ 'browse.official_only'|trans }} </div>
+		<div class="col-md-2 text-right">
+			<a href="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'official':((app.request.get('official') + 1) % 2)|default(1)})) }}" class="switch">
+				{% if app.request.get('official')|default(0) == 0 %}
+					<span class="hidden-value glyphicon glyphicon-ok checkedRes"></span>
+					<span class="shown-value glyphicon glyphicon-minus"></span>
+				{% else %}
+					<span class="shown-value glyphicon glyphicon-ok checkedRes"></span>
+					<span class="hidden-value glyphicon glyphicon-minus"></span>
+				{% endif %}
+			</a>
+		</div>
+	</div>
+	
+	
+	{% if app.request.get('_route') != 'vmb_resource_indexation' %}
+	<div class="row filter">
+		<div class="col-md-10">{{ 'browse.personal_resources'|trans }} :</div>
+		<div class="col-md-2 text-right">
+			<a href="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'personal':((app.request.get('personal') + 1) % 2)|default(1)})) }}" class="switch">
+				{% if app.request.get('personal')|default(0) == 0 %}
+					<span class="hidden-value glyphicon glyphicon-ok checkedRes"></span>
+					<span class="shown-value glyphicon glyphicon-minus"></span>
+				{% else %}
+					<span class="shown-value glyphicon glyphicon-ok checkedRes"></span>
+					<span class="hidden-value glyphicon glyphicon-minus"></span>
+				{% endif %}
+			</a>
+		</div>
+	</div>
+	{% endif %}	
+	
+	<h4>{{ 'menu.topics'|trans }}</h4>
+	{% include "VMBResourceBundle:Resource:topicLink.html.twig" with {'links': topics, 'current': topic.id|default(null)} %}
+	
+	{% if app.request.get('_route') != 'vmb_resource_indexation' %}
+	<h4>{{ 'menu.tools'|trans }}</h4>
+	<div class="row tools">
+		<a href="#"><span class="glyphicon glyphicon-zoom-in"></span>&nbsp; {{ 'browse.advanced_search'|trans }}</a><br/>
+		<a href="#"><span class="glyphicon glyphicon-tags"></span>&nbsp; {{ 'browse.multiple_indexation'|trans }}</a><br/>
+	</div>
+	{% endif %}
+</div>

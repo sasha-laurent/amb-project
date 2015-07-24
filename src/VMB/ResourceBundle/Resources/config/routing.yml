@@ -14,3 +14,9 @@ vmb_resource_browse_topic:
     requirements:
         topic: \d{1,}
         page: \d*
+        
+vmb_resource_indexation:
+    path:     /resource/indexation/{topic}
+    defaults: { _controller: "VMBResourceBundle:Resource:indexation" }
+    requirements:
+        topic: \d{1,}

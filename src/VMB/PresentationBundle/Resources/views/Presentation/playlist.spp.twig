@@ -1,0 +1,5 @@
+Playlist[V1.2]
+{{ entity.title }}
+{% for r in entity.resources if not(r.suggested) %}
+{{ r.usedResource.resource.filename }}.{{ r.usedResource.resource.extension }}
+{% endfor %}

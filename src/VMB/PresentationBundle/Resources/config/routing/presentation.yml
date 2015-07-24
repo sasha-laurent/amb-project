@@ -16,6 +16,12 @@ presentation_show:
     requirements:
         id:   \d{1,}
         
+presentation_download_playlist3d:
+    path:     /playlist3D/{id}
+    defaults: { _controller: "VMBPresentationBundle:Presentation:downloadPlaylist3D" }
+    requirements:
+        id:   \d{1,}
+        
 presentation_complementary:
     path:     /show/additional/{id}
     defaults: { _controller: "VMBPresentationBundle:Presentation:additionalContent" }

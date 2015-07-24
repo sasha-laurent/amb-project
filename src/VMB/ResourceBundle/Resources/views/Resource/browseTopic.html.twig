@@ -20,41 +20,7 @@
 {% block body %}
 	<div class="row">
 		<div class="col-md-3">
-			<div class="browse-topics">
-				<h3>{{ 'browse.parameters_title'|trans }}</h3>
-				<hr/>
-				<h4>{{ 'browse.filters'|trans }}</h4>
-				<div class="row filter">
-					<div class="col-md-10">{{ 'browse.official_only'|trans }} </div>
-					<div class="col-md-2 text-right">
-						<a href="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'official':((app.request.get('official') + 1) % 2)|default(1)})) }}" class="switch">
-							{% if app.request.get('official')|default(0) == 0 %}
-								<span class="hidden-value glyphicon glyphicon-ok checkedRes"></span>
-								<span class="shown-value glyphicon glyphicon-minus"></span>
-							{% else %}
-								<span class="shown-value glyphicon glyphicon-ok checkedRes"></span>
-								<span class="hidden-value glyphicon glyphicon-minus"></span>
-							{% endif %}
-						</a>
-					</div>
-				</div>
-				<div class="row filter">
-					<div class="col-md-10">{{ 'browse.personal_resources'|trans }} </div>
-					<div class="col-md-2 text-right">
-						<a href="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'personal':((app.request.get('personal') + 1) % 2)|default(1)})) }}" class="switch">
-							{% if app.request.get('personal')|default(0) == 0 %}
-								<span class="hidden-value glyphicon glyphicon-ok checkedRes"></span>
-								<span class="shown-value glyphicon glyphicon-minus"></span>
-							{% else %}
-								<span class="shown-value glyphicon glyphicon-ok checkedRes"></span>
-								<span class="hidden-value glyphicon glyphicon-minus"></span>
-							{% endif %}
-						</a>
-					</div>
-				</div>
-				<h4>{{ 'menu.topics'|trans }}</h4>
-				{% include "VMBResourceBundle:Resource:topicLink.html.twig" with {'links': topics, 'current': topic.id|default(null)} %}
-			</div>
+			{% include "VMBResourceBundle:Resource:browsePanel.html.twig" %}
 		</div>
 		<div class="col-md-9">
 			<div class="row">
@@ -99,7 +65,7 @@
 									<h4 class="modal-title" id="modal-tag-label-{{ entity.id }}">Indexer une ressource</h4>
 								  </div>
 								  <div class="modal-body">
-									  {{ 'message.ontology.modal'|trans }}
+									  {{ 'message.ontology.modalMultiple'|trans }}
 									  <hr/>
 									  <ul>
 									  {% for t in entity.topic %}

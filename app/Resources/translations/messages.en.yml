@@ -1,18 +1,21 @@
 'Aide contextuelle': 'Aide contextuelle'
 Close: Close
 Fermer: Fermer
+Niveaux: Niveaux
+'Points de vues': 'Points de vues'
 Titre: Titre
 
 actions:
     add: Add
     cancel: Cancel
     close: Close
-    confirm: Confirm
     create: Create
+    confirm: Confirm
     delete: Delete
     duplicate: Duplicate
     edit: Edit
-    import: Import
+    import: actions.import
+    index: actions.index   # FIXME
     next: actions.next
     options: Options
     previous: actions.previous
@@ -29,8 +32,11 @@ admin:
     user.manage: admin.user.manage
 
 browse:
+    advanced_search: browse.advanced_search
     default_presentations: 'Default presentations'
     filters: Filters
+    multiple_indexation: browse.multiple_indexation   # FIXME
+    mutliple_indexation: browse.mutliple_indexation
     no_presentation: browse.no_presentation
     official: Official
     parameters_title: browse.parameters_title
@@ -76,10 +82,8 @@ matrix:
     delete: matrix.delete
     deleted: matrix.deleted
     edit: matrix.edit
-
     error:
         resource_unofficial_not_added: matrix.error.resource_unofficial_not_added
-
     levels: matrix.levels
     main_title: matrix.main_title
     modified: matrix.modified
@@ -89,7 +93,7 @@ matrix:
     official_success: matrix.official_success
     official_title: matrix.official_title
     povs: matrix.povs
-    show: 'Matrix Overview'
+    show: "Matrix Overview"
 
 menu:
     bookmark: Bookmark
@@ -106,6 +110,7 @@ menu:
     presentation: menu.presentation
     presentations: Presentations
     resources: Resources
+    tools: menu.tools
     topics: Topics
     translation: Translation
     users_management: 'Users management'
@@ -143,6 +148,7 @@ ontology:
     delete_node: 'Delete node'
     edit: 'Edit ontology'
     edit_node: 'Edit node'
+    delete_node: 'Delete node'
     save_node: 'Save Node'
     create_index: 'Add tags to index'
 
@@ -259,10 +265,10 @@ topic:
     added: 'Topic was created'
     all: 'All topics'
     delete: 'Delete a Topic'
-    deleteMessage: '%title%'
+    deleteMessage: %title%
     deleted: 'Topic was successfuly deleted'
     edit: 'Edit Topic'
-    main_title: Topics
+    main_title: 'Topics'
     modified: 'Topic was modified'
     new_root: '+ Define as root'
 
@@ -273,3 +279,4 @@ user:
         admin: user.role.admin
         student: user.role.student
         teacher: user.role.teacher
+    register: 'Sign up'

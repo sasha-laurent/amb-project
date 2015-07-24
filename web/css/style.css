@@ -515,6 +515,10 @@ select[multiple="multiple"] {
 	margin: 10px 0px;
 }
 
+.browse-topics .row.tools {
+	line-height:28px;
+}
+
 .browse-topics h3 {
 	text-align: center;
 	margin-top: -4px;
@@ -527,6 +531,16 @@ select[multiple="multiple"] {
 
 .browse-topics .panel-collapse, #browse_file .panel-collapse			{ border-left: 0px; }
 .browse-topics .panel-collapse > ul, #browse_file .panel-collapse > ul 	{ border-left: 0px; }
+
+.resource-col {
+	padding: 2px;
+}
+
+.resource-col p {
+	cursor: pointer;
+	margin: 0px;
+	padding: 4px 8px;
+}
 
 .view-more-title a {
 	color: black;

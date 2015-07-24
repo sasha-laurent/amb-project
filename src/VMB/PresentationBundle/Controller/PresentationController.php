@@ -126,6 +126,27 @@ class PresentationController extends Controller
         ));
     }
     
+    
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
+    public function downloadPlaylist3DAction($id)
+    {
+		$em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('VMBPresentationBundle:Presentation')->findWithConcreteResources($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException($this->get('translator')->trans('message.error.entity_not_found', array('%class%' => 'Presentation')));
+        }
+        
+		$response = new Response();
+		$response->headers->set('Content-Type', 'text/plain');
+		$response->sendHeaders();
+	
+        return $this->render('VMBPresentationBundle:Presentation:playlist.spp.twig', array('entity' => $entity), $response);
+    }
+    
     /**
     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
     */

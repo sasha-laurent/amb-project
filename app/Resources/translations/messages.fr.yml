@@ -1,6 +1,8 @@
 'Aide contextuelle': 'Aide contextuelle'
 Close: Close
 Fermer: Fermer
+Niveaux: Niveaux
+'Points de vues': 'Points de vues'
 Titre: Titre
 
 actions:
@@ -13,6 +15,7 @@ actions:
     duplicate: Dupliquer
     edit: Modifier
     import: Importer
+    index: 'Indexer la sélection'
     next: Suivant
     options: Options
     previous: Précédent
@@ -29,8 +32,11 @@ admin:
     user.manage: 'Gestion des utilisateurs'
 
 browse:
+    advanced_search: 'Recherche avancée'
     default_presentations: 'Par défaut'
     filters: Filtres
+    multiple_indexation: 'Indexation multiple'
+    mutliple_indexation: 'Indexation multiple'
     no_presentation: 'Aucune présentation publique dans cet espace pour ces paramètres de recherche'
     official: 'Officielles'
     parameters_title: 'Affiner par'
@@ -99,6 +105,7 @@ menu:
     presentation: menu.presentation
     presentations: Présentations
     resources: Ressources
+    tools: Outils
     topics: Thématiques
     translation: Traduction
     users_management: 'Gestion des utilisateurs'

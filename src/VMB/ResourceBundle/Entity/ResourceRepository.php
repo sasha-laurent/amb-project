@@ -45,6 +45,32 @@ class ResourceRepository extends EntityRepository
 		return new Paginator($query, true);
 	}
 	
+	public function getTopicResources($topic, $official=true, $user=null, $search=null)
+	{
+		$builder = $this->createQueryBuilder('r')
+			->orderBy('r.type');
+		
+		$builder->join('r.topic', 't')
+		->andWhere('t.id = :topic')->setParameter('topic', $topic->getId());
+	
+		if(is_bool($official)) {
+			$builder->andWhere('r.trusted = :official')
+			->setParameter('official', $official);
+		}
+		
+		if($user != null) {
+			$builder->andWhere('r.owner = :user')->setParameter('user', $user);
+		}
+		
+		if($search != null) {
+			$builder->andWhere('r.title LIKE :keyword OR r.keywords LIKE :keyword OR r.description LIKE :keyword')->setParameter('keyword', '%'.$search.'%');
+		}
+
+		return $builder
+		->getQuery()
+		->getResult();
+	}
+	
 	
 	public function findByTopicSortedByType($topic, $official =  true, $user = null, $exclusive = false)
 	{
