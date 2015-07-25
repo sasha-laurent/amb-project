@@ -145,17 +145,22 @@ class ResourceController extends Controller
 			}
 			$next = $em->getRepository('VMBResourceBundle:Resource')->getResources($position + 1, 1, $topic, $official, ($personal ? $this->getUser() : null), $search);
 		}
-		
-
-        return $this->render('VMBResourceBundle:Resource:show.html.twig', array(
+		$rend_args = array(
             'entity'      => $entity,
             'mainTitle' => $entity->getTitle(),
             'saveToCaddy' => 'resource',
             'inCaddy' => $this->getUser()->resourceIsInCaddy($entity),
             'prev' => $prev,
             'next' => $next,
-            'position' => $position
-        ));
+            'position' => $position);
+
+		$typ = $entity->getType(); 
+		if($typ == 'text' || $typ == 'image'){
+			$rend_args['exportAssetUrl'] = $entity->getResourcePath();
+		}
+
+        return $this->render('VMBResourceBundle:Resource:show.html.twig', $rend_args
+        );
     }
     
     /**

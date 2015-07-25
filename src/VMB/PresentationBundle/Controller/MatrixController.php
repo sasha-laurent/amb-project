@@ -67,7 +67,8 @@ class MatrixController extends Controller
 				'editButtonUrl' => $this->generateUrl('matrix_edit', array('id' => $entity->getId())),
 				'delButtonUrl' => $this->generateUrl('matrix_delete', array('id' => $entity->getId())),
 				'entity' => $entity,
-				'resources' => array('official' => $validResources, 'personal' => $personalResources, 'unofficial' => $unofficialResources, 'bookmarks' => $caddyResources)
+				'resources' => array('official' => $validResources, 'personal' => $personalResources, 'unofficial' => $unofficialResources, 'bookmarks' => $caddyResources),
+				'forkButtonUrl' => $this->generateUrl('matrix_copy', array('id' => $id))
 				// ,'optionButtonModal' => '#modalEditRows'
 			));
 		}
@@ -166,7 +167,7 @@ class MatrixController extends Controller
     /**
      * Displays a form to edit an existing Matrix entity.
      * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
-     * TODO: Modal parameter? Would mean no back button, but close button in subPage instead.
+     * @param is_modal: means no Back button, but Close button instead.
      */
     public function editAction($id, $is_modal = false)
     {
@@ -181,6 +182,83 @@ class MatrixController extends Controller
 				$this->get('translator')->trans('message.error.not_enough_rights'));
 			return $this->redirect($this->generateUrl('matrix'));
 		}
+    }
+
+    /*
+    ** @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    ** Copies a Matrix for the logged in user to possibly apply his 
+    ** or her own modifications and redirects him/her to the copy.
+    ** TODO: Set successive copies as a series in parentheses (could lookup matrix copies with same user name suffix?)
+    */
+    public function copyAction(Request $request, $id){
+		$translator = $this->get('translator');
+    	try {
+				$em = $this->getDoctrine()->getManager();
+				$matrix = $em->getRepository('VMBPresentationBundle:Matrix')->getMatrixWithResources($id);
+
+        		if (!$matrix) {
+            	throw $this->createNotFoundException($this->get('translator')->trans('message.error.entity_not_found', array('%class%' => 'Matrix')));
+        		}
+				$em->detach($matrix);
+    					// Copy the matrix
+				$newMatrix = clone $matrix;
+				
+				// PoVs
+				$newPovs = array();
+				foreach($newMatrix->getPovs() as $pov) {
+					$newPovs[$pov->getId()] = clone $pov;
+					$newPovs[$pov->getId()]->setMatrix($newMatrix);
+				}
+				
+				$newMatrix->clearPovs();
+				foreach($newPovs as $newPov) {
+					$newMatrix->addPov($newPov);
+				}
+				
+				// Levels
+				$newLvls = array();
+				foreach($newMatrix->getLevels() as $lvl) {
+					$newLvls[$lvl->getId()] = clone $lvl;
+					$newLvls[$lvl->getId()]->setMatrix($newMatrix);
+				}
+				
+				$newMatrix->clearLevels();
+				foreach($newLvls as $newLvl) {
+					$newMatrix->addLevel($newLvl);
+				}
+				
+				// Used Resources
+				$newResources = array();
+				foreach($newMatrix->getResources() as $res) {
+					$newResources[$res->getId()] = clone $res;
+					$newResources[$res->getId()]->setPov($newPovs[$res->getPov()->getId()]);
+					$newResources[$res->getId()]->setLevel($newLvls[$res->getLevel()->getId()]);
+					$newResources[$res->getId()]->setMatrix($newMatrix);
+				}
+				
+				$newMatrix->clearResources();
+				foreach($newResources as $newRes) {
+					// no cascade persist, we must do it here
+					$newMatrix->addResource($newRes);
+					$em->persist($newRes);
+				}
+				
+				$newMatrix->setOwner($this->getUser());
+				$newMatrix->setDateCreation(new \DateTime());
+				$newMatrix->setDateUpdate(new \DateTime());
+				$newTitle = $newMatrix->getTitle() . " - " . $this->getUser()->toString(). "'s copy"; 
+				$newMatrix->setTitle($newTitle);
+				$em->persist($newMatrix);
+				$em->flush();
+
+				$request->getSession()->getFlashBag()->add('success', $translator->trans('matrix.copy_success'));				
+
+			} catch (\Exception $e) {
+				$request->getSession()->getFlashBag()
+				->add('danger', $e); // $translator->trans('message.error.occured')
+				return $this->showAction($request, $id);
+			}
+		return $this->showAction($request, $newMatrix->getId());
     }
 
     /**

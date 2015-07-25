@@ -18,6 +18,12 @@ matrix_edit:
     requirements:
         id:   \d{1,}
 
+matrix_copy:
+    path: /copy/{id}
+    defaults: { _controller: "VMBPresentationBundle:Matrix:copy"}
+    requirements:
+        id:   \d{1,}
+
 matrix_update:
     path:	  /update/{id}
     defaults: { _controller: "VMBPresentationBundle:Matrix:update" }
@@ -30,7 +36,7 @@ matrix_delete:
     defaults: { _controller: "VMBPresentationBundle:Matrix:delete" }
     requirements:
         id:   \d{1,}
-        
+
 matrix_official:
     path:     /official/{id}
     defaults: { _controller: "VMBPresentationBundle:Matrix:official" }
@@ -42,7 +48,7 @@ matrix_delete_row:
     defaults: { _controller: "VMBPresentationBundle:Matrix:deleteRow" }
     requirements:
         _method: POST
-        
+
 
 matrix_edit_row:
     path:     /editRow/

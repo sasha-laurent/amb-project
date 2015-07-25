@@ -13,7 +13,7 @@
 	</div>
 {% endblock %}
 
-{% if page == 1 and nbPages == 0 or nbPages == 1 %}
+{% if page == 1 and (nbPages == 0 or nbPages == 1) %}
 	{% set skipPagination = true %}
 {% endif %}
 
@@ -101,7 +101,7 @@
 									{% else %}
 										<a title="{{"caddy.add"|trans|desc('Bookmark')}}" class="btn {% if app.user.presentationIsInCaddy(entity) %}btn-info{% else %}btn-default{% endif %} presentationAddToCaddy" data-id="{{ entity.id }}"><span class="glyphicon glyphicon-star"></span></a>
 									{% endif %}
-									<a title="{{"presentation.copy_of"|trans|desc('Copy')}}" href="{{ path('presentation_create_copy', { 'id': entity.id }) }}" type="button" class="btn btn-default"><img width="10px" height="16px" style="border-top-color:rgb(255,255,255);" src="{{asset('img/git-branch.svg')}}"></img></a>					
+									<a title="{{"presentation.copy_of"|trans|desc('Copy')}}" href="{{ path('presentation_create_copy', { 'id': entity.id }) }}" type="button" class="btn btn-default"><img width="10px" height="16px" style="{% if entity.official or entity.default %}border-top-color:rgb(255,255,255){% else %}padding-bottom:4px{% endif %};" src="{{asset('img/git-branch.svg')}}"></img></a>					
 								</div>
 							</div>
 							

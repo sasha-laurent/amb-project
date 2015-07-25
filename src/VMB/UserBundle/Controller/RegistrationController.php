@@ -99,6 +99,7 @@ class RegistrationController extends BaseController
 
             /*
              * User redirect logic
+             * TODO: Doesn't work for admin panel - probably new user session created doesn't have admin rights after new user is added.
             **/
             if (null === $response = $event->getResponse()) {
                 if($has_admin_rights){

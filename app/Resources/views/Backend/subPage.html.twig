@@ -64,19 +64,19 @@
 						<span class="left glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
 					</a>
 				{% endif %}
-				{% if delButtonUrl is defined %}
-					<a title="{{ "actions.delete"|trans }}" class="btn btn-default" href="{{ delButtonUrl | raw }}" >
-						<span class="left glyphicon glyphicon-remove" aria-hidden="true"></span>
-					</a>
-				{% endif %}
 				{% if forkButtonUrl is defined %}
 					<a title="{{ "actions.duplicate"|trans|desc('Duplicate') }}" class="btn btn-default" href="{{ forkButtonUrl }}" >
 						{#<span class="left glyphicon glyphicon-duplicate" aria-hidden="true"></span> #}
 						<img width="10px" height="16px" src="{{asset('img/git-branch.svg')}}"></img>
 					</a>
 				{% endif %}
+				{% if delButtonUrl is defined %}
+					<a title="{{ "actions.delete"|trans }}" class="btn btn-default" href="{{ delButtonUrl | raw }}" >
+						<span class="left glyphicon glyphicon-remove" aria-hidden="true"></span>
+					</a>
+				{% endif %}
 				{% if exportAssetUrl is defined %}
-					<a href="{{ asset(exportAssetUrl) }}" title="{{ "player.new_tab"|trans|desc('Display file in a new tab') }}" id="xprt_url" target="_blank" class="btn btn-default">
+					<a href="{{ asset(exportAssetUrl) }}" title="{{ "player.new_tab"|trans|desc('Display file in a new tab') }}" id="xptr_url" target="_blank" class="btn btn-default">
 						<span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
 					</a>
 				{% endif %}

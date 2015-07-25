@@ -3,7 +3,7 @@ presentation:
     defaults:  { _controller: "VMBPresentationBundle:Presentation:index", page: 1 }
     requirements:
         page: \d*
-    
+
 presentation_perso:
     path:     /personal/{page}
     defaults: { _controller: "VMBPresentationBundle:Presentation:personalIndex", page: 1 }
@@ -15,18 +15,18 @@ presentation_show:
     defaults: { _controller: "VMBPresentationBundle:Presentation:show" }
     requirements:
         id:   \d{1,}
-        
+
 presentation_download_playlist3d:
     path:     /playlist3D/{id}
     defaults: { _controller: "VMBPresentationBundle:Presentation:downloadPlaylist3D" }
     requirements:
         id:   \d{1,}
-        
+
 presentation_complementary:
     path:     /show/additional/{id}
     defaults: { _controller: "VMBPresentationBundle:Presentation:additionalContent" }
     requirements:
-        id:   \d{1,}        
+        id:   \d{1,}
 
 presentation_new:
     path:     /new/{idMatrix}
@@ -39,7 +39,7 @@ presentation_edit:
     defaults: { _controller: "VMBPresentationBundle:Presentation:edit" }
     requirements:
         id:   \d{1,}
-        
+
 presentation_create_copy:
     path:     /createFrom/{id}
     defaults: { _controller: "VMBPresentationBundle:Presentation:createFrom" }
@@ -51,17 +51,17 @@ presentation_delete:
     defaults: { _controller: "VMBPresentationBundle:Presentation:delete" }
     requirements:
         id:   \d{1,}
-        
+
 presentation_deep_copy:
     path:     /copy/{id}
     defaults: { _controller: "VMBPresentationBundle:Presentation:deepCopy" }
     requirements:
         id:   \d{1,}
-        
+
 presentation_parameter:
     path:     /parameter/{param}/{id}/{value}
     defaults: { _controller: "VMBPresentationBundle:Presentation:parameter" }
     requirements:
-        id:   \d{1,}        
+        id:   \d{1,}
         param: default|official|public
         value: 0|1
