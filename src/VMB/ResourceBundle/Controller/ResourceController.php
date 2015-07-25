@@ -65,12 +65,18 @@ class ResourceController extends Controller
 		if ($page > $nbPages && $page != 1) {
 			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
 		}
+		$paramsBag = $request->query->all();
+		if(array_key_exists('search', $paramsBag)){
+			unset($paramsBag['search']);
+		}
+		$pathWithoutKeyword = $this->generateUrl('vmb_resource_browse', $paramsBag);
 
         return $this->render('VMBResourceBundle:Resource:browseTopic.html.twig', array(
             'mainTitle' => $mainTitle,
             'topic' 	=> $topic,
             'topics' 	=> $topics,
             'search' 	=> $search,
+            'pathWithoutKeyword' => $pathWithoutKeyword,
             'entities' 	=> $entities,
             'nbPerPage' => $nbPerPage,
 			'nbPages'  	=> $nbPages,

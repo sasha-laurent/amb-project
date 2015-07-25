@@ -115,12 +115,19 @@ class PresentationController extends Controller
 			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
 		}
 
+		$paramsBag = $request->query->all();
+		if(array_key_exists('search', $paramsBag)){
+			unset($paramsBag['search']);
+		}
+		$pathWithoutKeyword = $this->generateUrl('vmb_presentation_browse', $paramsBag);
+		
         return $this->render('VMBPresentationBundle:Presentation:browseTopic.html.twig', array(
             'mainTitle' => $mainTitle,
             'topic' 	=> $topic,
             'topics' 	=> $topics,
             'entities' 	=> $entities,
             'search' 	=> $search,
+            'pathWithoutKeyword' => $pathWithoutKeyword,
 			'nbPages'  	=> $nbPages,
 			'page'     	=> $page
         ));

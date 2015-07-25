@@ -76,7 +76,7 @@
 					</a>
 				{% endif %}
 				{% if exportAssetUrl is defined %}
-					<a href="{{ asset(exportAssetUrl) }}" title="{{ "player.new_tab"|trans|desc('Display file in a new tab') }}" target="_blank" class="btn btn-default">
+					<a href="{{ asset(exportAssetUrl) }}" title="{{ "player.new_tab"|trans|desc('Display file in a new tab') }}" id="xprt_url" target="_blank" class="btn btn-default">
 						<span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
 					</a>
 				{% endif %}

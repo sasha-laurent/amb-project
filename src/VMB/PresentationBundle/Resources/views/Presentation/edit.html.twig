@@ -526,7 +526,11 @@
 			});
 		})
 		
-		$('.editTimeButton').click(function(event) { event.stopImmediatePropagation(); event.preventDefault(); editTime(this); });
+		$('.editTimeButton').click(function(event) { 
+			event.stopImmediatePropagation(); 
+			event.preventDefault(); 
+			editTime(this); 
+		});
 		
 		$('#save-btn').click(function() {
 			$('#presentation_form').submit();
@@ -535,7 +539,7 @@
 		$('#delete_thumbs').click(function(event) {
 			event.preventDefault();
 			$('#keepThumbs').val(0);
-			$('#presentation_form').find('[type="submit"]').trigger('click');
+			$('#presentation_form').submit();
 		});
 		
 		
@@ -543,7 +547,7 @@
 		$('#save_new_presentation').click(function(event) {
 			event.preventDefault();
 			if($('#file_list li').length > 0) {
-				$('#presentation_form)'.find('[type="submit"]').trigger('click');
+				$('#presentation_form').submit();
 			}
 			else {
 				alert('Aucun élément dans la liste de lecture');

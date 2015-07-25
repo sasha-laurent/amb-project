@@ -101,7 +101,7 @@
 									{% else %}
 										<a title="{{"caddy.add"|trans|desc('Bookmark')}}" class="btn {% if app.user.presentationIsInCaddy(entity) %}btn-info{% else %}btn-default{% endif %} presentationAddToCaddy" data-id="{{ entity.id }}"><span class="glyphicon glyphicon-star"></span></a>
 									{% endif %}
-									<a title="{{"presentation.copy_of"|trans|desc('Copy')}}" href="{{ path('presentation_create_copy', { 'id': entity.id }) }}" type="button" class="btn btn-default"><img width="10px" height="16px" style="padding-bottom:4px" src="{{asset('img/git-branch.svg')}}"></img></a>					
+									<a title="{{"presentation.copy_of"|trans|desc('Copy')}}" href="{{ path('presentation_create_copy', { 'id': entity.id }) }}" type="button" class="btn btn-default"><img width="10px" height="16px" style="border-top-color:rgb(255,255,255);" src="{{asset('img/git-branch.svg')}}"></img></a>					
 								</div>
 							</div>
 							
