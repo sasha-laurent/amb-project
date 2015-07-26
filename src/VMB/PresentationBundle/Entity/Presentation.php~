@@ -112,6 +112,11 @@ class Presentation
 	*/
 	private $resources;
 	
+	/**
+	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Annotation", mappedBy="presentation", cascade={"remove", "persist", "detach"})
+	*/
+	private $annotations;
+	
 	private $sortedResources = null;
 	
 	/**

@@ -208,7 +208,10 @@ class Topic
 		}
 		else return 'img/icon/default_topic_thumb.jpg';
 	}
-	    
+	   
+	/**
+     * @ORM\PreRemove()
+     */ 
     public function storeFilenameForRemove()
     {
         $this->filenameForRemove = str_replace('\\', '/', __DIR__).'/../../../../web/upload/topic/'.$this->getSlug().'.jpg';

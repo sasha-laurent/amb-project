@@ -103,7 +103,10 @@ class PresentationRepository extends EntityRepository
 			->addSelect('usedRes')
 			->leftJoin('usedRes.resource', 'res')
 			->addSelect('res')
+			->leftJoin('p.annotations', 'a')
+			->addSelect('a')
 			->orderBy('checkedRes.sort', 'ASC')
+			->addOrderBy('a.beginning', 'ASC')
 			->where('p.id = :id')
 			->setParameter('id', $id)
 		;

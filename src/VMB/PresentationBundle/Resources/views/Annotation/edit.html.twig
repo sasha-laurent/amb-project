@@ -1,0 +1,26 @@
+{% extends '::Backend/subPage.html.twig' %}
+
+{% block body %}
+	<div class="timeline">
+    {% for res in presentation.resources %}
+		{% if res.suggested == false %}
+			<div style="width: {{ (res.getDuration / presentation.duration)*100 }}%;" class="timeline_res"></div>
+		{% endif %}
+	{% endfor %}
+	</div>
+	<div class="annotations">
+	{% for a in presentation.annotations %}
+		<div style="width: {{ (a.length / presentation.duration)*100 }}%; left:{{ (a.beginning / presentation.duration)*100 }}%; top: 0px;" class="timeline_annot"></div>
+	{% endfor %}
+	</div>
+	
+	<hr/>
+{% endblock %}
+
+
+{% block script %}
+	{{ parent() }}
+	<script>
+	
+	</script>
+{% endblock %}

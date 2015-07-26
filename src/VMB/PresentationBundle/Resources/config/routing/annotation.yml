@@ -1,0 +1,17 @@
+annotation_edit:
+    path:     /edit/{id}
+    defaults: { _controller: "VMBPresentationBundle:Annotation:edit" }
+    requirements:
+        id:   \d{1,}
+
+annotation_add:
+    path:     /add
+    defaults: { _controller: "VMBPresentationBundle:Annotation:add" }
+    requirements:
+        _method: POST
+    
+annotation_delete:
+    path:     /delete
+    defaults: { _controller: "VMBPresentationBundle:Annotation:delete" }
+    requirements:
+        _method: POST

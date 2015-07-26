@@ -647,3 +647,27 @@ input[type="file"].form-control { height: auto; }
 li.list-group-item.row .form-control {
 	margin-top: 2px;
 }
+
+.timeline {
+	height: 32px;
+}
+
+.timeline_res {
+	float: left;
+	height: 32px;
+	border-right: 1px solid black;
+	background-color: green;
+}
+
+.timeline .timeline_res:first-child {
+	border-radius : 16px 0px 0px 16px;
+}
+.timeline .timeline_res:last-child {
+	border-radius : 0px 16px 16px 0px;
+}
+
+.timeline_annot {
+	position: relative;
+	height: 12px;
+	background-color: #e8e8e8;
+}
