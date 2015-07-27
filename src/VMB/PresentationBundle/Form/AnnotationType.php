@@ -15,13 +15,20 @@ class AnnotationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('type')
             ->add('length')
             ->add('text')
             ->add('positionX')
             ->add('positionY')
+            ->add('fontSize')
+            ->add('fontColor')
             ->add('beginning')
-            ->add('presentation', 'entity')
+            ->add('presentation', 'entity', array(
+				'label' => 'Présentation',
+				'property' => 'title',
+				'class' => 'VMBPresentationBundle:Presentation')
+			)
+            ->add('file', 'file', array('label' => 'form.label.thumbnail', 'required' => false))
+            ->add('save', 'submit', array('label' => 'actions.save'))
         ;
     }
     

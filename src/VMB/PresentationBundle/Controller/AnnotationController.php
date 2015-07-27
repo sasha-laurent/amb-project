@@ -19,7 +19,7 @@ class AnnotationController extends Controller
      * Displays a form to edit all annotations associated to an entity
      *
      */
-    public function editAction($id)
+    public function editAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -29,9 +29,32 @@ class AnnotationController extends Controller
             throw $this->createNotFoundException($this->get('translator')->trans('message.error.entity_not_found', array('%class%' => 'Presentation')));
         }
         
+        $annotation = new Annotation();
+        $annotation->setPresentation($entity);
+        $form = $this
+			->get('form.factory')
+			->create(new AnnotationType(), $annotation);
+		
+        
+        if ($request->isMethod('POST')) 
+		{
+			$form->handleRequest($request);
+			if ($form->isValid()) 
+			{
+				$em = $this->getDoctrine()->getManager();
+				$em->persist($annotation);
+				//$annotation->preUpload();
+				$em->flush();
+				//$annotation->upload();
+
+				return $this->redirect($this->generateUrl('annotation_edit', array('id' => $id)));
+			}
+		}
+        
         $args = array(
             'mainTitle' => $entity->getTitle(),
-			'presentation' => $entity
+			'presentation' => $entity,
+			'form' => $form->createView()
         );
         return $this->render('VMBPresentationBundle:Annotation:edit.html.twig', $args);
     }

@@ -3,12 +3,15 @@
 namespace VMB\PresentationBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Annotation
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="VMB\PresentationBundle\Entity\AnnotationRepository")
+ * @ORM\HasLifecycleCallbacks
  */
 class Annotation
 {
@@ -24,9 +27,9 @@ class Annotation
     /**
      * @var string
      *
-     * @ORM\Column(name="type", type="string", length=10)
+     * @ORM\Column(name="extension", type="string", length=10)
      */
-    private $type;
+    private $extension;
 
     /**
      * @var integer
@@ -34,6 +37,20 @@ class Annotation
      * @ORM\Column(name="length", type="integer")
      */
     private $length;
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="fontSize", type="integer")
+     */
+    private $fontSize;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="fontColor", type="string")
+     */
+    private $fontColor;
 
     /**
      * @var string
@@ -62,19 +79,20 @@ class Annotation
      * @ORM\Column(name="beginning", type="integer")
      */
     private $beginning;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="ending", type="integer")
-     */
-    private $ending;
     
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Presentation", inversedBy="annotations")
 	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE") 
 	*/
 	private $presentation;
+	
+	/**
+     * @Assert\File(maxSize="128000000000")
+     * 
+     */
+    public $file;
+
+	private $filenameForRemove;
 
 
     /**
@@ -93,9 +111,9 @@ class Annotation
      * @param string $type
      * @return Annotation
      */
-    public function setType($type)
+    public function setExtension($extension)
     {
-        $this->type = $type;
+        $this->extension = $extension;
 
         return $this;
     }
@@ -105,9 +123,9 @@ class Annotation
      *
      * @return string 
      */
-    public function getType()
+    public function getExtension()
     {
-        return $this->type;
+        return $this->extension;
     }
 
     /**
@@ -226,25 +244,72 @@ class Annotation
     }
 
     /**
-     * Set ending
+     * Set presentation
      *
-     * @param integer $ending
+     * @param \VMB\PresentationBundle\Entity\Presentation $presentation
      * @return Annotation
      */
-    public function setEnding($ending)
+    public function setPresentation(\VMB\PresentationBundle\Entity\Presentation $presentation)
     {
-        $this->ending = $ending;
+        $this->presentation = $presentation;
 
         return $this;
     }
 
     /**
-     * Get ending
+     * Get presentation
      *
-     * @return integer 
+     * @return \VMB\PresentationBundle\Entity\Presentation 
      */
-    public function getEnding()
+    public function getPresentation()
     {
-        return $this->ending;
+        return $this->presentation;
+    }
+    
+    public function preUpload()
+    {
+        
+    }
+
+    public function upload()
+    {
+        if (null === $this->file){
+            return;
+        }
+        $extension = strtolower(pathinfo($this->file->getClientOriginalName(), PATHINFO_EXTENSION));
+        if(in_array($extension, array('mp3', 'ogg'))) {
+			$path = str_replace('\\', '/', __DIR__).'/../../../../web/upload/annotations/';
+			
+			$this->file->move($path, $this->getId().'.'.$this->getExtension());
+		}
+    }
+    
+    public function getFilePath()
+    {
+		if(is_file(str_replace('\\', '/', __DIR__).'/../../../../web/upload/annotations/'.$this->getId().'.'.$this->getExtension())) {
+			return 'upload/annotations/'.$this->getId().'.'.$this->getExtension();
+		}
+		else return '';
+	}
+	
+	/**
+     * @ORM\PreRemove()
+     */
+    public function storeFilenameForRemove()
+    {
+        $this->filenameForRemove = str_replace('\\', '/', __DIR__).'/../../../../web/upload/annotations/'.$this->getId().'.'.$this->getExtension();
+    }
+
+    /**
+     * @ORM\PostRemove()
+     */
+    public function removeUpload()
+    {
+        if ($this->filenameForRemove) {
+			if(is_file($this->filenameForRemove)) {
+				unlink($this->filenameForRemove);
+			}
+           
+        }
     }
 }

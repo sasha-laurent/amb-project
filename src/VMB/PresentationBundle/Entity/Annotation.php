@@ -27,7 +27,7 @@ class Annotation
     /**
      * @var string
      *
-     * @ORM\Column(name="extension", type="string", length=10)
+     * @ORM\Column(name="extension", type="string", length=10, nullable=true)
      */
     private $extension;
 
@@ -36,7 +36,21 @@ class Annotation
      *
      * @ORM\Column(name="length", type="integer")
      */
-    private $length;
+    private $length = 12;
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="fontSize", type="integer")
+     */
+    private $fontSize = 100;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="fontColor", type="string")
+     */
+    private $fontColor = '#000000';
 
     /**
      * @var string
@@ -50,21 +64,21 @@ class Annotation
      *
      * @ORM\Column(name="positionX", type="float")
      */
-    private $positionX;
+    private $positionX = 50;
 
     /**
      * @var float
      *
      * @ORM\Column(name="positionY", type="float")
      */
-    private $positionY;
+    private $positionY = 50;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="beginning", type="integer")
      */
-    private $beginning;
+    private $beginning = 0;
     
     /**
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Presentation", inversedBy="annotations")
@@ -297,5 +311,51 @@ class Annotation
 			}
            
         }
+    }
+
+    /**
+     * Set fontSize
+     *
+     * @param integer $fontSize
+     * @return Annotation
+     */
+    public function setFontSize($fontSize)
+    {
+        $this->fontSize = $fontSize;
+
+        return $this;
+    }
+
+    /**
+     * Get fontSize
+     *
+     * @return integer 
+     */
+    public function getFontSize()
+    {
+        return $this->fontSize;
+    }
+
+    /**
+     * Set fontColor
+     *
+     * @param string $fontColor
+     * @return Annotation
+     */
+    public function setFontColor($fontColor)
+    {
+        $this->fontColor = $fontColor;
+
+        return $this;
+    }
+
+    /**
+     * Get fontColor
+     *
+     * @return string 
+     */
+    public function getFontColor()
+    {
+        return $this->fontColor;
     }
 }
