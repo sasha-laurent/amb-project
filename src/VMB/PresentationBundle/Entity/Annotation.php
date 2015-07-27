@@ -5,6 +5,7 @@ namespace VMB\PresentationBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
+use \GetId3\GetId3Core as GetId3;
 
 /**
  * Annotation
@@ -29,7 +30,7 @@ class Annotation
      *
      * @ORM\Column(name="extension", type="string", length=10, nullable=true)
      */
-    private $extension;
+    private $extension = null;
 
     /**
      * @var integer
@@ -268,7 +269,27 @@ class Annotation
     
     public function preUpload()
     {
-        
+		if (null === $this->file){
+            return true;
+        }
+        $extension = strtolower(pathinfo($this->file->getClientOriginalName(), PATHINFO_EXTENSION));
+        if(in_array($extension, array('mp3', 'ogg'))) {
+			/*Analyse du fichier avec getID3 */
+			$getId3 = new GetId3();
+			$analyse = $getId3
+			->setOptionMD5Data(true)
+			->setOptionMD5DataSource(true)
+			->setEncoding('UTF-8')
+			->analyze($this->file);
+
+			if(in_array($extension, array('ogg', 'mp3'))){
+				$this->setLength($analyse['playtime_seconds']);
+				$this->setExtension($extension);
+			}
+			
+			return true;
+		}
+		return false;
     }
 
     public function upload()
@@ -276,13 +297,16 @@ class Annotation
         if (null === $this->file){
             return;
         }
-        $extension = strtolower(pathinfo($this->file->getClientOriginalName(), PATHINFO_EXTENSION));
-        if(in_array($extension, array('mp3', 'ogg'))) {
+        
+        if(in_array($this->getExtension(), array('mp3', 'ogg'))) {
 			$path = str_replace('\\', '/', __DIR__).'/../../../../web/upload/annotations/';
-			
 			$this->file->move($path, $this->getId().'.'.$this->getExtension());
 		}
     }
+    
+    public function isAudio() {
+		return $this->extension != null;
+	}
     
     public function getFilePath()
     {

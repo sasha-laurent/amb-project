@@ -656,7 +656,7 @@ li.list-group-item.row .form-control {
 	float: left;
 	height: 32px;
 	border-right: 1px solid black;
-	background-color: green;
+	background-color: #35A1FF;
 }
 
 .timeline .timeline_res:first-child {
@@ -666,13 +666,26 @@ li.list-group-item.row .form-control {
 	border-radius : 0px 16px 16px 0px;
 }
 
-.timeline_annot, .timeline_annot_edited {
+.annotations {
 	position: relative;
+	margin-top: 12px;
+}
+
+.timeline_annot, .timeline_annot_edited {
+	position: absolute;
+	display: block;
 	height: 12px;
-	background-color: #e8e8e8;
+	background-color: #C8C8C8;
+}
+.timeline_annot_audio {
+	background-color: #696969;
+}
+.timeline_annot_current {
+	background-color: #f00;
 }
 
 .timeline_annot_edited {
+	position: relative;
 	background-color: #ff0000;
 	width: 0px;
 	top: -22px;

@@ -1,8 +1,9 @@
 annotation_edit:
-    path:     /edit/{id}
-    defaults: { _controller: "VMBPresentationBundle:Annotation:edit" }
+    path:     /edit/{id}/{a}
+    defaults: { _controller: "VMBPresentationBundle:Annotation:edit", a: null }
     requirements:
         id:   \d{1,}
+        a:   \d{1,}
 
 annotation_add:
     path:     /add
@@ -11,7 +12,7 @@ annotation_add:
         _method: POST
     
 annotation_delete:
-    path:     /delete
+    path:     /delete/{id}
     defaults: { _controller: "VMBPresentationBundle:Annotation:delete" }
     requirements:
-        _method: POST
+        id:   \d{1,}

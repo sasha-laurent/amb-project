@@ -8,27 +8,49 @@
 
 {% block body %}
 	<div class="timeline">
-    {% for res in presentation.resources %}
-		{% if res.suggested == false %}
-			<div style="width: {{ (res.getDuration / presentation.duration)*100 }}%;" class="timeline_res" data-container="body" title="{{ res.usedResource.resource.title }}" data-toggle="popover" data-placement="bottom" data-content="<img width='200' height='112' src='{{ asset(res.usedResource.resource.getThumbsPath) }}' /><br/>{{ res.usedResource.resource.description }}"></div>
-		{% endif %}
-	{% endfor %}
+		{% for res in presentation.resources %}
+			{% if res.suggested == false %}
+				<div style="width: {{ (res.getDuration / presentation.duration)*100 }}%;" class="timeline_res" data-container="body" title="{{ res.usedResource.resource.title }}" data-toggle="popover" data-placement="bottom" data-content="<img width='200' height='112' src='{{ asset(res.usedResource.resource.getThumbsPath) }}' /><br/>{{ res.usedResource.resource.description }}"></div>
+			{% endif %}
+		{% endfor %}
 	</div>
 	
 	<div class="timeline_annot_edited"></div>
 	
 	<div class="annotations">
-	{% for a in presentation.annotations %}
-		<div style="width: {{ (a.length / presentation.duration)*100 }}%; left:{{ (a.beginning / presentation.duration)*100 }}%; top: 0px;" class="timeline_annot"></div>
-	{% endfor %}
+		{% set annotRows = [] %}
+		{% for a in presentation.annotations %}
+			{% set topValue = 0 %}
+			
+			{# Looking for an available slot to display the annotation #}
+			{% set break = false %}
+			{% for r in annotRows if not break %}
+				{% if (r.beginning + r.length < a.beginning) %}
+					{% set annotRows = annotRows|merge({ ('r'~(loop.index0)): a}) %} 
+					{% set topValue = loop.index0 * 18 %}
+					{% set break = true %}
+				{% endif %}
+			{% endfor %}
+			
+			{% if not break %}
+				{% set annotRows = annotRows|merge({ ('r'~(annotRows|length)): a}) %} 
+				{% set topValue = (annotRows|length - 1) * 18 %}
+			{% endif %}
+			
+			
+			<a role="button" tabindex="{{ loop.index0 }}" style="width: {{ (a.length / presentation.duration)*100 }}%; left:{{ (a.beginning / presentation.duration)*100 }}%; top: {{ topValue }}px;" class="timeline_annot{% if a.isAudio %} timeline_annot_audio{% endif %}{% if annotation.id == a.id %} timeline_annot_current{% endif %}" data-toggle="popover" data-content="<a href='{{ path('annotation_edit', {'id': presentation.id, 'a': a.id}) }}'><span class='glyphicon glyphicon-pencil'></span></a> <a href='{{ path('annotation_delete', {'id': a.id}) }}' onclick='if (!confirm('Are you sure?')) return false;'><span class='glyphicon glyphicon-remove'></span></a>"></a>
+		{% endfor %}
+		
+		{# filler so that the block has a good height #}
+		<div style="height: {{ 18 * annotRows|length }}px;"></div>
 	</div>
 	
 	<hr/>
-	<h2>Gestion des annotations</h2>
+	<h2>{% if mode == 'edit' %}Modification d'une annotation{% else %}Ajout d'une annotation{% endif %}</h2>
 	
 	{{ form_start(form, {'attr': {'id': 'annotation_form', 'class': 'form-annotation'}}) }}
 	<div class="well">
-		
+		{% if mode == 'new' %}
 		<div class="form-group text-center">
 			<div class="btn-group" role="group" aria-label="...">
 			  <button id="text_btn" data-mode="text" type="button" class="switch_btn btn"><span class="glyphicon glyphicon-comment"></span> Texte</button>
@@ -36,6 +58,7 @@
 			</div>
 		</div>
 		<hr/>
+		{% endif %}
 		{# Les erreurs générales du formulaire. #}
 		{{ form_errors(form) }}
 		
@@ -108,7 +131,7 @@
 			</div>
 		</div>
 		
-		<div class="audio_related form-group">
+		<div class="{% if mode == 'new' %}audio_related {% endif %}form-group" {% if mode == 'edit' %}style="display: none;"{% endif %}>
 			{# Génération du label. #}
 			{{ form_label(form.file, "Audio", {'label_attr': {'class': 'col-sm-1 control-label'}}) }}
 
@@ -159,8 +182,9 @@
 				$('#' + unactiveMode + '_btn').addClass('btn-default');
 				
 				if(mode == 'audio') {
-					$('.timeline_annot_edited').css('width', '3px');
-					$('#vmb_presentationbundle_annotation_length').val(3 * {{ presentation.duration }} / $('.timeline').width());
+					{% if mode == 'new' %}$('#vmb_presentationbundle_annotation_length').val(1);{% endif %}
+					$('#vmb_presentationbundle_annotation_text').val("Audio file");
+					updateAnnotationEdited();
 				}
 			}
 		}
@@ -187,12 +211,17 @@
 		}
 		
 		$(function() {
+			
+			{% if mode == 'new' or (mode == 'edit' and not annotation.isAudio)  %}
 			activateMode('text');
+			{% else %}
+			activateMode('audio');
+			{% endif %}
+			
 			$(".color_field").spectrum({
 				preferredFormat: "hex",
 				showInput: true,
-				showPalette: true,
-				color: "#000"
+				showPalette: true
 			});
 			
 			$('.selector-x-pos').draggable({ 
@@ -212,6 +241,16 @@
 					modifyPos('.text-position', 'top', x);
 					$('#vmb_presentationbundle_annotation_positionY').val(x);
 				}
+			});
+			
+			$('.box-position').click(function(e) {
+				var posX = e.pageX - $(this).offset().left, posY = e.pageY - $(this).offset().top;
+				x = (posX / $(this).width()) * 100;
+				y = (posY / $(this).height()) * 100;
+				modifyPos('.selector-y-pos, .text-position', 'top', y);
+				modifyPos('.selector-x-pos, .text-position', 'left', x);
+				$('#vmb_presentationbundle_annotation_positionX').val(x);
+				$('#vmb_presentationbundle_annotation_positionY').val(y);
 			});
 			
 			$('#vmb_presentationbundle_annotation_positionY').change(function() { 
@@ -240,6 +279,14 @@
 				trigger: 'hover',
 				html: true
 			});
+			
+			$('.timeline_annot').popover({
+				trigger: 'focus',
+				html: true,
+				placement: 'bottom'
+			});
+			
+			updateAnnotationEdited();
 		});
 	</script>
 {% endblock %}
