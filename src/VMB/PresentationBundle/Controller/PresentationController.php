@@ -298,7 +298,7 @@ class PresentationController extends Controller
 			$presentation = $this->getPresentation($id);
 		}
 
-		// Si la requête est en GET, on affiche une page de confirmation avant de delete
+		// Si la requête est en GET, on affiche une page de confirmation avant de copier
 		return $this->render('VMBPresentationBundle:Presentation:copy.html.twig', array(
 			'entityTitle' => '"'.$presentation->toString().'"',
 			'mainTitle' => $translator->trans('presentation.copy_of').' '.$presentation->toString(),
@@ -355,7 +355,6 @@ class PresentationController extends Controller
 				}
 			}
 		}
-
 		$user = $this->getUser();
 	
 		$args = array(
@@ -363,7 +362,7 @@ class PresentationController extends Controller
             'saveToCaddy' => 'presentation',
             'inCaddy' => $user->presentationIsInCaddy($entity),
 			'entity' => $entity,
-			'alternativeResources' => $alternativeResources
+			'alternativeResources' => $alternativeResources,
         );
         if($entity->isOwner($user)) {
 			$args['editButtonUrl'] = $this->generateUrl('presentation_edit', array('id' => $id));
@@ -371,6 +370,17 @@ class PresentationController extends Controller
 		else {
 			$args['forkButtonUrl'] = $this->generateUrl('presentation_deep_copy', array('id' => $id));
 		}
+
+		$presentation_resources = $entity->getResources();
+		$first_checked_res = $presentation_resources->first();
+		$used_resource = $first_checked_res->getUsedResource();
+		$actual_first_resource = $used_resource->getResource();
+		$typ = $actual_first_resource->getType();
+
+		if($typ == 'image' or $typ == 'text'){
+			$args['exportAssetUrl'] = $actual_first_resource->getResourcePath();
+		}
+
         return $this->render('VMBPresentationBundle:Presentation:show.html.twig', $args);
     }
     

@@ -27,9 +27,9 @@ class RegistrationFormType extends AbstractType
             // as default value set, options[admin] always equals to false
         }
         // add your custom field
-        $builder->remove('plainPassword');
-        $builder->add('plainPassword', 'hidden', array('data' => 'defaultPwd'))
-            ->add('save', 'submit', array('label' => 'actions.add'));
+        //$builder->remove('plainPassword');
+        //->add('plainPassword', 'hidden', array('data' => 'defaultPwd'))
+        $builder->add('save', 'submit', array('label' => 'actions.add'));
     }
 
     public function getParent()

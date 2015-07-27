@@ -14,7 +14,7 @@ actions:
     delete: Delete
     duplicate: Duplicate
     edit: Edit
-    import: actions.import
+    import: Import
     index: actions.index   # FIXME
     next: actions.next
     options: Options

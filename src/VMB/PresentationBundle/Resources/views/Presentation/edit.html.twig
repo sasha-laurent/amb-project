@@ -223,6 +223,7 @@
 	{{ form_rest(form) }}
 	{# Fermeture de la balise <form> du formulaire HTML #}
 	{{ form_end(form) }}
+	{# Include more info here - which topic does the matrix belong to? Who was the original creator of the matrix?#}
 {% endblock %}
 
 {% block script %}
@@ -533,6 +534,8 @@
 		});
 		
 		$('#save-btn').click(function() {
+			// TODO: Submit on condition that form data has changed
+			// since page load
 			$('#presentation_form').submit();
 		});
 

@@ -14,7 +14,7 @@
 {% endif %}
 
 {% block body %}
-    <div class="row">
+	<div class="row">
 		<div class="col-sm-8">
 			{% include '::players.html.twig' %}
 		</div>
@@ -60,10 +60,10 @@
 			</p>
 			<div class="text-center"><a href="{{ path('presentation_complementary', {'id': entity.id}) }}" type="button" class="btn btn-primary">{{ 'presentation.see_more'|trans }} <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a></div>
 		</div>
-    </div>
-    <hr/>
-    {% if firstResource != null %}
-    <div id="additional-infos">
+	</div>
+	<hr/>
+	{% if firstResource != null %}
+	<div id="additional-infos">
 		<h3 class="view-more-title"><a data-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">{{ 'show.resource_details'|trans }} <span class="glyphicon glyphicon-chevron-down"></span></a></h3>
 		<div class="collapse" id="collapseDescription">
 			<table class="table">
@@ -99,11 +99,10 @@
 {% block script %}
 	{{ parent() }}
 	<script>
-	playing = false;
-	clickOnPlayer = false;
-	currentTimeout = null;
-	fullscreenMode = false;
-	
+	var playing = false;
+	var clickOnPlayer = false;
+	var currentTimeout = null;
+
 	resourcesCollection = {
 		{% if alternativeResources|length == 0 %}
 			{% for res in entity.resources %}
@@ -137,7 +136,7 @@
 					'type': "{{ res.usedResource.resource.type }}"
 				},
 			{% endfor %}
-		{% endif %}	
+		{% endif %} 
 	};
 	
 	resourcesOrder = [ {% if alternativeResources|length == 0 %}
@@ -160,23 +159,25 @@
 		if(currentTimeout != null) {
 			clearTimeout(currentTimeout);
 		}
-		currentTimeout = setTimeout(function() { nextResource(); }, secDelay*1000);
+		currentTimeout = setTimeout(function() { 
+			nextResource(); 
+		}, secDelay*1000);
 	}
 	
 	function triggerNewRes(resId) {
 		if(selectedRes != resId) {
-			updateFullscreenValue();
+
 			res = resourcesCollection[resId];
 			
-			retoggleFullscreen = false;
-			if(fullscreenMode && resourcesCollection[selectedRes]['type'] == 'video' && res['type'] != 'video') {
-				retoggleFullscreen = true;
+			// Reasons to exit full-screen
+			if(fullscreenMode 
+				&& resourcesCollection[selectedRes]['type'] == 'video' 
+				&& res['type'] != 'video') {
+				exitFullscreen();
 			}
 			
 			$('#addedRes_' + selectedRes).removeClass('active');
 			selectedRes = resId;
-			
-			if(retoggleFullscreen) { toggleFullScreen(fullscreenMode); }
 			
 			stopAndHideAll(res['type']);
 			$('#addedRes_' + resId).addClass('active');
@@ -188,8 +189,12 @@
 			
 			displayNewRes(res['src'], res['type'], playing);
 			// If it's a picture/file we trigger the countdown manually (since there is no player)
-			if(playing && res['type'] != 'audio' && res['type'] != 'video') {
-				setNextResourceTimeout(res['duration']);
+			if(res['type'] != 'audio' && res['type'] != 'video') {
+				if(playing){
+					setNextResourceTimeout(res['duration']);
+				} 
+				// Refresh on export url
+				$("#xptr_url").attr("href", res['src']);
 			}
 		}
 	}
@@ -219,54 +224,6 @@
 		}
 	}
 	
-	function updateFullscreenValue() {
-		res = resourcesCollection[selectedRes];
-		if(res['type'] == 'video') {
-			oldVal = fullscreenMode;
-			fullscreenMode = document.querySelectorAll(".player")[0].plyr.isFullscreen();
-			if(oldVal != fullscreenMode) {
-				if(fullscreenMode) {
-					$('#players_container').removeClass('fullScreenPlayer');
-					$('#players_container').addClass('fullScreenPlayer');
-					$('#file_list').closest('.col-sm-3').hide();
-					$('#additional-infos').hide();
-				}
-				else {
-					$('#players_container').removeClass('fullScreenPlayer');
-					$('#file_list').closest('.col-sm-3').show();
-					$('#additional-infos').show();
-				}
-			}
-		}
-	}
-	
-	function toggleFullScreen(fullscreen) {
-		// Default value
-		fullscreen = null || fullscreen;
-		
-		updateFullscreenValue();
-		res = resourcesCollection[selectedRes];
-
-		oldValue = fullscreenMode;
-		fullscreenMode = (fullscreen == null) ? !fullscreenMode : fullscreen;
-		
-		if(oldValue != fullscreenMode) {		
-			document.querySelectorAll(".player")[0].plyr.toggleFullscreen();
-		}
-		
-		if(fullscreenMode) {
-			$('#players_container').removeClass('fullScreenPlayer');
-			$('#players_container').addClass('fullScreenPlayer');
-			$('#file_list').closest('.col-sm-3').hide();
-			$('#additional-infos').hide();
-		}
-		else {
-			$('#players_container').removeClass('fullScreenPlayer');
-			$('#file_list').closest('.col-sm-3').show();
-			$('#additional-infos').show();
-		}
-	}
-	
 	function playerPlayButton(play) {
 		playAction(play, true);
 	}
@@ -291,11 +248,15 @@
 				
 				if(res['type'] == 'video') {
 					videoPlayer = document.querySelectorAll(".player")[0].plyr;
-					if(!fromPlayerControls) { videoPlayer.play(); }
+					if(!fromPlayerControls) { 
+						videoPlayer.play(); 
+					}
 				}
 				else if(res['type'] == 'audio') {
-					audioPlayer = document.querySelectorAll(".player")[1].plyr;		
-					if(!fromPlayerControls) { audioPlayer.play(); }
+					audioPlayer = document.querySelectorAll(".player")[1].plyr;     
+					if(!fromPlayerControls) { 
+						audioPlayer.play(); 
+					}
 				}
 				else {
 					setNextResourceTimeout(res['duration']);
@@ -311,7 +272,7 @@
 					if(!fromPlayerControls) { videoPlayer.pause(); }
 				}
 				else if(res['type'] == 'audio') {
-					audioPlayer = document.querySelectorAll(".player")[1].plyr;		
+					audioPlayer = document.querySelectorAll(".player")[1].plyr;     
 					if(!fromPlayerControls) { audioPlayer.pause(); }
 				}
 				else {
@@ -321,34 +282,115 @@
 		}
 	}
 	
-	$('#presentation-prev-btn').click(function() 	  { prevResource(); });
-	$('#presentation-play-btn').click(function() 	  { playAction(); });
-	$('#presentation-next-btn').click(function() 	  { nextResource(); });
-	$('#presentation-fullscreen-btn').click(function() { toggleFullScreen(); });
-	$('#file_list .list-group-item').click(function() {	triggerNewRes($(this).attr('data-id'));	});
+	$('#presentation-prev-btn').click(function(){ 
+		prevResource(); 
+	});
+	$('#presentation-play-btn').click(function(){ 
+		playAction(); 
+	});
+	$('#presentation-next-btn').click(function(){ 
+		nextResource(); 
+	});
+	$('#file_list .list-group-item').click(function() { 
+		triggerNewRes($(this).attr('data-id')); 
+	});
 	
 	function bindControls() {
 		var video = $('video')[0];
-		$(document.querySelectorAll(".player")[0]).bind('click',   function(e) { clickOnPlayer = true; });
-		$(video).bind('ended',   function(e) { nextResource(); });
-		$(video).bind('playing', function(e) { if(clickOnPlayer) { playerPlayButton(true); clickOnPlayer = false; } });
-		$(video).bind('pause',   function(e) { if(clickOnPlayer) { playerPlayButton(false); clickOnPlayer = false; } });
+		$(document.querySelectorAll(".player")[0])
+		.bind('click',   function(e) { 
+			clickOnPlayer = true; 
+		});
+		$(video).bind('ended',   function(e) { 
+			nextResource(); 
+		});
+		$(video).bind('playing', function(e) { 
+			if(clickOnPlayer) { 
+				playerPlayButton(true); 
+				clickOnPlayer = false; 
+			} 
+		});
+		$(video).bind('pause',   function(e) { 
+			if(clickOnPlayer) { 
+				playerPlayButton(false); 
+				clickOnPlayer = false; 
+			} 
+		});
 		
 		var audio = $('audio')[0];
-		$(document.querySelectorAll(".player")[1]).bind('click',   function(e) { clickOnPlayer = true; });
-		$(audio).bind('ended',   function(e) { nextResource(); });
-		$(audio).bind('playing', function(e) { if(clickOnPlayer) { playerPlayButton(true); } });
-		$(audio).bind('pause',   function(e) { if(clickOnPlayer) { playerPlayButton(false); } });
+		$(document.querySelectorAll(".player")[1]).bind('click',   function(e) { 
+			clickOnPlayer = true; 
+		});
+		$(audio).bind('ended',   function(e) { 
+			nextResource(); 
+		});
+		$(audio).bind('playing', function(e) { 
+			if(clickOnPlayer) { 
+				playerPlayButton(true); 
+			} 
+		});
+		$(audio).bind('pause',   function(e) { 
+			if(clickOnPlayer) { 
+				playerPlayButton(false); 
+			} 
+		});
 	}
-	
-	$('html').keyup(function(e){
-		// This is not called if the video player is full screen (the event will be managed by the browser)
-		if(e.key == 'Escape') {
-			toggleFullScreen(false);
+
+	/*
+	**
+	**	Initialize control bindings
+	*/
+	bindControls();
+
+	/*
+	** Fullscreen support
+	*/
+	var fullscreenMode = false;
+
+	// We do not need to prevent default behaviour, 
+	// however we do need to show our hidden elts
+	$('html').keyup(function(event){
+		if(event.keyCode == 27) {
+			exitFullscreen();
+		}
+	});
+
+	$('#presentation-fullscreen-btn').click(function() { 
+		if(!fullscreenMode){
+			launchIntoFullscreen(document.documentElement); 
+		} else {
+			exitFullscreen();
 		}
 	});
 	
-	bindControls();    
-	setInterval(function() { updateFullscreenValue(); }, 200);
+	// Find the right method, call on correct element
+	// Courtesy http://davidwalsh.name/fullscreen
+	function launchIntoFullscreen(element) {
+		$('#additional-infos').hide();
+		$('header').hide();
+		if(element.requestFullscreen) {
+			element.requestFullscreen();
+		} else if(element.mozRequestFullScreen) {
+			element.mozRequestFullScreen();
+		} else if(element.webkitRequestFullscreen) {
+			element.webkitRequestFullscreen();
+		} else if(element.msRequestFullscreen) {
+			element.msRequestFullscreen();
+		}
+		fullscreenMode = true;
+	}
+
+	function exitFullscreen() {
+		$('#additional-infos').show();
+		$('header').show();
+		if(document.exitFullscreen) {
+			document.exitFullscreen();
+		} else if(document.mozCancelFullScreen) {
+			document.mozCancelFullScreen();
+		} else if(document.webkitExitFullscreen) {
+			document.webkitExitFullscreen();
+		}
+		fullscreenMode = false;
+	}
 	</script>
 {% endblock %}

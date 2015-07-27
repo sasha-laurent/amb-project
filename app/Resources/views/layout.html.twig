@@ -123,7 +123,6 @@
 {% endif %}
 				<form class="top-search-form" accept-charset="UTF-8" action="{{search_target}}" method="get">
 					<input class="form-control search-input" name="search" placeholder="{{ "actions.search"|trans|desc('Search') }}" type="text" {% if app.request.query.get('search') is defined %} value="{{app.request.query.get('search')}}"{% endif %}>
-					{#dump(search_target)#}
 				</form>
 				{% elseif is_granted("IS_AUTHENTICATED_ANONYMOUSLY")
 				and app.request.attributes.get('_route') !=  ("fos_user_registration_register" or "_welcome") %} 
@@ -232,17 +231,16 @@
 				});
 			</script>
 			<script>
+			{% if pathWithoutKeyword is defined %}
 			$(document).ready(function(){
 				$(".top-search-form").on("input", function(evt){
 					if($(this).find(":input").val() == ""){ 
-					// input was cleared by user
-						{% if pathWithoutKeyword is defined %}
-							window.location = "{{pathWithoutKeyword}}";
-						{% endif %}
-						
+						// input was cleared by user
+						window.location = "{{pathWithoutKeyword}}";
 					}
 				});
 			});
+			{% endif %}
 			</script>
 		{% endblock %}
 	</body>
