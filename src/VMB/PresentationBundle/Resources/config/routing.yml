@@ -1,3 +1,7 @@
+vmb_presentation_annotation:
+    resource: "@VMBPresentationBundle/Resources/config/routing/annotation.yml"
+    prefix:   /annotation
+
 vmb_presentation_topic:
     resource: "@VMBPresentationBundle/Resources/config/routing/topic.yml"
     prefix:   /topic

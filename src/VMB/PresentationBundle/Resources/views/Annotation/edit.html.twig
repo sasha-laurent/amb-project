@@ -1,0 +1,292 @@
+{% extends '::Backend/subPage.html.twig' %}
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel='stylesheet' id='stylesheet-css'  href='{{ asset('js/spectrum/spectrum.css') }}' type='text/css' media='all' />
+{% endblock %}
+
+{% block body %}
+	<div class="timeline">
+		{% for res in presentation.resources %}
+			{% if res.suggested == false %}
+				<div style="width: {{ (res.getDuration / presentation.duration)*100 }}%;" class="timeline_res" data-container="body" title="{{ res.usedResource.resource.title }}" data-toggle="popover" data-placement="bottom" data-content="<img width='200' height='112' src='{{ asset(res.usedResource.resource.getThumbsPath) }}' /><br/>{{ res.usedResource.resource.description }}"></div>
+			{% endif %}
+		{% endfor %}
+	</div>
+	
+	<div class="timeline_annot_edited"></div>
+	
+	<div class="annotations">
+		{% set annotRows = [] %}
+		{% for a in presentation.annotations %}
+			{% set topValue = 0 %}
+			
+			{# Looking for an available slot to display the annotation #}
+			{% set break = false %}
+			{% for r in annotRows if not break %}
+				{% if (r.beginning + r.length < a.beginning) %}
+					{% set annotRows = annotRows|merge({ ('r'~(loop.index0)): a}) %} 
+					{% set topValue = loop.index0 * 18 %}
+					{% set break = true %}
+				{% endif %}
+			{% endfor %}
+			
+			{% if not break %}
+				{% set annotRows = annotRows|merge({ ('r'~(annotRows|length)): a}) %} 
+				{% set topValue = (annotRows|length - 1) * 18 %}
+			{% endif %}
+			
+			
+			<a role="button" tabindex="{{ loop.index0 }}" style="width: {{ (a.length / presentation.duration)*100 }}%; left:{{ (a.beginning / presentation.duration)*100 }}%; top: {{ topValue }}px;" class="timeline_annot{% if a.isAudio %} timeline_annot_audio{% endif %}{% if annotation.id == a.id %} timeline_annot_current{% endif %}" data-toggle="popover" data-content="<a href='{{ path('annotation_edit', {'id': presentation.id, 'a': a.id}) }}'><span class='glyphicon glyphicon-pencil'></span></a> <a href='{{ path('annotation_delete', {'id': a.id}) }}' onclick='if (!confirm('Are you sure?')) return false;'><span class='glyphicon glyphicon-remove'></span></a>"></a>
+		{% endfor %}
+		
+		{# filler so that the block has a good height #}
+		<div style="height: {{ 18 * annotRows|length }}px;"></div>
+	</div>
+	
+	<hr/>
+	<h2>{% if mode == 'edit' %}Modification d'une annotation{% else %}Ajout d'une annotation{% endif %}</h2>
+	
+	{{ form_start(form, {'attr': {'id': 'annotation_form', 'class': 'form-annotation'}}) }}
+	<div class="well">
+		{% if mode == 'new' %}
+		<div class="form-group text-center">
+			<div class="btn-group" role="group" aria-label="...">
+			  <button id="text_btn" data-mode="text" type="button" class="switch_btn btn"><span class="glyphicon glyphicon-comment"></span> Texte</button>
+			  <button id="audio_btn" data-mode="audio" type="button" class="switch_btn btn"><span class="glyphicon glyphicon-volume-up"></span> Audio</button>
+			</div>
+		</div>
+		<hr/>
+		{% endif %}
+		{# Les erreurs générales du formulaire. #}
+		{{ form_errors(form) }}
+		
+		<div class="row">
+			<div class="form-group col-sm-6">
+				{# Génération du label. #}
+				{{ form_label(form.beginning, "Début", {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+
+				{# Affichage des erreurs pour ce champ précis. #}
+				{{ form_errors(form.beginning) }}
+
+				<div class="col-sm-10">
+				{# Génération de l'input. #}
+				{{ form_widget(form.beginning, {'attr': {'class': 'form-control'}}) }}
+				</div>
+			</div>
+			
+			<div class="form-group col-sm-6 text_related">
+				{# Génération du label. #}
+				{{ form_label(form.length, "Durée", {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+
+				{# Affichage des erreurs pour ce champ précis. #}
+				{{ form_errors(form.length) }}
+
+				<div class="col-sm-10">
+				{# Génération de l'input. #}
+				{{ form_widget(form.length, {'attr': {'class': 'form-control'}}) }}
+				</div>
+			</div>
+		</div>
+		
+		<div class="form-group text_related">
+			<label class="col-sm-1 control-label">Position</label>
+			{{ form_errors(form.positionX) }}
+			{{ form_errors(form.positionY) }}
+			<div class="col-sm-11">
+				<div class="col-sm-2">X : {{ form_widget(form.positionX, {'attr': {'class': 'annotation-position'}}) }} %</div>
+				<div class="col-sm-2">Y : {{ form_widget(form.positionY, {'attr': {'class': 'annotation-position'}}) }} %</div>
+				<div class="col-sm-4">
+					<div class="box-position-selector">
+						<div class="selector-x"><span class="selector-x-pos"></span></div>
+						<div class="selector-y"><span class="selector-y-pos"></span></div>
+					</div>
+				</div>
+				<div class="col-sm-4"><div class="box-position"><span class="text-position"></span></div></div>
+			</div>
+		</div>
+		
+		<div class="text_related form-group">
+			{{ form_label(form.text, "Texte", {'label_attr': {'class': 'col-sm-1 control-label'}}) }}
+			{{ form_errors(form.text) }}
+			<div class="col-sm-11">
+			{{ form_widget(form.text, {'attr': {'class': 'form-control'}}) }}
+			</div>
+		</div>
+		
+		<div class="text_related form-group">
+			{{ form_label(form.fontSize, "Taille", {'label_attr': {'class': 'col-sm-1 control-label'}}) }}
+			{{ form_errors(form.fontSize) }}
+			<div class="col-sm-11">
+			{{ form_widget(form.fontSize, {'attr': {'class': 'form-control'}}) }}
+			</div>
+		</div>
+		
+		<div class="text_related form-group">
+			{{ form_label(form.fontColor, "Couleur", {'label_attr': {'class': 'col-sm-1 control-label'}}) }}
+			{{ form_errors(form.fontColor) }}
+			<div class="col-sm-11">
+			{{ form_widget(form.fontColor, {'attr': {'class': 'color_field'}}) }}
+			</div>
+		</div>
+		
+		<div class="{% if mode == 'new' %}audio_related {% endif %}form-group" {% if mode == 'edit' %}style="display: none;"{% endif %}>
+			{# Génération du label. #}
+			{{ form_label(form.file, "Audio", {'label_attr': {'class': 'col-sm-1 control-label'}}) }}
+
+			{# Affichage des erreurs pour ce champ précis. #}
+			{{ form_errors(form.file) }}
+
+			<div class="col-sm-11">
+			{# Génération de l'input. #}
+			{{ form_widget(form.file, {'attr': {'class': 'form-control'}}) }}
+			</div>
+		</div>
+		
+		<hr/>
+		
+		<div class="form-group text-center">
+			{{ form_widget(form.save, {'attr': {'class': 'btn btn-primary'}}) }}
+		</div>
+	{# Fermeture de la balise <form> du formulaire HTML #}
+	</div>
+	<div style="display: none;">{{ form_rest(form) }}</div>
+	{{ form_widget(form._token) }} {{ form_end(form) }}
+{% endblock %}
+
+
+{% block script %}
+	{{ parent() }}
+	<script src="{{ asset('js/spectrum/spectrum.js') }}"></script>		
+	<script>
+		mode = 0;
+		
+		$('.switch_btn').click(function() {
+			activateMode($(this).attr('data-mode'));
+		});
+		
+		function activateMode(newMode) {
+			if(newMode != mode && (newMode == 'audio' || newMode == 'text')) {
+				mode = newMode;
+				var unactiveMode = (mode == 'audio') ? 'text' : 'audio';
+				
+				// Form
+				$('.' + mode + '_related').show();
+				$('.' + unactiveMode + '_related').hide();
+				
+				// Buttons
+				$('#' + mode + '_btn').addClass('btn-primary');
+				$('#' + mode + '_btn').removeClass('btn-default');
+				$('#' + unactiveMode + '_btn').removeClass('btn-primary');
+				$('#' + unactiveMode + '_btn').addClass('btn-default');
+				
+				if(mode == 'audio') {
+					{% if mode == 'new' %}$('#vmb_presentationbundle_annotation_length').val(1);{% endif %}
+					$('#vmb_presentationbundle_annotation_text').val("Audio file");
+					updateAnnotationEdited();
+				}
+			}
+		}
+		
+		function modifyPos(elt, cssArg, value) {
+			$(elt).css(cssArg, value + '%');
+		}
+		
+		function updateAnnotationEdited() {
+			$('.timeline_annot_edited').css('width', Math.floor(($('#vmb_presentationbundle_annotation_length').val() / {{ presentation.duration }}) * $('.timeline').width()) + 'px');
+			$('.timeline_annot_edited').css('left', Math.floor(($('#vmb_presentationbundle_annotation_beginning').val() / {{ presentation.duration }}) * $('.timeline').width()) + 'px');
+		}
+		
+		function parsePosValue(val) {
+			var valid = (val.match(/^-?\d+(?:\.\d+)?$/));
+			if(valid !== null) {
+				val = parseInt(val, 10);
+			}
+			else {
+				val = 50;
+				alert('alert.enter_a_valid_decimal_number');
+			}
+			return val;
+		}
+		
+		$(function() {
+			
+			{% if mode == 'new' or (mode == 'edit' and not annotation.isAudio)  %}
+			activateMode('text');
+			{% else %}
+			activateMode('audio');
+			{% endif %}
+			
+			$(".color_field").spectrum({
+				preferredFormat: "hex",
+				showInput: true,
+				showPalette: true
+			});
+			
+			$('.selector-x-pos').draggable({ 
+				axis: "x", 
+				containment: "parent",
+				drag: function( event, ui ) {
+					x = (ui.position.left / 133) * 100;
+					modifyPos('.text-position', 'left', x);
+					$('#vmb_presentationbundle_annotation_positionX').val(x);
+				}
+			});
+			$('.selector-y-pos').draggable({
+				axis: "y", 
+				containment: "parent",
+				drag: function( event, ui ) {
+					x = (ui.position.top / 133) * 100;
+					modifyPos('.text-position', 'top', x);
+					$('#vmb_presentationbundle_annotation_positionY').val(x);
+				}
+			});
+			
+			$('.box-position').click(function(e) {
+				var posX = e.pageX - $(this).offset().left, posY = e.pageY - $(this).offset().top;
+				x = (posX / $(this).width()) * 100;
+				y = (posY / $(this).height()) * 100;
+				modifyPos('.selector-y-pos, .text-position', 'top', y);
+				modifyPos('.selector-x-pos, .text-position', 'left', x);
+				$('#vmb_presentationbundle_annotation_positionX').val(x);
+				$('#vmb_presentationbundle_annotation_positionY').val(y);
+			});
+			
+			$('#vmb_presentationbundle_annotation_positionY').change(function() { 
+				val = parsePosValue($(this).val());
+				modifyPos('.text-position', 'top', val);
+				modifyPos('.selector-y-pos', 'top', val);
+			});
+			
+			$('#vmb_presentationbundle_annotation_positionX').change(function() { 
+				val = parsePosValue($(this).val());
+				modifyPos('.text-position', 'left', val);
+				modifyPos('.selector-x-pos', 'left', val);
+			});
+			
+			$('.timeline').click(function(e) {
+				var posX = e.pageX - $(this).offset().left;
+				time = Math.floor((posX / $(this).width()) * {{ presentation.duration }});
+				$('#vmb_presentationbundle_annotation_beginning').val(time);
+				updateAnnotationEdited();
+			});
+			
+			$('#vmb_presentationbundle_annotation_beginning').change(function() { updateAnnotationEdited();	});
+			$('#vmb_presentationbundle_annotation_length').change(function() { updateAnnotationEdited();	});
+			
+			$('.timeline_res').popover({
+				trigger: 'hover',
+				html: true
+			});
+			
+			$('.timeline_annot').popover({
+				trigger: 'focus',
+				html: true,
+				placement: 'bottom'
+			});
+			
+			updateAnnotationEdited();
+		});
+	</script>
+{% endblock %}

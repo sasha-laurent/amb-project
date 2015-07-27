@@ -113,6 +113,11 @@ class Presentation
 	*/
 	private $resources;
 	
+	/**
+	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Annotation", mappedBy="presentation", cascade={"remove", "persist", "detach"})
+	*/
+	private $annotations;
+	
 	private $sortedResources = null;
 	
 	/**
@@ -570,7 +575,10 @@ class Presentation
 			unlink(str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getId().'.jpg');
 		}
 	}
-	    
+	
+	/**
+     * @ORM\PreRemove()
+     */
     public function storeFilenameForRemove()
     {
         $this->filenameForRemove = str_replace('\\', '/', __DIR__).'/../../../../web/upload/presentation/'.$this->getId().'.jpg';
@@ -610,5 +618,38 @@ class Presentation
     public function getDefault()
     {
         return $this->default;
+    }
+
+    /**
+     * Add annotations
+     *
+     * @param \VMB\PresentationBundle\Entity\Annotation $annotations
+     * @return Presentation
+     */
+    public function addAnnotation(\VMB\PresentationBundle\Entity\Annotation $annotations)
+    {
+        $this->annotations[] = $annotations;
+
+        return $this;
+    }
+
+    /**
+     * Remove annotations
+     *
+     * @param \VMB\PresentationBundle\Entity\Annotation $annotations
+     */
+    public function removeAnnotation(\VMB\PresentationBundle\Entity\Annotation $annotations)
+    {
+        $this->annotations->removeElement($annotations);
+    }
+
+    /**
+     * Get annotations
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAnnotations()
+    {
+        return $this->annotations;
     }
 }
