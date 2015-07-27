@@ -168,7 +168,7 @@ presentation:
     delete: presentation.delete
     deleted: presentation.deleted
     details: presentation.details
-
+    is_empty_add_content: 'The presentation matrix is empty. Would you like to add some content?'
     error:
         matrix_unofficial: presentation.error.matrix_unofficial
         presentation_unofficial: presentation.error.presentation_unofficial

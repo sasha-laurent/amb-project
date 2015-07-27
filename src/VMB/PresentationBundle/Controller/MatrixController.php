@@ -472,11 +472,13 @@ class MatrixController extends Controller
 						}
 					}
 					else {
-						$elt = $em->getRepository('VMBPresentationBundle:'.$type)->find($rowId);
+						$elt = $em->getRepository('VMBPresentationBundle:'
+							.$type)->find($rowId);
 					}
 					
 					// If the element was found
-					if($elt !== null && $elt->getMatrix()->getId() == intval($matrixId)) {
+					if($elt !== null && 
+						$elt->getMatrix()->getId() == intval($matrixId)) {
 						$elt->setTitle($title);
 						$em->flush();
 						return new Response($elt->getId());	

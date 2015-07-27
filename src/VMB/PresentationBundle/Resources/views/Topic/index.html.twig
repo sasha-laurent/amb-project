@@ -22,12 +22,14 @@
 		{% endfor %}
 		$.each(group_ids, function(i, v){		
 			var c = $('#collapseListGroup'+v);
-			c.on('show.bs.collapse', function(){
-				$('a[href="#collapseListGroup'+v+'"] > span').removeClass('glyphicon-triangle-right').addClass('glyphicon-triangle-bottom');
+			c.on('shown.bs.collapse', function(){
+				$("a[aria-expanded='true']").find("span").removeClass('glyphicon-triangle-right').addClass('glyphicon-triangle-bottom');
 			});
-			c.on('hide.bs.collapse', function(){
-				$('a[href="#collapseListGroup'+v+'"] > span').removeClass('glyphicon-triangle-bottom').addClass('glyphicon-triangle-right');			
+			c.on('hidden.bs.collapse', function(){
+				$("a[aria-expanded='false']").find("span").removeClass('glyphicon-triangle-bottom').addClass('glyphicon-triangle-right');			
 			});
 		});
+
+
 	</script>
 {% endblock %}

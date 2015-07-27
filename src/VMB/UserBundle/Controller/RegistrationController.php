@@ -30,7 +30,7 @@ class RegistrationController extends BaseController
 {
     public function registerAction(Request $request)
     {
-        $has_admin_rights = $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN');
+        $has_admin_rights = $this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN');
         /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
         $formFactory = $this->get('fos_user.registration.form.factory');
         /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
@@ -49,8 +49,7 @@ class RegistrationController extends BaseController
         }
 
         // For some reason $opts cannot be resolved in our RegistrationForm class
-        $form = $formFactory->createForm(new RegistrationFormType(), $user, 
-            array("is_admin" => $has_admin_rights));
+        $form = $formFactory->createForm(new RegistrationFormType(), $user, array('is_admin' => $has_admin_rights));
         $form->setData($user);
 
         $form->handleRequest($request);
@@ -76,13 +75,14 @@ class RegistrationController extends BaseController
             $user->addRole($role);
             
             /*
-             * Password auto-generation
+             * Password auto-generation IF Admin created the account
             **/
-
-            $tokenGenerator = $this->get('fos_user.util.token_generator');
-			$password = substr($tokenGenerator->generateToken(), 0, 8); // 8 chars
-            $user->setPlainPassword($password);
-
+            if($has_admin_rights)
+            {
+                $tokenGenerator = $this->get('fos_user.util.token_generator');
+    			$password = substr($tokenGenerator->generateToken(), 0, 8); // 8 chars
+                $user->setPlainPassword($password);
+            }
 
             $userManager->updateUser($user);
             

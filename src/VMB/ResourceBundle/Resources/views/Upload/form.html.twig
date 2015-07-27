@@ -5,7 +5,7 @@
 	{{"resource.add"|trans}}
 	<div class="btn-group pull-right">
 		<button id="modal_save_btn" type="submit" title="Save" class="btn btn-default">
-			<span class="glyphicon glyphicon-floppy-disk"></span>
+			<span class="glyphicon glyphicon-floppy-open"></span>
 		</button>
 		<button type="button" title="Discard" class="btn btn-default" data-dismiss="modal">
 			<span class="glyphicon glyphicon-remove"></span>
@@ -56,22 +56,29 @@
 				$("#modal_loading").css('display', 'none');				
 			},
 			success: function(data, textStatus, jqXHR){
-				$("#modal_save_btn").removeClass("btn-default").addClass("btn-info")
-				$("#modal_save_btn > span").removeClass("glyphicon-floppy-disk").addClass("glyphicon-floppy-saved")
-				setTimeout(function(){$("#modalResourceAdd").modal('hide')}, 500);
-				$('.drag_container').before('<div class="alert alert-success col-sm-6 col-sm-offset-3 alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>'+textStatus+'</div>');
-/* TODO: Async load resource in: #collapseListGroup_personal_image > ul
-Template HTML to use:
-<li class="list-group-item addableResource addableRes_{id} ui-draggable ui-draggable-handle" data-resource="{id}" data-title="{title}" data-thumb="{thumbnail-path}">
-<div class="row">
-<div class="col-sm-10">{Title}</div>
-<div class="col-sm-2"></div>
-</div>
-</li>
-*/
+				$("#modal_save_btn").removeClass("btn-default").addClass("btn-info");
+				$("#modal_save_btn > span").removeClass("glyphicon-floppy-open").addClass("glyphicon-floppy-saved");
+				setTimeout(function(){ // Hide modal and revert classes for next resource add
+					$("#modalResourceAdd").modal('hide');
+					$("#modal_save_btn > span").removeClass("glyphicon-floppy-saved").addClass("glyphicon-floppy-open");
+					$("#modal_save_btn").removeClass("btn-info").addClass("btn-default");
+				}, 500);
+				// Show response message
+				$('.drag_container').before('<div class="alert alert-success col-sm-6 col-sm-offset-3 alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>'+data.message+'</div>');
+				// Make the resource available immediately in the personal file list
+				// TODO: Check if the resource's topic is coherent with the matrix' topic - an even better choice would be to highlight the matrix' topic in the modal resource add so that the user doesn't have to fill it himself.
+				var r = data.resource;
+				var file_list = $("#collapseListGroup_personal_image > ul");
+				$(file_list).append('<li class="list-group-item addableResource addableRes_'+r.res_id+' ui-draggable ui-draggable-handle" data-resource="'+r.res_id+'" data-title="'+r.res_title+'" data-thumb="'+r.res_thumb_path+'"><div class="row"><div class="col-sm-10">'+r.res_title+'</div><div class="col-sm-2"></div></div></li>');
 			},
 			error: function(jqXHR, textStatus, errorThrown){
-				$('.drag_container').before('<div class="alert alert-danger col-sm-6 col-sm-offset-3 alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>'+textStatus+'</div>');
+				console.log(data, textStatus, errorThrown);
+				$("#modal_save_btn").removeClass("btn-default").addClass("btn-danger");				
+				setTimeout(function(){
+					$("#modalResourceAdd").modal('hide');
+					$("#modal_save_btn").removeClass("btn-danger").addClass("btn-default");
+				}, 500);
+				$('.drag_container').before('<div class="alert alert-danger col-sm-6 col-sm-offset-3 alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>'+data.message+'</div>');
 			},
 			/*
 			** jQuery options

@@ -9,35 +9,35 @@ class VMBPreviousUrl
 	{
 		$this->router = $router;
 	}
-	
-	public function getPreviousUrl($request, $default = '#')
+	// TODO: - Fix the locale switcheroo which requires to memorize pre-switch URL
+	// 		 - Always pass and check CSRF token? Prevents most CSRF attacks
+	public function getPreviousUrl($request, $default = '_welcome')
 	{
 		$pos = null;
+
+		// Referer as passed by the header (unsafe - can be modified)
         $referer = $request->headers->get('referer');
-        $baseUrl = $request->getBaseUrl(); # root url from which $request is exec
-        if(!empty($baseUrl)){
-	        $pos = strpos($referer, $baseUrl);
+        // Target path only has value in case of 403
+        $target_p = $request->getSession()->get('_security.target_path'); 
+        // Root url from which $request is executed - empty more often than not
+        $baseUrl = $request->getBaseUrl();
+        // Hardcoded URL to use instead of baseUrl
+        // $localhost = "http://127.0.0.1:8000";
+        $vmb_path = "http://edu3d.enstb.org/edu/web"; 
+
+		// Can be empty if user set it to empty or browser is set not to forward referers.
+        if(empty($referer)) 
+        {
+        	return $default;
+        } else {
+        	// Checking if it's an internal URL
+        	$pos = strpos($referer, $vmb_path);
+        	if($pos === false) // Referer doesn't begin with our defined VMB Path
+        	{
+        		return $default;
+        	} else { // Return relative path 
+        		return substr($referer, strlen($vmb_path));
+        	}
         }
-        // If it's an intern url
-        if($pos != null && $pos !== false) {
-			$lastPath = substr($referer, $pos + strlen($baseUrl));
-			
-			// If there are request parameters not included in the "base" url
-			if($pos = strpos($lastPath, '?')) {
-				$lastPath = substr($lastPath, 0, $pos);
-			}
-			
-			try {
-				// If the route can not be matched, an exception is thrown
-				$this->router->match($lastPath);
-			}
-			catch(\Exception $e) {
-				return $default;
-			}
-			return $referer;
-		}
-		
-		// if it's an external url
-		return $default;
 	}
 }

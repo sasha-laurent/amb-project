@@ -370,7 +370,7 @@ class PresentationController extends Controller
 		else {
 			$args['forkButtonUrl'] = $this->generateUrl('presentation_deep_copy', array('id' => $id));
 		}
-
+		// TODO: CHECK EXISTENCE DONT JUST USE IT
 		$presentation_resources = $entity->getResources();
 		$first_checked_res = $presentation_resources->first();
 		$used_resource = $first_checked_res->getUsedResource();
@@ -641,6 +641,7 @@ class PresentationController extends Controller
 				'mainTitle' => ((!($presentation->toString())) ? 
 					$translator->trans('presentation.add') : $presentation->toString()),
 				'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('vmb_presentation_browse')),
+				'saveButton' => true,
 				'copy' => $saveAsCopy,
 				'matrix' => $presentation->getMatrix(),
 				'presentation' => $shownPresentation,

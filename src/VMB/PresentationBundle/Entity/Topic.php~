@@ -16,7 +16,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * 
  * use repository for handy tree functions
  * @ORM\Entity(repositoryClass="Gedmo\Tree\Entity\Repository\NestedTreeRepository")
- * @ORM\HasLifecycleCallbacks
+ * @ORM\EntityListeners({"TopicListener"}) 
  */
 class Topic
 {
@@ -74,12 +74,6 @@ class Topic
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $parent;
-
-    /**
-    * @ORM\ManyToOne(targetEntity="VMB\UserBundle\Entity\User")
-    * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-    */
-    private $owner;
     
     /**
      * @ORM\OneToMany(targetEntity="Topic", mappedBy="parent")
@@ -91,12 +85,6 @@ class Topic
 	* @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Ontology", mappedBy="topic", cascade={"remove", "persist", "detach"})
 	*/
 	private $ontologies;
-
-    /**
-    * @ORM\OneToMany(targetEntity="VMB\PresentationBundle\Entity\Presentation", mappedBy="topic")
-    * @ORM\Column(name="presentations_count", type="integer")
-    */
-    private $presentations_count = null;
     
     /**
      * @Assert\File(maxSize="128000000000")
@@ -106,6 +94,12 @@ class Topic
 
 	private $filenameForRemove;
 
+    /*
+    ** Total included presentations (own+children's) count column
+    ** @ORM\Column(name="total_included_presentations", type="integer")
+    **
+    */
+    private $total_included_presentations = 0;
 
 	/**
 	 * Used for select form components
@@ -427,25 +421,18 @@ class Topic
     }
 
     /**
-     * Set owner
-     *
-     * @param \VMB\UserBundle\Entity\User $owner
-     * @return Topic
+     * Get Total included Presentations Count
+     * @return integer
      */
-    public function setOwner(\VMB\UserBundle\Entity\User $owner = null)
-    {
-        $this->owner = $owner;
-
-        return $this;
+    public function getTotalIncludedPresentations(){
+        return $this->total_included_presentations;
     }
 
     /**
-     * Get owner
-     *
-     * @return \VMB\UserBundle\Entity\User 
+     * Set new Total for included Presentations
+     * @param integer
      */
-    public function getOwner()
-    {
-        return $this->owner;
+    public function setTotalIncludedPresentations($i){
+        $this->total_included_presentations = $i;
     }
 }

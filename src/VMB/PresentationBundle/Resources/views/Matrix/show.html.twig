@@ -55,7 +55,7 @@
 						<li role="presentation"><a href="#bookmarks" aria-controls="bookmarks" role="tab" data-toggle="tab">{{ 'resource.bookmarks'|trans }}</a></li>
 						{% if not entity.official %}<li role="presentation"><a href="#unofficial" aria-controls="unoffficial" role="tab" data-toggle="tab">{{ 'resource.shared'|trans }}</a></li>{% endif %}
 						<li role="presentation"> 
-						{# Modal resource add reference html here, with minimal modal form beneath.AJAX request with success means it becomes available immediately, upload in progress could feature a progress bar (@Future), failure means fail gracefully with an error message and let the user to keep on working. #}
+						{# Modal resource add reference html here, with minimal modal form beneath.AJAX request with success means it becomes available immediately, upload in progress could feature a progress bar (@Future), failure means fail gracefully with an error message and let the user keep on working. #}
 						<a title="{{"resource.add"|trans}}" data-toggle="modal" data-target="#modalResourceAdd"><span class="glyphicon glyphicon-plus"></span></a>
 						</li>
 					</ul>
@@ -292,7 +292,8 @@
 		});
 	});
 
-	// For forward compatibility we call jQuery.load() and inject content in the modal container instead of using "remote" parameter in the modal.js
+	// For forward compatibility we call jQuery.load() and inject content in the modal container 
+	// instead of using "remote" parameter in the modal.js
 	$('#myModal').on('show.bs.modal', function (e) {
 		console.log(this);
 		$('#indicator').show();

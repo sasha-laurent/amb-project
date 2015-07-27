@@ -6,6 +6,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Form\Form;
 
@@ -35,7 +36,9 @@ class UploadController extends Controller
                     $err_str = $this->get('translator')
                         ->trans('resource.upload_error');
                      if($request->isXmlHttpRequest()){       
-                        return new Response($err_str, 500);
+                        return new JsonResponse(array('success' => false, 
+                                                      'code' => 500,
+                                                      'message' => $err_str));
                     } else {
                         $request->getSession()->getFlashBag()->add('error', $err_str);
 
@@ -48,21 +51,30 @@ class UploadController extends Controller
                 }
 
                 if($request->isXmlHttpRequest()){ 
-                    $added_str = $this->get('translator')->trans('resource.added');
-                    return new Response($added_str);
+                    // Return new resource entity to be inserted in File List available immediately
+                    $res = new JsonResponse(
+                    	array('success' => true, 
+                    		'message' => $this->get('translator')->trans('resource.added'),
+                    		'resource' => array('res_id' => $resource->getId(),
+                    			'res_title' => $resource->getTitle(),
+                    			'res_thumb_path' => $resource->getThumbsPath()
+                    			)));
+                    return $res;
                 } else {
-                    $flashMessage = ($resource->getId() == null) ? $this->get('translator')->trans('resource.added') : $this->get('translator')->trans('resource.modified');
+                    $flashMessage = ($resource->getId() == null) ? 
+                    $this->get('translator')->trans('resource.added') : $this->get('translator')->trans('resource.modified');
                     $request->getSession()->getFlashBag()->add('success', $flashMessage);
 
                     return $this->redirect($this->generateUrl('resource'));
                 }
             } else {
                 if($request->isXmlHttpRequest()){ 
-                // if a form is not submitted (submit button pressed) it is considered invalid
-                //$err_str = (string) $form->getErrors(true); //debug
-                    $err_str = $this->get('translator')
-                    ->trans('resource.upload_error');
-                    return new Response($err_str, 400);
+                    // if a form is not submitted (submit button pressed) it is considered invalid
+                    //$err_str = (string) $form->getErrors(true); //debug
+                    $err_str = $this->get('translator')->trans('resource.upload_error');
+                    return new JsonResponse(array('success' => false, 
+                                                  'code' => 400,
+                                                  'message' => $err_str));
                 }
             }
         }
@@ -75,7 +87,8 @@ class UploadController extends Controller
         if($is_modal_dialog){
             return $this->render('VMBResourceBundle:Upload:form.html.twig', $render_opts);            
         } else {
-            $render_opts['backButtonUrl'] = $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request, $this->generateUrl('resource'));
+            $render_opts['backButtonUrl'] = $this->container->get('vmb_presentation.previous_url')
+            ->getPreviousUrl($request, $this->generateUrl('resource'));
             return $this->render('::Backend/form.html.twig', $render_opts);
         }
     }
@@ -99,7 +112,8 @@ class UploadController extends Controller
      */
     protected function getResource($id)
     {
-        $resource = $this->getDoctrine()->getManager()->getRepository('VMBResourceBundle:Resource')->find($id);
+        $resource = $this->getDoctrine()->getManager()
+        ->getRepository('VMBResourceBundle:Resource')->find($id);
 
 		if ($resource == null) {
 			throw $this->createNotFoundException('Unable to find Resource entity.');
