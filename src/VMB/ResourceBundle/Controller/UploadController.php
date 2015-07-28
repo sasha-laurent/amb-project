@@ -32,25 +32,8 @@ class UploadController extends Controller
                     $em = $this->getDoctrine()->getManager();
                     $em->persist($resource);
                     $em->flush();   
-                } catch (\Doctrine\ORM\ORMException $e){
-                    $err_str = $this->get('translator')
-                        ->trans('resource.upload_error');
-                     if($request->isXmlHttpRequest()){       
-                        return new JsonResponse(array('success' => false, 
-                                                      'code' => 500,
-                                                      'message' => $err_str));
-                    } else {
-                        $request->getSession()->getFlashBag()->add('error', $err_str);
 
-                        return $this->redirect($this->generateUrl('resource'));
-                    }        
-                } catch(\Exception $e){
-                    // TODO: 
-                    // Log $e->getMessage() in $this->get('logger')
-                    // with some customization
-                }
-
-                if($request->isXmlHttpRequest()){ 
+					if($request->isXmlHttpRequest()){ 
                     // Return new resource entity to be inserted in File List available immediately
                     $res = new JsonResponse(
                     	array('success' => true, 
@@ -60,16 +43,42 @@ class UploadController extends Controller
                     			'res_thumb_path' => $resource->getThumbsPath()
                     			)));
                     return $res;
-                } else {
-                    $flashMessage = ($resource->getId() == null) ? 
-                    $this->get('translator')->trans('resource.added') : $this->get('translator')->trans('resource.modified');
-                    $request->getSession()->getFlashBag()->add('success', $flashMessage);
+	                } else {
+	                    $flashMessage = ($resource->getId() == null) ? 
+	                    $this->get('translator')->trans('resource.added') : $this->get('translator')->trans('resource.modified');
+	                    $request->getSession()->getFlashBag()->add('success', $flashMessage);
 
-                    return $this->redirect($this->generateUrl('resource'));
+	                    return $this->redirect($this->generateUrl('resource'));
+	                }
+                } catch (\Doctrine\ORM\ORMException $e){
+                    $err_str = $this->get('translator')
+                        ->trans('resource.upload_error');
+                     if($request->isXmlHttpRequest()){       
+                        return new JsonResponse(array('success' => false, 
+                                                      'code' => 500,
+                                                      'message' => $err_str.$e->getMessage()));
+                    } else {
+                        $request->getSession()->getFlashBag()->add('error', $err_str);
+
+                        return $this->redirect($this->generateUrl('resource'));
+                    }        
+                } catch(\Exception $e){
+                    // TODO: 
+                    // Log $e->getMessage() in $this->get('logger')
+                    // with some customization
+                	if($request->isXmlHttpRequest()){ 
+                		$err_str = $this->get('translator')->trans('resource.upload_error');
+                		return new JsonResponse(array('success' => false, 
+                			'code' => 400,
+                			'message' => $err_str.$e->getMessage()));
+                	} else {
+                        $request->getSession()->getFlashBag()->add('error', $e->getMessage());
+
+                        return $this->redirect($this->generateUrl('resource'));
+                	}
                 }
-            } else {
+            } else { // if a form is not submitted (submit button pressed) it is considered invalid
                 if($request->isXmlHttpRequest()){ 
-                    // if a form is not submitted (submit button pressed) it is considered invalid
                     //$err_str = (string) $form->getErrors(true); //debug
                     $err_str = $this->get('translator')->trans('resource.upload_error');
                     return new JsonResponse(array('success' => false, 

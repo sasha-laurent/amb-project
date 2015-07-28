@@ -35,7 +35,7 @@
 					{% else %}
 						<li class="previous disabled"><a href="#"><span aria-hidden="true">&larr;</span> {{ 'actions.previous'|trans }}</a></li>
 					{% endif %}
-					{% if next %}
+					{% if next %}					
 						{% for n in next %}
 							<li class="next"><a href="{{ path('resource_show', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'position': position + 1, 'id': n.id})) }}#title">Suivant <span aria-hidden="true">&rarr;</span></a></li>
 						{% else %}
@@ -50,29 +50,29 @@
 {% endblock %}
 
 {% block script %}
+	{# Keyboard left/right arrow navigation code. #}
+	{# TODO: Dynamically load next resource in the navigation placeholder. (maybe even preload it) #}
 	{{ parent() }}
 	<script>
-		{# Keyboard left/right arrow navigation code. #}
-		{# TODO: Dynamically load next resource in the navigation placeholder. (maybe even preload it) #}
-		var KEYLEFT = 37, KEYRIGHT = 39;
-		$('body').keydown(function(event){
-{% if prev is defined and prev is not empty %}
-				if(event.which == KEYLEFT){
-					window.location = "{{ path('resource_show', 
-						app.request.attributes.get('_route_params')
-						|merge(app.request.query.all)
-						|merge({'position': position - 1, 'id': attribute( prev|first, 'id')})) }}#title";
-				}
-{% endif %}
-{% if next is defined and next is not empty %}
-				if(event.which == KEYRIGHT){
-					window.location = "{{ path('resource_show', 
-						app.request.attributes.get('_route_params')
-						|merge(app.request.query.all)
-						|merge({'position': position + 1, 'id': attribute(next|first, 'id')})) }}#title";
-				}
-{% endif %}
-		});
+	var KEYLEFT = 37, KEYRIGHT = 39;
+	$('body').keydown(function(event){
+{% if prev is not empty %}{% set first_prev = prev|first %}{% if attribute(first_prev, 'id') is defined %}
+		if(event.which == KEYLEFT){
+			window.location = "{{ path('resource_show', 
+				app.request.attributes.get('_route_params')
+				|merge(app.request.query.all)
+				|merge({'position': position - 1, 'id': attribute( first_prev, 'id')})) }}#title";
+		}
+{% endif %}{% endif %}
+{% if next is not empty %}{% set first_nxt = next|first %}{% if attribute(first_nxt, 'id') is defined %}
+		if(event.which == KEYRIGHT){
+			window.location = "{{ path('resource_show', 
+				app.request.attributes.get('_route_params')
+				|merge(app.request.query.all)
+				|merge({'position': position + 1, 'id': attribute(first_nxt, 'id')})) }}#title";
+		}
+{% endif %}{% endif %}
+	});
 		{% include '::plyrSetup.html.twig' %}
 	</script>
 {% endblock %}

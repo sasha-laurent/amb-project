@@ -1,7 +1,7 @@
 resource:
     path:     /
     defaults: { _controller: "VMBResourceBundle:Resource:index" }
-    
+
 resource_show:
     path:     /show/{id}
     defaults: { _controller: "VMBResourceBundle:Resource:show" }

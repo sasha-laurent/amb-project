@@ -17,8 +17,8 @@ class TopicListener
 	{
 		$em = $args->getEntityManager();
 		$pres_count = $t->getTotalIncludedPresentations();
-		//if($pres_count == 0)
-		//{
+		if($pres_count == 0)
+		{
 			$new_count = $em->getRepository('VMBPresentationBundle:Topic')->getPresentationsCounts($t);
 			if($new_count != $pres_count)
 			{
@@ -26,6 +26,6 @@ class TopicListener
 				$em->persist($t);
 				$em->flush();
 			}
-		//}
+		}
 	}
 }

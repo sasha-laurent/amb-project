@@ -295,7 +295,6 @@
 	// For forward compatibility we call jQuery.load() and inject content in the modal container 
 	// instead of using "remote" parameter in the modal.js
 	$('#myModal').on('show.bs.modal', function (e) {
-		console.log(this);
 		$('#indicator').show();
 		var modal_content = $(this).find(".modal-dialog > .modal-content");
 		$(modal_content).load("{{ path('matrix_edit', {'id': entity.id, 'is_modal': true}) }}", function(){

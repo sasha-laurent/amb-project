@@ -162,6 +162,13 @@ class Resource
     public $mime_type;
 
     /**
+     * @var string
+     * Absolute path to file.
+     *
+    **/
+    private $filenameForRemove = null; 
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -530,13 +537,13 @@ class Resource
         }
     }
 
-    protected function getUploadRootDir($mime_type = null)
+    public function getUploadRootDir($mime_type = null)
     {
         // le chemin absolu du répertoire où les documents uploadés doivent être sauvegardés
         return str_replace('\\', '/', __DIR__).'/../../../../web/'.$this->getUploadDir($mime_type);
     }
 
-    protected function getUploadDir($mime_type = null)
+    public function getUploadDir($mime_type = null)
     {
         // on se débarrasse de « __DIR__ » afin de ne pas avoir de problème lorsqu'on affiche
         // le document/image dans la vue.
@@ -546,6 +553,16 @@ class Resource
         else {
             return 'upload/resources/'.$this->getOwner().'/';   
         }
+    }
+
+    public function getFilenameForRemove()
+    {
+        return $this->$filenameForRemove;
+    }
+
+    public function setFilenameForRemove($str = null)
+    {
+        $this->filenameForRemove = $str;
     }
     
     public function getResourcePath() {

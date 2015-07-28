@@ -19,39 +19,28 @@ class PresentationListener
 		$this->updateCountsBy($p, $event, 1);
 	}
 
-	public function preRemove(Presentation $p, LifecycleEventArgs $event)
+	public function postRemove(Presentation $p, LifecycleEventArgs $event)
 	{
 		$this->updateCountsBy($p, $event, -1);
 	}
 
-	public function updateCountsBy(Presentation $p, LifecycleEventArgs $event, $val)
+	public function updateCountsBy(Presentation $p = null, LifecycleEventArgs $event, $val)
 	{
+		if(null === $p){ // Stop when parent is not defined
+			return;
+		}
 		$em = $event->getEntityManager();
 		$p_topic = $p->getTopic();
-		// Increment counts;
-		$count = $p_topic->getTotalIncludedPresentations();
-		$new_val = $count + $val;
-		if($new_val >= 0)
+		$own_count = $p_topic->getTotalIncludedPresentations();
+		if($own_count + $val >= 0)
 		{
-			$p_topic->setTotalIncludedPresentations($new_val);
-			// Persist to DB
-			$em->persist($p_topic);
+			$p_topic->setTotalIncludedPresentations($own_count + $val); // Increment/Decrement counts
+			$em->persist($p_topic); // Persist to DB
 			$em->flush();
 		}
 		$parent_t = $p_topic->getParent();
 		// Propagate upwards
-		while($parent_t != null)
-		{
-			$c = $parent_t->getTotalIncludedPresentations();
-			$new_val = $c + $val;
-			if($new_val >= 0)
-			{
-				$parent_t->setTotalIncludedPresentations($new_val);
-				$em->persist($parent_t);
-				$em->flush();
-			}
-			$parent_t = $parent_t->getParent();
-		}
+		$this->updateCountsBy($parent_t, $event, $val);
 	}
 
 }
