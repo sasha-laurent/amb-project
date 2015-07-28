@@ -53,23 +53,25 @@
 	{{ parent() }}
 	<script>
 		{# Keyboard left/right arrow navigation code. #}
+		{# TODO: Dynamically load next resource in the navigation placeholder. (maybe even preload it) #}
 		var KEYLEFT = 37, KEYRIGHT = 39;
 		$('body').keydown(function(event){
-			{% if prev is defined and prev is not empty %}
+{% if prev is defined and prev is not empty %}
 				if(event.which == KEYLEFT){
 					window.location = "{{ path('resource_show', 
 						app.request.attributes.get('_route_params')
 						|merge(app.request.query.all)
 						|merge({'position': position - 1, 'id': attribute( prev|first, 'id')})) }}#title";
 				}
-			{% elseif next is defined and next is not empty %}
+{% endif %}
+{% if next is defined and next is not empty %}
 				if(event.which == KEYRIGHT){
 					window.location = "{{ path('resource_show', 
 						app.request.attributes.get('_route_params')
 						|merge(app.request.query.all)
 						|merge({'position': position + 1, 'id': attribute(next|first, 'id')})) }}#title";
 				}
-			{% endif %}
+{% endif %}
 		});
 		{% include '::plyrSetup.html.twig' %}
 	</script>

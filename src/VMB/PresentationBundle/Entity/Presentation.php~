@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="VMB\PresentationBundle\Entity\PresentationRepository")
+ * @ORM\EntityListeners({"PresentationListener"}) 
  */
 class Presentation
 {

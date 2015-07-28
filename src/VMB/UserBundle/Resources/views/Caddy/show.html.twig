@@ -100,7 +100,7 @@
 		function askConfirm(type, id)
 		{
 			$("#"+id+" > button").hide();
-			$("#"+id).append('<a onclick="deleteBookmark('+'\''+type+'\','+id+')">{{"actions.delete"|trans}}</a> <strong>/</strong> <a onclick="showDelButton(\''+id+'\')">{{"actions.cancel"|trans}}</a>');
+			$("#"+id).append('<a onclick="deleteBookmark('+'\''+type+'\','+id+')">{{"actions.confirm"|trans}}</a> <strong>/</strong> <a onclick="showDelButton(\''+id+'\')">{{"actions.cancel"|trans}}</a>');
 		}
 		// TODO: show "empty space" message when all bookmarks have been deleted
 		function deleteBookmark(typ, idd)

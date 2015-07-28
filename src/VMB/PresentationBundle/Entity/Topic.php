@@ -12,12 +12,9 @@ use Gedmo\Mapping\Annotation as Gedmo;
  *
  * @Gedmo\Tree(type="nested")
  * @ORM\Table()
- * @ORM\Entity(repositoryClass="VMB\PresentationBundle\Entity\TopicRepository")
- * 
  * use repository for handy tree functions
- * @ORM\Entity(repositoryClass="Gedmo\Tree\Entity\Repository\NestedTreeRepository")
- * @ORM\HasLifecycleCallbacks
- * 
+ * @ORM\Entity(repositoryClass="VMB\PresentationBundle\Entity\TopicRepository")
+ * @ORM\EntityListeners({"TopicListener"}) 
  */
 class Topic
 {
@@ -95,6 +92,13 @@ class Topic
 
 	private $filenameForRemove;
 
+    /**
+    ** @var integer
+    ** Total included presentations (own+children's) count column
+    ** @ORM\Column(name="total_included_presentations", type="integer")
+    **
+    */
+    public $total_included_presentations = 0;
 
 	/**
 	 * Used for select form components
@@ -419,26 +423,18 @@ class Topic
     }
 
     /**
-     * Set owner
-     *
-     * @param \VMB\UserBundle\Entity\User $owner
-     * @return Topic
+     * Get Total included Presentations Count
+     * @return integer
      */
-    public function setOwner(\VMB\UserBundle\Entity\User $owner = null)
-    {
-        $this->owner = $owner;
-
-        return $this;
+    public function getTotalIncludedPresentations(){
+        return $this->total_included_presentations;
     }
 
     /**
-     * Get owner
-     *
-     * @return \VMB\UserBundle\Entity\User 
+     * Set new Total for included Presentations
+     * @param integer
      */
-    public function getOwner()
-    {
-        return $this->owner;
+    public function setTotalIncludedPresentations($i){
+        $this->total_included_presentations = $i;
     }
-
 }

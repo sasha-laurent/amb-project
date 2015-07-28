@@ -2,35 +2,44 @@
 
 namespace VMB\PresentationBundle\Entity;
 
-use Doctrine\ORM\EntityRepository;
+use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 /**
- * TopicRepository
+ * TopicRepository 
  */
-class TopicRepository extends EntityRepository
+class TopicRepository extends NestedTreeRepository
 {
-
 	/**
 	 * Number of presentations linked to each topic.
 	 * TODO: Join on presentations table, parametrized by "default", "official", "public/personal" args
+	 ** $public=true, $official=true, $default='all', $user = null
 	 */
-	public function findWithPresentationCounts($topic, $public=true, $official=true, $default='all', $user = null)
+	public function getPresentationsCounts($topic)
 	{
 		$count = 0;
+		$query_res = 0;
+		if($topic != null)
+		{
+			try{ // Calculate own presentations count
+				$presentation_repo = $this->getEntityManager()->getRepository('VMBPresentationBundle:Presentation');
+				$qb = $presentation_repo->createQueryBuilder('p')->select('count(p)')
+				->where('p.topic = :tpc')->setParameter('tpc', $topic);
+				$query_res = $qb->getQuery()->getSingleScalarResult();	
+				$count += $query_res;
 
-		$qb = $this
-		->createQueryBuilder('t')
-		->join('t.presentation', 'p')->addSelect('count(p)')
-		->andWhere('p.topic = :tpc')->setParameter('tpc', $topic);
-		$count = $qb->getQuery()->getSingleScalarResult();
+			} catch (\Doctrine\ORM\NonUniqueResultException $e)
+			{
+				echo $e;
+			}
 
-		$children = $topic->getChildren();
-		if($children != null){
+            // Calculate topic's children presentations count
+			$children = $topic->getChildren();
             foreach($children as $c){
-            	$count += $this->findPresentationsCount($c);
+            	$query_res = $this->getPresentationsCounts($c);
+            	$count += $query_res;
        		}
     	}
-
+    	// Return total presentations count
 		return $count;
 	}
 }

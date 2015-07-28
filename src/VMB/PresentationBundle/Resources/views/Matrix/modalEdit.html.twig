@@ -89,6 +89,7 @@
 {% block script %}
 	{{ parent() }}
 	<script type="text/javascript">
+	var form_elt = $('form[name="vmb_presentationbundle_matrix"]');
 	$(document).ready(function(){
 		/* 
 		** TODO: Declare action list, helper functions to manage it
@@ -101,7 +102,12 @@
 		// Loop through symfony-baked content to populate 
 		$("#vmb_presentationbundle_matrix_povs, #vmb_presentationbundle_matrix_levels").each(function(index, elt) {
 		});
+		
 	});
+	$("#myModal #save-btn").on('click', function(e){
+			var form_data = $(form_elt).serializeArray();
+			// persistChanges(form_data);
+		});
 	/*
 	** Helper Functions for modal dialog
 	*/
@@ -110,16 +116,46 @@
 		var typ_str = type.toLowerCase()+"s";
 		var nxt_id = $(ul_container).children().length - 1;
 		console.log(ul_container, nxt_id);
-		$(ul_container).append('<li class="list-group-item row"><div class="col-md-8 matrix-row-title"><input type="text" id="vmb_presentationbundle_matrix_'+typ_str+'_'+nxt_id+'_title" name="vmb_presentationbundle_matrix['+typ_str+']['+nxt_id+'][title]" required="required" maxlength="64" class="form-control"></div><div class="col-md-4 text-right"><button type="button" class="btn btn-danger" onclick="removeRow(this)"><span class="glyphicon glyphicon-remove"></span></button></div></li>');
+		$(ul_container).append('<li class="list-group-item row"><div class="col-md-8 matrix-row-title"><input type="text" id="vmb_presentationbundle_matrix_'+typ_str+'_'+nxt_id+'_title" name="vmb_presentationbundle_matrix['+typ_str+']['+nxt_id+'][title]" required="required" maxlength="64" class="form-control"></div><div class="col-md-4 text-right"><button type="button" class="btn btn-danger" onclick="askConfirmDel(this)"><span class="glyphicon glyphicon-remove"></span></button></div></li>');
 	}
-	function removeRow(elt){
-		var row_elt = $(elt).parentsUntil("ul")[1];
-		$(row_elt).remove();
-		// save elt in undo-list before del
+	/**
+	 * Temporarily hide "Delete" glyph and show confirmation link
+	 * Bind link click actions to appropriate functions.
+	 * 
+	**/
+	function askConfirmDel(elt){
+		var row_elt = $(elt).parentsUntil("ul")[1]; // Whole row
+		var cont = $(row_elt).find(".col-md-4"); // "Delete" part
+		
+		// TODO: Calculate resources to be deleted, notify user of cascade consequences in a big red alert container? 
+		$(cont).find("button").hide();
+		$(cont).append('a').on('click', function(){
+			deleteRow(row_elt)}).html('{{"actions.confirm"|trans}}');
+		$(cont).append('strong').html('/');
+		$(cont).append('a').on('click', function({
+			showDelButton(row_elt)}).html('{{"actions.cancel"|trans}}');
+		}
 	}
 
-	// TODO: Calculate diff if deletions, notify user of cascade consequences? 
-	// (list of content that would be deleted)
+	/**
+	 * Actual data request to the server
+	**/
+	function deleteRow(elt){
+		
+		// save elt in undo-list before del
+		$(row_elt).remove();
+	}
+
+	/**
+	 * Show hidden "Delete" glyph and remove temporary confirmation
+	 * buttons.
+	**/
+	function showDelButton(elt){
+		$(elt).find('a').remove();
+		$(elt).find('strong').remove();
+		$(elt).find('button').show();
+	}
+
 	function persistChanges(){
 	$.ajax();
 	}

@@ -12,6 +12,14 @@
 {% set cellHeight = cellWidth * 9 / 16 %}
 
 {% block body -%}
+{# If no resources are included in the presentation's matrix 
+	kindly redirect the user to the matrix/show page. #}
+{% if matrix.resources.snapshot is empty %}
+<p class="text-center bg-warning btn-lg">
+	<a href="{{path('matrix_show', {'id' : matrix.id} )}}">{{ 'presentation.is_empty_add_content'|trans|raw }}</a>
+</p>
+{% endif %}
+
 {{ form_start(form, {'attr': {'id': 'presentation_form', 'class': 'form-horizontal'}}) }}
 	<div class="well">
 		{# Les erreurs générales du formulaire. #}
@@ -533,10 +541,14 @@
 			editTime(this); 
 		});
 		
+		// TODO: Submit on condition that form data has changed
+		// since page load
 		$('#save-btn').click(function() {
-			// TODO: Submit on condition that form data has changed
-			// since page load
-			$('#presentation_form').submit();
+			if($('#file_list li').length > 0) {
+				$('#presentation_form').submit();
+			} else {
+				alert('Aucun élément dans la liste de lecture');
+			}
 		});
 
 		$('#delete_thumbs').click(function(event) {

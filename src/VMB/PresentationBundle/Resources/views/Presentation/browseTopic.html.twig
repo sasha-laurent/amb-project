@@ -195,13 +195,13 @@
 			{% endfor %}
 			$.each(group_ids, function(i, v){		
 				var c = $('#collapseListGroup'+v);
-				c.on('show.bs.collapse', function(){
-					$('a[href="#collapseListGroup'+v+'"] > span')
+				c.on('shown.bs.collapse', function(){
+					$('a[aria-expanded="true"] > span')
 					.removeClass('glyphicon-chevron-right')
 					.addClass('glyphicon-chevron-down');
 				});
-				c.on('hide.bs.collapse', function(){
-					$('a[href="#collapseListGroup'+v+'"] > span')
+				c.on('hidden.bs.collapse', function(){
+					$('a[aria-expanded="false"] > span')
 					.removeClass('glyphicon-chevron-down')
 					.addClass('glyphicon-chevron-right');			
 				});

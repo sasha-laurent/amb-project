@@ -162,7 +162,7 @@ presentation:
     delete: 'Suppression d''une présentation'
     deleted: 'Présentation supprimée'
     details: 'Détails de la présentation'
-
+    is_empty_add_content: 'La matrice de présentation est vide. Voudriez-vous y ajouter du contenu?'
     error:
         matrix_unofficial: 'La matrice associée n''est pas officielle'
         presentation_unofficial: 'Une présentation non officielle ne peut être passée en présentation par défaut'

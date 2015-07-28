@@ -587,7 +587,7 @@ class Resource
 
         if(in_array($this->getExtension(), array('jpeg', 'jpg', 'png'))){
             // on crée la miniature
-
+            // http://php.net/manual/en/function.imagecreate.php
             if($extension =="jpg" || $extension =="jpeg" ){
 
                 $uploadedfile = $this->getUploadRootDir($this->getType()).$this->getFilename().'.'.$this->getExtension();
