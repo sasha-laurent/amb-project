@@ -1,7 +1,8 @@
 <?php
 // src\MB\ResourceBundle\Entity\ResourceListener;
-namespace VMB\PresentationBundle\Entity;
+namespace VMB\ResourceBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use VMB\ResourceBundle\Entity\Resource;
 use \GetId3\GetId3Core as GetId3;

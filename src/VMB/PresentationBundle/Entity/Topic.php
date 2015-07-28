@@ -98,7 +98,7 @@ class Topic
     ** @ORM\Column(name="total_included_presentations", type="integer")
     **
     */
-    public $total_included_presentations = 0;
+    private $totalIncludedPresentations = 0;
 
 	/**
 	 * Used for select form components
@@ -427,7 +427,7 @@ class Topic
      * @return integer
      */
     public function getTotalIncludedPresentations(){
-        return $this->total_included_presentations;
+        return $this->totalIncludedPresentations;
     }
 
     /**
@@ -435,6 +435,6 @@ class Topic
      * @param integer
      */
     public function setTotalIncludedPresentations($i){
-        $this->total_included_presentations = $i;
+        $this->totalIncludedPresentations = $i;
     }
 }
