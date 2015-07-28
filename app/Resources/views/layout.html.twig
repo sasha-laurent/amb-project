@@ -106,6 +106,7 @@
 							<li><a href="{{ path('vmb_resource_browse', {'personal': 1}) }}">{{ "menu.resources"|trans|desc('Resources') }}</a></li>
                             
                             {% if is_granted('ROLE_TEACHER') %}
+								<li><a href="{{ path('vmb_resource_indexation') }}">{{ 'browse.multiple_indexation'|trans }}</a></li>
 								<li><a href="{{ path('ontology_main') }}">{{ "menu.ontologies"|trans|desc('Ontologies') }}</a></li>
 								<li><a href="{{ path('help') }}">{{ "menu.contextual_help"|trans|desc('Contextual help') }}</a></li>
                             {% endif %}

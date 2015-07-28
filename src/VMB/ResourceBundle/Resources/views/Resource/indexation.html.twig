@@ -20,18 +20,22 @@
 		</div>
 		<div class="col-md-9">
 			<div class="row">
-				{% for entity in entities %}
-				<div class="col-md-4 resource-col">
-					<p data-id="{{ entity.id }}">
-						<span class="glyphicon glyphicon-{{ entity.getGlyphicon }}"></span> {{ entity.title }}
-					</p>
-				</div>
+				{% if topic == null %}
+					<div class="col-md-12 text-center"><em>{{ 'message.resource.you_must_select_a_topic_first'|trans }}</em><br/><br/></div>
 				{% else %}
-					<div class="col-md-12 text-center">
-						<em>{{ 'message.resource.none_for_this_search'|trans }}</em>
-						<br/><br/>
+					{% for entity in entities %}
+					<div class="col-md-4 resource-col">
+						<p class="resource-with-desc" data-id="{{ entity.id }}" data-toggle="popover" data-content="<img width='200' height='113' src='{{ asset(entity.getThumbsPath) }}' /><br/>{{ entity.description }}">
+							<span class="glyphicon glyphicon-{{ entity.getGlyphicon }}"></span> {{ entity.title }}
+						</p>
 					</div>
-				{% endfor %}
+					{% else %}
+						<div class="col-md-12 text-center">
+							<em>{{ 'message.resource.none_for_this_search'|trans }}</em>
+							<br/><br/>
+						</div>
+					{% endfor %}
+				{% endif %}
 			</div>
 		</div>
     </div>  
@@ -47,13 +51,15 @@
 		  <div class="modal-body">
 			  {{ 'message.ontology.modal'|trans }}
 			  <hr/>
-				<ul>
-				{% for o in topic.ontologies %}
-					<li><a href="#" class="index-btn" data-id="{{ o.id }}">{{ o.name }}</a></li>
-				{% else %}
-					<li><em>{{ 'message.ontology.none_for_this_topic'|trans }}</em></li>
-				{% endfor %}
-				</ul>
+				{% if topic != null %}
+					<ul>
+					{% for o in topic.ontologies %}
+						<li><a href="#" class="index-btn" data-id="{{ o.id }}">{{ o.name }}</a></li>
+					{% else %}
+						<li><em>{{ 'message.ontology.none_for_this_topic'|trans }}</em></li>
+					{% endfor %}
+					</ul>
+				{% endif %}
 			  </ul>
 		  </div>
 		  <div class="modal-footer">
@@ -70,6 +76,13 @@
 	selection = [];
 		
 	$(function() {
+		$('.resource-with-desc').popover({
+			trigger: 'hover',
+			delay: {'show':500, 'hide':50},
+			html: true,
+			placement: 'bottom'
+		});
+		
 		if($('.collapse.in').length) {
 			currentElt = $('.collapse.in');
 			while($(currentElt).attr('data-level') != "0") {

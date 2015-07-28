@@ -91,19 +91,20 @@ class ResourceController extends Controller
 		$em = $this->getDoctrine()->getManager();
 		$topics = $em->getRepository('VMBPresentationBundle:Topic')->childrenHierarchy();
 		
-		
-		if($topic != null) {
-			$topic = $em->getRepository('VMBPresentationBundle:Topic')->find($topic);
-			$mainTitle = $topic->getTitle() . ' - ' . $mainTitle;
-		}
-		
 		$request = $this->get('request');
 		$official = ($request->query->get('official') == 1) ? true : 'all';
 		$search = $request->query->get('search');
 
 		$personal = ($this->get('security.context')->isGranted('ROLE_ADMIN')) ? null : $this->getUser();
 		
-        $entities = $em->getRepository('VMBResourceBundle:Resource')->getTopicResources($topic, $official, $personal, $search);
+		if($topic != null) {
+			$topic = $em->getRepository('VMBPresentationBundle:Topic')->find($topic);
+			$mainTitle = $topic->getTitle() . ' - ' . $mainTitle;
+			$entities = $em->getRepository('VMBResourceBundle:Resource')->getTopicResources($topic, $official, $personal, $search);
+		}
+		else {
+			$entities = null;
+		}        
 
         return $this->render('VMBResourceBundle:Resource:indexation.html.twig', array(
             'mainTitle' => $mainTitle,

@@ -67,6 +67,7 @@ class AnnotationController extends Controller
 		}
         
         $args = array(
+			'backButtonUrl' => $this->generateUrl('presentation_edit', array('id' => $id)),
             'mainTitle' => $entity->getTitle(),
 			'presentation' => $entity,
 			'form' => $form->createView(),
