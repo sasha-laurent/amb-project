@@ -194,6 +194,7 @@
 							<p class="text-right">
 								{{ 'show.total_duration'|trans }} : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
 							</p>
+							<p class="text-center"><a href="{{ path('annotation_edit', {'id' : presentation.id}) }}"><span class="glyphicon glyphicon-edit"></span> Gérer les annotations</a></p>
 						{% if not copy %}
 						</div>
 						<!-- Suggestions -->

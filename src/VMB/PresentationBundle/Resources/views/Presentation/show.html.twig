@@ -59,6 +59,29 @@
 				{{ 'show.total_duration'|trans }} : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
 			</p>
 			<div class="text-center"><a href="{{ path('presentation_complementary', {'id': entity.id}) }}" type="button" class="btn btn-primary">{{ 'presentation.see_more'|trans }} <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a></div>
+			{% if is_granted('ROLE_ADMIN') %}
+				<br/>
+				<div class="text-center"><a data-toggle="modal" data-target="#modal-tag">{{ 'presentation.playlist_3D'|trans }}</a></div>
+				<!-- Modal -->
+				<div class="modal fade" id="modal-tag" tabindex="-1" role="dialog" aria-labelledby="modal-tag-label-modal-tag" aria-hidden="true">
+				  <div class="modal-dialog">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="modal-tag-label">{{ 'message.playlist_3D.modal_title'|trans }}</h4>
+					  </div>
+					  <div class="modal-body">
+						  {{ 'message.playlist_3D.modal_text'|trans }}
+						  <hr/>
+						  <a href="{{ path('presentation_download_playlist3d', {'id': entity.id}) }}">{{ 'message.playlist_3D.modal_link'|trans }}</a>
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">{{ 'actions.close'|trans }}</button>
+					  </div>
+					</div>
+				  </div>
+				</div>
+			{% endif %}
 		</div>
 	</div>
 	<hr/>
