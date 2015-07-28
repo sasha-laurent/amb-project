@@ -6,7 +6,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use VMB\ResourceBundle\Entity\Resource;
 use \GetId3\GetId3Core as GetId3;
 
-class TopicListener
+class ResourceListener
 {
     /**
      * @ORM\PrePersist()
