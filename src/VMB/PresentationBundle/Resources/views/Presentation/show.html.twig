@@ -214,6 +214,8 @@
 	/* *************DEFINING ANNOTATIONS*************** */
 	/* ************************************************ */
 	
+	annotationFolder = "{{ asset('upload/annotations/') }}";
+	
 	// Annotation object
 	function Annotation(presentation, id, beginning, duration, style, text, format) {
 		this.presentation = presentation;
@@ -223,13 +225,24 @@
 		this.id = id;
 		this.text = text;
 		this.format = format;
+		this.media = null;
 		
-		this.isAudio	   = function()	{ return (this.format != null); };
+		this.isAudio	   = function()	{ return (this.format != ""); };
 	}
 	
 	// Method that stops the current resource
-	Annotation.prototype.setup = function() {
-		$('#annotations_container').append('<div id="annot_' + this.id + '" class="annotation" style="color: ' + this.style.fontColor + ';font-family: \'' + this.style.font + '\', \'Open Sans\'; font-color: ' + this.style.fontColor + '; font-size: ' + this.style.fontSize + '%; top: ' + this.style.positionY + '%; left: ' + this.style.positionX + '%;">' + this.text + '</div>');
+	Annotation.prototype.setup = function(currentTime, autoplay) {
+		if(this.isAudio()) {
+			$('#annotations_container').append('<div id="annot_' + this.id + '" class="annotation_audio"><audio><source src="' + annotationFolder + this.id + '.' + this.format + '"></audio></div>');
+			this.media = $('#annot_' + this.id + ' audio').get(0);
+			
+			// We need to wait for the media to be ready to play to set the time
+			this.media.addEventListener("canplay",function() { this.media.currentTime = currentTime - this.beginning;}.bind(this, currentTime));
+			if(autoplay) { this.play(); }
+		}
+		else {
+			$('#annotations_container').append('<div id="annot_' + this.id + '" class="annotation" style="color: ' + this.style.fontColor + ';font-family: \'' + this.style.font + '\', \'Open Sans\'; font-color: ' + this.style.fontColor + '; font-size: ' + this.style.fontSize + '%; top: ' + this.style.positionY + '%; left: ' + this.style.positionX + '%;">' + this.text + '</div>');
+		}
 	}
 	
 	// Method that stops the current resource
@@ -239,12 +252,12 @@
 	
 	// Method that stops the current resource
 	Annotation.prototype.play = function() {
-		
+		if(this.isAudio()) { this.media.play(); }
 	}
 	
 	// Method that stops the current resource
 	Annotation.prototype.pause = function() {
-		
+		if(this.isAudio()) { this.media.pause(); }
 	}
 
 	
@@ -457,7 +470,7 @@
 		
 		// If a new annotation must be triggered
 		while(this.annotationsIndex < this.annotations.length && this.annotations[this.annotationsIndex].beginning <= currentTime) {
-			this.annotations[this.annotationsIndex].setup();
+			this.annotations[this.annotationsIndex].setup(currentTime, this.isPlaying());
 			this.annotationsActive.push(this.annotations[this.annotationsIndex]);
 			this.annotationsIndex++;
 		}
@@ -484,7 +497,7 @@
 		for(i = this.annotationsIndex; i >= 0; i--) {
 			// We activate any annotation that would be active at this point of time
 			if(this.annotations[i].beginning + this.annotations[i].duration > currentTime) {
-				this.annotations[i].setup();
+				this.annotations[i].setup(currentTime, this.isPlaying());
 				this.annotationsActive.push(this.annotations[i]);
 			}
 		}
