@@ -49,6 +49,13 @@ class Annotation
     /**
      * @var string
      *
+     * @ORM\Column(name="font", type="string")
+     */
+    private $font = 'Open Sans';
+    
+    /**
+     * @var string
+     *
      * @ORM\Column(name="fontColor", type="string")
      */
     private $fontColor = '#000000';
@@ -381,5 +388,28 @@ class Annotation
     public function getFontColor()
     {
         return $this->fontColor;
+    }
+
+    /**
+     * Set font
+     *
+     * @param string $font
+     * @return Annotation
+     */
+    public function setFont($font)
+    {
+        $this->font = $font;
+
+        return $this;
+    }
+
+    /**
+     * Get font
+     *
+     * @return string 
+     */
+    public function getFont()
+    {
+        return $this->font;
     }
 }

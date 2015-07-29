@@ -116,6 +116,14 @@
 		</div>
 		
 		<div class="text_related form-group">
+			{{ form_label(form.font, "Police", {'label_attr': {'class': 'col-sm-1 control-label'}}) }}
+			{{ form_errors(form.font) }}
+			<div class="col-sm-11">
+			{{ form_widget(form.font, {'attr': {'class': 'form-control'}}) }}
+			</div>
+		</div>
+		
+		<div class="text_related form-group">
 			{{ form_label(form.fontSize, "Taille", {'label_attr': {'class': 'col-sm-1 control-label'}}) }}
 			{{ form_errors(form.fontSize) }}
 			<div class="col-sm-11">
