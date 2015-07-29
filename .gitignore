@@ -4,6 +4,12 @@
 !app/cache/.gitkeep
 !app/logs/.gitkeep
 
+# Cache and logs (Symfony3)
+/var/cache/*
+/var/logs/*
+!var/cache/.gitkeep
+!var/logs/.gitkeep
+
 # Parameters
 /app/config/parameters.yml
 /app/config/parameters.ini
@@ -18,7 +24,7 @@
 
 # Assets and user uploads
 /web/bundles/
-/web/uploads/
+/web/upload/
 
 # PHPUnit
 /app/phpunit.xml

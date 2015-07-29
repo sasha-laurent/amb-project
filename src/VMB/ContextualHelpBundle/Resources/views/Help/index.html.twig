@@ -14,11 +14,12 @@
 	
 	<ul class="list-group" id="sortable">
         {% for entity in entities %}
+			{% set realLength = 0 %}
 			<li class="list-group-item row">
                 <div class="col-md-8">{{ entity.title }}</div>
                 <div class="col-md-1 text-center">{% if entity.hasVideo %}<span class="label label-success">oui</span>{% else %}<span class="label label-danger">non</span>{% endif %}</div>
                 <div class="col-md-1 text-center">
-					<span data-toggle="popover" data-content="{% for r in entity.route %}{{ routes[r].path }}<br/>{% endfor %}" class="label label-default">{{ entity.route|length }}</span>
+					<span data-toggle="popover" data-content="{% for r in entity.route if routes[r] is defined %}{% set realLength = realLength + 1%}{{ routes[r].path }}<br/>{% endfor %}" class="label label-default">{{ realLength }}</span>
 				</div>
                 <div class="col-md-2 text-center">				
 					<div class="btn-group" role="group" aria-label="...">									

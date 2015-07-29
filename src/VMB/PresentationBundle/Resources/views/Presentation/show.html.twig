@@ -16,7 +16,7 @@
 {% block body %}
 	<div class="row">
 		<div class="col-sm-8">
-			{% include '::players.html.twig' %}
+			{% include 'VMBPresentationBundle:Presentation:player.html.twig' %}
 		</div>
 		<div class="col-sm-4">
 			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> {{ 'show.playlist'|trans }}</h4>
@@ -122,10 +122,11 @@
 {% block script %}
 	{{ parent() }}
 	<script>
-	var playing = false;
-	var clickOnPlayer = false;
-	var currentTimeout = null;
-
+	/* ************************************************ */
+	/* *****************DATA DECLARATION*************** */
+	/* ************************************************ */
+		
+	// Resources data (registered by id)
 	resourcesCollection = {
 		{% if alternativeResources|length == 0 %}
 			{% for res in entity.resources %}
@@ -162,6 +163,7 @@
 		{% endif %} 
 	};
 	
+	// Resources order
 	resourcesOrder = [ {% if alternativeResources|length == 0 %}
 			{% for res in entity.resources %}
 				{% if res.suggested == false %}
@@ -174,53 +176,212 @@
 			{% endfor %}
 		{% endif %} ];
 		
-	selectedRes = {{ firstResource.id|default(0) }};
+	/* ************************************************ */
+	/* ******************DEFINING TIMER**************** */
+	/* ************************************************ */
 	
-	{% include '::plyrSetup.html.twig' %}
-	
-	function setNextResourceTimeout(secDelay) {
-		if(currentTimeout != null) {
-			clearTimeout(currentTimeout);
+	// Timer object so that we can stop and resume anytime we need it
+	function Timer(callback, delay, start) {
+		start = typeof start !== 'undefined' ? start : true;
+		
+		var timerId, start, remaining = delay, duration = delay;
+
+		this.pause = function() {
+			window.clearTimeout(timerId);
+			remaining -= new Date() - start;
+		};
+
+		this.resume = function() {
+			start = new Date();
+			window.clearTimeout(timerId);
+			timerId = window.setTimeout(callback, remaining);
+		};
+		
+		this.getCurrentTime = function() {
+			return (duration - remaining);
+		};
+
+		if(start) {
+			this.resume();
 		}
-		currentTimeout = setTimeout(function() { 
-			nextResource(); 
-		}, secDelay*1000);
 	}
 	
-	function triggerNewRes(resId) {
-		if(selectedRes != resId) {
-
-			res = resourcesCollection[resId];
-			
-			// Reasons to exit full-screen
-			if(fullscreenMode 
-				&& resourcesCollection[selectedRes]['type'] == 'video' 
-				&& res['type'] != 'video') {
-				exitFullscreen();
+	/* ************************************************ */
+	/* ******************DEFINING PLAYER*************** */
+	/* ************************************************ */
+	
+	// Player object
+	function Player(presentation) {
+		this.presentation = presentation;
+		this.resource = null;
+		this.playing = false;
+		this.mediaPlayer = {
+			'video': document.querySelectorAll('.video_player')[0].plyr,
+			'audio': document.querySelectorAll('.audio_player')[0].plyr
+		};
+		this.timer = null; // needed if we're not using a media player with an ending event
+		
+		this.isPlaying	   = function()	{ return this.playing; };
+		this.resourceEnded = function() { this.presentation.next(); };
+		$(this.mediaPlayer['video'].media).bind('ended',   function(){ this.resourceEnded(); }.bind(this));
+		$(this.mediaPlayer['audio'].media).bind('ended',   function(){ this.resourceEnded(); }.bind(this));
+	}	
+	
+	// Reset the timer (checks if it exists)
+	Player.prototype.clearTimer = function() {
+		if(this.timer != null) {
+			this.timer.pause();
+			this.timer = null;
+		}
+	}
+	
+	// Return the current time relative to the resource being played
+	Player.prototype.getCurrentTime = function() {
+		if(type == 'video' || type == 'audio') {
+			return this.mediaPlayer[type].media.currentTime;
+		}
+		else if(this.timer != null) {
+			this.timer.getCurrentTime();
+		}
+		else {
+			return null;
+		}
+	}
+	
+	// Method that hides and resets a player
+	Player.prototype.hide = function(type) {
+		if(type == 'video' || type == 'audio') {
+			this.mediaPlayer[type].pause();
+		}
+		else {
+			this.clearTimer();
+			if(type == 'image') {
+				$('.image_player img').attr('src', '');
+			}
+			else if(type == 'application' || newType == 'text') {
+				$('.file_player iframe').attr('src', '');
+				type = 'file';
+			}
+		}
+		$('.' + type + '_player').hide();
+	}
+	
+	// Method that shows a player
+	Player.prototype.show = function(type) {
+		if(type == 'application' || type == 'text') {
+			type = 'file';
+		}
+		$('.' + type + '_player').show();
+	}
+	
+	// Method that plays the current resource
+	Player.prototype.play = function() {
+		this.playing = true;
+		if(this.resource.type == 'audio' || this.resource.type == 'video') {
+			// We just play the media
+			this.mediaPlayer[this.resource.type].play();
+		}
+		else {
+			// If we need to trigger the end manually, we release the timer
+			this.timer.resume();
+		}
+	}
+	
+	// Method that stops the current resource
+	Player.prototype.pause = function() {
+		this.playing = false;
+		if(this.resource.type == 'audio' || this.resource.type == 'video') {
+			// We just play the media
+			this.mediaPlayer[this.resource.type].pause();
+		}
+		else {
+			// If we need to trigger the end manually, we release the timer
+			this.timer.pause();
+		}
+	}
+	
+	// Method that setup a resource and plays it if the player was already playing
+	Player.prototype.setResource = function(resource) {
+		if(this.resource != resource) {
+			// Modifies the player that is currently shown
+			if(this.resource == null || this.resource.type != resource.type) {
+				if(this.resource != null) {
+					this.hide(this.resource.type);
+				}
+				this.show(resource.type);
 			}
 			
-			$('#addedRes_' + selectedRes).removeClass('active');
-			selectedRes = resId;
+			// Setup depending on the new player
+			if(resource.type == 'audio' || resource.type == 'video') {
+				this.mediaPlayer[resource.type].source(resource.src);
+			}
+			else {
+				// We setup the duration
+				this.timer = new Timer(function(){ this.resourceEnded(); }.bind(this), resource.duration*1000, false);
+				
+				// Then we setup the content	
+				if(resource.type == 'image') {
+					$('.image_player img').attr('src', resource.src);
+					$('.image_player a').attr('href', resource.src);
+				}
+				else {
+					$('.file_player iframe').attr('src', resource.src);
+					$('.file_player a').attr('href', resource.src);
+				}
+			}
+			this.resource = resource;
 			
-			stopAndHideAll(res['type']);
-			$('#addedRes_' + resId).addClass('active');
+			// If we were already playing before, we continue
+			if(this.playing) { this.play();	}
+		}
+	}
+	
+	/* ************************************************ */
+	/* **************DEFINING PRESENTATION************* */
+	/* ************************************************ */
+		
+	// Presentation object
+	function Presentation(resources, order) {
+		this.resources = resources;
+		this.order = order;
+		this.index = 0;
+		this.resourceBeginningTime = 0;
+		this.player = new Player(this);
+	
+		// Methods that act directly on the player
+		this.play 		 = function() 		{ this.player.play(); };
+		this.pause 		 = function() 		{ this.player.pause(); };
+		this.isPlaying	 = function()		{ return this.player.isPlaying(); };
+		
+		this.setResource(0);
+	}
+	
+	// Method that shows a resource (hides other player and shows the right one) if it exists
+	Presentation.prototype.setResource = function(index)  { 
+		if(index >= 0 && index < this.order.length) {
+			this.index = index;
+			var res = this.resources[this.order[index]];
+			this.player.setResource(res);
+			
+			// Display
+			$('#file_list li').removeClass('active');
+			$('#addedRes_' + this.order[index]).addClass('active');
 			$('#current-res-title').html(res['title']);
 			$('#current-res-position').html(res['pov'] + ' - ' + res['level']);
 			$('#current-res-creation').html(res['creation']);
 			$('#current-res-update').html(res['update']);
 			$('#current-res-description').html(res['description']);
-			
-			displayNewRes(res['src'], res['type'], playing);
-			// If it's a picture/file we trigger the countdown manually (since there is no player)
-			if(res['type'] != 'audio' && res['type'] != 'video') {
-				if(playing){
-					setNextResourceTimeout(res['duration']);
-				} 
-				// Refresh on export url
-				$("#xptr_url").attr("href", res['src']);
-			}
-		}
-	}
+		} 
+	};
+	
+	Presentation.prototype.next = function() { this.setResource(this.index + 1); }
+	Presentation.prototype.prev = function() { this.setResource(this.index - 1); }
+	
+	presentation = new Presentation(resourcesCollection, resourcesOrder);	
+	
+	/* ************************************************ */
+	/* ****************BINDING CONTROLS**************** */
+	/* ************************************************ */
 	
 	function indexOf(array, item) {
 		for (var i = 0; i < array.length; i++) {
@@ -229,162 +390,30 @@
 		return -1;
 	}
 	
-	function prevResource() {
-		i = indexOf(resourcesOrder, selectedRes);
-		i--;
-		if(i >= 0) {
-			clearTimeout(currentTimeout);
-			triggerNewRes(resourcesOrder[i]);
+	function togglePlay() {
+		if(presentation.isPlaying()) {
+			presentation.pause();
+			span = $('#presentation-play-btn .glyphicon-pause');
+			$(span).addClass('glyphicon-play');
+			$(span).removeClass('glyphicon-pause');			
+		}
+		else {
+			presentation.play();
+			span = $('#presentation-play-btn .glyphicon-play');
+			$(span).addClass('glyphicon-pause');
+			$(span).removeClass('glyphicon-play');
 		}
 	}
 	
-	function nextResource() {
-		i = indexOf(resourcesOrder, selectedRes);
-		i++;
-		if(i < resourcesOrder.length) {
-			clearTimeout(currentTimeout);
-			triggerNewRes(resourcesOrder[i]);
-		}
-	}
+	$('#presentation-play-btn').click(function()	  { togglePlay(); });
+	$('#presentation-prev-btn').click(function()	  { presentation.prev(); });
+	$('#presentation-next-btn').click(function()	  { presentation.next(); });
+	$('#file_list .list-group-item').click(function() { presentation.setResource(indexOf(resourcesOrder, $(this).attr('data-id'))); });
 	
-	function playerPlayButton(play) {
-		playAction(play, true);
-	}
 	
-	function playAction(newValue, fromPlayerControls) {
-		// Default value
-		newValue = newValue || null;
-		fromPlayerControls = fromPlayerControls || false;
-		
-		oldValue = playing;
-		playing = (newValue != null) ? newValue : !playing;
-		
-		// In order to avoid an infinite loop of actions (playAction > onplaying > playAction > ...)
-		if(oldValue != playing) {
-			res = resourcesCollection[selectedRes];
-			
-			// If we want to play the resource
-			if(playing) {
-				span = $('#presentation-play-btn .glyphicon-play');
-				$(span).addClass('glyphicon-pause');
-				$(span).removeClass('glyphicon-play');
-				
-				if(res['type'] == 'video') {
-					videoPlayer = document.querySelectorAll(".player")[0].plyr;
-					if(!fromPlayerControls) { 
-						videoPlayer.play(); 
-					}
-				}
-				else if(res['type'] == 'audio') {
-					audioPlayer = document.querySelectorAll(".player")[1].plyr;     
-					if(!fromPlayerControls) { 
-						audioPlayer.play(); 
-					}
-				}
-				else {
-					setNextResourceTimeout(res['duration']);
-				}
-			}
-			else {
-				span = $('#presentation-play-btn .glyphicon-pause');
-				$(span).addClass('glyphicon-play');
-				$(span).removeClass('glyphicon-pause');
-				
-				if(res['type'] == 'video') {
-					videoPlayer = document.querySelectorAll(".player")[0].plyr;
-					if(!fromPlayerControls) { videoPlayer.pause(); }
-				}
-				else if(res['type'] == 'audio') {
-					audioPlayer = document.querySelectorAll(".player")[1].plyr;     
-					if(!fromPlayerControls) { audioPlayer.pause(); }
-				}
-				else {
-					clearTimeout(currentTimeout);
-				}
-			}
-		}
-	}
-	
-	$('#presentation-prev-btn').click(function(){ 
-		prevResource(); 
-	});
-	$('#presentation-play-btn').click(function(){ 
-		playAction(); 
-	});
-	$('#presentation-next-btn').click(function(){ 
-		nextResource(); 
-	});
-	$('#file_list .list-group-item').click(function() { 
-		triggerNewRes($(this).attr('data-id')); 
-	});
-	
-	function bindControls() {
-		var video = $('video')[0];
-		$(document.querySelectorAll(".player")[0])
-		.bind('click',   function(e) { 
-			clickOnPlayer = true; 
-		});
-		$(video).bind('ended',   function(e) { 
-			nextResource(); 
-		});
-		$(video).bind('playing', function(e) { 
-			if(clickOnPlayer) { 
-				playerPlayButton(true); 
-				clickOnPlayer = false; 
-			} 
-		});
-		$(video).bind('pause',   function(e) { 
-			if(clickOnPlayer) { 
-				playerPlayButton(false); 
-				clickOnPlayer = false; 
-			} 
-		});
-		
-		var audio = $('audio')[0];
-		$(document.querySelectorAll(".player")[1]).bind('click',   function(e) { 
-			clickOnPlayer = true; 
-		});
-		$(audio).bind('ended',   function(e) { 
-			nextResource(); 
-		});
-		$(audio).bind('playing', function(e) { 
-			if(clickOnPlayer) { 
-				playerPlayButton(true); 
-			} 
-		});
-		$(audio).bind('pause',   function(e) { 
-			if(clickOnPlayer) { 
-				playerPlayButton(false); 
-			} 
-		});
-	}
-
-	/*
-	**
-	**	Initialize control bindings
-	*/
-	bindControls();
-
-	/*
-	** Fullscreen support
-	*/
-	var fullscreenMode = false;
-
-	// We do not need to prevent default behaviour, 
-	// however we do need to show our hidden elts
-	$('html').keyup(function(event){
-		if(event.keyCode == 27) {
-			exitFullscreen();
-		}
-	});
-
-	$('#presentation-fullscreen-btn').click(function() { 
-		if(!fullscreenMode){
-			launchIntoFullscreen(document.documentElement); 
-		} else {
-			exitFullscreen();
-		}
-	});
+	/* ************************************************ */
+	/* ****************MANAGING FULLSCREEN************* */
+	/* ************************************************ */
 	
 	// Find the right method, call on correct element
 	// Courtesy http://davidwalsh.name/fullscreen
@@ -415,5 +444,6 @@
 		}
 		fullscreenMode = false;
 	}
+	
 	</script>
 {% endblock %}
