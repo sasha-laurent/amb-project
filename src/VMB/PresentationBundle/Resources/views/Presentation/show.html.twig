@@ -181,11 +181,11 @@
 	/* ************************************************ */
 	
 	// Timer object so that we can stop and resume anytime we need it
-	function Timer(callback, delay, start) {
-		start = typeof start !== 'undefined' ? start : true;
+	function Timer(callback, delay, autoStart) {
+		autoStart = typeof autoStart !== 'undefined' ? autoStart : true;
 		
 		var timerId, start, remaining = delay, duration = delay;
-
+		
 		this.pause = function() {
 			window.clearTimeout(timerId);
 			remaining -= new Date() - start;
@@ -198,10 +198,14 @@
 		};
 		
 		this.getCurrentTime = function() {
-			return (duration - remaining);
+			if(typeof start  !== 'undefined') {
+				remaining -= new Date() - start;
+				start = new Date(); 
+			}
+			return (duration - remaining)/1000;
 		};
 
-		if(start) {
+		if(autoStart) {
 			this.resume();
 		}
 	}
@@ -260,9 +264,11 @@
 		this.timer = null; // needed if we're not using a media player with an ending event
 		
 		this.isPlaying	   = function()	{ return this.playing; };
-		this.resourceEnded = function() { this.presentation.next(); };
+		this.resourceEnded = function() { this.presentation.nextAuto(); };
 		$(this.mediaPlayer['video'].media).bind('ended',   function(){ this.resourceEnded(); }.bind(this));
+		$(this.mediaPlayer['video'].media).bind('seeking',   function(){ this.presentation.resetAnnotations(); }.bind(this));
 		$(this.mediaPlayer['audio'].media).bind('ended',   function(){ this.resourceEnded(); }.bind(this));
+		$(this.mediaPlayer['audio'].media).bind('seeking',   function(){ this.presentation.resetAnnotations(); }.bind(this));
 	}	
 	
 	// Reset the timer (checks if it exists)
@@ -279,7 +285,7 @@
 			return this.mediaPlayer[this.resource.type].media.currentTime;
 		}
 		else if(this.timer != null) {
-			this.timer.getCurrentTime();
+			return this.timer.getCurrentTime();
 		}
 		else {
 			return null;
@@ -403,7 +409,12 @@
 		}
 		this.annotationsIndex = 0;
 		this.annotationsActive = [];
-		this.annotationTimer = new Timer(function() { this.updateAnnotations() }.bind(this), 333, false);
+		if(this.annotations.length) {
+			this.annotationTimer = new Timer(function() { this.updateAnnotations() }.bind(this), 333, false);
+		}
+		else {
+			this.annotationTimer = null;
+		}
 		
 		this.index = 0;
 		this.timeIndex = 0; // beginning of the current resource
@@ -415,24 +426,28 @@
 		this.isPlaying	 = function() { return this.player.isPlaying(); };
 		this.play 		 = function() { 
 			this.player.play(); 
-			this.annotationTimer.resume();
-			for(i = 0; i < this.annotationsActive.length; i++) { this.annotationsActive[i].play(); }
+			if(this.annotations.length) { 
+				this.annotationTimer.resume();
+				for(i = 0; i < this.annotationsActive.length; i++) { this.annotationsActive[i].play(); }
+			}
 		};
 		this.pause 		 = function() { 
 			this.player.pause(); 
-			this.annotationTimer.pause();
-			for(i = 0; i < this.annotationsActive.length; i++) { this.annotationsActive[i].pause(); }
+			if(this.annotations.length) {
+				this.annotationTimer.pause();
+				for(i = 0; i < this.annotationsActive.length; i++) { this.annotationsActive[i].pause(); }
+			}
 		};
 		
 		this.setResource(0);
 	}
 	
-	// Method that checks if a new annotation must be displayed or if an old one must be discarded
+	// Method that checks REGULARLY if a new annotation must be displayed or if an old one must be discarded
 	Presentation.prototype.updateAnnotations = function()  {
 		var currentTime = this.getCurrentTime();
 		
 		// If an annotation is now outdated
-		var i = this.annotationsActive.length
+		var i = this.annotationsActive.length;
 		while (i--) {
 			if(this.annotationsActive[i].beginning + this.annotationsActive[i].duration < currentTime) {
 				this.annotationsActive[i].destroy();
@@ -449,8 +464,39 @@
 		this.annotationTimer = new Timer(function() { this.updateAnnotations() }.bind(this), 333);
 	}
 	
+	// Method that is called when a MANUAL change is made and annotations have to be completely reset
+	Presentation.prototype.resetAnnotations = function()  {
+		// Deleting all annotatinos
+		var i = this.annotationsActive.length;
+		while (i--) {
+			this.annotationsActive[i].destroy();
+			this.annotationsActive.splice(i, 1);
+		}
+		
+		// Searching for new ones
+		var currentTime = this.getCurrentTime();
+		this.annotationsIndex = this.annotations.length - 1;
+		while(this.annotationsIndex >= 0 && this.annotations[this.annotationsIndex].beginning >= currentTime) {
+			this.annotationsIndex--;
+		}
+		
+		// Now we now that have the right index for further updates and we can now browse annotations that could be active at this timeframe
+		for(i = this.annotationsIndex; i >= 0; i--) {
+			// We activate any annotation that would be active at this point of time
+			if(this.annotations[i].beginning + this.annotations[i].duration > currentTime) {
+				this.annotations[i].setup();
+				this.annotationsActive.push(this.annotations[i]);
+			}
+		}
+		
+		// we set the index to the proper position (since we want it to point to the closer annotation (that has not appeared yet))
+		this.annotationsIndex++;
+	}
+	
 	// Method that shows a resource (hides other player and shows the right one) if it exists
-	Presentation.prototype.setResource = function(index)  { 
+	Presentation.prototype.setResource = function(index, manual)  { 
+		manual = typeof manual !== 'undefined' ? manual : true;
+		
 		if(index >= 0 && index < this.order.length) {
 			this.index = index;
 			var res = this.resources[this.order[index]];
@@ -470,9 +516,15 @@
 			$('#current-res-creation').html(res['creation']);
 			$('#current-res-update').html(res['update']);
 			$('#current-res-description').html(res['description']);
+			
+			// If the change was manual, we need to destroy all current annotations and search for the current ones
+			if(manual) {
+				this.resetAnnotations();
+			}
 		} 
 	};
 	
+	Presentation.prototype.nextAuto = function() { this.setResource(this.index + 1, false); }
 	Presentation.prototype.next = function() { this.setResource(this.index + 1); }
 	Presentation.prototype.prev = function() { this.setResource(this.index - 1); }
 	
