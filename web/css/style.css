@@ -552,6 +552,46 @@ select[multiple="multiple"] {
 	top: 4px;
 }
 
+#presentation_player {
+	background-color: black;
+	min-height:350px;
+	min-width: 623px;
+}
+
+#presentation_player .image_player, 
+#presentation_player .video_player, 
+#presentation_player .audio_player,
+#presentation_player .file_player {
+	position: relative;
+	min-height:350px;
+	min-width: 623px;
+}
+
+#presentation_player .image_player img, 
+#presentation_player .audio_player .player-controls,
+#presentation_player .file_player iframe {
+	position: absolute;
+	display: block;
+}
+
+#presentation_player .audio_player {
+	background-image: url('../img/icon/audio_file.png');
+	background-size: 100% 100%;
+}
+
+#presentation_player .audio_player .player-controls {
+	bottom:-48px;
+	left: 50%;
+	margin-left: -311px;
+	width: 623px;
+	height: 58px;
+}
+
+#presentation_player iframe {
+	min-height:350px;
+	min-width: 623px;
+}
+
 #players_container {
 	min-height:445px;
 }
