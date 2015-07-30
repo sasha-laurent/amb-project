@@ -14,6 +14,12 @@
 {% endif %}
 
 {% block body %}
+{# If no resources are included in the presentation's matrix kindly redirect the user to the matrix/show page. #}
+{% if entity.resources.snapshot is empty %}
+<p class="text-center bg-warning btn-lg">
+	<a href="{{path('matrix_show', {'id' : entity.matrix.id} )}}">{{ 'presentation.is_empty_add_content'|trans|raw }}</a>
+</p>
+{% endif %}
 	<div class="row">
 		<div class="col-sm-8">
 			{% include '::players.html.twig' %}

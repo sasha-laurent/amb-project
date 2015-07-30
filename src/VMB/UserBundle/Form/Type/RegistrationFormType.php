@@ -23,13 +23,7 @@ class RegistrationFormType extends AbstractType
                 ));
             $builder->remove('plainPassword')->add('plainPassword', 'hidden', array('data' => 'defaultPwd'));
         } else {
-            // Default value is indeed set, 
-            // and options[is_admin] always equals to false
-            if (array_key_exists("is_admin", $options)){
-                echo 'Set!';
-            } else {
-                echo 'Not Set!';
-            }
+            // Default value set
         }
         $builder->add('save', 'submit', array('label' => 'actions.add'));
     }

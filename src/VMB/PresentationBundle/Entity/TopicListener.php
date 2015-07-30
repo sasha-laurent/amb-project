@@ -9,7 +9,7 @@ class TopicListener
 {
 	/**
 	** Calculates an initial number of presentations linked to a Topic
-	** after a topic has been loaded or refreshed.
+	** after a topic has been loaded or refreshed if the count is default null value.
 	** @param <Topic> t
 	** @return <void> - information is persisted to the DB
 	*/
@@ -17,15 +17,12 @@ class TopicListener
 	{
 		$em = $args->getEntityManager();
 		$pres_count = $t->getTotalIncludedPresentations();
-		if($pres_count == 0)
+		if(null === $pres_count)
 		{
 			$new_count = $em->getRepository('VMBPresentationBundle:Topic')->getPresentationsCounts($t);
-			if($new_count != $pres_count)
-			{
-				$t->setTotalIncludedPresentations($new_count);
-				$em->persist($t);
-				$em->flush();
-			}
+			$t->setTotalIncludedPresentations($new_count);
+			$em->persist($t);
+			$em->flush();
 		}
 	}
 }

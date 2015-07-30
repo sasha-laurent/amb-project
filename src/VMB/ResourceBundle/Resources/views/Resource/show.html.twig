@@ -56,14 +56,16 @@
 	<script>
 	var KEYLEFT = 37, KEYRIGHT = 39;
 	$('body').keydown(function(event){
-{% if prev is not empty %}{% set first_prev = prev|first %}{% if attribute(first_prev, 'id') is defined %}
+{% if prev is not empty %}{% set first_prev = prev|first %}
+{% if attribute(first_prev, 'id') is defined %}
 		if(event.which == KEYLEFT){
 			window.location = "{{ path('resource_show', 
 				app.request.attributes.get('_route_params')
 				|merge(app.request.query.all)
 				|merge({'position': position - 1, 'id': attribute( first_prev, 'id')})) }}#title";
 		}
-{% endif %}{% endif %}
+{% endif %}
+{% endif %}
 {% if next is not empty %}{% set first_nxt = next|first %}{% if attribute(first_nxt, 'id') is defined %}
 		if(event.which == KEYRIGHT){
 			window.location = "{{ path('resource_show', 

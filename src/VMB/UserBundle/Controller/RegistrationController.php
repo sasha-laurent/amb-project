@@ -30,9 +30,9 @@ class RegistrationController extends BaseController
 {
     public function registerAction(Request $request)
     {
-        $has_admin_rights = $this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN');
+        $has_admin_rights = $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN');
         /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
-        $formFactory = $this->get('fos_user.registration.form.factory');
+        $formFactory = $this->get('form.factory');
         /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
         $userManager = $this->get('fos_user.user_manager');
         /** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
@@ -48,8 +48,7 @@ class RegistrationController extends BaseController
             return $event->getResponse();
         }
 
-        // For some reason $opts cannot be resolved in our RegistrationForm class
-        $form = $formFactory->createForm(new RegistrationFormType(), $user, array('is_admin' => $has_admin_rights));
+        $form = $formFactory->createBuilder(new RegistrationFormType(), $user, array('is_admin' => $has_admin_rights))->getForm();
         $form->setData($user);
 
         $form->handleRequest($request);

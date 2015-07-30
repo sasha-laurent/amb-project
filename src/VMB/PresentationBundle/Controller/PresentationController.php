@@ -77,8 +77,11 @@ class PresentationController extends Controller
     */
     public function browseAction($page, $topic=null)
     {
+    	// Si la page dépasse dans le négatif, reprendre le comportement par défaut
+    	// c-à-dire comme si le numéro de page n'avait pas été spécifié
 		if ($page < 1) {
-			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
+			$page = 1;
+			// throw $this->createNotFoundException("La page ".$page." n'existe pas.");
 		}
 		
 		$nbPerPage = 12;
@@ -107,12 +110,14 @@ class PresentationController extends Controller
 		
         $entities = $em->getRepository('VMBPresentationBundle:Presentation')->getPresentations($page, $nbPerPage, $topic, $publicMode, $official, $default, $personal, $search);
         
-        // On calcule le nombre total de pages grâce au count($listAdverts) qui retourne le nombre total d'annonces
+        // On calcule le nombre total de pages grâce au count($entities) qui retourne le nombre total de presentations
 		$nbPages = ceil(count($entities)/$nbPerPage);
 		
-		// Si la page n'existe pas, on retourne une 404
-		if ($page > $nbPages && $page != 1) {
-			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
+		// Si la page n'existe pas, (on retourne une 404)
+		// on redirige l'utilisateur vers la dernière page
+		if ($page > $nbPages) {
+			return $this->browseAction($nbPages, $topic);
+			// throw $this->createNotFoundException("La page ".$page." n'existe pas.");
 		}
 
 		$paramsBag = $request->query->all();
@@ -370,16 +375,32 @@ class PresentationController extends Controller
 		else {
 			$args['forkButtonUrl'] = $this->generateUrl('presentation_deep_copy', array('id' => $id));
 		}
-		// TODO: CHECK EXISTENCE DONT JUST USE IT
+		// Checking existence all the way down to the first resource available for export.
+		/* \Doctrine\Common\Collections\Collection of
+		   \VMB\PresentationBundle\Entity\UsedResource */
 		$presentation_resources = $entity->getResources();
-		$first_checked_res = $presentation_resources->first();
-		$used_resource = $first_checked_res->getUsedResource();
-		$actual_first_resource = $used_resource->getResource();
-		$typ = $actual_first_resource->getType();
 
-		if($typ == 'image' or $typ == 'text'){
-			$args['exportAssetUrl'] = $actual_first_resource->getResourcePath();
-		}
+		if(!$presentation_resources->isEmpty())
+		{
+			$first_checked_res = $presentation_resources->first();
+			if(null !== $first_checked_res)
+			{
+				/* \VMB\PresentationBundle\Entity\UsedResource */
+				$used_resource = $first_checked_res->getUsedResource();
+				if(null !== $used_resource)
+				{
+					/* \VMB\ResourceBundle\Entity\Resource */
+					$actual_first_resource = $used_resource->getResource();
+					$typ = $actual_first_resource->getType();
+					if($typ == 'image' or $typ == 'text')
+					{
+						$args['exportAssetUrl'] = $actual_first_resource->getResourcePath();
+					}						
+				}
+			}
+		} 
+		/* If the presentation resources are empty the View will display a message to prompt the user to fill Matrix with resources */
+		
 
         return $this->render('VMBPresentationBundle:Presentation:show.html.twig', $args);
     }
@@ -624,7 +645,8 @@ class PresentationController extends Controller
 				$em->flush();
 				$workingPresentation->upload();
 
-				$flashMessage = !$workingPresentation->toString() ? $translator->trans('presentation.added') : $translator->trans('presentation.modified');
+				$flashMessage = !$workingPresentation->toString() ? 
+					$translator->trans('presentation.added') : $translator->trans('presentation.modified');
 				$request->getSession()->getFlashBag()->add('success', $flashMessage);
 				
 				if($saveAsCopy) {

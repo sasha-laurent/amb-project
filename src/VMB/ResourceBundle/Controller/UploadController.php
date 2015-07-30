@@ -34,13 +34,15 @@ class UploadController extends Controller
                     $em->flush();   
 
 					if($request->isXmlHttpRequest()){ 
-                    // Return new resource entity to be inserted in File List available immediately
+                    // Return new resource entity as JSON Object to be inserted in File List available immediately 
                     $res = new JsonResponse(
                     	array('success' => true, 
                     		'message' => $this->get('translator')->trans('resource.added'),
-                    		'resource' => array('res_id' => $resource->getId(),
-                    			'res_title' => $resource->getTitle(),
-                    			'res_thumb_path' => $resource->getThumbsPath()
+                            'rid' => $resource->getId(),
+                    		'resource' => array(
+                    			'title' => $resource->getTitle(),
+                    			'src' => "/".$resource->getThumbsPath(),
+                                'type'=> $resource->getType()
                     			)));
                     return $res;
 	                } else {

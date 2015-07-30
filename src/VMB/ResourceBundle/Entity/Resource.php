@@ -557,7 +557,7 @@ class Resource
 
     public function getFilenameForRemove()
     {
-        return $this->$filenameForRemove;
+        return $this->filenameForRemove;
     }
 
     public function setFilenameForRemove($str = null)
@@ -571,7 +571,7 @@ class Resource
 
     public function getThumbsPath()
     {
-        if(in_array($this->getType(), array('application', 'text', 'audio'))) {
+        if(in_array($this->getType(), array('application', 'pdf', 'text', 'audio'))) {
             return 'img/icon/'.$this->getType().'.jpg';
         }
         return $this->getUploadDir($this->getType()).'thumbs/'.$this->filename.'.jpg';
@@ -579,7 +579,7 @@ class Resource
     
     public function getGlyphicon()
     {
-		$assoc = array('video' => 'film', 'image' => 'picture', 'audio' => 'volume-up', 'application' => 'paperclip', 'text' => 'file');
+		$assoc = array('video' => 'film', 'image' => 'picture', 'audio' => 'volume-up', 'application' => 'paperclip', 'pdf' => 'file', 'text' => 'file');
 		return $assoc[$this->type];
 	}
 

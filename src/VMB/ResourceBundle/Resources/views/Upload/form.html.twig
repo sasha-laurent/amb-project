@@ -64,18 +64,32 @@
 					$("#modal_save_btn").removeClass("btn-info").addClass("btn-default");
 				}, 500);
 				var msg_type = "success";
-				if(data.success == true){
-					// Make the resource available immediately in the personal file list
-					// TODO: Check if the resource's topic is coherent with the matrix' topic - an even better choice would be to highlight the matrix' topic in the modal resource add so that the user doesn't have to fill it himself.
+				if(data.success == true)
+				{
+					/* Make the resource available immediately in the personal file list
+					 *
+					 * TODO: Check if the resource's topic is coherent with the matrix' topic
+					 * an even better choice would be to highlight the matrix' topic in the
+					 * modal resource add so that the user doesn't have to fill it himself.
+					*/
 					var r = data.resource;
-					if(r != null){ // Resource response is defined
+					var _id = data.rid;
+					if(r != null && _id != '' && _id != null)
+					{ // Resource is defined in ajax response
 						var file_list = $("#collapseListGroup_personal_image > ul");
-						$(file_list).append('<li class="list-group-item addableResource addableRes_'+r.res_id+' ui-draggable ui-draggable-handle" data-resource="'+r.res_id+'" data-title="'+r.res_title+'" data-thumb="'+r.res_thumb_path+'"><div class="row"><div class="col-sm-10">'+r.res_title+'</div><div class="col-sm-2"></div></div></li>');
+						$(file_list).prepend('<li class="list-group-item addableResource addableRes_'+_id+' ui-draggable ui-draggable-handle" data-resource="'+_id+'" data-title="'+r.title+'" data-thumb="'+r.src+'"><div class="row"><div class="col-sm-10">'+r.title+'</div><div class="col-sm-2"></div></div></li>');
+						resourcesCollection[_id] = r; // Insert it in our data object
+						// Make it clickable
+						$('.addableRes_'+_id).on('click', function(){
+							triggerNewRes(_id);
+						});
+					} else {
+						//console.log(r, _id);
 					}
-				} else { // Failed to persist data
+				} else { // Failed to persist the data
 					msg_type = "danger";
 				}
-				// Show response message
+				// Display response message
 				$('.drag_container').before('<div class="alert alert-'+msg_type+' col-sm-6 col-sm-offset-3 alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>'+data.message+'</div>');
 			},
 			error: function(jqXHR, textStatus, errorThrown){
@@ -85,7 +99,7 @@
 					$("#modalResourceAdd").modal('hide');
 					$("#modal_save_btn").removeClass("btn-danger").addClass("btn-default");
 				}, 500);
-				$('.drag_container').before('<div class="alert alert-danger col-sm-6 col-sm-offset-3 alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>'+data.message+'</div>');
+				$('.drag_container').before('<div class="alert alert-danger col-sm-6 col-sm-offset-3 alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>'+textStatus+'</div>');
 			},
 			/*
 			** jQuery options

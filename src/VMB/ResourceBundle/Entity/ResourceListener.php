@@ -32,7 +32,7 @@ class ResourceListener
             	throw new Exception(" Unrecognized media type.", 1);
             } elseif($primary_typ == 'application' && $secondary_typ != 'pdf'){
             	$em->detach($resource);
-                throw new Exception(" Unauthorized file extension.", 1);
+                throw new Exception(" Unauthorized file type.", 1);
             } elseif($primary_typ == 'application' && $secondary_typ == 'pdf'){
             	$resource->setType($secondary_typ);
             } else {
@@ -170,6 +170,8 @@ class ResourceListener
             $video
                 ->frame(\FFMpeg\Coordinate\TimeCode::fromSeconds($snapTime))
                 ->save($resource->getUploadRootDir($resource->getType()).'thumbs/'.$resource->getFilename().'.jpg');
+        } elseif($resource->getType() == 'audio'){
+            // Take resource->thumbUpload and move it to audiothumbs directory
         }
     }
 
@@ -179,7 +181,11 @@ class ResourceListener
     public function preRemove(Resource $resource, LifecycleEventArgs $args)
     {
     	$rm_file_named = $resource->getUploadRootDir($resource->getType()).$resource->getFilename().'.'.$resource->getExtension();
-        $resource->setFilenameForRemove($rm_file_named);
+        if(null !== $rm_file_named){
+            $resource->setFilenameForRemove($rm_file_named);    
+        } else {
+            throw new Exception("File not found: ".$rm_file_named); 
+        }
     }
 
     /**
@@ -191,13 +197,18 @@ class ResourceListener
         if (null !== $rm_file_named) {
 			if(is_file($rm_file_named)) {
 				unlink($rm_file_named);
-			}
+			} else {
+                throw new Exception("File not found: ".$rm_file_named);
+            }
             if(!in_array($resource->getType(), array('application', 'text', 'audio'))){
 				$thumbsAbsolutePath = $resource->getUploadRootDir($resource->getType()).'thumbs/'.$resource->getFilename().'.jpg';
 				if(is_file($thumbsAbsolutePath)) {
 					unlink($thumbsAbsolutePath);
-				}
-            }
+				} else {
+                    throw new Exception("Thumb image not found: ".$thumbsAbsolutePath);
+                    
+                }
+            } 
         }
     }
 }

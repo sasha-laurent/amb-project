@@ -149,6 +149,7 @@ class ResourceController extends Controller
 		$rend_args = array(
             'entity'      => $entity,
             'mainTitle' => $entity->getTitle(),
+            'editButtonUrl' => $this->generateUrl('resource_edit', array('id' => $id)),
             'saveToCaddy' => 'resource',
             'inCaddy' => $this->getUser()->resourceIsInCaddy($entity),
             'prev' => $prev,

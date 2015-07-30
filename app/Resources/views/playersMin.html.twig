@@ -19,7 +19,7 @@
 		<img style='width:100%;' src="{{ asset(playingResource.getResourcePath) }}" />
 	</div>
 	{# Very dangerous to include arbitrary "application" type in iFrames... #}
-	{% elseif playingResource.type == 'text' or playingResource.type == 'application' %}
+	{% elseif playingResource.type == 'text' or playingResource.type == 'application' or playingResource.type == 'pdf' %}
 	<div class="file_player text-center">
 		<iframe src="{{ asset(playingResource.getResourcePath) }}" width="542" height="400" align="middle"></iframe>
 	</div>

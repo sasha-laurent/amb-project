@@ -16,31 +16,39 @@ class PresentationListener
 	
 	public function postPersist(Presentation $p, LifecycleEventArgs $event)
 	{
-		$this->updateCountsBy($p, $event, 1);
+		$p_topic = $p->getTopic();
+		if(null === $p_topic){
+			return;
+		} else {
+			$this->updateCountsBy($p_topic, $event, 1);
+		}
 	}
 
 	public function postRemove(Presentation $p, LifecycleEventArgs $event)
 	{
-		$this->updateCountsBy($p, $event, -1);
+		$p_topic = $p->getTopic();
+		if(null === $p_topic){
+			return;
+		} else {
+			$this->updateCountsBy($p_topic, $event, -1);
+		}
 	}
 
-	public function updateCountsBy(Presentation $p = null, LifecycleEventArgs $event, $val)
+	public function updateCountsBy(Topic $t = null, LifecycleEventArgs $event, $val)
 	{
-		if(null === $p){ // Stop when parent is not defined
+		if(null === $t){ // Stop when (parent) topic is not defined any more
 			return;
 		}
-		$em = $event->getEntityManager();
-		$p_topic = $p->getTopic();
-		$own_count = $p_topic->getTotalIncludedPresentations();
+		$own_count = $t->getTotalIncludedPresentations();
 		if($own_count + $val >= 0)
 		{
-			$p_topic->setTotalIncludedPresentations($own_count + $val); // Increment/Decrement counts
-			$em->persist($p_topic); // Persist to DB
+			$t->setTotalIncludedPresentations($own_count + $val); // Increment/Decrement counts
+			$em = $event->getEntityManager();
+			$em->persist($t); // Persist to DB
 			$em->flush();
 		}
-		$parent_t = $p_topic->getParent();
-		// Propagate upwards
-		$this->updateCountsBy($parent_t, $event, $val);
+		$parent_t = $t->getParent();
+		$this->updateCountsBy($parent_t, $event, $val);  // Propagate upwards
 	}
 
 }

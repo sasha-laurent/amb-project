@@ -11,7 +11,7 @@ class VMBPreviousUrl
 	}
 	// TODO: - Fix the locale switcheroo which requires to memorize pre-switch URL
 	// 		 - Always pass and check CSRF token? Prevents most CSRF attacks
-	public function getPreviousUrl($request, $default = '_welcome')
+	public function getPreviousUrl($request, $default = '/')
 	{
 		$pos = null;
 
@@ -23,7 +23,7 @@ class VMBPreviousUrl
         $baseUrl = $request->getBaseUrl();
         // Hardcoded URL to use instead of baseUrl
         // $localhost = "http://127.0.0.1:8000";
-        $vmb_path = "http://edu3d.enstb.org/edu/web"; 
+        $vmb_path = "http://edu3d.enstb.org/"; 
 
 		// Can be empty if user set it to empty or browser is set not to forward referers.
         if(empty($referer)) 

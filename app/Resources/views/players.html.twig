@@ -23,8 +23,8 @@
 	<div {% if playingResource.type != 'image' %}style="display: none;"{% endif %} class="image_player text-center">
 		<img style='width:100%;' {% if playingResource.type == 'image' %}src="{{ asset(playingResource.getResourcePath) }}"{% endif %}/>
 	</div>
-	<div {% if playingResource.type != 'text' and playingResource.type != 'application' %}style="display: none;"{% endif %} class="file_player text-center">
-		<iframe {% if playingResource.type == 'text' or playingResource.type == 'application' %}src="{{ asset(playingResource.getResourcePath) }}"{% endif %} width="542" height="400" align="middle"></iframe>
+	<div {% if playingResource.type != 'text' and playingResource.type != 'application' and playingResource.type != 'pdf' %}style="display: none;"{% endif %} class="file_player text-center">
+		<iframe {% if playingResource.type == 'text' or playingResource.type == 'application' or playingResource.type == 'pdf' %}src="{{ asset(playingResource.getResourcePath) }}"{% endif %} width="542" height="400" align="middle"></iframe>
 	</div>
 	{% else %}
 	<div style="display: none;" class="player">

@@ -21,8 +21,8 @@
 				{% endif %}
 				<a href="{{ path("vmb_presentation_browse_topic", app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'topic': link.id })) }}" title="{{ link.title }}">
 					{{ link.title }} 
-					{% if attribute(link, 'total_included_presentations') is defined %} 
-						({{attribute(link, 'total_included_presentations')}}) 
+					{% if attribute(link, 'totalIncludedPresentations') is defined %} 
+						({{attribute(link, 'totalIncludedPresentations')}}) 
 					{% else %} 
 						{#dump(link)#}
 					{% endif %}

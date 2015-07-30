@@ -95,10 +95,10 @@ class Topic
     /**
     ** @var integer
     ** Total included presentations (own+children's) count column
-    ** @ORM\Column(name="total_included_presentations", type="integer")
+    ** @ORM\Column(name="total_included_presentations", type="integer", nullable=true)
     **
     */
-    private $total_included_presentations = 0;
+    private $totalIncludedPresentations = null;
 
 	/**
 	 * Used for select form components
@@ -424,10 +424,10 @@ class Topic
 
     /**
      * Get Total included Presentations Count
-     * @return integer
+     * @return integer|null
      */
     public function getTotalIncludedPresentations(){
-        return $this->total_included_presentations;
+        return $this->totalIncludedPresentations;
     }
 
     /**
@@ -435,6 +435,6 @@ class Topic
      * @param integer
      */
     public function setTotalIncludedPresentations($int){
-        $this->total_included_presentations = $int;
+        $this->totalIncludedPresentations = $int;
     }
 }
