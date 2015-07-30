@@ -36,7 +36,7 @@ class VMBPreviousUrl
         	{
         		return $default;
         	} else { // Return relative path 
-        		return substr($referer, strlen($vmb_path));
+        		return $referer;
         	}
         }
 	}
