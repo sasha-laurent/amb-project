@@ -202,10 +202,13 @@
         	<script>
 				// Setup the player
 				plyr.setup({
-					debug: 	true,
-					title: 	"Video demo",
+					{% if app.request.get('_route') == 'presentation_show' %}
+					click: 	false,
+					controls: ["current-time", "duration", "mute", "volume"],
+					{% endif %}
+					title: 	"Media player",
 					captions: {
-						defaultActive: true
+						defaultActive: false
 					},
 					onSetup: function() {
 						var player 	= this,

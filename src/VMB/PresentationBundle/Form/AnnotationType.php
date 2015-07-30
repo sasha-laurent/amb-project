@@ -20,6 +20,7 @@ class AnnotationType extends AbstractType
             ->add('positionX')
             ->add('positionY')
             ->add('fontSize')
+            ->add('font')
             ->add('fontColor')
             ->add('beginning')
             ->add('presentation', 'entity', array(

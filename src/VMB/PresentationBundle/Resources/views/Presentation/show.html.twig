@@ -22,7 +22,7 @@
 {% endif %}
 	<div class="row">
 		<div class="col-sm-8">
-			{% include '::players.html.twig' %}
+			{% include 'VMBPresentationBundle:Presentation:player.html.twig' %}
 		</div>
 		<div class="col-sm-4">
 			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> {{ 'show.playlist'|trans }}</h4>
@@ -128,10 +128,11 @@
 {% block script %}
 	{{ parent() }}
 	<script>
-	var playing = false;
-	var clickOnPlayer = false;
-	var currentTimeout = null;
-
+	/* ************************************************ */
+	/* *****************DATA DECLARATION*************** */
+	/* ************************************************ */
+		
+	// Resources data (registered by id)
 	resourcesCollection = {
 		{% if alternativeResources|length == 0 %}
 			{% for res in entity.resources %}
@@ -168,6 +169,7 @@
 		{% endif %} 
 	};
 	
+	// Resources order
 	resourcesOrder = [ {% if alternativeResources|length == 0 %}
 			{% for res in entity.resources %}
 				{% if res.suggested == false %}
@@ -180,53 +182,421 @@
 			{% endfor %}
 		{% endif %} ];
 		
-	selectedRes = {{ firstResource.id|default(0) }};
+	/* ************************************************ */
+	/* ******************DEFINING TIMER**************** */
+	/* ************************************************ */
 	
-	{% include '::plyrSetup.html.twig' %}
-	
-	function setNextResourceTimeout(secDelay) {
-		if(currentTimeout != null) {
-			clearTimeout(currentTimeout);
+	// Timer object so that we can stop and resume anytime we need it
+	function Timer(callback, delay, autoStart) {
+		autoStart = typeof autoStart !== 'undefined' ? autoStart : true;
+		
+		var timerId, start, remaining = delay, duration = delay;
+		
+		this.pause = function() {
+			window.clearTimeout(timerId);
+			remaining -= new Date() - start;
+		};
+
+		this.resume = function() {
+			start = new Date();
+			window.clearTimeout(timerId);
+			timerId = window.setTimeout(callback, remaining);
+		};
+		
+		this.getCurrentTime = function() {
+			if(typeof start  !== 'undefined') {
+				remaining -= new Date() - start;
+				start = new Date(); 
+			}
+			return (duration - remaining)/1000;
+		};
+
+		if(autoStart) {
+			this.resume();
 		}
-		currentTimeout = setTimeout(function() { 
-			nextResource(); 
-		}, secDelay*1000);
 	}
 	
-	function triggerNewRes(resId) {
-		if(selectedRes != resId) {
-
-			res = resourcesCollection[resId];
+	/* ************************************************ */
+	/* *************DEFINING ANNOTATIONS*************** */
+	/* ************************************************ */
+	
+	annotationFolder = "{{ asset('upload/annotations/') }}";
+	
+	// Annotation object
+	function Annotation(presentation, id, beginning, duration, style, text, format) {
+		this.presentation = presentation;
+		this.style = style;
+		this.beginning = beginning;
+		this.duration = duration;
+		this.id = id;
+		this.text = text;
+		this.format = format;
+		this.media = null;
+		
+		this.isAudio	   = function()	{ return (this.format != ""); };
+	}
+	
+	// Method that stops the current resource
+	Annotation.prototype.setup = function(currentTime, autoplay) {
+		if(this.isAudio()) {
+			$('#annotations_container').append('<div id="annot_' + this.id + '" class="annotation_audio"><audio><source src="' + annotationFolder + this.id + '.' + this.format + '"></audio></div>');
+			this.media = $('#annot_' + this.id + ' audio').get(0);
 			
-			// Reasons to exit full-screen
-			if(fullscreenMode 
-				&& resourcesCollection[selectedRes]['type'] == 'video' 
-				&& res['type'] != 'video') {
-				exitFullscreen();
+			// We need to wait for the media to be ready to play to set the time
+			this.media.addEventListener("canplay",function() { this.media.currentTime = currentTime - this.beginning;}.bind(this, currentTime));
+			if(autoplay) { this.play(); }
+		}
+		else {
+			$('#annotations_container').append('<div id="annot_' + this.id + '" class="annotation" style="color: ' + this.style.fontColor + ';font-family: \'' + this.style.font + '\', \'Open Sans\'; font-color: ' + this.style.fontColor + '; font-size: ' + this.style.fontSize + '%; top: ' + this.style.positionY + '%; left: ' + this.style.positionX + '%;">' + this.text + '</div>');
+		}
+	}
+	
+	// Method that stops the current resource
+	Annotation.prototype.destroy = function() {
+		$('#annot_' + this.id).remove();
+	}
+	
+	// Method that stops the current resource
+	Annotation.prototype.play = function() {
+		if(this.isAudio()) { this.media.play(); }
+	}
+	
+	// Method that stops the current resource
+	Annotation.prototype.pause = function() {
+		if(this.isAudio()) { this.media.pause(); }
+	}
+
+	
+	/* ************************************************ */
+	/* ******************DEFINING PLAYER*************** */
+	/* ************************************************ */
+	
+	// Player object
+	function Player(presentation) {
+		this.presentation = presentation;
+		this.resource = null;
+		this.playing = false;
+		this.mediaPlayer = {
+			'video': document.querySelectorAll('.video_player')[0].plyr,
+			'audio': document.querySelectorAll('.audio_player')[0].plyr
+		};
+		this.timer = null; // needed if we're not using a media player with an ending event
+		
+		this.isPlaying	   = function()	{ return this.playing; };
+		this.resourceEnded = function() { this.presentation.nextAuto(); };
+		$(this.mediaPlayer['video'].media).bind('ended',   function(){ this.resourceEnded(); }.bind(this));
+		$(this.mediaPlayer['video'].media).bind('seeking',   function(){ this.presentation.resetAnnotations(); }.bind(this));
+		$(this.mediaPlayer['audio'].media).bind('ended',   function(){ this.resourceEnded(); }.bind(this));
+		$(this.mediaPlayer['audio'].media).bind('seeking',   function(){ this.presentation.resetAnnotations(); }.bind(this));
+	}	
+	
+	// Reset the timer (checks if it exists)
+	Player.prototype.clearTimer = function() {
+		if(this.timer != null) {
+			this.timer.pause();
+			this.timer = null;
+		}
+	}
+	
+	// Return the current time relative to the resource being played
+	Player.prototype.getCurrentTime = function() {
+		if(this.resource.type == 'video' || this.resource.type == 'audio') {
+			return this.mediaPlayer[this.resource.type].media.currentTime;
+		}
+		else if(this.timer != null) {
+			return this.timer.getCurrentTime();
+		}
+		else {
+			return null;
+		}
+	}
+	
+	// Method that hides and resets a player
+	Player.prototype.hide = function(type) {
+		if(type == 'video' || type == 'audio') {
+			this.mediaPlayer[type].pause();
+		}
+		else {
+			this.clearTimer();
+			if(type == 'image') {
+				$('.image_player img').attr('src', '');
+			}
+			else if(type == 'application' || newType == 'text') {
+				$('.file_player iframe').attr('src', '');
+				type = 'file';
+			}
+		}
+		$('.' + type + '_player').hide();
+	}
+	
+	// Method that shows a player
+	Player.prototype.show = function(type) {
+		if(type == 'application' || type == 'text') {
+			type = 'file';
+		}
+		$('.' + type + '_player').show();
+	}
+	
+	// Method that plays the current resource
+	Player.prototype.play = function() {
+		this.playing = true;
+		if(this.resource.type == 'audio' || this.resource.type == 'video') {
+			// We just play the media
+			this.mediaPlayer[this.resource.type].play();
+		}
+		else {
+			// If we need to trigger the end manually, we release the timer
+			this.timer.resume();
+		}
+	}
+	
+	// Method that stops the current resource
+	Player.prototype.pause = function() {
+		this.playing = false;
+		if(this.resource.type == 'audio' || this.resource.type == 'video') {
+			// We just play the media
+			this.mediaPlayer[this.resource.type].pause();
+		}
+		else {
+			// If we need to trigger the end manually, we release the timer
+			this.timer.pause();
+		}
+	}
+	
+	// Method that setup a resource and plays it if the player was already playing
+	Player.prototype.setResource = function(resource) {
+		if(this.resource != resource) {
+			// Modifies the player that is currently shown
+			if(this.resource == null || this.resource.type != resource.type) {
+				if(this.resource != null) {
+					this.hide(this.resource.type);
+				}
+				this.show(resource.type);
 			}
 			
-			$('#addedRes_' + selectedRes).removeClass('active');
-			selectedRes = resId;
+			this.resource = resource;
+			// Setup depending on the new player
+			if(resource.type == 'audio' || resource.type == 'video') {
+				this.mediaPlayer[resource.type].source(resource.src);
+			}
+			else {
+				// We setup the duration
+				this.timer = new Timer(function(){ this.resourceEnded(); }.bind(this), resource.duration*1000, false);
+				
+				// Then we setup the content	
+				if(resource.type == 'image') {
+					$('.image_player img').attr('src', resource.src);
+					
+					// Fix an issue when calibrateDisplay is called before the browser knows the image size
+					$(".image_player img").bind('load', function() {
+						this.calibrateDisplay();
+					}.bind(this));
+				}
+				else {
+					$('.file_player iframe').attr('src', resource.src);
+				}
+				this.calibrateDisplay();
+			}
 			
-			stopAndHideAll(res['type']);
-			$('#addedRes_' + resId).addClass('active');
+			// If we were already playing before, we continue
+			if(this.playing) { this.play();	}
+		}
+	}
+	
+	// Method used when setting up a resource or when switching between fullscreen and normal mode
+	Player.prototype.calibrateDisplay = function () { 
+		if(this.resource.type == 'image') {
+			imgW = $('.image_player img').get(0).naturalWidth;
+			imgH = $('.image_player img').get(0).naturalHeight;
+			cadreW = $('#presentation_player').width();
+			cadreH = $('#presentation_player').height();
+			if(imgW/imgH > 16/9) {
+				$('.image_player img').css('left', '0px');
+				$('.image_player img').css('top', (cadreH - (cadreW * imgH/imgW)) / 2 + 'px');
+				$('.image_player img').css('width', cadreW + 'px');
+				$('.image_player img').css('height', (cadreW * imgH/imgW) + 'px');
+			}
+			else {
+				$('.image_player img').css('left', (cadreW - (cadreH * imgW/imgH)) / 2 + 'px');
+				$('.image_player img').css('top', '0px');
+				$('.image_player img').css('width', (cadreH * imgW/imgH) + 'px');
+				$('.image_player img').css('height', cadreH + 'px');
+			}
+		}
+		else if(this.resource.type == 'application' || this.resource.type == 'text') {
+			cadreW = $('#presentation_player').width();
+			cadreH = $('#presentation_player').height();
+			$('.file_player iframe').css('width', cadreW + 'px');
+			$('.file_player iframe').css('height', cadreH + 'px');
+		}
+	}
+	
+	/* ************************************************ */
+	/* **************DEFINING PRESENTATION************* */
+	/* ************************************************ */
+		
+	// Presentation object
+	function Presentation(resources, order, annotations) {
+		this.resources = resources;
+		this.order = order;
+		
+		this.annotations = [];
+		for (i = 0; i < annotations.length; i++) {
+			this.annotations.push(new Annotation(this, annotations[i].id, annotations[i].beginning, annotations[i].duration, annotations[i].style, annotations[i].text, annotations[i].format));
+		}
+		this.annotationsIndex = 0;
+		this.annotationsActive = [];
+		if(this.annotations.length) {
+			this.annotationTimer = new Timer(function() { this.updateAnnotations() }.bind(this), 333, false);
+		}
+		else {
+			this.annotationTimer = null;
+		}
+		
+		this.index = 0;
+		this.timeIndex = 0; // beginning of the current resource
+		this.resourceBeginningTime = 0;
+		this.player = new Player(this);
+	
+		// Methods that are directly linked to the player
+		this.getCurrentTime	 = function() { return this.timeIndex + this.player.getCurrentTime(); };
+		this.isPlaying	 = function() { return this.player.isPlaying(); };
+		this.play 		 = function() { 
+			this.player.play(); 
+			if(this.annotations.length) { 
+				this.annotationTimer.resume();
+				for(i = 0; i < this.annotationsActive.length; i++) { this.annotationsActive[i].play(); }
+			}
+		};
+		this.pause 		 = function() { 
+			this.player.pause(); 
+			if(this.annotations.length) {
+				this.annotationTimer.pause();
+				for(i = 0; i < this.annotationsActive.length; i++) { this.annotationsActive[i].pause(); }
+			}
+		};
+		
+		this.setResource(0);
+	}
+	
+	// Method that checks REGULARLY if a new annotation must be displayed or if an old one must be discarded
+	Presentation.prototype.updateAnnotations = function()  {
+		var currentTime = this.getCurrentTime();
+		
+		// If an annotation is now outdated
+		var i = this.annotationsActive.length;
+		while (i--) {
+			if(this.annotationsActive[i].beginning + this.annotationsActive[i].duration < currentTime) {
+				this.annotationsActive[i].destroy();
+				this.annotationsActive.splice(i, 1);
+			}
+		}
+		
+		// If a new annotation must be triggered
+		while(this.annotationsIndex < this.annotations.length && this.annotations[this.annotationsIndex].beginning <= currentTime) {
+			this.annotations[this.annotationsIndex].setup(currentTime, this.isPlaying());
+			this.annotationsActive.push(this.annotations[this.annotationsIndex]);
+			this.annotationsIndex++;
+		}
+		this.annotationTimer = new Timer(function() { this.updateAnnotations() }.bind(this), 333);
+	}
+	
+	// Method that is called when a MANUAL change is made and annotations have to be completely reset
+	Presentation.prototype.resetAnnotations = function()  {
+		// Deleting all annotatinos
+		var i = this.annotationsActive.length;
+		while (i--) {
+			this.annotationsActive[i].destroy();
+			this.annotationsActive.splice(i, 1);
+		}
+		
+		// Searching for new ones
+		var currentTime = this.getCurrentTime();
+		this.annotationsIndex = this.annotations.length - 1;
+		while(this.annotationsIndex >= 0 && this.annotations[this.annotationsIndex].beginning >= currentTime) {
+			this.annotationsIndex--;
+		}
+		
+		// Now we now that have the right index for further updates and we can now browse annotations that could be active at this timeframe
+		for(i = this.annotationsIndex; i >= 0; i--) {
+			// We activate any annotation that would be active at this point of time
+			if(this.annotations[i].beginning + this.annotations[i].duration > currentTime) {
+				this.annotations[i].setup(currentTime, this.isPlaying());
+				this.annotationsActive.push(this.annotations[i]);
+			}
+		}
+		
+		// we set the index to the proper position (since we want it to point to the closer annotation (that has not appeared yet))
+		this.annotationsIndex++;
+	}
+	
+	// Method that shows a resource (hides other player and shows the right one) if it exists
+	Presentation.prototype.setResource = function(index, manual)  { 
+		manual = typeof manual !== 'undefined' ? manual : true;
+		
+		if(index >= 0 && index < this.order.length) {
+			this.index = index;
+			var res = this.resources[this.order[index]];
+			this.player.setResource(res);
+			
+			// We compute once again the timeIndex
+			this.timeIndex = 0;
+			for(i = 0; i < index; i++) {
+				this.timeIndex += this.resources[this.order[i]].duration;
+			}
+			
+			// Managing display
+			$('#file_list li').removeClass('active');
+			$('#addedRes_' + this.order[index]).addClass('active');
 			$('#current-res-title').html(res['title']);
 			$('#current-res-position').html(res['pov'] + ' - ' + res['level']);
 			$('#current-res-creation').html(res['creation']);
 			$('#current-res-update').html(res['update']);
 			$('#current-res-description').html(res['description']);
 			
-			displayNewRes(res['src'], res['type'], playing);
-			// If it's a picture/file we trigger the countdown manually (since there is no player)
-			if(res['type'] != 'audio' && res['type'] != 'video') {
-				if(playing){
-					setNextResourceTimeout(res['duration']);
-				} 
-				// Refresh on export url
-				$("#xptr_url").attr("href", res['src']);
+			// If the change was manual, we need to destroy all current annotations and search for the current ones
+			if(manual) {
+				this.resetAnnotations();
 			}
-		}
+		} 
+	};
+	
+	Presentation.prototype.nextAuto = function() { this.setResource(this.index + 1, false); }
+	Presentation.prototype.next = function() { this.setResource(this.index + 1); }
+	Presentation.prototype.prev = function() { this.setResource(this.index - 1); }
+	
+	
+	// Fullscreen
+	Presentation.prototype.launchFullscreen = function () {
+		launchIntoFullscreen(document.getElementById('presentation_player'));
 	}
+	
+	// Method that setups element so that they fit with their new positions
+	Presentation.prototype.fullscreenToggled = function () { 
+		this.player.calibrateDisplay(); 
+	}
+	
+	presentation = new Presentation(resourcesCollection, resourcesOrder, [
+		{% for a in entity.annotations %}{
+			'id' : {{ a.id }}, 
+			'beginning': {{ a.beginning }},
+			'duration': {{ a.length }},
+			'style': {
+				'fontColor': "{{ a.fontColor|e('html') }}",
+				'fontSize': {{ a.fontSize }},
+				'font': "{{ a.font|e('js') }}",
+				'positionX': {{ a.positionX }},
+				'positionY': {{ a.positionY }}
+			},
+			'text': "{{ a.text|e('js') }}",
+			'format': "{{ a.extension|e('js') }}"
+		},
+		{% endfor %}
+	]);	
+	
+	/* ************************************************ */
+	/* ****************BINDING CONTROLS**************** */
+	/* ************************************************ */
 	
 	function indexOf(array, item) {
 		for (var i = 0; i < array.length; i++) {
@@ -235,168 +605,43 @@
 		return -1;
 	}
 	
-	function prevResource() {
-		i = indexOf(resourcesOrder, selectedRes);
-		i--;
-		if(i >= 0) {
-			clearTimeout(currentTimeout);
-			triggerNewRes(resourcesOrder[i]);
+	function togglePlay() {
+		if(presentation.isPlaying()) {
+			presentation.pause();
+			span = $('#presentation-play-btn .glyphicon-pause');
+			$(span).addClass('glyphicon-play');
+			$(span).removeClass('glyphicon-pause');			
+		}
+		else {
+			presentation.play();
+			span = $('#presentation-play-btn .glyphicon-play');
+			$(span).addClass('glyphicon-pause');
+			$(span).removeClass('glyphicon-play');
 		}
 	}
 	
-	function nextResource() {
-		i = indexOf(resourcesOrder, selectedRes);
-		i++;
-		if(i < resourcesOrder.length) {
-			clearTimeout(currentTimeout);
-			triggerNewRes(resourcesOrder[i]);
-		}
-	}
 	
-	function playerPlayButton(play) {
-		playAction(play, true);
-	}
+	// If we press the presentation_player zone
+	$('#presentation_player').click(function()	      { togglePlay(); });
 	
-	function playAction(newValue, fromPlayerControls) {
-		// Default value
-		newValue = newValue || null;
-		fromPlayerControls = fromPlayerControls || false;
-		
-		oldValue = playing;
-		playing = (newValue != null) ? newValue : !playing;
-		
-		// In order to avoid an infinite loop of actions (playAction > onplaying > playAction > ...)
-		if(oldValue != playing) {
-			res = resourcesCollection[selectedRes];
-			
-			// If we want to play the resource
-			if(playing) {
-				span = $('#presentation-play-btn .glyphicon-play');
-				$(span).addClass('glyphicon-pause');
-				$(span).removeClass('glyphicon-play');
-				
-				if(res['type'] == 'video') {
-					videoPlayer = document.querySelectorAll(".player")[0].plyr;
-					if(!fromPlayerControls) { 
-						videoPlayer.play(); 
-					}
-				}
-				else if(res['type'] == 'audio') {
-					audioPlayer = document.querySelectorAll(".player")[1].plyr;     
-					if(!fromPlayerControls) { 
-						audioPlayer.play(); 
-					}
-				}
-				else {
-					setNextResourceTimeout(res['duration']);
-				}
-			}
-			else {
-				span = $('#presentation-play-btn .glyphicon-pause');
-				$(span).addClass('glyphicon-play');
-				$(span).removeClass('glyphicon-pause');
-				
-				if(res['type'] == 'video') {
-					videoPlayer = document.querySelectorAll(".player")[0].plyr;
-					if(!fromPlayerControls) { videoPlayer.pause(); }
-				}
-				else if(res['type'] == 'audio') {
-					audioPlayer = document.querySelectorAll(".player")[1].plyr;     
-					if(!fromPlayerControls) { audioPlayer.pause(); }
-				}
-				else {
-					clearTimeout(currentTimeout);
-				}
-			}
-		}
-	}
+	// We do not want to stop playing if the controls are pressed even if it is the presentation_player zone
+	$( ".player-controls" ).click(function( event )   { event.stopPropagation(); });
 	
-	$('#presentation-prev-btn').click(function(){ 
-		prevResource(); 
-	});
-	$('#presentation-play-btn').click(function(){ 
-		playAction(); 
-	});
-	$('#presentation-next-btn').click(function(){ 
-		nextResource(); 
-	});
-	$('#file_list .list-group-item').click(function() { 
-		triggerNewRes($(this).attr('data-id')); 
-	});
+	// Control buttons on the right
+	$('#presentation-play-btn').click(function()	  { togglePlay(); });
+	$('#presentation-prev-btn').click(function()	  { presentation.prev(); });
+	$('#presentation-next-btn').click(function()	  { presentation.next(); });
+	$('#presentation-fullscreen-btn').click(function(){ presentation.launchFullscreen(); });
+	$('#file_list .list-group-item').click(function() { presentation.setResource(indexOf(resourcesOrder, $(this).attr('data-id'))); });
 	
-	function bindControls() {
-		var video = $('video')[0];
-		$(document.querySelectorAll(".player")[0])
-		.bind('click',   function(e) { 
-			clickOnPlayer = true; 
-		});
-		$(video).bind('ended',   function(e) { 
-			nextResource(); 
-		});
-		$(video).bind('playing', function(e) { 
-			if(clickOnPlayer) { 
-				playerPlayButton(true); 
-				clickOnPlayer = false; 
-			} 
-		});
-		$(video).bind('pause',   function(e) { 
-			if(clickOnPlayer) { 
-				playerPlayButton(false); 
-				clickOnPlayer = false; 
-			} 
-		});
-		
-		var audio = $('audio')[0];
-		$(document.querySelectorAll(".player")[1]).bind('click',   function(e) { 
-			clickOnPlayer = true; 
-		});
-		$(audio).bind('ended',   function(e) { 
-			nextResource(); 
-		});
-		$(audio).bind('playing', function(e) { 
-			if(clickOnPlayer) { 
-				playerPlayButton(true); 
-			} 
-		});
-		$(audio).bind('pause',   function(e) { 
-			if(clickOnPlayer) { 
-				playerPlayButton(false); 
-			} 
-		});
-	}
-
-	/*
-	**
-	**	Initialize control bindings
-	*/
-	bindControls();
-
-	/*
-	** Fullscreen support
-	*/
-	var fullscreenMode = false;
-
-	// We do not need to prevent default behaviour, 
-	// however we do need to show our hidden elts
-	$('html').keyup(function(event){
-		if(event.keyCode == 27) {
-			exitFullscreen();
-		}
-	});
-
-	$('#presentation-fullscreen-btn').click(function() { 
-		if(!fullscreenMode){
-			launchIntoFullscreen(document.documentElement); 
-		} else {
-			exitFullscreen();
-		}
-	});
+	
+	/* ************************************************ */
+	/* ****************MANAGING FULLSCREEN************* */
+	/* ************************************************ */
 	
 	// Find the right method, call on correct element
 	// Courtesy http://davidwalsh.name/fullscreen
 	function launchIntoFullscreen(element) {
-		$('#additional-infos').hide();
-		$('header').hide();
 		if(element.requestFullscreen) {
 			element.requestFullscreen();
 		} else if(element.mozRequestFullScreen) {
@@ -406,12 +651,9 @@
 		} else if(element.msRequestFullscreen) {
 			element.msRequestFullscreen();
 		}
-		fullscreenMode = true;
 	}
 
 	function exitFullscreen() {
-		$('#additional-infos').show();
-		$('header').show();
 		if(document.exitFullscreen) {
 			document.exitFullscreen();
 		} else if(document.mozCancelFullScreen) {
@@ -419,7 +661,11 @@
 		} else if(document.webkitExitFullscreen) {
 			document.webkitExitFullscreen();
 		}
-		fullscreenMode = false;
 	}
+	
+	$(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange', function() { 
+		presentation.fullscreenToggled();
+	}.bind(presentation));
+	
 	</script>
 {% endblock %}
