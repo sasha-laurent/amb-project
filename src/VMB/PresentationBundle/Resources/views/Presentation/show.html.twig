@@ -380,6 +380,11 @@
 				// Then we setup the content	
 				if(resource.type == 'image') {
 					$('.image_player img').attr('src', resource.src);
+					
+					// Fix an issue when calibrateDisplay is called before the browser knows the image size
+					$(".image_player img").bind('load', function() {
+						this.calibrateDisplay();
+					}.bind(this));
 				}
 				else {
 					$('.file_player iframe').attr('src', resource.src);
