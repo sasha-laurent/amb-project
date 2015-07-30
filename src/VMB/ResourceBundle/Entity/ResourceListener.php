@@ -18,7 +18,8 @@ class ResourceListener
         $em = $args->getEntityManager();
         if (null !== $resource->file)
         {
-        	// TODO: Filter/match authorized & unauthorized extensions? Binary code could be injected in images
+        	// TODO: Filter/match authorized & unauthorized extensions? 
+            // Binary code could be injected in images
         	// so can't be sure no attack vectors included at all.
             $extension = strtolower(pathinfo($resource->file->getClientOriginalName(), PATHINFO_EXTENSION));
             $resource->setExtension($extension);
@@ -77,34 +78,35 @@ class ResourceListener
         $extension = $resource->getExtension();
 
     /*    
-        vous devez lancer une exception ici si le fichier ne peut pas
+        Lancer une exception ici si le fichier ne peut pas
         être déplacé afin que l'entité ne soit pas persistée dans la
-        base de données comme le fait la méthode move() de UploadedFile
-        et on ajoute le reste a partir du type_mime et l'user
+        base de données
     */
     	try {
-	    	// If directories do not exist yet, create them (default mode : 777)
+	    	// If directories do not exist yet, create them 
+            // (default/no-arg mode : 777)
 	        if (!is_dir($resource->getUploadRootDir($resource->getType())))
 	        {
 	            if (!is_dir($resource->getUploadRootDir())) {
 	            	try {
 	                	mkdir($resource->getUploadRootDir());	
 	            	} catch (IOException $e) {
-	            		// Do something with it
+	            		return $e->getMessage();
 	            	}
 	            }
 	            try {
 	            	mkdir($resource->getUploadRootDir($resource->getType()));	
 	            } catch (IOException $e) {
-	            	// Do something with it
+	            	return $e->getMessage();
 	            }
 	        }
-	        $resource->file->move($resource->getUploadRootDir($resource->getType()), $resource->getFilename().'.'.$resource->getExtension());
+	        $resource->file->move($resource->getUploadRootDir($resource->getType()), 
+                $resource->getFilename().'.'.$resource->getExtension());
 	        unset($resource->file);     	
     	} catch (FileException $e) {
     		$em = $args->getEntityManager();
     		$em->detach($resource);
-    		return $e;
+    		return $e->getMessage();
     	}
 
 
@@ -173,6 +175,7 @@ class ResourceListener
         } elseif($resource->getType() == 'audio'){
         // Takes resource->customAudioArt 
         // and moves it to audio/thumbs directory
+        // TODO: Need to create resized view for Browsing
             $audioart_path = $resource->getUploadRootDir($resource->getType()).'thumbs/' ;
             if(null !== $resource->customAudioArt)
             {
@@ -187,16 +190,16 @@ class ResourceListener
                     try{
                         mkdir($audioart_path);
                     } catch (IOException $e) {
-                        // Do something with $e. Log it?
+                        return $e->getMessage();
                     }
                 }
                 try {
                 // Move the randomly named file to a standard file location 
-                   $resource->customAudioArt->move($audioart_path, $resource->getId().$ext);
+                   $resource->customAudioArt->move($audioart_path, $resource->getId().".".$ext);
                     unset($resource->customAudioArt);
                     $resource->setCustomArtValue(true);  
                 } catch (FileException $e) {
-                    // Do something with $e. Same, log it?
+                    return $e->getMessage();
                 }
                 
             }
@@ -212,7 +215,7 @@ class ResourceListener
         if(null !== $rm_file_named){
             $resource->setFilenameForRemove($rm_file_named);    
         } else {
-            throw new Exception("File not found: ".$rm_file_named); 
+            throw new Exception("File not found while preparing file for remove: ".$rm_file_named); 
         }
     }
 
@@ -229,16 +232,18 @@ class ResourceListener
             {
 				unlink($rm_file_named);
 			} else {
-                throw new Exception("File not found: ".$rm_file_named);
+                // Throwing the exception will block Doctrine
+                // from detaching the dead (file-less) entity
+                //throw new Exception("File not found while trying to unlink: ".$rm_file_named);
             }
             // Removing Thumb File
             if(!in_array($resource->getType(), 
-                array('application', 'text')))
+                array('application', 'pdf', 'text')))
             {
                 // Default thumb filename
                 $thumb_f_name = $resource->getFilename(); 
                 // An audio file may or may not have custom art.
-                if($resource->getType == 'audio' 
+                if($resource->getType() == 'audio' 
                     && !$resource->hasCustomArt()){
                     return; // Nothing to remove
                 } else {
@@ -249,7 +254,7 @@ class ResourceListener
 				if(is_file($thumbsAbsolutePath)) {
 					unlink($thumbsAbsolutePath);
 				} else {
-                    throw new Exception("Thumb image not found: ".$thumbsAbsolutePath);
+                    // throw new Exception("Thumb image not found: ".$thumbsAbsolutePath);
                     
                 }
             }

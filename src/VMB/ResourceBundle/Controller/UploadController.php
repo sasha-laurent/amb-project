@@ -46,6 +46,7 @@ class UploadController extends Controller
                     			)));
                     return $res;
 	                } else {
+                       // TODO: Resource.id will never be Null here..
 	                    $flashMessage = ($resource->getId() == null) ? 
 	                    $this->get('translator')->trans('resource.added') : $this->get('translator')->trans('resource.modified');
 	                    $request->getSession()->getFlashBag()->add('success', $flashMessage);
@@ -115,7 +116,7 @@ class UploadController extends Controller
     {
 		$resource = $this->getResource($id);
 
-		return $this->renderForm($resource, false, true);
+		return $this->renderForm($resource, false);
     }    
     
     /**

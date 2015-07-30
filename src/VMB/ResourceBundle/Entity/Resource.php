@@ -592,8 +592,8 @@ class Resource
     public function getThumbsPath()
     {
         if($this->hasCustomArt()){
-            return $this->getUploadDir(
-                $this->getType()).'thumbs/'.$this->id.'.jpg';            
+            return $this->getUploadDir()
+            .'resources/'.$this->getOwner().'/'.$this->getType().'/'.'thumbs/'.$this->id.'.jpg';            
         } else if(in_array($this->getType(), 
             array('application', 'pdf', 'text', 'audio'))) {
             return 'img/icon/'.$this->getType().'.jpg';
