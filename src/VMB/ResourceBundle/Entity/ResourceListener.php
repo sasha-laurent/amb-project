@@ -171,7 +171,35 @@ class ResourceListener
                 ->frame(\FFMpeg\Coordinate\TimeCode::fromSeconds($snapTime))
                 ->save($resource->getUploadRootDir($resource->getType()).'thumbs/'.$resource->getFilename().'.jpg');
         } elseif($resource->getType() == 'audio'){
-            // Take resource->thumbUpload and move it to audiothumbs directory
+        // Takes resource->customAudioArt 
+        // and moves it to audio/thumbs directory
+            $audioart_path = $resource->getUploadRootDir($resource->getType()).'thumbs/' ;
+            if(null !== $resource->customAudioArt)
+            {
+                $ext = strtolower(pathinfo($resource->customAudioArt
+                    ->getClientOriginalName(), PATHINFO_EXTENSION));
+                if(!($ext == 'jpg' || $ext == 'jpeg')) 
+                { // Accepted file formats
+                    return;
+                }
+                if (!is_dir($resource->getUploadRootDir($resource->getType()).'thumbs/')) 
+                { // Create art folder container if necessary
+                    try{
+                        mkdir($audioart_path);
+                    } catch (IOException $e) {
+                        // Do something with $e. Log it?
+                    }
+                }
+                try {
+                // Move the randomly named file to a standard file location 
+                   $resource->customAudioArt->move($audioart_path, $resource->getId().$ext);
+                    unset($resource->customAudioArt);
+                    $resource->setCustomArtValue(true);  
+                } catch (FileException $e) {
+                    // Do something with $e. Same, log it?
+                }
+                
+            }
         }
     }
 
@@ -193,22 +221,38 @@ class ResourceListener
      */
     public function postRemove(Resource $resource, LifecycleEventArgs $args)
     {
+        // Removing content file
     	$rm_file_named = $resource->getFilenameForRemove();
-        if (null !== $rm_file_named) {
-			if(is_file($rm_file_named)) {
+        if (null !== $rm_file_named) 
+        {
+			if(is_file($rm_file_named)) 
+            {
 				unlink($rm_file_named);
 			} else {
                 throw new Exception("File not found: ".$rm_file_named);
             }
-            if(!in_array($resource->getType(), array('application', 'text', 'audio'))){
-				$thumbsAbsolutePath = $resource->getUploadRootDir($resource->getType()).'thumbs/'.$resource->getFilename().'.jpg';
+            // Removing Thumb File
+            if(!in_array($resource->getType(), 
+                array('application', 'text')))
+            {
+                // Default thumb filename
+                $thumb_f_name = $resource->getFilename(); 
+                // An audio file may or may not have custom art.
+                if($resource->getType == 'audio' 
+                    && !$resource->hasCustomArt()){
+                    return; // Nothing to remove
+                } else {
+                    $thumb_f_name = $resource->getId();
+                }
+                // Resolve thumb absolute path and delete it if we can.
+				$thumbsAbsolutePath = $resource->getUploadRootDir($resource->getType()).'thumbs/'.$thumb_f_name.'.jpg';
 				if(is_file($thumbsAbsolutePath)) {
 					unlink($thumbsAbsolutePath);
 				} else {
                     throw new Exception("Thumb image not found: ".$thumbsAbsolutePath);
                     
                 }
-            } 
+            }
         }
     }
 }

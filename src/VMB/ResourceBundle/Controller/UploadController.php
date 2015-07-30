@@ -15,7 +15,7 @@ use VMB\ResourceBundle\Form\ResourceType;
 
 class UploadController extends Controller
 {
-    
+    // TODO: Doesn't show File and Thumbnail on edit...
     protected function renderForm($resource, $is_modal_dialog = false)
     {
         $request = $this->get('request');
@@ -115,7 +115,7 @@ class UploadController extends Controller
     {
 		$resource = $this->getResource($id);
 
-		return $this->renderForm($resource);
+		return $this->renderForm($resource, false, true);
     }    
     
     /**

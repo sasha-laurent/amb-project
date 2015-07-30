@@ -64,7 +64,7 @@ class Resource
      * @Gedmo\Slug(fields={"title"},updatable=false)
      * @ORM\Column(name="filename", type="string", length=128, unique=true)
      */
-    private $filename;
+    private $filename;       
 
     /**
      * @var string
@@ -155,6 +155,18 @@ class Resource
      * @Assert\File(maxSize="128000000000")
      */
     public $file;
+
+    /**
+     * @Assert\File(maxSize="128000000000")
+     */
+    public $customAudioArt = null;
+
+    /**
+     * @var boolean 
+     * Use it to memorize whether an Audio file has custom album art
+     * attached to it or not.
+     */
+    private $hasCustomArt = false; 
 
     /*
     * Variable de mime
@@ -569,12 +581,26 @@ class Resource
 		return $this->getUploadDir($this->getType()).$this->filename.'.'.$this->extension;
 	}
 
+    public function hasCustomArt(){
+        return $this->hasCustomArt || null !== $this->customAudioArt;
+    }
+
+    public function setCustomArtValue($bool){
+        $this->customAudioArt = $bool;
+    }
+
     public function getThumbsPath()
     {
-        if(in_array($this->getType(), array('application', 'pdf', 'text', 'audio'))) {
+        if($this->hasCustomArt()){
+            return $this->getUploadDir(
+                $this->getType()).'thumbs/'.$this->id.'.jpg';            
+        } else if(in_array($this->getType(), 
+            array('application', 'pdf', 'text', 'audio'))) {
             return 'img/icon/'.$this->getType().'.jpg';
+        } else {
+            return $this->getUploadDir(
+                $this->getType()).'thumbs/'.$this->filename.'.jpg';   
         }
-        return $this->getUploadDir($this->getType()).'thumbs/'.$this->filename.'.jpg';
     }
     
     public function getGlyphicon()

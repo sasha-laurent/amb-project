@@ -111,4 +111,22 @@
 			processData: false
 		});
 	});
+	$(document).ready(function(){
+		// hide optional thumbnail input
+		var thumbnail_form = $("#vmb_resourcebundle_resource_customAudioArt").parentsUntil("#vmb_resourcebundle_resource")[1];
+		$(thumbnail_form).hide();
+		// when a file has been selected, parse extension, if it corresponds to an audio file then reveal audio art upload 
+		$("#vmb_resourcebundle_resource_file").change(function(){
+			var selected_file = $(this)[0].files[0];
+			if(selected_file != null) // don't exclude this possibility
+			{
+				var typ = selected_file.type.split('/');
+				if(typ[0] == 'audio' && (typ[1] == 'ogg' || typ[1] == 'mp3'))
+				{
+					$(thumbnail_form).show();
+				}
+			}
+		});
+		
+	});
 </script>

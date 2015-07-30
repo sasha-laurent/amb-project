@@ -32,7 +32,8 @@ class ResourceType extends AbstractType
 		if($resource->getId() == null) {
 			$builder->add('file', 'file', array('label' => 'form.label.file'));
 		}
-		
+        // Optional thumbnail for audio file (must be initialized as hidden)
+		$builder->add('customAudioArt', 'file', array('label' => 'form.label.thumbnail', 'required' => false));
 		$builder->add('save', 'submit', array('label' => 'actions.save'));
     }
     
