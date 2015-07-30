@@ -368,6 +368,7 @@
 				this.show(resource.type);
 			}
 			
+			this.resource = resource;
 			// Setup depending on the new player
 			if(resource.type == 'audio' || resource.type == 'video') {
 				this.mediaPlayer[resource.type].source(resource.src);
@@ -379,31 +380,43 @@
 				// Then we setup the content	
 				if(resource.type == 'image') {
 					$('.image_player img').attr('src', resource.src);
-					imgW = $('.image_player img').width();
-					imgH = $('.image_player img').height();
-					cadreW = $('#presentation_player').width();
-					cadreH = $('#presentation_player').height();
-					if(imgW/imgH > 16/9) {
-						$('.image_player img').css('left', '0px');
-						$('.image_player img').css('top', (cadreH - (cadreW * imgH/imgW)) / 2 + 'px');
-						$('.image_player img').css('width', cadreW + 'px');
-						$('.image_player img').css('height', (cadreW * imgH/imgW) + 'px');
-					}
-					else {
-						$('.image_player img').css('left', (cadreW - (cadreH * imgW/imgH)) / 2 + 'px');
-						$('.image_player img').css('top', '0px');
-						$('.image_player img').css('width', (cadreH * imgW/imgH) + 'px');
-						$('.image_player img').css('height', cadreH + 'px');
-					}
 				}
 				else {
 					$('.file_player iframe').attr('src', resource.src);
 				}
+				this.calibrateDisplay();
 			}
-			this.resource = resource;
 			
 			// If we were already playing before, we continue
 			if(this.playing) { this.play();	}
+		}
+	}
+	
+	// Method used when setting up a resource or when switching between fullscreen and normal mode
+	Player.prototype.calibrateDisplay = function () { 
+		if(this.resource.type == 'image') {
+			imgW = $('.image_player img').get(0).naturalWidth;
+			imgH = $('.image_player img').get(0).naturalHeight;
+			cadreW = $('#presentation_player').width();
+			cadreH = $('#presentation_player').height();
+			if(imgW/imgH > 16/9) {
+				$('.image_player img').css('left', '0px');
+				$('.image_player img').css('top', (cadreH - (cadreW * imgH/imgW)) / 2 + 'px');
+				$('.image_player img').css('width', cadreW + 'px');
+				$('.image_player img').css('height', (cadreW * imgH/imgW) + 'px');
+			}
+			else {
+				$('.image_player img').css('left', (cadreW - (cadreH * imgW/imgH)) / 2 + 'px');
+				$('.image_player img').css('top', '0px');
+				$('.image_player img').css('width', (cadreH * imgW/imgH) + 'px');
+				$('.image_player img').css('height', cadreH + 'px');
+			}
+		}
+		else if(this.resource.type == 'application' || this.resource.type == 'text') {
+			cadreW = $('#presentation_player').width();
+			cadreH = $('#presentation_player').height();
+			$('.file_player iframe').css('width', cadreW + 'px');
+			$('.file_player iframe').css('height', cadreH + 'px');
 		}
 	}
 	
@@ -541,6 +554,17 @@
 	Presentation.prototype.next = function() { this.setResource(this.index + 1); }
 	Presentation.prototype.prev = function() { this.setResource(this.index - 1); }
 	
+	
+	// Fullscreen
+	Presentation.prototype.launchFullscreen = function () {
+		launchIntoFullscreen(document.getElementById('presentation_player'));
+	}
+	
+	// Method that setups element so that they fit with their new positions
+	Presentation.prototype.fullscreenToggled = function () { 
+		this.player.calibrateDisplay(); 
+	}
+	
 	presentation = new Presentation(resourcesCollection, resourcesOrder, [
 		{% for a in entity.annotations %}{
 			'id' : {{ a.id }}, 
@@ -585,9 +609,18 @@
 		}
 	}
 	
+	
+	// If we press the presentation_player zone
+	$('#presentation_player').click(function()	      { togglePlay(); });
+	
+	// We do not want to stop playing if the controls are pressed even if it is the presentation_player zone
+	$( ".player-controls" ).click(function( event )   { event.stopPropagation(); });
+	
+	// Control buttons on the right
 	$('#presentation-play-btn').click(function()	  { togglePlay(); });
 	$('#presentation-prev-btn').click(function()	  { presentation.prev(); });
 	$('#presentation-next-btn').click(function()	  { presentation.next(); });
+	$('#presentation-fullscreen-btn').click(function(){ presentation.launchFullscreen(); });
 	$('#file_list .list-group-item').click(function() { presentation.setResource(indexOf(resourcesOrder, $(this).attr('data-id'))); });
 	
 	
@@ -598,8 +631,6 @@
 	// Find the right method, call on correct element
 	// Courtesy http://davidwalsh.name/fullscreen
 	function launchIntoFullscreen(element) {
-		$('#additional-infos').hide();
-		$('header').hide();
 		if(element.requestFullscreen) {
 			element.requestFullscreen();
 		} else if(element.mozRequestFullScreen) {
@@ -609,12 +640,9 @@
 		} else if(element.msRequestFullscreen) {
 			element.msRequestFullscreen();
 		}
-		fullscreenMode = true;
 	}
 
 	function exitFullscreen() {
-		$('#additional-infos').show();
-		$('header').show();
 		if(document.exitFullscreen) {
 			document.exitFullscreen();
 		} else if(document.mozCancelFullScreen) {
@@ -622,8 +650,11 @@
 		} else if(document.webkitExitFullscreen) {
 			document.webkitExitFullscreen();
 		}
-		fullscreenMode = false;
 	}
+	
+	$(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange', function() { 
+		presentation.fullscreenToggled();
+	}.bind(presentation));
 	
 	</script>
 {% endblock %}
