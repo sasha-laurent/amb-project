@@ -24,6 +24,8 @@
 
 # Assets and user uploads
 /web/bundles/
+!web/bundles/telecomvmb/css/
+!web/bundles/telecomvmb/js/
 /web/upload/
 
 # PHPUnit
