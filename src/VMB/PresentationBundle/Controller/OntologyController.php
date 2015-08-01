@@ -123,7 +123,7 @@ class OntologyController extends Controller
 
         $index = "index".$i.".json";
         $ontology = "ontology".$i.".json";
-        return $this->render('TelecomVmbBundle:Admin:search.html.twig', array(
+        return $this->render('VMBPresentationBundle:Ontology:search.html.twig', array(
             'indexFile' => $index,
             'ontologyFile' => $ontology,
             'value' => $i,

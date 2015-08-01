@@ -2,12 +2,13 @@
 
 namespace VMB\PresentationBundle\Entity;
 
+use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * UsedResource
  *
- * @ORM\Table(name="usedresource",uniqueConstraints={@ORM\UniqueConstraint(name="uniq_resource_per_lvl_pov", columns={"pov_id", "level_id", "matrix_id"})})
+ * @ORM\Table(name="usedresource")
  * @ORM\Entity(repositoryClass="VMB\PresentationBundle\Entity\UsedResourceRepository")
  */
 class UsedResource
@@ -28,22 +29,33 @@ class UsedResource
 	private $resource;
 
     /**
+    * @Gedmo\SortableGroup
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Level")
 	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
 	*/
 	private $level;
 
     /**
+    * @Gedmo\SortableGroup
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Pov")
 	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
 	*/
 	private $pov;
 	
 	/**
+	* @Gedmo\SortableGroup
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Matrix", inversedBy="resources")
 	* @ORM\JoinColumn(nullable=false)
 	*/
 	private $matrix;
+	
+	/**
+     * @var integer
+     *
+     * @Gedmo\SortablePosition
+     * @ORM\Column(name="sort", type="integer")
+     */
+    private $sort;
 	
     /**
      * Get id

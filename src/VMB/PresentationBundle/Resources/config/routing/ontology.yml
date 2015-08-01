@@ -33,3 +33,7 @@ ontology_list_available:
     defaults: { _controller: VMBPresentationBundle:Ontology:listAvailable }
     requirements:
         resourceId: \d{1,}
+
+ontology_search:
+    pattern:  /search/{i}
+    defaults: { _controller: VMBPresentationBundle:Ontology:search, i:1 }
