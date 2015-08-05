@@ -24,7 +24,7 @@ class ResourceController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('VMBResourceBundle:Resource')->findAll();
+        $entities = $em->getRepository('VMBResourceBundle:Resource')->findAllByDate();
 
         return $this->render('VMBResourceBundle:Resource:index.html.twig', array(
             'mainTitle' => $this->get('translator')->trans('resource.browse'),
@@ -207,7 +207,7 @@ class ResourceController extends Controller
 				
 				$request->getSession()->getFlashBag()->add('success', $this->get('translator')->trans('resource.deleted'));
 			} catch (\Exception $e) {
-				$request->getSession()->getFlashBag()->add('danger',"An error occured");
+				$request->getSession()->getFlashBag()->add('danger',"An error occured".$e->__toString());
 			}
 			return $this->redirect($this->generateUrl('resource'));
 		}

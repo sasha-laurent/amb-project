@@ -25,7 +25,6 @@
 		<div class="col-md-9">
 			<div class="row">
 				{% for entity in entities %}
-					{{dump(entity)}}
 				<div class="col-md-4">
 					<a class="thumbnail-link" href="{{ path('resource_show', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'page':null, 'position': nbPerPage*(page-1) + loop.index, 'id': entity.id })) }}">
 						<div class="thumbnail block-browse block-resource">
@@ -82,9 +81,11 @@
 									  {% endfor %}
 									  </ul>
 								  </div>
+								  {# Redondance avec le boutton du haut
 								  <div class="modal-footer">
 									<button type="button" class="btn btn-default" data-dismiss="modal">{{ 'actions.close'|trans }}</button>
 								  </div>
+								  #}
 								</div>
 							  </div>
 							</div>

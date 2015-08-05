@@ -1,0 +1,4 @@
+services:
+#    vmb_search.example:
+#        class: VMB\SearchBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]

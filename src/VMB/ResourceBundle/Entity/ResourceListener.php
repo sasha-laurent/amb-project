@@ -18,26 +18,55 @@ class ResourceListener
         $em = $args->getEntityManager();
         if (null !== $resource->file)
         {
-        	// TODO: Filter/match authorized & unauthorized extensions? 
-            // Binary code could be injected in images
-        	// so can't be sure no attack vectors included at all.
+        	// TODO: Whitelist extensions and mime types?
+            $exts_whitelist = array(
+                'ogg' => 'audio', 'mp3'  => 'audio',
+                'jpeg' => 'image', 'jpg' => 'image', 'png' => 'image',
+                'mp4' => 'video',
+                'pdf' => 'pdf');
+            $mime_type_whitelist = array();
+
             $extension = strtolower(pathinfo($resource->file->getClientOriginalName(), PATHINFO_EXTENSION));
             $resource->setExtension($extension);
-            $resource->mime_type = explode("/",$resource->file->getMimeType());
-            $primary_typ = $resource->mime_type[0];
-            $secondary_typ = $resource->mime_type[1];
-
-            // Taking some elementary precautions.
+            $resource->mime_type = $resource->file->getMimeType();
+            $mime_arr = explode("/", $resource->mime_type);
+            $primary_typ = $mime_arr[0];
+            $secondary_typ = $mime_arr[1];
+            
+            /*
+             * Taking some elementary precautions.
+             * Notes:
+             * - Null is a valid File::getMimeType() result
+             *
             if (null === $resource->mime_type){
             	$em->detach($resource);
             	throw new Exception(" Unrecognized media type.", 1);
-            } elseif($primary_typ == 'application' && $secondary_typ != 'pdf'){
-            	$em->detach($resource);
-                throw new Exception(" Unauthorized file type.", 1);
-            } elseif($primary_typ == 'application' && $secondary_typ == 'pdf'){
-            	$resource->setType($secondary_typ);
+            }
+            */
+            
+            if(!in_array($extension, 
+                array_keys($exts_whitelist)))
+            {
+                throw new Exception("Unauthorized file extension.", 1);
             } else {
-            	$resource->setType($primary_typ);
+                if($primary_typ == 'application' 
+                    && $secondary_typ != 'pdf'){
+                    // Try to set type by guessing extension
+                    // Either extension & mime type are valid or we detach the entity
+                    // MP3s are sometimes parsed as "application/octet-stream"
+                    $guessed_ext = $resource->file->guessExtension();
+                    if(array_key_exists($guessed_ext, $exts_whitelist)){
+                        $resource->setType($exts_whitelist[$guessed_ext]);
+                    } else {
+                        throw new Exception("Unauthorized resolved file type.", 1);
+                        
+                    }
+                } elseif($primary_typ == 'application' 
+                    && $secondary_typ == 'pdf'){
+                    $resource->setType($secondary_typ);
+                } else {
+                    $resource->setType($primary_typ);
+                }
             }
 
             $resource->setSize(filesize($resource->file));
@@ -61,9 +90,7 @@ class ResourceListener
             }
             elseif($resource->getType() == 'video'){
                 $resource->setDuration($analyse['playtime_seconds']);   
-            } 
-        } else {
-        	throw new Exception("File transmission error", 1);
+            }
         }
     }
     
@@ -72,16 +99,15 @@ class ResourceListener
      */
     public function postPersist(Resource $resource, LifecycleEventArgs $args)
     {
-        if (null === $resource->file){
+        if (null === $resource->file 
+            && null === $resource->customAudioArt){
             return;
         }
-        $extension = $resource->getExtension();
 
-    /*    
+        /*    
         Lancer une exception ici si le fichier ne peut pas
-        être déplacé afin que l'entité ne soit pas persistée dans la
-        base de données
-    */
+        être déplacé afin que l'entité ne soit pas persistée dans la base de données
+        */
     	try {
 	    	// If directories do not exist yet, create them 
             // (default/no-arg mode : 777)
@@ -91,26 +117,25 @@ class ResourceListener
 	            	try {
 	                	mkdir($resource->getUploadRootDir());	
 	            	} catch (IOException $e) {
-	            		return $e->getMessage();
+	            		return $e;
 	            	}
 	            }
 	            try {
 	            	mkdir($resource->getUploadRootDir($resource->getType()));	
 	            } catch (IOException $e) {
-	            	return $e->getMessage();
+	            	return $e;
 	            }
 	        }
 	        $resource->file->move($resource->getUploadRootDir($resource->getType()), 
                 $resource->getFilename().'.'.$resource->getExtension());
 	        unset($resource->file);     	
     	} catch (FileException $e) {
-    		$em = $args->getEntityManager();
-    		$em->detach($resource);
-    		return $e->getMessage();
+    		return $e;
     	}
+        // Le fichier a été déplacé, on peut créer les miniatures.
 
-
-        if(in_array($resource->getExtension(), array('jpeg', 'jpg', 'png'))){
+        if(in_array($resource->getExtension(), 
+            array('jpeg', 'jpg', 'png'))){
             // on crée la miniature
             // http://php.net/manual/en/function.imagecreate.php
             if($extension =="jpg" || $extension =="jpeg" ){
@@ -172,37 +197,19 @@ class ResourceListener
             $video
                 ->frame(\FFMpeg\Coordinate\TimeCode::fromSeconds($snapTime))
                 ->save($resource->getUploadRootDir($resource->getType()).'thumbs/'.$resource->getFilename().'.jpg');
-        } elseif($resource->getType() == 'audio'){
-        // Takes resource->customAudioArt 
-        // and moves it to audio/thumbs directory
-        // TODO: Need to create resized view for Browsing
-            $audioart_path = $resource->getUploadRootDir($resource->getType()).'thumbs/' ;
-            if(null !== $resource->customAudioArt)
-            {
-                $ext = strtolower(pathinfo($resource->customAudioArt
-                    ->getClientOriginalName(), PATHINFO_EXTENSION));
-                if(!($ext == 'jpg' || $ext == 'jpeg')) 
-                { // Accepted file formats
-                    return;
-                }
-                if (!is_dir($resource->getUploadRootDir($resource->getType()).'thumbs/')) 
-                { // Create art folder container if necessary
-                    try{
-                        mkdir($audioart_path);
-                    } catch (IOException $e) {
-                        return $e->getMessage();
-                    }
-                }
-                try {
-                // Move the randomly named file to a standard file location 
-                   $resource->customAudioArt->move($audioart_path, $resource->getId().".".$ext);
-                    unset($resource->customAudioArt);
-                    $resource->setCustomArtValue(true);  
-                } catch (FileException $e) {
-                    return $e->getMessage();
-                }
-                
-            }
+
+        } elseif($resource->getType() == 'audio' 
+            && $resource->hasCustomArt()){
+            /*
+             * TODO: Make thumb for Resource/browse out of customArt 
+            **/
+        } elseif ($resource->getType() == 'pdf')
+        {
+            /*
+            ** TODO : Imagick first PDF page and transform it into a JPEG
+            **
+            */
+
         }
     }
 
@@ -228,36 +235,27 @@ class ResourceListener
     	$rm_file_named = $resource->getFilenameForRemove();
         if (null !== $rm_file_named) 
         {
-			if(is_file($rm_file_named)) 
+    		if(is_file($rm_file_named)) 
             {
-				unlink($rm_file_named);
-			} else {
-                // Throwing the exception will block Doctrine
+    			unlink($rm_file_named);
+    		} else {
+                // Throwing the exception blocks Doctrine
                 // from detaching the dead (file-less) entity
-                //throw new Exception("File not found while trying to unlink: ".$rm_file_named);
+                // return new Exception("File not found while trying to unlink: ".$rm_file_named);
             }
-            // Removing Thumb File
-            if(!in_array($resource->getType(), 
-                array('application', 'pdf', 'text')))
+        }
+        // Resolve thumb absolute path if it exists
+        // and delete it if we can.
+        if($resource->getType() == 'audio' 
+            && $resource->hasCustomArt())
+        {
+            $thumbsAbsolutePath = $resource->getCustomArtPath(true);
+            if(is_file($thumbsAbsolutePath)) 
             {
-                // Default thumb filename
-                $thumb_f_name = $resource->getFilename(); 
-                // An audio file may or may not have custom art.
-                if($resource->getType() == 'audio' 
-                    && !$resource->hasCustomArt()){
-                    return; // Nothing to remove
-                } else {
-                    $thumb_f_name = $resource->getId();
-                }
-                // Resolve thumb absolute path and delete it if we can.
-				$thumbsAbsolutePath = $resource->getUploadRootDir($resource->getType()).'thumbs/'.$thumb_f_name.'.jpg';
-				if(is_file($thumbsAbsolutePath)) {
-					unlink($thumbsAbsolutePath);
-				} else {
-                    // throw new Exception("Thumb image not found: ".$thumbsAbsolutePath);
-                    
-                }
-            }
+                unlink($thumbsAbsolutePath);
+            } else {
+                // return new Exception("Thumb image not found: ".$thumbsAbsolutePath);  
+            }    
         }
     }
 }

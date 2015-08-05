@@ -140,7 +140,9 @@
       
 		<div class="container main_body">
 			{% if stripBodyHeader is not defined %}
-			<h1 class="page-header" id="title">{% block h1_title %}{% endblock %}</h1>			
+			<h1 class="page-header" id="title">{% block h1_title %}{% endblock %}</h1>
+			{% else %} {% block header %}{% endblock %}
+			{% endif %}			
 			{% for label, flashes in app.session.flashbag.all %}
 				{% for flash in flashes %}
 					<div class="alert alert-{{ label }}{{ alertDismissible|default(true) ? ' alert-dismissible' : '' }}">
@@ -151,7 +153,6 @@
 					</div>
 				{% endfor %}
 			{% endfor %}
-			{% endif %}
 			{% block body %}{% endblock %}
 		</div>
 		<footer class="footer">
