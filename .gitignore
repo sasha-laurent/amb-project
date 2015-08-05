@@ -37,3 +37,6 @@
 
 # Composer PHAR
 /composer.phar
+
+# Backups
+/backup/

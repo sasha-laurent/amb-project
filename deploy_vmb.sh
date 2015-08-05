@@ -5,9 +5,10 @@
 
 #Passage du pull avec la clef
 echo "début de la mise à jour"
-git pull https://bitbucket.org/Taurus17/vmb.git production
+git pull https://bitbucket.org/Taurus17/vmb.git master
 
-echo "Migration Base de Données"
+echo "Migration Base de Données" 
+# TODO: Voir comment on pourrait mieux migrer
 php app/console doctrine:schema:update --force
 
 #Mise à jour du cache
