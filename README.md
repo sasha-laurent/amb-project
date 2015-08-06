@@ -16,7 +16,7 @@ This README would normally document whatever steps are necessary to get your app
 * Database configuration
 * How to run tests
 * Deployment instructions
-
+	Automatic deployment every day for Master Branch
 ### Contribution guidelines ###
 
 * Writing tests
