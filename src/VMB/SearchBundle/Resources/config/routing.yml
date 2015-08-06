@@ -1,0 +1,6 @@
+vmb_search_homepage:
+    path:     /search/{type}/{query}
+    defaults: { _controller: "VMBSearchBundle:Default:index", type : "presentation" }
+    requirements:
+        type: "presentation|resource"
+        query: \string{3,}

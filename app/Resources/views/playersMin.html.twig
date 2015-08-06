@@ -10,6 +10,9 @@
 	{# Audio files #}
 	{% elseif playingResource.type == 'audio' %}
 	<div class="player">
+		{% if playingResource.hasCustomArt %}
+			<img style='width:100%;' src="{{ asset(playingResource.getCustomArtPath) }}" />
+		{% endif %}
 		<audio id="audio_player" controls>
 			<source src="{{ asset(playingResource.getResourcePath) }}">
 		</audio>

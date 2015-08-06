@@ -1,28 +1,67 @@
+{% set stripBodyHeader = true %}
+{% extends "::Backend/subPage.html.twig" %}
 {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 
+{% block header %}
 <form action="#" method="post" id="modal_res_add" class="form-horizontal" {{ form_enctype(form) }}>
 <h3 class="page-header" style="margin-top:20px;padding-bottom:20px">
-	{{"resource.add"|trans}}
+	{{mainTitle}}
 	<div class="btn-group pull-right">
 		<button id="modal_save_btn" type="submit" title="Save" class="btn btn-default">
 			<span class="glyphicon glyphicon-floppy-open"></span>
 		</button>
+		{% if is_modal is defined %}
 		<button type="button" title="Discard" class="btn btn-default" data-dismiss="modal">
 			<span class="glyphicon glyphicon-remove"></span>
 		</button>
+		{% endif %}
 	</div>
 	<span id="modal_loading" style="margin-right:10px;margin-top:9px" class="loading_indicator_inline pull-right"></span>
 </h3>
-<div class="well" style="margin-bottom:10px;padding-bottom:9px;">
+{% endblock %}
+
+{% block body %}
+	<div class="well" style="margin-bottom:10px;padding-bottom:9px;">
 		<div class="form-group">{{form_label(form.title)}}<div class="col-sm-10">{{form_widget(form.title)}}</div></div>
 		<div class="form-group">{{form_label(form.description)}}<div class="col-sm-10">{{form_widget(form.description)}}</div></div>
 		<div class="form-group">{{form_label(form.keywords)}}<div class="col-sm-10">{{form_widget(form.keywords)}}</div></div>
 		<div class="form-group">{{form_label(form.topic)}}<div class="col-sm-10">{{form_widget(form.topic)}}</div></div>
-		<div class="form-group">{{form_label(form.file)}}<div class="col-sm-10" style="margin-top:5px;">{{form_widget(form.file)}}</div></div>
+		{% if form.file is defined %}
+			<div class="form-group">{{form_label(form.file)}}<div class="col-sm-10" style="margin-top:5px;">{{form_widget(form.file)}}</div></div>
+		{% endif %}
+		<div class="row">
+			{{form_label(form.customAudioArt)}}
+		{% if resource.hasCustomArt() %}
+				<div class="col-sm-4 col-sm-offset-2">
+				<img src="{{ asset(resource.getCustomArtPath) }}" id="customArt_thumb" title="{{ 'form.label.current_thumbnail'|trans }}" style="height: 155px; width: 205px;"/> 
+					<button class="btn btn-default" id="delete_thumbs" type="button" role="button">
+						<span class="glyphicon glyphicon-remove"></span>
+					</button>
+				</div>
+		{% endif %}
+				<div class="col-sm-4">
+					<div style="margin-top:5px;">
+				{{form_widget(form.customAudioArt)}}
+					</div>
+				</div>
+		</div>
+	</div>
+{% if resource.hasCustomArt %}
+	<input type="hidden" name="keepThumbs" id="keepThumbs" value="1"/>
+{% endif %}
 	    {{ form_widget(form._token) }}
 </div>
 </form>
+{% endblock %}
+
+{% block script %}
+{% if is_modal is not defined %}
+	{{parent()}} {# Import jQuery (+UI), Bootstrap, Plyr #}
+{% endif %} 
+	
 <script type="text/javascript">
+{# Frameworks should be imported, load our custom Ajax code #}
+{% if is_modal is defined %}
 	$("#modal_res_add").on('submit', function(evt){
 
 		/*
@@ -104,29 +143,59 @@
 			/*
 			** jQuery options
 			** contentType is "multipart/form-data"
-			** but we set it to false or jQuery auto-setting gets it wrong
+			** but we set it to defined or jQuery auto-setting gets it wrong
 			*/
 			contentType: false, 
 			cache: false,
 			processData: false
 		});
 	});
+{% endif %}
+
+// Defining some selectors that will come in handy 
+var file_form = $("#vmb_resourcebundle_resource_file");
+var thumbnail_row = $("#vmb_resourcebundle_resource_customAudioArt").parentsUntil(".well")[2];
+var thumbnail_form = $("#vmb_resourcebundle_resource_customAudioArt").parentsUntil(".row")[1];
+
+{% if resource.hasCustomArt() %}
+{# Manage thumb deletion with an ajax request. ?#}
+	$('#delete_thumbs').click(function(event) {
+		event.preventDefault();
+		// TODO: If confirm ajax req.
+		$('#keepThumbs').val(0);
+		$(this).parent().hide();
+		$(thumbnail_form).show();
+	});
+	var hasCustomArt = true;
+{% else %}
+	var hasCustomArt = false;
+{% endif %}
+
 	$(document).ready(function(){
-		// hide optional thumbnail input
-		var thumbnail_form = $("#vmb_resourcebundle_resource_customAudioArt").parentsUntil("#vmb_resourcebundle_resource")[1];
-		$(thumbnail_form).hide();
-		// when a file has been selected, parse extension, if it corresponds to an audio file then reveal audio art upload 
-		$("#vmb_resourcebundle_resource_file").change(function(){
-			var selected_file = $(this)[0].files[0];
-			if(selected_file != null) // don't exclude this possibility
-			{
-				var typ = selected_file.type.split('/');
-				if(typ[0] == 'audio' && (typ[1] == 'ogg' || typ[1] == 'mp3'))
+		if(file_form.length != 0) 
+		{	// File upload form is actually defined.
+			// Initially hide optional thumbnail input
+			$(thumbnail_row).hide();
+			// when a file has been selected, parse extension, if it corresponds to an audio file then reveal audio art upload 
+			$(file_form).change(function(){
+				var selected_file = $(this)[0].files[0];
+				// don't exclude the possibility that nothing was selected
+				if(selected_file != null) 
 				{
-					$(thumbnail_form).show();
+					var typ = selected_file.type.split('/');
+					// show the form if an audio file was selected
+					if(typ[0] == 'audio' && 
+						(typ[1] == 'ogg' || typ[1] == 'mp3'))
+					{
+						$(thumbnail_row).show();
+					}
 				}
-			}
-		});
-		
+			});
+		} else if(hasCustomArt)
+		{
+			$(thumbnail_form).hide();
+		}
 	});
 </script>
+{% endblock %}
+

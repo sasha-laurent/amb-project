@@ -42,9 +42,9 @@
 			</li>
 		{% for pov in form.povs %}
 			<li class="list-group-item row">
-			<div class="col-md-8 matrix-row-title">{{ form_widget(pov.title) }}</div>
-			<div class="col-md-4 text-right">
-				<button type="button" class="btn btn-danger" onclick="removeRow(this)">
+			<div class="col-md-10 matrix-row-title">{{ form_widget(pov.title) }}</div>
+			<div class="col-md-2 text-right">
+				<button type="button" class="btn btn-danger" onclick="askConfirmDel(this)">
 					<span class="glyphicon glyphicon-remove"></span>
 				</button>
 			</div>
@@ -66,9 +66,9 @@
 			</li>
 		{% for lvl in form.levels %}
 			<li class="list-group-item row">
-			<div class="col-md-8 matrix-row-title">{{ form_widget(lvl.title) }}</div>
-			<div class="col-md-4 text-right">
-				<button type="button" class="btn btn-danger" onclick="removeRow(this)">
+			<div class="col-md-10 matrix-row-title">{{ form_widget(lvl.title) }}</div>
+			<div class="col-md-2 text-right">
+				<button type="button" class="btn btn-danger" onclick="askConfirmDel(this)">
 					<span class="glyphicon glyphicon-remove"></span>
 				</button>
 			</div>
@@ -94,12 +94,17 @@
 		/* 
 		** TODO: Declare action list, helper functions to manage it
 		** 		- Make sure indexes are consistent with database repr. 
-		** (for example when something is deleted it should be put back at its original index, 
-		** not at a new index value, and next input names changed accordingly)
-		**		- Prep. batch request (which would help minimize server diff processing) to persist at matrix/update
+		** (for example when something is deleted and the deletion is
+		**  undone it should be put back at its original index, 
+		** not at a new index value, and next input names' indexes
+		**  changed accordingly)
+		**		- Prep. batch request (to help minimize server diff processing) to persist at matrix/update
 		**		- Add hook to persistChanges (modal dialog floppy-disk button)
 		*/	
-		// Loop through symfony-baked content to populate 
+		// Enable popovers
+		// $('[data-toggle="popover"]').popover(); 
+
+		// Loop through symfony-baked content to populate
 		$("#vmb_presentationbundle_matrix_povs, #vmb_presentationbundle_matrix_levels").each(function(index, elt) {
 		});
 		
@@ -124,27 +129,30 @@
 	 * 
 	**/
 	function askConfirmDel(elt){
-		var row_elt = $(elt).parentsUntil("ul")[1]; // Whole row
-		var cont = $(row_elt).find(".col-md-4"); // "Delete" part
-		
-		// TODO: Calculate resources to be deleted, notify user of cascade consequences in a big red alert container? 
-		$(cont).find("button").hide();
-		$(cont).append('a').on('click', function(){
-			deleteRow(row_elt);
-			}).html('{{"actions.confirm"|trans}}');
-		$(cont).append('strong').html('/');
-		$(cont).append('a').on('click', function(){
-			showDelButton(row_elt);
-			}).html('{{"actions.cancel"|trans}}');
-		}
+		var row_elt = $(elt).parentsUntil("ul");
+		var del_button = row_elt[0], row = row_elt[1]; 
+		// [0] -> "Delete" part, [1] -> Whole row
+		 var confirmAlert = '<p>{{"matrix.deleteRowMessage"|trans}}</p><p><button type="button" class="btn btn-danger">{{"actions.delete"|trans}}</button><button type="button" class="btn btn-default">{{"actions.cancel"|trans}}</button></p>';
+		console.log('{{"actions.confirm"|trans}}', confirmAlert);
+    	$(del_button).popover({
+    		placement: 'top',
+    		html: true,
+    		title: '{{"actions.confirm"|trans}}',
+    		content: confirmAlert
+    	});
+    	$(del_button).popover('show');
+	}
 
 	/**
 	 * Actual data request to the server
+	 *
+	 * TODO: Calculate resources to be deleted, notify user of cascade 
+	 * consequences in a big red alert container? 
 	**/
 	function deleteRow(elt){
 		
 		// save elt in undo-list before del
-		$(row_elt).remove();
+		$(elt).remove();
 	}
 
 	/**

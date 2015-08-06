@@ -23,7 +23,9 @@
 /vendor/
 
 # Assets and user uploads
-/web/bundles/
+/web/bundles/*
+!/web/bundles/telecomvmb
+/web/bundles/telecomvmb/json
 /web/upload/
 
 # PHPUnit

@@ -16,6 +16,7 @@ use VMB\PresentationBundle\Form\MatrixType;
 /**
  * Matrix controller.
  *
+ * TODO: A user can only edit/delete a matrix which doesn't have any depending presentations -> remove said user from owner, set owner to admin?
  */
 class MatrixController extends Controller
 {

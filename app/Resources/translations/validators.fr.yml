@@ -1,17 +1,17 @@
 fos_user:
     email:
-        already_used: fos_user.email.already_used
-        blank: fos_user.email.blank
-        invalid: fos_user.email.invalid
-        long: fos_user.email.long
-        short: fos_user.email.short
+        already_used: 'Adresse mail déjà utilisée'
+        blank: 'Pas d''adresse mail renseignée'
+        invalid: 'Format de l''adresse mail invalide'
+        long: 'Adresse mail trop longue'
+        short: 'Adresse mail trop courte'
 
     password:
-        blank: fos_user.password.blank
-        short: fos_user.password.short
+        blank: 'Mot de passe vide'
+        short: 'Mot de passe trop court'
 
     username:
-        already_used: fos_user.username.already_used
-        blank: fos_user.username.blank
-        long: fos_user.username.long
-        short: fos_user.username.short
+        already_used: 'Nom d''utilisateur déjà utilisé'
+        blank: 'Pas de nom d''utilisateur renseigné'
+        long: 'Nom d''utilisateur trop long'
+        short: 'Nom d''utilisateur trop court'
