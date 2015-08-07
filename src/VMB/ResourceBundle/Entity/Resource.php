@@ -159,14 +159,18 @@ class Resource
     /**
      * @Assert\File(maxSize="128000000000")
      */
-    public $customAudioArt = null;
+    public $customAudioArt;
 
     /**
-     * @var boolean 
+     * @ORM\Column(name="customArt", type="string", length=128, nullable=true)
+     * @var string 
      * Use it to memorize whether an Audio file has custom album art
      * attached to it or not.
+     * The path is relative to the web/ folder, and not absolute to  
+     * the root folder (as * such direct is_file(customArtPath) 
+     * will always fail).
      */
-    private $hasCustomArt = false; 
+    private $customArtPath = null; 
 
     /*
     * Variable de mime
@@ -581,19 +585,133 @@ class Resource
 		return $this->getUploadDir($this->getType()).$this->filename.'.'.$this->extension;
 	}
 
+    /**
+     * @param noparam
+     * @return boolean : Audio resource has custom art or not
+    **/
     public function hasCustomArt(){
-        return $this->hasCustomArt || null !== $this->customAudioArt;
+        if(isset($this->customAudioArt))
+        {
+            return true;
+        }
+        elseif(null !== $this->customArtPath) 
+        {
+            return true;
+        } else {
+            // Try to resolve based on resource Id and different accepted file extensions.
+            $base_path = $this->getUploadRootDir('audio').'thumbs/'.$this->id;
+            foreach (array('jpeg', 'jpg', 'png') as $ext) {
+                $file_resolve = $base_path.".".$ext;
+                if(is_file($file_resolve))
+                {
+                    $this->customArtPath = $this->getUploadDir('audio').'thumbs/'.$this->id.'.'.$ext;
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    /**
+     * @param Whether the path to file to return should be absolute or not.
+     * @return Relative|Absolute path to custom art file on server.
+     * @return null value if the custom (relative) path is found not 
+     * to be set. 
+     * Most of the time the hasCustomArt function will be called
+     * first. This mean the file resolution will be run once already, 
+     * as such there is no need to run it again. 
+    */
+    public function getCustomArtPath($absolute_path = false){
+        if(isset($this->customArtPath) && !$absolute_path)
+        {
+            return $this->customArtPath;
+        } else if (isset($this->customArtPath) && $absolute_path) {
+            $abs_p = str_replace('\\', '/', __DIR__).'/../../../../web/'.$this->customArtPath;
+            if(is_file($abs_p))
+            {
+                return $abs_p;
+            } else {
+                return null;
+            }
+        } else {
+            /*
+            // Try to resolve based on resource Id and different accepted file extensions.
+            $base_path = $this->getUploadRootDir('audio').'thumbs/'.$this->id;
+            foreach (array('jpeg', 'jpg', 'png') as $ext) {
+                $file_resolve = $base_path.".".$ext;
+                if(is_file($file_resolve))
+                {
+                    $this->customArtPath = $this->getUploadDir('audio').'thumbs/'.$this->id.'.'.$ext;
+                    return $this->customArtPath;
+                }
+            }*/
+            return null;
+        }
+    }
+    /**
+     * @param Relative path to /var/www/edu/web/ directory
+     * @return void
+    **/
+    public function setCustomArtPath($path){
+        $this->customArtPath = $path;
     }
 
-    public function setCustomArtValue($bool){
-        $this->customAudioArt = $bool;
+    public function persistCustomAudioArt()
+    {
+        /*
+         * Takes resource->customAudioArt 
+         * and moves it to audio/thumbs directory
+         */
+        $ul_root_audio_path = $this->getUploadRootDir('audio')
+        .'thumbs/';
+        $ext = strtolower(pathinfo($this->customAudioArt->getClientOriginalName(), PATHINFO_EXTENSION));
+        // Accepted file formats
+        if(!in_array($ext, array('jpeg', 'jpg', 'png'))) 
+        {
+            throw new Exception("Invalid thumb file extension");
+        }
+        // Create art folder container if necessary
+        if (!is_dir($ul_root_audio_path)) 
+        { 
+            try{
+                mkdir($ul_root_audio_path);
+            } catch (IOException $e) {
+                return $e;
+            }
+        }
+        // Move the randomly named file to a standard file location 
+        try {
+           $artPath = $this->getId().".".$ext;
+           $this->customAudioArt->move($ul_root_audio_path, $artPath);
+           $this->setCustomArtPath($resource->getUploadDir('audio').'thumbs/'.$artPath); 
+           unset($this->customAudioArt);
+       } catch (FileException $e) {
+        return $e;
+        }
+    }
+
+    /**
+     * Tries at the best of its ability to remove any trace
+     * of custom art on server and as object attribute.
+     * @return void
+    **/
+    public function removeCustomArt(){
+        $customArtAbsolutePath = $this->getCustomArtPath(true);
+        if(is_file($customArtAbsolutePath))
+        {
+            unlink($customArtAbsolutePath);
+        } else {
+            // throw new Exception("File Not Found: ".$customArtAbsolutePath, 1); 
+        }
+        if(isset($this->customArtPath))
+        {
+            unset($this->customArtPath);
+        }
     }
 
     public function getThumbsPath()
     {
         if($this->hasCustomArt()){
-            return $this->getUploadDir(
-                $this->getType()).'thumbs/'.$this->id.'.jpg';            
+            return $this->getCustomArtPath();            
         } else if(in_array($this->getType(), 
             array('application', 'pdf', 'text', 'audio'))) {
             return 'img/icon/'.$this->getType().'.jpg';
@@ -606,7 +724,11 @@ class Resource
     public function getGlyphicon()
     {
 		$assoc = array('video' => 'film', 'image' => 'picture', 'audio' => 'volume-up', 'application' => 'paperclip', 'pdf' => 'file', 'text' => 'file');
-		return $assoc[$this->type];
+        if(array_key_exists($this->type, $assoc)){
+            return $assoc[$this->type];
+        } else {
+            return 'question-sign';
+        } 
 	}
 
 

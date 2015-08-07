@@ -1,0 +1,35 @@
+{% extends '::layout.html.twig' %}
+
+{% block h1_title %}
+	{# 
+	Back Button + {Num.Results} {Search Results | trans} for {query}
+	#}
+{% endblock %}
+
+{% block body %}
+	<div class="row">
+		<div class="btn-group" role="group">
+			{# add class btn-primary for queried type#}
+			<button type="button" class="btn">
+				{{"menu.presentations"|trans}} <span class="badge"></span>
+			</button>
+			<button type="button" class="btn">
+				{{"menu.resources"|trans}} <span class="badge"></span>
+			</button>
+		</div>
+	</div>
+	{#
+	Be able to switch between 
+	glyphicon glyphicon-th-list and 
+	glyphicon glyphicon-th-large
+	representations
+	---------------------------
+	Results container
+	---------------------------
+	Pagination Footer
+	#}
+{% endblock %}
+
+{% block script %}
+	{# Populate Json with resource entity objects.#}
+{% endblock }

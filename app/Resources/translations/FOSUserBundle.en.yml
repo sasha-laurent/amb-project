@@ -1,38 +1,38 @@
 change_password:
-    submit: change_password.submit
+    submit: 'Change password'
 
 group:
     edit:
-        submit: group.edit.submit
+        submit: 'Edit group'
 
     new:
-        submit: group.new.submit
+        submit: 'Create new group'
 
 profile:
     edit:
-        submit: profile.edit.submit
+        submit: 'Edit profile'
 
 registration:
     register: 'Sign up'
-    back: registration.back
-    check_email: registration.check_email
-    confirmed: registration.confirmed
+    back: 'Go back'
+    check_email: 'Last checkpoint to activate your AMB account: follow the activation link sent to the email account provided.'
+    confirmed: 'Registration was successful'
 
     email:
-        message: registration.email.message
-        subject: registration.email.subject
+        message: 'Follow the link to complete your registration.'
+        subject: 'Activate your AMB Account'
 
-    submit: registration.submit
+    submit: 'Sign me up'
 
 resetting:
     request:
         request_reset: 'Forgot your password?' 
-        invalid_username: resetting.request.invalid_username
-        submit: resetting.request.submit
-        username: resetting.request.username
+        invalid_username: 'Username is invalid'
+        submit: 'Reset password'
+        username: 'Username'
 
     reset:
-        submit: reset
+        submit: Reset
 
 security:
     login:

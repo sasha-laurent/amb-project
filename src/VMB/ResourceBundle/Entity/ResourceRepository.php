@@ -13,10 +13,16 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
  */
 class ResourceRepository extends EntityRepository
 {
+
+	public function findAllByDate()
+	{
+		return $this->findBy(array(),array('dateCreate' => 'DESC'));
+	}
+
 	public function getResources($page, $nbPerPage, $topic=null, $official=true, $user = null, $search = null)
 	{
 		$builder = $this->createQueryBuilder('r')
-			->orderBy('r.type');
+			->orderBy('r.dateUpdate', 'DESC');
 		
 		if($topic != null) {
 			$builder->join('r.topic', 't')

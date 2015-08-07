@@ -15,34 +15,34 @@ actions:
     duplicate: Duplicate
     edit: Edit
     import: Import
-    index: actions.index   # FIXME
-    next: actions.next
+    index: Add to index   # FIXME
+    next: Next
     options: Options
-    previous: actions.previous
+    previous: Previous
     save: Save
     search: Search
 
 added: added
 
 admin:
-    user: admin.user
-    user.add: admin.user.add
-    user.added: admin.user.added
-    user.delete: admin.user.delete
-    user.manage: admin.user.manage
+    user: user
+    user.add: 'Add a new user'
+    user.added: 'User successfuly added'
+    user.delete: 'Delete user'
+    user.manage: 'Manage users'
 
 browse:
-    advanced_search: browse.advanced_search
+    advanced_search: 'Advanced Search'
     default_presentations: 'Default presentations'
     filters: Filters
-    multiple_indexation: browse.multiple_indexation   # FIXME
-    mutliple_indexation: browse.mutliple_indexation
-    no_presentation: browse.no_presentation
+    multiple_indexation: 'Multiple Indexation'   # FIXME
+    mutliple_indexation: browse.multiple_indexation
+    no_presentation: 'No Presentation corresponds to these search criteria.'
     official: Official
-    parameters_title: browse.parameters_title
-    personal_presentation: browse.personal_presentation
-    personal_resources: browse.personal_resources
-    preview_current_resource: browse.preview_current_resource
+    parameters_title: 'Filter by'
+    personal_presentation: 'Personal presentations'
+    personal_resources: 'Personal resources'
+    preview_current_resource: 'Preview current resource'
 
 caddy:
     add: 'Add to bookmarks'
@@ -63,37 +63,38 @@ form:
         video: Video
 
 help:
-    add: help.add
-    added: help.added
-    delete: help.delete
-    deleted: help.deleted
-    edit: help.edit
-    edited: help.edited
-    main_title: help.main_title
-    no_help_for_this_page: help.no_help_for_this_page
+    add: 'Add help'
+    added: 'Help was added'
+    delete: 'Delete help'
+    deleted: 'Help was deleted'
+    edit: 'Edit help'
+    edited: 'Help was edited'
+    main_title: 'Help content management'
+    no_help_for_this_page: 'No help content corresponds to this page'
 
 label:
-    'no': 'no'
-    'yes': 'yes'
+    no: 'no'
+    yes: 'yes'
 
 matrix:
-    add: matrix.add
-    added: matrix.added
-    delete: matrix.delete
-    deleted: matrix.deleted
-    edit: matrix.edit
+    add: 'Add a matrix'
+    added: 'Matrix was added'
+    delete: 'Delete matrix'
+    deleteRowMessage: 'Confirm you wish to proceed. This action will delete all resources currently associated to this element.'
+    deleted: 'Matrix was deleted'
+    edit: 'Edit matrix'
     error:
-        resource_unofficial_not_added: matrix.error.resource_unofficial_not_added
-    levels: matrix.levels
-    main_title: matrix.main_title
-    modified: matrix.modified
-    modify_structure: matrix.modify_structure
-    note_resource: matrix.note_resource
-    official_fail: matrix.official_fail
-    official_success: matrix.official_success
-    official_title: matrix.official_title
-    povs: matrix.povs
-    show: "Matrix Overview"
+        resource_unofficial_not_added: 'The resource is not official and could not be added.'
+    levels: Levels
+    main_title: 'Manage your presentation matrices'
+    modified: 'Matrix was modified'
+    modify_structure: 'Modify matrix structure'
+    note_resource: 'This matrix is official. Only official resources are shown here.'
+    official_fail: 'Cannot proceed. Some of the used resources are not considered official.'
+    official_success: 'Matrix was made official.'
+    official_title: 'Make a matrix official'
+    povs: 'Points of view'
+    show: 'Matrix Overview'
 
 menu:
     bookmark: Bookmark
@@ -106,39 +107,39 @@ menu:
     manage: Manage
     matrixes: Matrixes
     ontologies: Ontologies
-    ontology: menu.ontology
-    presentation: menu.presentation
+    ontology: Ontology
+    presentation: Presentation
     presentations: Presentations
     resources: Resources
-    tools: menu.tools
+    tools: Tools
     topics: Topics
     translation: Translation
-    users_management: 'Users management'
+    users_management: 'User management'
 
 message:
     delete: 'You chose to delete %title%, are you sure ?'
 
     error:
-        entity_not_found: message.error.entity_not_found
-        not_enough_rights: message.error.not_enough_rights
-        occured: message.error.occured
+        entity_not_found: 'Entity of type %class% was not found.'
+        not_enough_rights: 'Not enough rights to complete this action.'
+        occured: 'An error occured.'
 
     matrix:
-        warning_official: message.matrix.warning_official
+        warning_official: 'this action will not automatically render official any presentation created from this matrix'
 
-    no_elt_found: message.no_elt_found
+    no_elt_found: 'No element was found.'
 
     ontology:
-        modal: message.ontology.moda
-        none_for_this_topic: 'No ontologies correspond to this topic.'
+        modal: 'Click on the ontology that you wish to use. Ontologies are indexed by topic. Presented topics are those linked to this particular resource.'
+        none_for_this_topic: 'No ontology corresponds to this topic.'
 
     presentation:
-        copy: message.presentation.copy
+        copy: 'You chose to copy presentation named %title%. Do you wish to proceed with the import of this presentation and associated matrix in your personal space?'
 
     resource:
-        none_for_this_search: 'No resource match your search.'
+        none_for_this_search: 'No resources match your search.'
 
-    save: message.save
+    save: Save
 
     title:
         warning: Warning
@@ -153,61 +154,62 @@ ontology:
     create_index: 'Add tags to index'
 
 player:
-    new_tab: 'Show this file in a new tab'
+    new_tab: 'Show this file in a new tab.'
 
 presentation:
-    add: presentation.add
-    added: presentation.added
-    added_to_playlist: presentation.added_to_playlist
-    advanced_visualisation: presentation.advanced_visualisation
-    browse: presentation.browse
-    copy_of: presentation.copy_of
-    copy_success: presentation.copy_success
-    default: presentation.default
-    default_topic: presentation.default_topic
-    delete: presentation.delete
-    deleted: presentation.deleted
-    details: presentation.details
+    add: 'Add a presentation'
+    added: 'Presentation was added'
+    added_to_playlist: 'The presentation was added to the playlist.'
+    advanced_visualisation: 'Advanced options'
+    browse: 'Browse presentations'
+    copy_of: 'Copy presentation'
+    copy_success: 'Presentation was copied successfuly.'
+    default: Default
+    default_topic: 'Default presentations for this topic.'
+    delete: 'Delete presentation'
+    deleted: 'Presentation was deleted'
+    details: 'Show presentation details'
+    edit: "Edit presentation"
     is_empty_add_content: 'The presentation matrix is empty. Would you like to add some content?'
     error:
-        matrix_unofficial: presentation.error.matrix_unofficial
-        presentation_unofficial: presentation.error.presentation_unofficial
+        matrix_unofficial: 'Associated matrix is unofficial'
+        presentation_unofficial: 'A unofficial presentation cannot be made a default presentation.'
 
-    generate_complement: presentation.generate_complement
-    initial_presentation: presentation.initial_presentation
-    main_title: presentation.main_title
+    generate_complement: 'Generate more content'
+    initial_presentation: 'Initial presentation'
+    main_title: 'All presentations'
 
     modal:
-        browse_existing: presentation.modal.browse_existing
-        create_from_matrix: presentation.modal.create_from_matrix
-        create_matrix: presentation.modal.create_matrix
-        from_existing: presentation.modal.from_existing
-        from_existing_0: presentation.modal.from_existing_0
-        from_existing_1: presentation.modal.from_existing_1
-        from_existing_2: presentation.modal.from_existing_2
-        from_scratch: presentation.modal.from_scratch
-        from_scratch_0: presentation.modal.from_scratch_0
-        from_scratch_1: presentation.modal.from_scratch_1
-        from_scratch_2: presentation.modal.from_scratch_2
-        from_scratch_3: presentation.modal.from_scratch_3
+        browse_existing: 'Browse existing presentations'
+        create_from_matrix: 'Create a presentation from your matrices.'
+        create_matrix: 'Create a presentation matrix.'
+        from_existing: 'Create from an pre-existing presentation.'
+        from_existing_0: "If you wish to create a presentation without having to define the presentation matrix by yourself, it is possible to do it from a pre-existing matrix.\n\t\t\t To do that, all you need to do is browse the existing presentations and choose the one you want to use as a model. Two choices will be offered to you once you view a presentation."
+        from_existing_1: 'Click to duplicate both the presentation and the presentation matrix.'
+        from_existing_2: 'You can also click on "Show more" and then on "Advanced Options" to create a presentation that conserves the original presentation matrix (as a consequence you won''t be able to edit said matrix, or add any more resources to it).'
+        from_scratch: 'Create a presentation from scratch.'
+        from_scratch_0: 'Creating a presentation from scratch is done in three steps:'
+        from_scratch_1: 'Choose the presentation''s topic'
+        from_scratch_2: 'Create a presentation matrix and completing it using resources from the presentation''s topic'
+        from_scratch_3: 'Finally make your presentation using the previously created matrix.'
 
-    modified: presentation.modified
-    my_selection: presentation.my_selection
-    new_playlist: presentation.new_playlist
-    official: presentation.official
-    parameters: presentation.parameters
+    modified: 'Presentation was modified'
+    my_selection: 'My selection'
+    new_playlist: 'New playlist'
+    official: Official
+    parameters: 'Parameters'
     personal_presentation: 'Personal presentation'
     personal_copy: 'Personal copy'
-    play_selection: presentation.play_selection
-    public: presentation.public
-    same_topic: presentation.same_topic
-    save_selection: presentation.save_selection
-    see_more: presentation.see_more
-    suggested_as_complement: presentation.suggested_as_complement
-    suggested_presentation: presentation.suggested_presentation
-    suggestions: presentation.suggestions
+    play_selection: 'Play new selection'
+    public: Public
+    same_topic: 'Presentations with the same topic'
+    save_selection: 'Save selection'
+    see_more: 'See more'
+    suggested_as_complement: 'Suggested as complement'
+    suggested_presentation: 'Suggested presentation'
+    suggestions: Suggestions
 
-removed: removed
+removed: Removed
 
 resource:
     add: 'Add new resource'
@@ -219,10 +221,11 @@ resource:
     edit: 'Edit resource'
     index: 'Index resource'
     modified: 'Resource was modified'
-    none_found_in_this_space: 'No resource found in this space'
+    none_found_in_this_space: 'No resource was found in this space'
     officials: Official
     personals: Personal
     shared: Shared
+    show: 'Examine resource'
     type_error: 'Unrecognized resource type.'
     upload_error: 'Upload failed. Please try again.'
 
@@ -231,52 +234,52 @@ role:
     stud: Student
 
 show:
-    playlist: show.playlist
-    resource_details: show.resource_details
-    total_duration: show.total_duration
+    playlist: Playlist
+    resource_details: Details
+    total_duration: Total duration
 
 tab:
-    mail: tab.mail
-    password: tab.password
-    role: tab.role
-    user: tab.user
-    users: tab.users
+    mail: E-mail Address
+    password: Password
+    role: Role
+    user: User
+    users: Users
 
 table:
     action: Actions
     created: 'Created on'
     creation: 'Creation date'
-    description: table.description
-    duration: table.duration
-    official: table.official
-    routes: table.routes
-    size: table.size
+    description: Description
+    duration: Duration
+    official: Official
+    routes: Routes
+    size: Size
     title: Titles
-    topic: table.topic
-    type: table.type
+    topic: Topic
+    type: Type
     update: 'Updated on'
-    video: table.video
+    video: Video
 
 text:
-    password: text.password
+    password: Password
 
 topic:
     add: 'Add new topic'
     added: 'Topic was created'
     all: 'All topics'
     delete: 'Delete a Topic'
-    deleteMessage: %title%
+    deleteMessage: 'Topic %title% will be deleted [Warning: This action will also delete all associated matrices, resources and presentations.]'
     deleted: 'Topic was successfuly deleted'
     edit: 'Edit Topic'
     main_title: 'Topics'
     modified: 'Topic was modified'
-    new_root: '+ Define as root'
+    new_root: '+ New root'
 
 user:
     register: 'Sign up'
 
     role:
-        admin: user.role.admin
-        student: user.role.student
-        teacher: user.role.teacher
+        admin: Admin
+        student: Student
+        teacher: Teacher
     register: 'Sign up'

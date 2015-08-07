@@ -27,7 +27,7 @@ added: Ajouts
 admin:
     user: 'l''utilisateur'
     user.add: 'Ajout d''un utilisateur'
-    user.added: 'Utilisateur ajoutée'
+    user.added: 'Utilisateur ajouté'
     user.delete: 'Suppression d''un utilisateur'
     user.manage: 'Gestion des utilisateurs'
 
@@ -44,10 +44,14 @@ browse:
     personal_resources: 'Ressources personnelles'
     preview_current_resource: 'Aperçu de la ressource courante'
 
+caddy:
+    add: 'Ajouter aux favoris'
+    remove: 'Supprimer des favoris'
+
 form:
     label:
         associated_routes: 'Adresses associées'
-        current_thumbnail: form.label.current_thumbnail
+        current_thumbnail: Miniature
         description: Description
         file: Fichier
         keywords: Mots-clés
@@ -76,6 +80,7 @@ matrix:
     add: 'Ajout d''une matrice'
     added: 'Matrice ajoutée'
     delete: 'Suppression d''une matrice'
+    deleteRowMessage: 'Veuillez confirmer que vous souhaitez procéder. Cette action supprimera toute ressource associée à l''élément sélectionné.'
     deleted: 'Matrice supprimée'
     edit: 'Modification d''une matrice'
     error:
@@ -89,6 +94,7 @@ matrix:
     official_success: 'Matrice passée en officiel'
     official_title: 'Officialisation d''une matrice'
     povs: 'Points de vue'
+    show: 'Vue d''ensemble de la matrice'
 
 menu:
     bookmark: Favoris
@@ -102,7 +108,7 @@ menu:
     matrixes: Matrices
     ontologies: 'Structure des connaissances'
     ontology: 'Structure des connaissances'
-    presentation: menu.presentation
+    presentation: Présentation
     presentations: Présentations
     resources: Ressources
     tools: Outils
@@ -114,8 +120,8 @@ message:
     delete: 'Vous avez choisi de supprimer %title%, êtes-vous sûr ?'
 
     error:
-        entity_not_found: 'L''entité %class% n''a pu être trouvée'
-        not_enough_rights: 'Vous ne disposez pas des droits suffisants pour effectuer cette opération'
+        entity_not_found: 'L''entité %class% n''a pu être trouvée.'
+        not_enough_rights: 'Vous ne disposez pas des droits suffisants pour effectuer cette opération.'
         occured: 'Une erreur est survenue'
 
     matrix:
@@ -147,7 +153,7 @@ ontology:
     create_index: 'Ajouter des éléments à l''index'
 
 player:
-    new_tab: 'Afficher dans un nouvel onglet'
+    new_tab: 'Afficher dans un nouvel onglet.'
 
 presentation:
     add: 'Ajout d''une présentation'
@@ -162,6 +168,7 @@ presentation:
     delete: 'Suppression d''une présentation'
     deleted: 'Présentation supprimée'
     details: 'Détails de la présentation'
+    edit: "Modifier la présentation"
     is_empty_add_content: 'La matrice de présentation est vide. Voudriez-vous y ajouter du contenu?'
     error:
         matrix_unofficial: 'La matrice associée n''est pas officielle'
@@ -189,7 +196,7 @@ presentation:
     my_selection: 'Ma sélection'
     new_playlist: 'Nouvelle liste de lecture'
     official: Officielle
-    parameters: 'Paramètres de %title%'
+    parameters: 'Paramètres'
     personal_presentation: 'Présentation personnelle'
     personal_copy: 'Copie personnelle'
     play_selection: 'Lancer la nouvelle présentation'
@@ -216,12 +223,13 @@ resource:
     personals: Personnelles
     bookmarks: Favoris
     shared: Partagées
+    show: 'Examiner la ressource'
     type_error: "Type de ressource non reconnu."
     upload_error: 'Echec lors de l''import. Veuillez ré-essayer.'
 
 role:
-    prof: role.prof
-    stud: role.stud
+    prof: Professeur
+    stud: Etudiant
 
 show:
     playlist: 'Liste de lecture'
@@ -229,11 +237,11 @@ show:
     total_duration: 'Durée totale'
 
 tab:
-    mail: tab.mail
-    password: tab.password
-    role: tab.role
-    user: tab.user
-    users: tab.users
+    mail: Adresse Mail
+    password: Mot de passe
+    role: Rôle
+    user: Utilisateur
+    users: Utilisateurs
 
 table:
     action: Action
@@ -251,7 +259,7 @@ table:
     video: Vidéo
 
 text:
-    password: text.password
+    password: 'Mot de passe'
 
 topic:
     add: 'Ajouter une thématique'

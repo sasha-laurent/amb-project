@@ -10,6 +10,7 @@ class VMBPreviousUrl
 		$this->router = $router;
 	}
 	// TODO: - Fix the locale switcheroo which requires to memorize pre-switch URL
+        // Check if _locale param is set
 	// 		 - Always pass and check CSRF token? Prevents most CSRF attacks
 	public function getPreviousUrl($request, $default = '/')
 	{
