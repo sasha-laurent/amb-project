@@ -415,7 +415,10 @@ class Matrix
     {
 		$this->sortedResources = array();
 		foreach($this->resources as $resource) {
-			$this->sortedResources[$resource->getPov()->getId()][$resource->getLevel()->getId()] = $resource;
+			if(!isset($this->sortedResources[$resource->getPov()->getId()][$resource->getLevel()->getId()])) {
+				$this->sortedResources[$resource->getPov()->getId()][$resource->getLevel()->getId()] = array();
+			}
+			$this->sortedResources[$resource->getPov()->getId()][$resource->getLevel()->getId()][] = $resource;
 		}
 	}
 
