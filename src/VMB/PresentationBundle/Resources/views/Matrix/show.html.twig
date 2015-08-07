@@ -143,256 +143,203 @@
 {% endblock %}
 
 {% block script %}
-	{{ parent() }}
-	<script>
-	var rowsUpdated = false;
-	
-	resourcesCollection = {
-		{% for key, subArrResources in resources %}
-			{% for elt in subArrResources %}
-				{{ elt.id }}: {
-					'title': "{{ elt.title }}", 
-					'description': "{{ elt.description }}", 
-					'creation': "{{ elt.dateCreate|date('d/m/y') }}", 
-					'update': "{{ elt.dateUpdate|date('d/m/y') }}", 
-					'duration': {{ elt.duration|default(0) }},
-					'duration_str': "{{ "%02d"|format(elt.duration // 60) }}:{{ "%02d"|format(elt.duration % 60) }}",
-					'src': "{{ asset(elt.getResourcePath) }}",
-					'type': "{{ elt.type }}"
-				},
-			{% endfor %}
+{{ parent() }}
+<script>
+var rowsUpdated = false;
+
+resourcesCollection = {
+	{% for key, subArrResources in resources %}
+		{% for elt in subArrResources %}
+			{{ elt.id }}: {
+				'title': "{{ elt.title }}", 
+				'description': "{{ elt.description }}", 
+				'creation': "{{ elt.dateCreate|date('d/m/y') }}", 
+				'update': "{{ elt.dateUpdate|date('d/m/y') }}", 
+				'duration': {{ elt.duration|default(0) }},
+				'duration_str': "{{ "%02d"|format(elt.duration // 60) }}:{{ "%02d"|format(elt.duration % 60) }}",
+				'src': "{{ asset(elt.getResourcePath) }}",
+				'type': "{{ elt.type }}"
+			},
 		{% endfor %}
-	};
-	selectedRes = 0;
-	$(document.querySelectorAll(".player")[0]).show();
+	{% endfor %}
+};
+selectedRes = 0;
+$(document.querySelectorAll(".player")[0]).show();
+
+{% include '::plyrSetup.html.twig' %}
 	
-	{% include '::plyrSetup.html.twig' %}
+var selectedClass = 'ui-state-highlight',
+	clickDelay = 250,
+	// click time (milliseconds)
+	lastClick, diffClick; // timestamps
+	
+function triggerNewRes(resId) {
+	if(selectedRes != resId) {
+		$('.addableRes_' + selectedRes).removeClass('active');
+		selectedRes = resId;
+		res = resourcesCollection[resId];
+		stopAndHideAll(res['type']);
+		$('.addableRes_' + resId).addClass('active');
 		
-	var selectedClass = 'ui-state-highlight',
-		clickDelay = 250,
-		// click time (milliseconds)
-		lastClick, diffClick; // timestamps
-		
-	function triggerNewRes(resId) {
-		if(selectedRes != resId) {
-			$('.addableRes_' + selectedRes).removeClass('active');
-			selectedRes = resId;
-			res = resourcesCollection[resId];
-			stopAndHideAll(res['type']);
-			$('.addableRes_' + resId).addClass('active');
-			
-			displayNewRes(res['src'], res['type']);
+		displayNewRes(res['src'], res['type']);
+	}
+}
+
+$('.addableResource').click(function() {
+	triggerNewRes($(this).attr('data-resource'));
+});
+
+function bindCustomDraggable(selector) {		
+	$(selector).bind('mousedown mouseup', function(e) {
+		if (e.type == "mousedown") {
+			lastClick = e.timeStamp; // get mousedown time
+		} else {
+			diffClick = e.timeStamp - lastClick;
+			if (diffClick < clickDelay) {
+				// add selected class to group draggable objects
+				$(this).toggleClass(selectedClass);
+			}
 		}
-	}
-	
-	$('.addableResource').click(function() {
-		triggerNewRes($(this).attr('data-resource'));
-	});
-	
-	function bindCustomDraggable(selector) {		
-		$(selector).bind('mousedown mouseup', function(e) {
-			if (e.type == "mousedown") {
-				lastClick = e.timeStamp; // get mousedown time
-			} else {
-				diffClick = e.timeStamp - lastClick;
-				if (diffClick < clickDelay) {
-					// add selected class to group draggable objects
-					$(this).toggleClass(selectedClass);
-				}
-			}
-		})
-		.draggable({
-			revertDuration: 10,
-			containment: '.drag_container',
-			zIndex: 1000,
-			cursor: "move", 
-			cursorAt: { top: {{ cellHeight / 2 }}, left: {{ cellWidth / 2 }} },
-			start: function(e, ui) {
-				ui.helper.addClass(selectedClass);
-			},
-			stop: function(e, ui) {
-				// reset group positions
-				$('.' + selectedClass).css({
-					top: 0,
-					left: 0
-				});
-			},
-			drag: function(e, ui) {
-				// set selected group position to main dragged object
-				// this works because the position is relative to the starting position
-				$('.' + selectedClass).css({
-					top: ui.position.top,
-					left: ui.position.left
-				});
-			}
-		});
-	}
-	
-	function noticeUnsavedMatrix() {		
-		$("#save-btn").addClass('btn-info');
-		$("#save-btn").removeClass('btn-default');
-	}
-	
-	$(function() {
-		bindCustomDraggable($(".usedResource"));
-		// Script to differentiate a click from a mousedown for drag event		
-		
-		$('.addableResource').draggable({
-			zIndex: 1000,
-			cursor: "move",
-			revert: true,
-			helper: "clone"
-		});
-
-		$("#browse_file").droppable({
-			accept: '.usedResource',
-			drop: function(e, ui) {
-				ui.draggable.prev('input').val(0);
-				$('.usedResource.' + selectedClass).prev('input').val(0);
-				ui.draggable.remove();
-				$('.usedResource.' + selectedClass).remove();
-				noticeUnsavedMatrix();
-			}
-		});
-		
-		$("#matrix td").droppable({
-			accept: '.usedResource, .addableResource',
-			drop: function(e, ui) {
-				if(ui.draggable.hasClass('usedResource')) {
-					if($('.usedResource.'+ selectedClass).length > 1) {
-						alert('Vous ne pouvez pas déplacer plusieurs éléments dans une seule case');
-					}
-					else {
-						ui.draggable.prev('input').val(0);
-						$('> .usedResource', this).remove();
-						$('> input', this).val(ui.draggable.attr('data-resource'));
-						ui.draggable.appendTo($(this)) // ui.draggable is appended by the script, so add it after
-						.removeClass(selectedClass).css({
-							top: 0,
-							left: 0
-						});
-						noticeUnsavedMatrix();
-					}
-				}
-				else {
-					$('> .usedResource', this).remove();
-					$('> input', this).val(ui.draggable.attr('data-resource'));
-					$(this).append('<div class="usedResource" data-resource="' + ui.draggable.attr('data-resource') + '" style="background-image:url(' + ui.draggable.attr('data-thumb') + ');"><div class="resThumbnailHover"><span class="resTitle">' + ui.draggable.attr('data-title') + '</span></div></div>');
-					bindCustomDraggable($('> .usedResource', this));
-					noticeUnsavedMatrix();
-				}
-				$(this).removeClass('tdOvered');
-			},
-			over: function(e, ui) {
-				$(this).addClass('tdOvered');
-			},
-			out: function(e, ui) {
-				$(this).removeClass('tdOvered');
-			}
-		});
-	});
-
-	// For forward compatibility we call jQuery.load() and inject content in the modal container 
-	// instead of using "remote" parameter in the modal.js
-	$('#myModal').on('show.bs.modal', function (e) {
-		$('#indicator').show();
-		var modal_content = $(this).find(".modal-dialog > .modal-content");
-		$(modal_content).load("{{ path('matrix_edit', {'id': entity.id, 'is_modal': true}) }}", function(){
-			$('#indicator').hide();
-		});		
-	});
-
-	$('#modalResourceAdd').modal({ show: false });
-	$('#modalResourceAdd').on('show.bs.modal', function(e){
-		$('#indicator').show();
-		var modal_content = $(this).find(".modal-dialog > .modal-content");
-		$(modal_content).load("{{ path('resource_new', {'is_modal':true}) }}", function(){
-			$('#indicator').hide();
-		});		
-	});
-	// on hide, if resource upload is pending then show a small tab on the bottom right
-	$('#modalResourceAdd').on('hide.bs.modal', function(e){
-	});
-
-
-	$('#save-btn').click(function(event) {
-		if($("#save-btn").hasClass('btn-info')) {
-			$(".loading_indicator_inline").css('display', 'inline-block');
-			event.preventDefault();
-			$('#matrix_form').submit();
+	})
+	.draggable({
+		revertDuration: 10,
+		containment: '.drag_container',
+		zIndex: 1000,
+		cursor: "move", 
+		cursorAt: { top: {{ cellHeight / 2 }}, left: {{ cellWidth / 2 }} },
+		start: function(e, ui) {
+			ui.helper.addClass(selectedClass);
+		},
+		stop: function(e, ui) {
+			// reset group positions
+			$('.' + selectedClass).css({
+				top: 0,
+				left: 0
+			});
+		},
+		drag: function(e, ui) {
+			// set selected group position to main dragged object
+			// this works because the position is relative to the starting position
+			$('.' + selectedClass).css({
+				top: ui.position.top,
+				left: ui.position.left
+			});
 		}
 	});
+}
+
+function noticeUnsavedMatrix() {		
+	$("#save-btn").addClass('btn-info');
+	$("#save-btn").removeClass('btn-default');
+}
+
+$(function() {
+	bindCustomDraggable($(".usedResource"));
+	// Script to differentiate a click from a mousedown for drag event		
 	
-	$('html').keyup(function(e){
-		if(e.key == 'Delete') {
+	$('.addableResource').draggable({
+		zIndex: 1000,
+		cursor: "move",
+		revert: true,
+		helper: "clone"
+	});
+
+	$("#browse_file").droppable({
+		accept: '.usedResource',
+		drop: function(e, ui) {
+			ui.draggable.prev('input').val(0);
 			$('.usedResource.' + selectedClass).prev('input').val(0);
+			ui.draggable.remove();
 			$('.usedResource.' + selectedClass).remove();
 			noticeUnsavedMatrix();
 		}
 	});
 	
-	
-	// Matrix rows management
-	function updateTitle(item, id, type, title) {
-		$.ajax({
-			type: "POST",
-			url: "{{ path('matrix_edit_row') }}",
-			data: { rowId: id, matrixId: {{ entity.id }}, title: title, rowType: type },
-			cache: false,
-			success: function(data){
-				if($.isNumeric(data)) {
-					$(item).html(title);
-					$(item).removeClass('inputMode');
-					if(id == "0") {
-						$(item).closest('li').attr('data-id', data);
-					}
-					rowsUpdated = true;
+	$("#matrix td").droppable({
+		accept: '.usedResource, .addableResource',
+		drop: function(e, ui) {
+			if(ui.draggable.hasClass('usedResource')) {
+				if($('.usedResource.'+ selectedClass).length > 1) {
+					alert('Vous ne pouvez pas déplacer plusieurs éléments dans une seule case');
 				}
 				else {
-					alert('Une erreur est survenue');
+					ui.draggable.prev('input').val(0);
+					$('> .usedResource', this).remove();
+					$('> input', this).val(ui.draggable.attr('data-resource'));
+					ui.draggable.appendTo($(this)) // ui.draggable is appended by the script, so add it after
+					.removeClass(selectedClass).css({
+						top: 0,
+						left: 0
+					});
+					noticeUnsavedMatrix();
 				}
 			}
-		});    
-		return false;
-	}
-	
-	function deleteRow(item, id, type) {
-		if(id == 0) {
-			$(item).remove();
+			else {
+				$('> .usedResource', this).remove();
+				$('> input', this).val(ui.draggable.attr('data-resource'));
+				$(this).append('<div class="usedResource" data-resource="' + ui.draggable.attr('data-resource') + '" style="background-image:url(' + ui.draggable.attr('data-thumb') + ');"><div class="resThumbnailHover"><span class="resTitle">' + ui.draggable.attr('data-title') + '</span></div></div>');
+				bindCustomDraggable($('> .usedResource', this));
+				noticeUnsavedMatrix();
+			}
+			$(this).removeClass('tdOvered');
+		},
+		over: function(e, ui) {
+			$(this).addClass('tdOvered');
+		},
+		out: function(e, ui) {
+			$(this).removeClass('tdOvered');
 		}
-		else {
-			if(confirm('Etes-vous sûr(e) de vouloir supprimer cette ligne? Cette action est irréversible et détruit le contenu associé.')){
-				$.ajax({
-					type: "POST",
-					url: "{{ path('matrix_delete_row') }}",
-					data: { rowId: id, matrixId: {{ entity.id }}, rowType: type },
-					cache: false,
-					success: function(data){
-						if(data == 'ok') {
-							$(item).remove();
-							rowsUpdated = true;
-						}
-						else {
-							alert('Une erreur est survenue');
-						}
-					}
-				});
-			}    
-		}
-		return false;
+	});
+});
+
+// For forward compatibility we call jQuery.load() and inject content in the modal container 
+// instead of using "remote" parameter in the modal.js
+$('#myModal').on('show.bs.modal', function (e) {
+	$('#indicator').show();
+	var modal_content = $(this).find(".modal-dialog > .modal-content");
+	$(modal_content).load("{{ path('matrix_edit', {'id': entity.id, 'is_modal': true}) }}", function(){
+		$('#indicator').hide();
+	});		
+});
+
+$('#modalResourceAdd').modal({ show: false });
+$('#modalResourceAdd').on('show.bs.modal', function(e){
+	$('#indicator').show();
+	var modal_content = $(this).find(".modal-dialog > .modal-content");
+	$(modal_content).load("{{ path('resource_new', {'is_modal':true}) }}", function(){
+		$('#indicator').hide();
+	});		
+});
+
+$('#save-btn').click(function(event) {
+	if($("#save-btn").hasClass('btn-info')) {
+		$(".loading_indicator_inline").css('display', 'inline-block');
+		event.preventDefault();
+		$('#matrix_form').submit();
 	}
+});
 
-	// Description arrow show dynamics
-	$('#collapseDescription').on('show.bs.collapse', function(){
-				$('a[href="#collapseDescription"] > span').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');
-			})
-							.on('hide.bs.collapse', function(){
-				$('a[href="#collapseDescription"] > span').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
-			});
+$('html').keyup(function(e){
+	if(e.key == 'Delete') {
+		$('.usedResource.' + selectedClass).prev('input').val(0);
+		$('.usedResource.' + selectedClass).remove();
+		noticeUnsavedMatrix();
+	}
+});
 
-	// Show on document initialize depends on trailing URL anchor set by link in matrix index list
-	var possible_anchor = decodeURIComponent(window.location.href).split("#")[1];
-	show_modal_edit = (possible_anchor == "show_edit") ? true : false;
-	$('#myModal').modal({ show : show_modal_edit });
-	</script>
+// Description arrow show dynamics
+$('#collapseDescription').on('show.bs.collapse', function(){
+	$('a[aria-expanded="true"] > span').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');
+}).on('hide.bs.collapse', function(){
+	$('a[aria-expanded="false"] > span').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
+});
+{#
+ # Whether we display the modal dialog to edit the Matrix structure when the HTML document is first initialized 
+ # depends on the existence of a trailing URL anchor "#show_edit" 
+ # (set by the link on the pencil glyphicon in matrixes index list)
+##}
+var addr_anchor = decodeURIComponent(window.location.href).split("#")[1];
+show_modal_edit = (addr_anchor == "show_edit") ? true : false;
+$('#myModal').modal({ show : show_modal_edit });
+</script>
 {% endblock %}

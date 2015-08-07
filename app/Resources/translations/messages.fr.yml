@@ -80,7 +80,8 @@ matrix:
     add: 'Ajout d''une matrice'
     added: 'Matrice ajoutée'
     delete: 'Suppression d''une matrice'
-    deleteRowMessage: 'Veuillez confirmer que vous souhaitez procéder. Cette action supprimera toute ressource associée à l''élément sélectionné.'
+    deleteRowTitle: 'Veuillez confirmer que vous souhaitez procéder.'
+    deleteRowMessage: 'Cette action supprimera toute ressource associée à l''élément sélectionné.'
     deleted: 'Matrice supprimée'
     edit: 'Modification d''une matrice'
     error:

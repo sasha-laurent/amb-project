@@ -682,7 +682,7 @@ class Resource
         try {
            $artPath = $this->getId().".".$ext;
            $this->customAudioArt->move($ul_root_audio_path, $artPath);
-           $this->setCustomArtPath($resource->getUploadDir('audio').'thumbs/'.$artPath); 
+           $this->setCustomArtPath($this->getUploadDir('audio').'thumbs/'.$artPath); 
            unset($this->customAudioArt);
        } catch (FileException $e) {
         return $e;

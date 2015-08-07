@@ -5,6 +5,7 @@ namespace VMB\ResourceBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 use VMB\ResourceBundle\Entity\Resource;
 use VMB\ResourceBundle\Form\ResourceType;
@@ -32,7 +33,9 @@ class ResourceController extends Controller
             'entities' => $entities
         ));
     }
-    
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */    
     public function browseAction($page, $topic=null)
     {
 		$mainTitle = $this->get('translator')->trans('resource.browse');
@@ -83,7 +86,9 @@ class ResourceController extends Controller
 			'page'     	=> $page
         ));
     }
-    
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */    
     public function indexationAction($topic)
     {
 		$mainTitle = $this->get('translator')->trans('browse.multiple_indexation');
@@ -119,6 +124,9 @@ class ResourceController extends Controller
      * Finds and displays a Resource entity.
      *
      */
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
     public function showAction($id)
     {
         $em = $this->getDoctrine()->getManager();
@@ -169,6 +177,9 @@ class ResourceController extends Controller
      * Search an entity.
      *
      */
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
     public function searchAction()
     {
 		$request = $this->container->get('request');
@@ -195,6 +206,9 @@ class ResourceController extends Controller
      * Deletes a Resource entity.
      *
      */
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
     public function deleteAction(Request $request, $id)
     {
         $resource = $this->getResource($id);
