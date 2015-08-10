@@ -322,12 +322,104 @@ header {
 	background-color: #FFBD70;
 }
 
-
-.usedResource, .usedResource .resThumbnailHover {
+.usedResource, .usedResource .resThumbnailHover, .tileUsedResource {
 	width: 100%;
 	height: 100%;
 	background-size: cover;
 	position: relative;
+}
+
+.tileContent {
+	display: none;
+}
+
+.enableSort {
+	display: block;
+	clear: both;
+	width: 100%;
+	height: 16px;
+	text-align: center;
+	line-height: 32px;
+	cursor: pointer;
+}
+.enableSort.hidden {
+	display: none;
+}
+
+.sortableResources {
+	height: 66px;
+}
+
+.tileUsedResource .nbResources {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.65);
+	color: white;
+	text-align: center;
+	cursor: pointer;
+}
+.tileUsedResource .nbResources:hover, .tileUsedResource.activeTile .nbResources { background-color: rgba(0,0,0,0.80); }
+
+.tileUsedResource .nbResources.noBg {
+	cursor: default;
+	background: transparent;
+}
+
+.tileUsedResource.ui-state-highlight .nbResources, .tdOvered .tileUsedResource .nbResources {
+	background-color: rgba(252, 152, 52, 0.6);
+}
+
+.tileUsedResource .nbResources .total {
+	width: 100%;
+	position: absolute;
+	top: 50%;
+	height: 20px;
+	margin-top: -10px;
+	line-height: 20px;
+	font-size: 20px;
+	text-align: center;
+}
+
+.tileUsedResource .nbResources .total.nbTotal {
+	top: 8px;
+	margin-top: 0px;
+}
+
+.tileUsedResource .nbResources .counterCheck {
+	text-align: right;
+	position: absolute;
+	margin-left: -39px;
+	bottom: 8px;
+	left: 50%;
+	height: 26px;
+	width: 79px;
+	padding: 3px 6px;
+	background-color: rgba(0,0,0,0.5);
+}
+
+.tileUsedResource .nbResources .counterCheck.copyMode {
+	width: 100%;
+	padding: 3px 0px;
+	left: 0px;
+	margin-left: 0px;
+	text-align: center;
+}
+
+#matrix .popover {
+	max-width: none;
+}
+
+#matrix .popover-content {
+	padding: 12px 12px 12px 8px;
+}
+
+#matrix .popover-content .usedResource {
+	display: block;
+	width: 120px;
+	height: 66px;
+	margin-left: 4px;
+	float: left;
 }
 
 .resThumbnailHover .resTitle {

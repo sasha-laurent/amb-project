@@ -2,7 +2,6 @@
 
 namespace VMB\PresentationBundle\Entity;
 
-use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -29,21 +28,18 @@ class UsedResource
 	private $resource;
 
     /**
-    * @Gedmo\SortableGroup
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Level")
 	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
 	*/
 	private $level;
 
     /**
-    * @Gedmo\SortableGroup
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Pov")
 	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
 	*/
 	private $pov;
 	
 	/**
-	* @Gedmo\SortableGroup
 	* @ORM\ManyToOne(targetEntity="VMB\PresentationBundle\Entity\Matrix", inversedBy="resources")
 	* @ORM\JoinColumn(nullable=false)
 	*/
@@ -52,7 +48,6 @@ class UsedResource
 	/**
      * @var integer
      *
-     * @Gedmo\SortablePosition
      * @ORM\Column(name="sort", type="integer")
      */
     private $sort;
@@ -165,5 +160,28 @@ class UsedResource
     public function getResource()
     {
         return $this->resource;
+    }
+
+    /**
+     * Set sort
+     *
+     * @param integer $sort
+     * @return UsedResource
+     */
+    public function setSort($sort)
+    {
+        $this->sort = $sort;
+
+        return $this;
+    }
+
+    /**
+     * Get sort
+     *
+     * @return integer 
+     */
+    public function getSort()
+    {
+        return $this->sort;
     }
 }
