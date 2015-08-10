@@ -80,7 +80,8 @@ matrix:
     add: 'Add a matrix'
     added: 'Matrix was added'
     delete: 'Delete matrix'
-    deleteRowMessage: 'Confirm you wish to proceed. This action will delete all resources currently associated to this element.'
+    deleteRowTitle: 'Confirm you wish to proceed.'
+    deleteRowMessage: 'This action will delete all resources currently associated to this element.'
     deleted: 'Matrix was deleted'
     edit: 'Edit matrix'
     error:

@@ -6,30 +6,46 @@
 	#}
 {% endblock %}
 
+{% if page == 1 and (nbPages == 0 or nbPages == 1) %}
+	{% set skipPagination = true %}
+{% endif %}
+
 {% block body %}
 	<div class="row">
-		<div class="btn-group" role="group">
+		<div class="btn-group align-center" role="group" aria-label="Type Selection">
 			{# add class btn-primary for queried type#}
 			<button type="button" class="btn">
-				{{"menu.presentations"|trans}} <span class="badge"></span>
+				{{"menu.presentations"|trans}} <span class="badge">{#count#}</span>
 			</button>
 			<button type="button" class="btn">
-				{{"menu.resources"|trans}} <span class="badge"></span>
+				{{"menu.resources"|trans}} <span class="badge">{#count#}</span>
+			</button>
+		</div>
+		{# Mosaic default ?#}
+		<div class="btn-group-lg pull-right" role="group" aria-label="View Selection">
+			<button type="button" class="btn" id="resultsAsList">
+				<span class="glyphicon-th-list"></span>
+			</button>
+			<button type="button" class="btn btn-primary" id="resultsAsMosaic">
+				<span class="glyphicon-th-large"></span>
 			</button>
 		</div>
 	</div>
-	{#
-	Be able to switch between 
-	glyphicon glyphicon-th-list and 
-	glyphicon glyphicon-th-large
-	representations
-	---------------------------
-	Results container
-	---------------------------
-	Pagination Footer
-	#}
+	
+	<div id="resultsContainer">
+	</div>
+
+	{% if skipPagination is not defined %}
+		{% include '::pagination.html.twig' %}
+	{% endif %}
 {% endblock %}
 
 {% block script %}
-	{# Populate Json with resource entity objects.#}
+	{{parent()}}
+	<script type="text/javascript">
+	var list_template = "";
+	var mosaic_template = "";
+	// Populate Json with resource entity objects.
+	$(function(){});
+	</script>
 {% endblock }

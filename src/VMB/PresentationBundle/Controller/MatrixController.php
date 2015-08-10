@@ -5,6 +5,7 @@ namespace VMB\PresentationBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 use VMB\PresentationBundle\Entity\Matrix;
@@ -301,13 +302,14 @@ class MatrixController extends Controller
 		}
 		$render_opts = array(
 			'form' => $form->createView(),
+			'entity' => $matrix,
 			'mainTitle' => ((!($matrix->toString())) ? 
 				$translator->trans('matrix.add') : $translator->trans('matrix.edit')));
 
 		if($is_modal_dialog){
 			$render_opts['saveButton'] = true;		
 			$render_opts['is_modal'] = true;		
-			$render_opts['delButtonUrl'] = '#" data-dismiss="modal"';
+			$render_opts['delButtonUrl'] = '#" data-dismiss="modal"'; // small hack to inject the dismiss attribute
 			return $this->render('VMBPresentationBundle:Matrix:modalEdit.html.twig', $render_opts);	
 		} else {
 			$render_opts['backButtonUrl'] = $this->container->get('vmb_presentation.previous_url')
@@ -410,7 +412,7 @@ class MatrixController extends Controller
     
     /**
      * Deletes a Matrix Row (level or Pov)
-     *
+     * Bug: rowId from form is not real rowId from database table
      */
     /**
     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
@@ -420,26 +422,36 @@ class MatrixController extends Controller
 		$matrixId = $request->request->get('matrixId');
 		$matrix = $this->getMatrix($matrixId);
 		
-		if($this->get('security.context')->isGranted('ROLE_ADMIN') || $matrix->isOwner($this->getUser())) {	
+		if($this->get('security.context')->isGranted('ROLE_ADMIN') 
+			|| $matrix->isOwner($this->getUser())) {	
 			if ($request->isMethod('POST')) {
 				$rowId = $request->request->get('rowId');
 				$type = $request->request->get('rowType');
 				
 				try {
-					$elt = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:'.$type)->find($rowId);
+					$elt = $this->getDoctrine()->getManager()
+					->getRepository('VMBPresentationBundle:'.$type)->find($rowId);
 					// If the element was found
-					if($elt !== null && $elt->getMatrix()->getId() == intval($matrixId)) {
-						$em = $this->getDoctrine()->getManager();
-						$em->remove($elt);
-						$em->flush();
-						return new Response('ok');	
+					if($elt !== null){
+						if($elt->getMatrix()->getId() == intval($matrixId)) {
+							$em = $this->getDoctrine()->getManager();
+							$em->remove($elt);
+							$em->flush();
+							return new JsonResponse('ok');
+						} else {
+							return new JsonResponse('emid:'.$elt->getMatrix()->getId().', reqid:'.intval($matrixId), 500);
+						}
+					} else {
+						return new JsonResponse('Element not found', 500);
 					}
 				} catch (\Exception $e) {
-					return new Response($e); 
+					return new JsonResponse($e->getMessage(), 500); 
 				}
 			}
+		} else {
+			$access_denied = $this->get('translator')->trans('message.error.not_enough_rights');
+			return new JsonResponse($access_denied, 403);
 		}
-		return new Response('error');
 	}
 	
 	/**
@@ -474,8 +486,7 @@ class MatrixController extends Controller
 							$elt->setMatrix($matrix);
 							$em->persist($elt);
 						}
-					}
-					else {
+					} else {
 						$elt = $em->getRepository('VMBPresentationBundle:'
 							.$type)->find($rowId);
 					}
