@@ -12,21 +12,20 @@
 # - /var/www/{site placeholder} should be an argument
 #
 # To copy the files use: (should be output to )
-# scp username@10.77.6.23:/var/www/edu/backup /local_folder
+# scp username@10.77.6.23:/var/www/edu/backup /local
 
 TODAY=$(date +%F)
 HOME_DIR=/var/www/edu
 
 # Create backup directory if not found
-# TODO: Also create upload/ and data/ dirs
 if [[ ! -d "$HOME_DIR/backup/" ]]; then
-	mkdir "$HOME_DIR/backup/" || { exit "[FAIL] Can't create backup directory." ;}
+	mkdir "$HOME_DIR/backup/" || { exit "[FAIL] Can't create backup directory."; }
 fi
 
 # Compress and save upload directory
 tar -czf $HOME_DIR/backup/upload/uploaded_files_$TODAY.tar.gz $HOME_DIR/web/upload
 # Dump database data
-mysqldump vmb > $HOME_DIR/backup/data/amb_sql_$TODAY
+mysqldump vmb -u root -pJGIRZrRk > $HOME_DIR/backup/data/amb_sql_$TODAY
 # Remove backup files older than a month =~30 days
 find $HOME_DIR/backup/ -mtime +30 -exec rm {} \;
 # Exit without errors
