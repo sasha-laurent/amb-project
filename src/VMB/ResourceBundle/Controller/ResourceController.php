@@ -37,7 +37,7 @@ class ResourceController extends Controller
     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
     */    
     public function browseAction($page, $topic=null)
-    {
+    {		
 		$mainTitle = $this->get('translator')->trans('resource.browse');
 		
 		if ($page < 1) {
@@ -55,11 +55,21 @@ class ResourceController extends Controller
 		}
 		
 		$request = $this->get('request');
+		$advancedSearch = explode(',', $request->query->get('advancedSearch'));
+		foreach($advancedSearch as $key => $value) {
+			if(is_numeric($value)) {
+				$advancedSearch[$key] = intval($value);
+			}
+			else {
+				unset($advancedSearch[$key]);
+			}
+		}
+			
 		$official = ($request->query->get('official') == 1) ? true : 'all';
 		$personal = ($request->query->get('personal') == 1);
 		$search = $request->query->get('search');
 		
-        $entities = $em->getRepository('VMBResourceBundle:Resource')->getResources($page, $nbPerPage, $topic, $official, ($personal ? $this->getUser() : null), $search);
+        $entities = $em->getRepository('VMBResourceBundle:Resource')->getResources($page, $nbPerPage, $topic, $official, ($personal ? $this->getUser() : null), $search, $advancedSearch);
         
         // On calcule le nombre total de pages grâce au count($listAdverts) qui retourne le nombre total d'annonces
 		$nbPages = ceil(count($entities)/$nbPerPage);

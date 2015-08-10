@@ -19,29 +19,62 @@
 	
 	
 	{% if app.request.get('_route') != 'vmb_resource_indexation' %}
-	<div class="row filter">
-		<div class="col-md-10">{{ 'browse.personal_resources'|trans }} :</div>
-		<div class="col-md-2 text-right">
-			<a href="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'personal':((app.request.get('personal') + 1) % 2)|default(1)})) }}" class="switch">
-				{% if app.request.get('personal')|default(0) == 0 %}
-					<span class="hidden-value glyphicon glyphicon-ok checkedRes"></span>
-					<span class="shown-value glyphicon glyphicon-minus"></span>
-				{% else %}
-					<span class="shown-value glyphicon glyphicon-ok checkedRes"></span>
-					<span class="hidden-value glyphicon glyphicon-minus"></span>
-				{% endif %}
-			</a>
+		<div class="row filter">
+			<div class="col-md-10">{{ 'browse.personal_resources'|trans }} :</div>
+			<div class="col-md-2 text-right">
+				<a href="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'personal':((app.request.get('personal') + 1) % 2)|default(1)})) }}" class="switch">
+					{% if app.request.get('personal')|default(0) == 0 %}
+						<span class="hidden-value glyphicon glyphicon-ok checkedRes"></span>
+						<span class="shown-value glyphicon glyphicon-minus"></span>
+					{% else %}
+						<span class="shown-value glyphicon glyphicon-ok checkedRes"></span>
+						<span class="hidden-value glyphicon glyphicon-minus"></span>
+					{% endif %}
+				</a>
+			</div>
 		</div>
-	</div>
 	{% endif %}	
-	
-	<h4>{{ 'menu.topics'|trans }}</h4>
-	{% include "VMBResourceBundle:Resource:topicLink.html.twig" with {'links': topics, 'current': topic.id|default(null)} %}
-	
-	{% if app.request.get('_route') != 'vmb_resource_indexation' %}
-	<h4>{{ 'menu.tools'|trans }}</h4>
-	<div class="row tools">
-		<a href="#"><span class="glyphicon glyphicon-zoom-in"></span>&nbsp; {{ 'browse.advanced_search'|trans }}</a><br/>
-	</div>
+		
+	{% if app.request.get('advancedSearch') %}
+		<h4>{{ 'menu.tools'|trans }}</h4>
+		<div class="row tools">
+			<a href="{{ path(app.request.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'advancedSearch':null})) }}">{{ 'browse.stop_advanced_search'|trans }}</a><br/>
+		</div>
+	{% else %}
+		<h4>{{ 'menu.topics'|trans }}</h4>
+		{% include "VMBResourceBundle:Resource:topicLink.html.twig" with {'links': topics, 'current': topic.id|default(null)} %}
+		
+		{% if app.request.get('_route') != 'vmb_resource_indexation' %}
+			<h4>{{ 'menu.tools'|trans }}</h4>
+			<div class="row tools">
+				<a href="#" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-zoom-in"></span>&nbsp; {{ 'browse.advanced_search'|trans }}</a><br/>
+			</div>
+			
+			<!-- Modal -->
+			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			  <div class="modal-dialog" role="document">
+				<div class="modal-content">
+				  <div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">{{ 'browse.advanced_search'|trans }}</h4>
+				  </div>
+				  <div class="modal-body">
+					{{ 'browse.advanced_search.modal_text'|trans }}
+					<hr/>
+					<ul>
+					{% for o in topic.ontologies %}
+						<li><a href="{{ path('ontology_search', {'i': o.id}) }}">{{ o.name }}</a></li>
+					{% else %}
+						<li><em>{{ 'message.ontology.none_for_this_topic'|trans }}</em></li>
+					{% endfor %}
+					</ul>
+				  </div>
+				  <div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span></button>
+				  </div>
+				</div>
+			  </div>
+			</div>
+		{% endif %}
 	{% endif %}
 </div>

@@ -36,4 +36,4 @@ ontology_list_available:
 
 ontology_search:
     pattern:  /search/{i}
-    defaults: { _controller: VMBPresentationBundle:Ontology:search, i:1 }
+    defaults: { _controller: VMBPresentationBundle:Ontology:search }

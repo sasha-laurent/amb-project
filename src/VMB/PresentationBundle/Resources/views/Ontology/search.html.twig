@@ -31,10 +31,6 @@
 			  ontologyMode : 'search',
 			  id		   : '1'          
 			});
-
-			$('#select-ontology').change(function(){
-		       	$('#form-ontology').submit();
-		    });
 		});
 	</script>
 
@@ -43,17 +39,6 @@
 {% block buttons %}
 	<ul class = "main-top-menu">
   		<li style="margin-top: 7px;"><span id="video-number" style="font-weight:bold; color:red;">0</span> <span id="video-text">videos were</span> found</li>
-  		<li>
-  			<form method="GET" id="form-ontology" name="form-ontology" method="GET">
-  				<select class="form-control" name="ontology" id="select-ontology">
-  					{% for ontology in ontologies %}
-  						<option {% if value == ontology.id %} selected {% endif %} value="{{ontology.id}}">
-  							{{ontology.name|e}}
-  						</option>
-  					{% endfor %}
-  				</select>
-  			</form>
-  		</li>
   		<li><button class="btn search-button">Search</button></li>
 	</ul>
 {% endblock %}
@@ -65,14 +50,14 @@
 		
 		<div class="miller--terms--container">
 			
-			{{#if parent}}
+			{#if parent #}
 				<div class="miller--terms--selection">					
 					{{#each parent}} {{#if @index}} &raquo; {{/if}} <a href="#" class="crumb" data-depth="{{depth}}">{{name}}</a>{{/each}}
 				</div>
 			{{/if}}
 
   		<ul class="terms">
-  			{{#each taxonomies}}
+  			{#each taxonomies#}
   				<li class="term" id = "data{{id}}" data-id="{{id}}">
   					<a href="#">
   					  <span class="title">{{label}}</span> 
@@ -87,7 +72,7 @@
 	</script>
 	<!-- end of Miller taxonomy -->	
 	{% endraw %}
-	<form style = "display:none; visibility: hidden;" method="POST" name="search-form" id="search-form" action="">
-		<input type="text" name="search" id="search-value">
+	<form style = "display:none; visibility: hidden;" method="GET" name="search-form" id="search-form" action="{{ path('vmb_resource_browse_topic', {topic: ontology.topic.id}) }}">
+		<input type="text" name="advancedSearch" id="search-value">
 	</form>
 {% endblock %}
