@@ -62,7 +62,7 @@
 					{{ 'browse.advanced_search.modal_text'|trans }}
 					<hr/>
 					<ul>
-					{% for o in topic.ontologies %}
+					{% for o in topic.ontologies|default(null) %}
 						<li><a href="{{ path('ontology_search', {'i': o.id}) }}">{{ o.name }}</a></li>
 					{% else %}
 						<li><em>{{ 'message.ontology.none_for_this_topic'|trans }}</em></li>
