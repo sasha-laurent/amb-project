@@ -90,41 +90,43 @@ class MatrixController extends Controller
     public function updateAction(Request $request, $id)
     {
 		$em = $this->getDoctrine()->getManager();
-		$matrix = $em->getRepository('VMBPresentationBundle:Matrix')->find($id);
+		$matrix = $em->getRepository('VMBPresentationBundle:Matrix')->getMatrixWithResources($id);
 
 		$resourceUpdates = $request->request->all();
 		
-		$nbRm = $nbAdd = 0;
+		$nbRm = $nbAdd = $nbUpdate = 0;
 		
 		// We browse the existing used resources to see if they have been modified or removed
-		$usedResources = $em->getRepository('VMBPresentationBundle:UsedResource')->findByMatrixId($id);
-		foreach($usedResources as $usedRes) {
-			$key = $usedRes->getPov()->getId().'_'.$usedRes->getLevel()->getId();
-			
-			// We make sure that the value is in the right range
-			if(isset($resourceUpdates[$key]) && is_numeric($resourceUpdates[$key])) {
-				// Conversion to int before tests
-				$resourceUpdates[$key] = intval($resourceUpdates[$key]);
-				if($resourceUpdates[$key] >= 0) {				
-					// We must delete the entity
-					if($resourceUpdates[$key] == 0) {
+		$sortedResources = $matrix->getSortedResources();
+		foreach($sortedResources as $pov => $subArr) {
+			foreach($subArr as $lvl => $resArr) {
+				foreach($resArr as $index => $usedRes) {
+					$key = $pov.'_'.$lvl.'_'.$index;
+					
+					// We make sure that the value is in the right range
+					if(isset($resourceUpdates[$key]) && is_numeric($resourceUpdates[$key])) {
+						// Conversion to int before tests
+						$resourceUpdates[$key] = intval($resourceUpdates[$key]);
+						if($resourceUpdates[$key] >= 0) {				
+							$usedRes->setResource($em->getRepository('VMBResourceBundle:Resource')->find($resourceUpdates[$key]));
+							$nbUpdate++;
+							unset($resourceUpdates[$key]);
+						}
+					}
+					else {
 						$em->remove($usedRes);
 						$nbRm++;
 					}
-					// We must update the entity
-					else {
-						$usedRes->setResource($em->getRepository('VMBResourceBundle:Resource')->find($resourceUpdates[$key]));
-					}
-					unset($resourceUpdates[$key]);
 				}
 			}
 		}
 		
 		// We browse the remaining post values > the remaining values that are not 0 are meant to be added to the database
 		foreach($resourceUpdates as $key => $res) {
-			if(preg_match('`^([0-9]+)_([0-9]+)$`', $key, $matches)) {
+			if(preg_match('`^([0-9]+)_([0-9]+)_([0-9]+)$`', $key, $matches)) {
 				$pov = intval($matches[1]);
 				$lvl = intval($matches[2]);
+				$pos = intval($matches[3]);
 				$res = intval($res);
 				
 				if($res != 0) {
@@ -136,6 +138,7 @@ class MatrixController extends Controller
 						$usedResource->setPov($em->getRepository('VMBPresentationBundle:Pov')->find($pov));
 						$usedResource->setLevel($em->getRepository('VMBPresentationBundle:Level')->find($lvl));
 						$usedResource->setResource($resource);
+						$usedResource->setSort($pos);
 						
 						$em->persist($usedResource);
 						$nbAdd++;
@@ -147,7 +150,7 @@ class MatrixController extends Controller
 			}
 		}
 
-		$em->flush();
+		$em->flush(); 
 		
 		$flashMessage = $this->get('translator')->trans('matrix.modified').' - '.$nbAdd.' '. $this->get('translator')->trans('added') . ' | '.$nbRm.' '. $this->get('translator')->trans('removed');
 		$request->getSession()->getFlashBag()->add('success', $flashMessage);
