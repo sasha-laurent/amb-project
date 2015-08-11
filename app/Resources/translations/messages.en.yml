@@ -75,10 +75,18 @@ help:
 
 homepage:
     title: 'Welcome to the Alternative Mediations Builder'
-    presentation_paragraph_1:
-    presentation_paragraph_2:
-    presentation_paragraph_3:
-    sign_up_link: 'Sign up for free to watch and create your own presentations.'
+    presentation_paragraph_1: 'AMB is a modular universe of services for educative and cultural mediation. It offers an extensive range of possibilities for setting up presentations:'
+    presentation_paragraph_1_1: 'adaptive to different user profiles'
+    presentation_paragraph_1_2: 'open to rich media'
+    presentation_paragraph_1_3: 'supporting a wide range of discourses.'
+    presentation_paragraph_2: 'AMB provides innovative technical means for developing projects in quality guidance and assistance in reading strategies, interpretation and comprehension (of a subject, of a concept, of a state of affairs, of an object, etc.).'
+    presentation_paragraph_3: 'AMB carries out and stimulates mediations addressing progressive levels of receptors’ implication. Its conception relies on a fair number of "grains", i.e., resources with some narrative autonomy. These grains may be combined freely to build presentations with:'
+    presentation_paragraph_3_1: 'complementary points of view (ways of reading, regards, aspects, topics...)'
+    presentation_paragraph_3_2: 'various difficulty degrees (essential, enhanced, comprehensive...)'
+    presentation_paragraph_3_3: 'eclectic presentation variants (rewritings, alternative sequences...).'
+    presentation_paragraph_4: 'AMB proposes, more precisely, a platform for constructing personalized presentations (showing, exhibition, visit and reading tour, course...) in an interactive and intuitive manner. It is intended for mediators whose objective is to create content (professors, curators...), and for receptors, whose goal is to be informed, discover, learn, explore, etc. (general public, students, visitors, spectators...). '
+    presentation_paragraph_5: 'AMP may give grounds to numerous educational and cultural paradigms, as, for instance : MOOCs, SPOCs, active pedagogy projects, inverse class sessions, classical lectures, projects of visitor-centered digital museology, dynamically composed tailored shows, communication operations, etc. '
+    sign_up: 'Sign up for free' #  to watch and create your own presentations.
 
 label:
     no: 'no'
