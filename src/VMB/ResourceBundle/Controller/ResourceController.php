@@ -137,7 +137,7 @@ class ResourceController extends Controller
     /**
     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
     */
-    public function showAction($id)
+    public function showAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -147,7 +147,6 @@ class ResourceController extends Controller
             throw $this->createNotFoundException('Unable to find Resource entity.');
         }
         
-        $request = $this->get('request');
 		$official = ($request->query->get('official') == 1) ? true : 'all';
 		$personal = ($request->query->get('personal') == 1);
 		$search = $request->query->get('search');
@@ -168,8 +167,10 @@ class ResourceController extends Controller
             'entity'      => $entity,
             'mainTitle' => $entity->getTitle(),
             'editButtonUrl' => $this->generateUrl('resource_edit', array('id' => $id)),
+            'backButtonUrl' => $this->get('vmb_presentation.previous_url')->getPreviousUrl($request),
             'saveToCaddy' => 'resource',
             'inCaddy' => $this->getUser()->resourceIsInCaddy($entity),
+            'hasPlaybackFunction' => true,
             'prev' => $prev,
             'next' => $next,
             'position' => $position);

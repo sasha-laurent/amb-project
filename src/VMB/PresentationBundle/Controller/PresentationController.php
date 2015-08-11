@@ -100,15 +100,17 @@ class PresentationController extends Controller
 		$default = ($request->query->get('default') == 1) ? true : 'all';
 		$search = $request->query->get('search');
 		
-		$publicMode = true;
-		$personal = null;
-		$privateEntities = null;
+		// $privateEntities = null;
 		if($request->query->get('personal') == 1) {
 			$personal = $this->getUser();
 			$publicMode = 'all';
+		} else {
+			$personal = null;
+			$publicMode = true;			
 		}
 		
-        $entities = $em->getRepository('VMBPresentationBundle:Presentation')->getPresentations($page, $nbPerPage, $topic, $publicMode, $official, $default, $personal, $search);
+        $entities = $em->getRepository('VMBPresentationBundle:Presentation')
+        ->getPresentations($page, $nbPerPage, $topic, $publicMode, $official, $default, $personal, $search);
         
         // On calcule le nombre total de pages grâce au count($entities) qui retourne le nombre total de presentations
 		$nbPages = ceil(count($entities)/$nbPerPage);
@@ -149,7 +151,9 @@ class PresentationController extends Controller
         $entity = $em->getRepository('VMBPresentationBundle:Presentation')->findWithConcreteResources($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException($this->get('translator')->trans('message.error.entity_not_found', array('%class%' => 'Presentation')));
+            throw $this->createNotFoundException(
+            	$this->get('translator')->trans('message.error.entity_not_found', 
+            	array('%class%' => 'Presentation')));
         }
         
 		$response = new Response();
@@ -211,8 +215,10 @@ class PresentationController extends Controller
 		if ($request->isMethod('POST')) {
 			try {
 				$em = $this->getDoctrine()->getManager();
-				$presentation = $em->getRepository('VMBPresentationBundle:Presentation')->findWithConcreteResources($id);
-				$matrix = $em->getRepository('VMBPresentationBundle:Matrix')->getMatrixWithResources($presentation->getMatrix()->getId());
+				$presentation = $em->getRepository('VMBPresentationBundle:Presentation')
+					->findWithConcreteResources($id);
+				$matrix = $em->getRepository('VMBPresentationBundle:Matrix')
+					->getMatrixWithResources($presentation->getMatrix()->getId());
 				$em->detach($presentation);
 				$em->detach($matrix);
 				
@@ -332,10 +338,13 @@ class PresentationController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('VMBPresentationBundle:Presentation')->findWithConcreteResources($id);
+        $entity = $em->getRepository('VMBPresentationBundle:Presentation')
+        	->findWithConcreteResources($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException($this->get('translator')->trans('message.error.entity_not_found', array('%class%' => 'Presentation')));
+            throw $this->createNotFoundException(
+            	$this->get('translator')->trans('message.error.entity_not_found', 
+            	array('%class%' => 'Presentation')));
         }
         
         $alternativeResources = array();
@@ -343,7 +352,8 @@ class PresentationController extends Controller
 		if ($request->isMethod('POST')) 
 		{
 			$postValues = $request->request->all();
-			$matrix = $em->getRepository('VMBPresentationBundle:Matrix')->getMatrixWithResources($entity->getMatrix()->getId());
+			$matrix = $em->getRepository('VMBPresentationBundle:Matrix')
+				->getMatrixWithResources($entity->getMatrix()->getId());
 
 			foreach($postValues as $key => $position) {
 				if(preg_match('`usedResource_([0-9]+)_([0-9]+)`', $key, $matches)) {
@@ -364,8 +374,10 @@ class PresentationController extends Controller
 	
 		$args = array(
             'mainTitle' => $entity->getTitle(),
+            'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request),
             'saveToCaddy' => 'presentation',
             'inCaddy' => $user->presentationIsInCaddy($entity),
+            'hasPlaybackFunction' => true,
 			'entity' => $entity,
 			'alternativeResources' => $alternativeResources,
         );
@@ -683,7 +695,8 @@ class PresentationController extends Controller
 				'copy' => $saveAsCopy,
 				'matrix' => $presentation->getMatrix(),
 				'presentation' => $shownPresentation,
-				'alertDismissible' => true
+				'alertDismissible' => true,
+				'hasPlaybackFunction' => true,
 			);
 			
 		if(!$saveAsCopy && $presentation->getId() != null) {

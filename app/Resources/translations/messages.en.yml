@@ -7,6 +7,7 @@ Titre: Titre
 
 actions:
     add: Add
+    back: 'Go Back'
     cancel: Cancel
     close: Close
     create: Create
@@ -72,12 +73,19 @@ help:
     main_title: 'Help content management'
     no_help_for_this_page: 'No help content corresponds to this page'
 
+homepage:
+    title: 'Welcome to the Alternative Mediations Builder'
+    presentation_paragraph_1:
+    presentation_paragraph_2:
+    presentation_paragraph_3:
+    sign_up_link: 'Sign up for free to watch and create your own presentations.'
+
 label:
     no: 'no'
     yes: 'yes'
 
 matrix:
-    add: 'Add a matrix'
+    add: 'Add matrix'
     added: 'Matrix was added'
     delete: 'Delete matrix'
     deleteRowTitle: 'Confirm you wish to proceed.'
@@ -95,7 +103,7 @@ matrix:
     official_success: 'Matrix was made official.'
     official_title: 'Make a matrix official'
     povs: 'Points of view'
-    show: 'Matrix Overview'
+    show: 'Matrix overview'
 
 menu:
     bookmark: Bookmark
@@ -146,11 +154,12 @@ message:
         warning: Warning
 
 ontology:
+    add: 'Add ontology' 
     add_node: 'Add Node'
     delete_node: 'Delete node'
     edit: 'Edit ontology'
     edit_node: 'Edit node'
-    delete_node: 'Delete node'
+    delete: 'Delete ontology'
     save_node: 'Save Node'
     create_index: 'Add tags to index'
 
@@ -163,7 +172,7 @@ presentation:
     added_to_playlist: 'The presentation was added to the playlist.'
     advanced_visualisation: 'Advanced options'
     browse: 'Browse presentations'
-    copy_of: 'Copy presentation'
+    copy_of: 'Copy the presentation'
     copy_success: 'Presentation was copied successfuly.'
     default: Default
     default_topic: 'Default presentations for this topic.'
@@ -171,7 +180,7 @@ presentation:
     deleted: 'Presentation was deleted'
     details: 'Show presentation details'
     edit: "Edit presentation"
-    is_empty_add_content: 'The presentation matrix is empty. Would you like to add some content?'
+    is_empty_add_content: 'The presentation matrix is empty.<br/> Add some first!'
     error:
         matrix_unofficial: 'Associated matrix is unofficial'
         presentation_unofficial: 'A unofficial presentation cannot be made a default presentation.'
@@ -247,7 +256,7 @@ tab:
     users: Users
 
 table:
-    action: Actions
+    action: Action
     created: 'Created on'
     creation: 'Creation date'
     description: Description
@@ -255,7 +264,7 @@ table:
     official: Official
     routes: Routes
     size: Size
-    title: Titles
+    title: Title
     topic: Topic
     type: Type
     update: 'Updated on'
@@ -265,20 +274,20 @@ text:
     password: Password
 
 topic:
-    add: 'Add new topic'
+    add: 'Add topic'
     added: 'Topic was created'
     all: 'All topics'
-    delete: 'Delete a Topic'
+    delete: 'Delete topic'
     deleteMessage: 'Topic %title% will be deleted [Warning: This action will also delete all associated matrices, resources and presentations.]'
     deleted: 'Topic was successfuly deleted'
-    edit: 'Edit Topic'
+    edit: 'Edit topic'
     main_title: 'Topics'
     modified: 'Topic was modified'
     new_root: '+ New root'
 
 user:
     register: 'Sign up'
-
+    profile: Profile
     role:
         admin: Admin
         student: Student

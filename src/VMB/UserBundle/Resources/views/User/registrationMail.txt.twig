@@ -2,5 +2,7 @@ Bonjour,
 
 Voici votre mail récapitulatif d'inscription à VMB. Vos identifiants sont ci-dessous :
 
-Nom d'utilisateur :{{ username }}
+Nom d'utilisateur : {{ username }}
+{% if password is defined %}
 Mot de passe : {{ password }}
+{% endif %}

@@ -28,6 +28,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
     
 class RegistrationController extends BaseController
 {
+
     public function registerAction(Request $request)
     {
         $has_admin_rights = $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN');
@@ -63,14 +64,14 @@ class RegistrationController extends BaseController
             **/
 
             $form_role = $form->getData()->getRoles();
-            $role = 'ROLE_STUDENT';
             if( isset($form_role) 
                 && $has_admin_rights 
                 && in_array($form_role, array('ROLE_ADMIN', 'ROLE_STUDENT', 'ROLE_TEACHER')))
             {
                     $role = $form_role;
-			}
-
+			} else {
+                $role = 'ROLE_STUDENT';
+            }
             $user->addRole($role);
             
             /*
@@ -82,17 +83,28 @@ class RegistrationController extends BaseController
     			$password = substr($tokenGenerator->generateToken(), 0, 8); // 8 chars
                 $user->setPlainPassword($password);
             }
-
-            $userManager->updateUser($user);
+            try {
+                $userManager->updateUser($user);
+            } catch(\Doctrine\DBAL\DBALException $e){
+                // If duplicate entry for username then just say username not available
+                $flashMessage = $this->get('translator')->trans($e->getMessage());
+                $request->getSession()->getFlashBag()->add('danger', $flashMessage);
+                $url = $this->generateUrl('fos_user_registration_register');
+                return new RedirectResponse($url);
+            }
             
             /*
              * Sending registration mail 
             **/
+            $message_opts = array('username' => $user->getUsername());
+            if($has_admin_rights){
+                $message_opts['password'] = $password;
+            }
             $message = \Swift_Message::newInstance()
 				->setSubject('Inscription à VMB')
 				->setFrom('vmb@vmb.com')
 				->setTo($user->getEmail())
-				->setBody($this->renderView('VMBUserBundle:User:registrationMail.txt.twig', array('username' => $user->getUsername(), 'password' => $password)))
+				->setBody($this->renderView('VMBUserBundle:User:registrationMail.txt.twig',$message_opts))
             ;
 			$this->get('mailer')->send($message);
 
@@ -106,6 +118,7 @@ class RegistrationController extends BaseController
     				$request->getSession()->getFlashBag()->add('success', $flashMessage);
                     $url = $this->generateUrl('admin_user');
                 } else {
+                    $this->get('session')->set('fos_user_send_confirmation_email/email', $user->getEmail());
                     $url = $this->generateUrl('fos_user_registration_check_email');
                 }
                 $response = new RedirectResponse($url);

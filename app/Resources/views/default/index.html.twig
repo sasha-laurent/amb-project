@@ -1,9 +1,18 @@
 {% extends '::layout.html.twig' %}
 
+{% block h1_title %}
+    	<div class="text-center">{{"homepage.title"|trans}}</div>
+{% endblock %}
+
 {% block body %}
-    <h4>
-    	Welcome to the Virtual Mediations Builder homepage! <br/>
-    	You can watch the introductive video. (on the right | below ) <br/>
-    	Then you can sign up for free to create your own presentation. <br/>
-    </h4>
+<div class="col-md-6">
+	<p class="lead">{{"homepage.presentation_paragraph_1"|trans}}</p>
+	<p>{{"homepage.presentation_paragraph_2"|trans}}</p>
+	<p>{{"homepage.presentation_paragraph_3"|trans}}</p>
+</div>
+<div class="col-md-6">
+	<a href="{{path("fos_user_registration_register")}}">{{"homepage.sign_up_link"|trans}}
+	</a>
+</div>
+    	
 {% endblock %}

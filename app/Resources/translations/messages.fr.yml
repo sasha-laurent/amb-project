@@ -7,6 +7,7 @@ Titre: Titre
 
 actions:
     add: Ajouter
+    back: 'Aller en arrière'
     cancel: Annuler
     create: Créer
     close: Fermer
@@ -72,6 +73,13 @@ help:
     main_title: 'Gestion des aides contextuelles'
     no_help_for_this_page: 'Aucune aide contextuelle pour cette page'
 
+homepage:
+    title: 'Bienvenue à Alternative Mediations Builder'
+    presentation_paragraph_1: 'AMB est un univers de services pour des présentations polyvalentes, pouvant s''adapter à divers profils de public, en présentiel ou à distance.'
+    presentation_paragraph_2: 'Conçu essentiellement pour des présentations à base de vidéos, il supporte aussi des images, des textes voire des  audios.'
+    presentation_paragraph_3: 'Interactif, l''AMB offre une large gamme de possibilités pour mettre sur pied, de manière intuitive, plusieurs schémas d''exposition.'
+    sign_up_link: 'Inscrivez-vous gratuitement pour visualiser des présentations et créer les votres.'
+
 label:
     no: Non
     yes: Oui
@@ -87,7 +95,7 @@ matrix:
     error:
         resource_unofficial_not_added: 'Une ressource n''a pu être ajoutée car elle n''est pas officielle'
     levels: Niveaux
-    main_title: 'Gestion de vos matrices de présentation'
+    main_title: 'Gestion des matrices'
     modified: 'Matrice modifiée'
     modify_structure: 'Modifier la structure de la matrice'
     note_resource: 'Cette matrice étant officielle, seules les ressources officielles (et donc indexées) sont ici affichées'
@@ -146,8 +154,11 @@ message:
         warning: Attention
 
 ontology:
+    add: 'Créer une nouvelle ontologie'
     add_node: 'Ajouter un élément'
+    edit: 'Modification de l''ontologie'
     edit_node: 'Modifier l''élément'
+    delete: 'Suppression de l''ontologie'
     delete_node: 'Effacer l''élément'
     save_node: 'Sauvegarder'
     edit: 'Modifier l''ontologie'
@@ -157,7 +168,7 @@ player:
     new_tab: 'Afficher dans un nouvel onglet.'
 
 presentation:
-    add: 'Ajout d''une présentation'
+    add: 'Création d''une nouvelle présentation'
     added: 'Présentation ajoutée'
     added_to_playlist: 'Ajoutée à la liste de lecture'
     advanced_visualisation: 'Visualisation avancée'
@@ -170,7 +181,7 @@ presentation:
     deleted: 'Présentation supprimée'
     details: 'Détails de la présentation'
     edit: "Modifier la présentation"
-    is_empty_add_content: 'La matrice de présentation est vide. Voudriez-vous y ajouter du contenu?'
+    is_empty_add_content: 'La matrice de présentation est vide.<br/>Veuillez ajouter du contenu, tout d’abord !'
     error:
         matrix_unofficial: 'La matrice associée n''est pas officielle'
         presentation_unofficial: 'Une présentation non officielle ne peut être passée en présentation par défaut'
@@ -215,11 +226,12 @@ resource:
     add: 'Ajout d''une ressource'
     added: 'Ressource ajoutée'
     browse: 'Parcourir les ressources'
-    delete: 'Suppression d''une ressource'
+    delete: 'Suppression de la ressource'
     deleted: 'Ressource supprimée'
-    edit: 'Modification d''une ressource'
+    edit: 'Modification de la ressource'
+    index: 'Indexation de la ressource'
     modified: 'Ressource modifiée'
-    none_found_in_this_space: 'Aucune ressource trouvée pour ce sujet dans cet espace'
+    none_found_in_this_space: 'Aucune ressource n''a été trouvée pour ce sujet dans cet espace'
     officials: Officielles
     personals: Personnelles
     bookmarks: Favoris
@@ -266,15 +278,16 @@ topic:
     add: 'Ajouter une thématique'
     added: 'Thématique ajoutée'
     all: 'Toutes les thématiques'
-    delete: 'Suppression d''une thématique'
+    delete: 'Suppression de la thématique'
     deleteMessage: 'la thématique "%title%" [ATTENTION CELA SUPPRIMERA TOUTES LES MATRICES, RESSOURCES ET PRESENTATIONS LIEES]'
     deleted: 'Thématique supprimée'
-    edit: 'Thématique modifiée'
+    edit: 'Modification de la thématique'
     main_title: 'Classification des thématiques'
     modified: 'Thématique modifiée'
     new_root: '+ Nouvelle racine'
 
 user:
+    profile: Profil
     role:
         admin: Administrateur
         student: Étudiant

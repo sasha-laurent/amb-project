@@ -42,23 +42,23 @@ class Presentation
     /**
      * @var boolean
      *
-     * @ORM\Column(name="public", type="boolean", options={"default":0})
+     * @ORM\Column(name="public", type="boolean", options={"dfault":0})
      */
     private $public = 0;
     
     /**
      * @var boolean
      *
-     * @ORM\Column(name="official", type="boolean", options={"default":0})
+     * @ORM\Column(name="official", type="boolean", options={"dfault":0})
      */
     private $official = 0;
     
     /**
      * @var boolean
      *
-     * @ORM\Column(name="`default`", type="boolean", options={"default":0})
+     * @ORM\Column(name="dfault", type="boolean", options={"dfault":0})
      */
-    private $default = 0;
+    private $dfault = 0;
 
     /**
      * @var \DateTime
@@ -605,7 +605,7 @@ class Presentation
      */
     public function setDefault($default)
     {
-        $this->default = $default;
+        $this->dfault = $default;
 
         return $this;
     }
@@ -617,7 +617,7 @@ class Presentation
      */
     public function getDefault()
     {
-        return $this->default;
+        return $this->dfault;
     }
 
     /**

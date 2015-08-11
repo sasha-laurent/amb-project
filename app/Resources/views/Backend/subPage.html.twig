@@ -16,7 +16,7 @@
 	<div class="row">
 		<div class="col-md-{{ 12 - colWidth }}">
 			{% if backButtonUrl is defined %}
-				<a title="{{"actions.back"|trans|desc('Go Back')}}" class="btn btn-default" href="{{ backButtonUrl }}" >
+				<a title="{{"actions.back"|trans}}" class="btn btn-default" href="{{ backButtonUrl }}" >
 					<span class="left glyphicon glyphicon-chevron-left" aria-hidden="true" >
 					</span>
 				</a>
@@ -30,7 +30,7 @@
 			{% endif %}
 			<div class="btn-group" role="group" aria-label="...">
 				{% if editButtonUrl is defined %}
-					<a title="{{ "actions.edit"|trans|desc('Edit') }}" class="btn btn-default" 
+					<a title="{{ "actions.edit"|trans }}" class="btn btn-default" 
 					{% if editModal is defined %} 
 						data-toggle="modal" data-target="{{ editModal }}" 
 						{% else %} 
@@ -45,12 +45,13 @@
 					</a>				
 				{% endif %}
 				{% if saveButton is defined %}
-					<a class="btn btn-default" id="save-btn" title="{{ "actions.save"|trans|desc('Save') }}">
+					<a class="btn btn-default" id="save-btn" title="{{ "actions.save"|trans }}">
 						<span class="left glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
 					</a>
 				{% endif %}
 				{% if addButtonUrl is defined %}
-					<a title="{{ "actions.add"|trans|desc('Add') }}" class="btn btn-default" 
+					{# Modular addButtonTitle defined in controllers#}
+					<a title="{{ "actions.add"|trans }}" class="btn btn-default" 
 					{% if addModal is defined %} 
 						data-toggle="modal" data-target="{{ addModal }}" 
 					{% else %} 
@@ -60,12 +61,12 @@
 					</a>
 				{% endif %}
 				{% if optionButtonModal is defined %}
-					<a title="{{ "actions.options"|trans|desc('Options') }}" class="btn btn-default" data-toggle="modal" data-target="{{ optionButtonModal }}">
+					<a title="{{ "actions.options"|trans }}" class="btn btn-default" data-toggle="modal" data-target="{{ optionButtonModal }}">
 						<span class="left glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
 					</a>
 				{% endif %}
 				{% if forkButtonUrl is defined %}
-					<a title="{{ "actions.duplicate"|trans|desc('Duplicate') }}" class="btn btn-default" href="{{ forkButtonUrl }}" >
+					<a title="{{ "actions.duplicate"|trans }}" class="btn btn-default" href="{{ forkButtonUrl }}" >
 						{#<span class="left glyphicon glyphicon-duplicate" aria-hidden="true"></span> #}
 						<img width="10px" height="16px" src="{{asset('img/git-branch.svg')}}"></img>
 					</a>
@@ -76,7 +77,7 @@
 					</a>
 				{% endif %}
 				{% if exportAssetUrl is defined %}
-					<a href="{{ asset(exportAssetUrl) }}" title="{{ "player.new_tab"|trans|desc('Display file in a new tab') }}" id="xptr_url" target="_blank" class="btn btn-default">
+					<a href="{{ asset(exportAssetUrl) }}" title="{{ "player.new_tab"|trans }}" id="xptr_url" target="_blank" class="btn btn-default">
 						<span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
 					</a>
 				{% endif %}
