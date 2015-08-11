@@ -5,14 +5,34 @@
 {% endblock %}
 
 {% block body %}
-<div class="col-md-6">
-	<p class="lead">{{"homepage.presentation_paragraph_1"|trans}}</p>
+<div class="row">
+<div class="col-md-6 lead">
+	<p>{{"homepage.presentation_paragraph_1"|trans}}
+		<ul>
+			<li>{{"homepage.presentation_paragraph_1_1"|trans}}</li>
+			<li>{{"homepage.presentation_paragraph_1_2"|trans}}</li>
+			<li>{{"homepage.presentation_paragraph_1_3"|trans}}</li>
+		</ul>
+	</p>
 	<p>{{"homepage.presentation_paragraph_2"|trans}}</p>
-	<p>{{"homepage.presentation_paragraph_3"|trans}}</p>
 </div>
 <div class="col-md-6">
-	<a href="{{path("fos_user_registration_register")}}">{{"homepage.sign_up_link"|trans}}
-	</a>
+	<img src="{{asset("img/landingPageArt.jpg")}}" width="460px" height="325px">
 </div>
+</div>
+	<p>{{"homepage.presentation_paragraph_3"|trans}}
+		<ul>
+			<li>{{"homepage.presentation_paragraph_3_1"|trans}}</li>
+			<li>{{"homepage.presentation_paragraph_3_2"|trans}}</li>
+			<li>{{"homepage.presentation_paragraph_3_3"|trans}}</li>
+		</ul>
+	</p>
+	<p>{{"homepage.presentation_paragraph_4"|trans}}</p>
+	<p>{{"homepage.presentation_paragraph_5"|trans}}</p>
+<div class="row text-center">
+	<a class='btn btn-success btn-lg' href="{{path("fos_user_registration_register")}}">{{"homepage.sign_up"|trans}}
+	</a>	
+</div>
+
     	
 {% endblock %}

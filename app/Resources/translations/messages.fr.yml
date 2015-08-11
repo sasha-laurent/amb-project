@@ -75,10 +75,18 @@ help:
 
 homepage:
     title: 'Bienvenue à Alternative Mediations Builder'
-    presentation_paragraph_1: 'AMB est un univers de services pour des présentations polyvalentes, pouvant s''adapter à divers profils de public, en présentiel ou à distance.'
-    presentation_paragraph_2: 'Conçu essentiellement pour des présentations à base de vidéos, il supporte aussi des images, des textes voire des  audios.'
-    presentation_paragraph_3: 'Interactif, l''AMB offre une large gamme de possibilités pour mettre sur pied, de manière intuitive, plusieurs schémas d''exposition.'
-    sign_up_link: 'Inscrivez-vous gratuitement pour visualiser des présentations et créer les votres.'
+    presentation_paragraph_1: 'AMB est un univers modulable de services pour la médiation éducative et culturelle. Il offre une palette étendue de possibilités pour réaliser des présentations :'
+    presentation_paragraph_1_1: 'adaptables à plusieurs profils d’utilisateurs'
+    presentation_paragraph_1_2: 'ouvertes à des médias riches'
+    presentation_paragraph_1_3: 'supportant des discours variés.'
+    presentation_paragraph_2: 'AMB met à disposition des moyens techniques innovants pour développer des projets d’accompagnement et d’assistance en lecture, interprétation et compréhension (d’un thème, d’un concept, d’une situation, d’un objet, etc.).'
+    presentation_paragraph_3: 'AMB assure et stimule des médiations axées sur des niveaux graduels d’implication de la part des récepteurs. Sa conception se fonde sur un nombre considérable de « grains », c’est-à-dire, de ressources ayant une certaine autonomie narrative. Ces grains peuvent être combinés à volonté pour construire des présentations suivant :'
+    presentation_paragraph_3_1: 'des points de vue complémentaires (manières de lire, regards, aspects, topiques...)'
+    presentation_paragraph_3_2: 'des degrés de difficulté multiples (essentiel, étendu, compréhensif...)'
+    presentation_paragraph_3_3: 'des variantes de présentation éclectiques (réécritures, séquences alternatives...).'
+    presentation_paragraph_4: 'AMB propose, plus concrètement, une plateforme de construction de présentations (exposition, parcours de visite et de lecture, cours...) personnalisables d’une façon interactive et intuitive. Il est destiné à des médiateurs, dont l’objectif est de créer des contenus (professeurs, conservateurs de musée...), et à des récepteurs, dont le but est de s’informer, de découvrir, d’apprendre, d’explorer, etc. (public général, élèves, visiteurs, spectateurs...). '
+    presentation_paragraph_5: 'AMB peut appuyer plusieurs paradigmes éducatifs et culturels, comme par exemple : des MOOC et des SPOC, des projets en pédagogie active, des séances de classe inversée, des cours magistraux classiques, des projets de muséologie numérique centrée sur le visiteur (en phase de préparation, de réalisation ou de capitalisation de visite), des spectacles sur mesure dynamiquement construits, des opérations de communication, etc.'
+    sign_up: 'Inscrivez-vous gratuitement' # pour visualiser des présentations et créer les votres.
 
 label:
     no: Non
