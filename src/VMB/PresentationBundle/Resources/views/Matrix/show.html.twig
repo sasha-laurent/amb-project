@@ -27,18 +27,12 @@
 			<tr height="{{ cellHeight }}px">
 				<th class="text-center">{{ pov.title }}</th>
 				{% for level in entity.levels %}
-				<td data-prototype="{{ pov.id ~ "_" ~ level.id }}" class="text-center">
-					<input type="hidden" name="{{ pov.id ~ "_" ~ level.id }}" value="{{ entity.sortedResources[pov.id][level.id].resource.id|default(0) }}" />
-					{% if entity.sortedResources[pov.id][level.id] is defined %}
-						<div class="usedResource" data-resource="{{ entity.sortedResources[pov.id][level.id].resource.id }}" style="background-image:url({{ asset(entity.sortedResources[pov.id][level.id].resource.getThumbsPath) }});">
-							<div class="resThumbnailHover"><span class="resTitle">{{ entity.sortedResources[pov.id][level.id].resource.title|shortenText(18, '...') }}</span></div>
-						</div>
-					{% endif %}
-				</td>
+					<td id="td_{{ pov.id ~ "_" ~ level.id }}" data-prototype="{{ pov.id ~ "_" ~ level.id }}" class="text-center"></td>
 				{% endfor %}
 			</tr>
 			{% endfor %}
 		</table>
+		<div id="inputs_hidden"></div>
 	</form>
 	<hr/>
 		<div class="row">
@@ -145,20 +139,30 @@
 {% block script %}
 	{{ parent() }}
 	<script>
+	var places = ["bottom", "left", "top", "right"];
 	var rowsUpdated = false;
+	
+	function indexOf(array, item) {
+		for (var i = 0; i < array.length; i++) {
+			if (array[i].toString() === item.toString()) return i;
+		}
+		return -1;
+	}
 	
 	resourcesCollection = {
 		{% for key, subArrResources in resources %}
 			{% for elt in subArrResources %}
 				{{ elt.id }}: {
 					'title': "{{ elt.title }}", 
+					'shortTitle': "{{ elt.title|shortenText(18, '...') }}", 
 					'description': "{{ elt.description }}", 
 					'creation': "{{ elt.dateCreate|date('d/m/y') }}", 
 					'update': "{{ elt.dateUpdate|date('d/m/y') }}", 
 					'duration': {{ elt.duration|default(0) }},
 					'duration_str': "{{ "%02d"|format(elt.duration // 60) }}:{{ "%02d"|format(elt.duration % 60) }}",
 					'src': "{{ asset(elt.getResourcePath) }}",
-					'type': "{{ elt.type }}"
+					'type': "{{ elt.type }}",
+					'thumbs': "{{ asset(elt.getThumbsPath) }}",
 				},
 			{% endfor %}
 		{% endfor %}
@@ -189,22 +193,298 @@
 		triggerNewRes($(this).attr('data-resource'));
 	});
 	
-	function bindCustomDraggable(selector) {		
+	// Matrix object
+	function Matrix() {
+		this.unsaved = false;		
+		this.boxes = {};
+		this.mode = 'tile'; // tile or resource
+		
+		this.getBox = function(coords) { return this.boxes[coords]; };
+	};
+	
+	Matrix.prototype.setMode = function(mode) { 
+		var currentMode = this.mode;
+		
+		if((mode == 'tile' || mode == 'resource') && mode != currentMode) { 
+			this.mode = mode; 
+			if(mode == 'tile') {
+				$('.usedResource.' + selectedClass).removeClass(selectedClass);
+			}
+			else {
+				$('.tileUsedResource.' + selectedClass).removeClass(selectedClass);
+			}
+		} 
+	}
+	
+	Matrix.prototype.addBox = function(pov, lvl, resList) {
+		this.boxes[pov + "_" + lvl] = new Box(pov, lvl, resList);
+		this.boxes[pov + "_" + lvl].generateBox();
+	};
+	
+	Matrix.prototype.generatePopover = function(boxId) {
+		return this.boxes[boxId].generatePopover();
+	};
+	
+	// Method that sets the matrix as unsaved
+	Matrix.prototype.noticeUnsaved = function() {
+		this.unsaved = true;
+		$("#save-btn").addClass('btn-info');
+		$("#save-btn").removeClass('btn-default');
+	};
+	
+	Matrix.prototype.prepareSave = function() {
+		inputs = "";
+		$.each(this.boxes, function(key, box) {
+			inputs += box.generateInputs();
+		});	
+		$('#inputs_hidden').html(inputs);
+	};
+	
+	Matrix.prototype.transfer = function(source, destination) {
+		if(source != destination) {
+			this.boxes[source].transferTo(this.boxes[destination]);
+		}
+	}
+	
+	Matrix.prototype.deleteSelection = function() {
+		if(this.mode == 'tile') {
+			$('.tileUsedResource.' + selectedClass).each(function(i, obj) {
+				this.getBox($(obj).attr('data-coordinates')).clearResources();
+			}.bind(this));
+			$('.tileUsedResource.' + selectedClass).removeClass(selectedClass);
+		}
+		else {
+			var idArray = $('.usedResource.' + selectedClass).map(function(){
+				return $(this).attr('data-id');
+			}).get();
+			this.getBox($('.usedResource.' + selectedClass).closest('td').attr('data-prototype')).removeResource(idArray);
+			$('.usedResource.' + selectedClass).removeClass(selectedClass);
+		}
+	}
+	
+	// Box (td) object
+	function Box(pov, lvl, resList) {
+		this.pov = pov;
+		this.lvl = lvl;
+		this.resList = resList;
+		this.domElt = $('#td_' + this.pov + '_' + this.lvl);
+	};
+	
+	Box.prototype.generateBox = function() {
+		var str = '<div class="tileUsedResource" data-coordinates="' + this.pov + '_' + this.lvl + '" data-length="' + this.resList.length + '" data-toggle="popover" ';
+		if(this.resList.length > 0) {
+			str += 'style="' + this.resList[0].getBackgroundStyle() + '"><div class="nbResources"><div class="total">+' + this.resList.length + '</div></div>';
+		}
+		else {
+			str += 'style="background-image: none;"><div class="nbResources noBg"></div>';
+		}
+		str += '</div>';
+		
+		this.domElt.html(str);
+	};
+	
+	Box.prototype.updateBox = function() {
+		var elt = $('> .tileUsedResource', this.domElt);
+		elt.attr('data-length', this.resList.length);
+		if(this.resList.length > 0) {
+			$(elt).css('background-image', 'url(' + this.resList[0].getThumbs() + ')');
+			$('> .nbResources', elt).removeClass('noBg');
+			$('> .nbResources', elt).html('<div class="total">+' + this.resList.length + '</div>');
+			if($('.tileUsedResource', this.domElt).data("bs.popover").tip().hasClass('in')) {
+				$('.tileUsedResource', this.domElt).popover('show');
+			}
+		}
+		else {
+			$(elt).css('background-image', 'none');
+			$('> .nbResources', elt).addClass('noBg');
+			$('> .nbResources', elt).html('');
+			if($('.tileUsedResource', this.domElt).data("bs.popover").tip().hasClass('in')) {
+				$('.tileUsedResource', this.domElt).popover('hide');
+			}
+		}
+		
+		
+	}
+	
+	Box.prototype.transferTo = function(destination) {
+		for(var i = 0; i < this.resList.length; i++) {
+			destination.addResource(this.resList[i].getId());
+		}
+		this.clearResources();
+	}
+	
+	Box.prototype.generatePopover = function() {
+		var str = '';
+		for(i=0; i < this.resList.length; i++) {
+			str += this.resList[i].getPopoverContent();
+		}
+		if(str != '') {
+			str = '<div class="sortableResources">' + str + '</div>';
+			str += (this.resList.length > 1) ? '<a class="enableSort">Activer le classement</a>' : '<a class="enableSort hidden">Activer le classement</a>';
+		}		
+		return str;
+	};
+	
+	Box.prototype.addResource = function(resId) {
+		this.resList.push(new Resource(resId));
+		this.updateBox();
+	};
+	
+	Box.prototype.clearResources = function() {
+		this.resList.splice(0, this.resList.length);
+		this.updateBox();
+	}
+		
+	Box.prototype.removeResource = function(resId) {
+		resId = (resId.constructor === Array) ? resId : [ resId ];
+		
+		for(j=0; j < resId.length; j++) {
+			for(var i = this.resList.length - 1; i >= 0; i--) {
+				if(this.resList[i].getId() == resId[j]) {
+					this.resList.splice(i, 1);
+				}
+			}
+		}
+		this.updateBox();
+	};
+	
+	Box.prototype.generateInputs = function() {
+		var output = "";
+		for(var i = 0; i < this.resList.length; i++) {
+			output += '<input type="hidden" name="' + this.pov + '_' + this.lvl + '_' + i + '" value="' + this.resList[i].getId() + '" />';
+		}
+		return output;
+	}
+	
+	Box.prototype.updateResourceList = function(newResList) {
+		if(newResList.length == this.resList.length) {
+			for(var i = 0; i < this.resList.length; i++) {
+				this.resList[i].setId(newResList[i]);
+			}
+		}
+	}
+	
+	// Used Resource Object
+	function Resource(resId) {
+		this.id = resId;
+
+		this.setId				= function(newId) { this.id = newId; }
+		this.getId				= function() { return this.id; };
+		this.getThumbs 			= function() { return (this.id != 0) ? resourcesCollection[this.id].thumbs 			 	  : ''; };
+		this.getShortTitle 		= function() { return (this.id != 0) ? resourcesCollection[this.id].shortTitle 		 	  : ''; };
+		this.getBackgroundStyle = function() { return (this.id != 0) ? 'background-image: url(' + this.getThumbs() + ');' : 'background-image: none;'; };
+	};
+	
+	Resource.prototype.getPopoverContent = function() {
+		return '<div class="usedResource" data-id="' + this.getId() + '" style="background-image:url(' + this.getThumbs() + ');"> \
+			<div class="resThumbnailHover"><span class="resTitle">' + this.getShortTitle() + '</span></div> \
+		</div>';
+	};
+	
+	// BINDINGS
+	function enableResourceDrop() {
+		$('#matrix td').droppable("option", "accept", '.tileUsedResource, .addableResource, .usedResource');
+	}
+	
+	function disableResourceDrop() {
+		$('#matrix td').droppable("option", "accept", '.tileUsedResource, .addableResource');
+	}
+	
+	function bindPopover(selector) {
+		$(selector).popover({
+			html: true,
+			placement: "bottom",
+			trigger: "click",
+			content: function() { return matrix.generatePopover($(this).attr('data-coordinates')); }
+		}).on("show.bs.popover", function () { 
+			$('.tileUsedResource').not(this).popover('hide');
+			elt = $('> .popover-content', $(this).data("bs.popover").tip());
+			elt.css("height", ((parseInt($(this).attr('data-length'), 10) > 1) ? 1 : 0) * 16 + 67 + 12 * 2 + 'px'); 
+			elt.css("width", ($(this).attr('data-length') * 120 + ($(this).attr('data-length') - 1) * 4 + 12*2) + "px"); 
+		}).on('hidden.bs.popover', function () {
+			$(this).removeClass('activeTile');
+		}).on('shown.bs.popover', function () {
+			$(this).addClass('activeTile');
+			$(this).attr('data-sortableEnabled', 0);
+			
+			// Draggable behaviour
+			bindCustomDraggable($('> .popover-content .usedResource', $(this).data("bs.popover").tip()), 10, '#' + $(this).data("bs.popover").tip().attr("id") + ' .sortableResources');
+			
+			// Sortable behaviour
+			$('> .popover-content .enableSort', $(this).data("bs.popover").tip()).unbind('click');
+			$('> .popover-content .enableSort', $(this).data("bs.popover").tip()).on('click', function() {
+				var elt = $('> .popover-content', $(this).data("bs.popover").tip());
+				if($(this).attr('data-sortableEnabled') == 1) {
+					$(this).attr('data-sortableEnabled', 0);
+					$('> .sortableResources', elt).sortable('destroy');
+					enableResourceDrop();
+					$(elt).find('.enableSort').html("Activer le classement");
+				}
+				else {
+					$(this).attr('data-sortableEnabled', 1);
+					disableResourceDrop();
+					$('> .sortableResources', elt).sortable({ 
+						update: function(event, ui) { 
+							var newResList = []
+							$('> .usedResource', this).each(function() { newResList.push($(this).attr('data-id')); });
+							matrix.getBox($(this).closest('td').attr('data-prototype')).updateResourceList(newResList);
+						}
+					});
+					$(elt).find('.enableSort').html("Désactiver le classement");
+				}
+			}.bind(this));
+			
+			// Right click behaviour
+			$('> .popover-content', $(this).data("bs.popover").tip()).unbind('contextmenu');
+			$('> .popover-content', $(this).data("bs.popover").tip()).on('contextmenu', function(event) {
+				// on right click : modify popover position (clockwise)
+				$(this).data("bs.popover").options.placement = places[(indexOf(places, $(this).data("bs.popover").options.placement) + 1) % 4];
+				$(this).popover('show');
+				return false;
+			}.bind(this));
+		});
+		
+		$(selector).on('contextmenu', function(event) {
+			// on right click : modify popover position (clockwise)
+			$(this).data("bs.popover").options.placement = places[(indexOf(places, $(this).data("bs.popover").options.placement) + 1) % 4];
+			$(this).popover('show');
+			return false;
+		});
+	}
+	
+	function bindCustomDraggable(selector, revertTime, connectToSortableId) {
+		revertTime = typeof revertTime !== 'undefined' ? revertTime : 0;
+		connectToSortableId = typeof connectToSortableId !== 'undefined' ? connectToSortableId : false;
+		
+		$(selector).unbind('mousedown mouseup');	
 		$(selector).bind('mousedown mouseup', function(e) {
 			if (e.type == "mousedown") {
 				lastClick = e.timeStamp; // get mousedown time
 			} else {
 				diffClick = e.timeStamp - lastClick;
 				if (diffClick < clickDelay) {
-					// add selected class to group draggable objects
-					$(this).toggleClass(selectedClass);
+					// add selected class to group draggable objects if Ctrl is pressed
+					if($(this).hasClass('tileUsedResource')) {
+						if (e.ctrlKey && $(this).find('input').first().val() != 0) {
+							matrix.setMode('tile');
+							$(this).toggleClass(selectedClass);
+						}
+					}
+					else if($(this).hasClass('usedResource')) {
+						if (e.ctrlKey) {
+							matrix.setMode('resource');
+							$(this).toggleClass(selectedClass);
+						}
+					}
 				}
 			}
 		})
 		.draggable({
-			revertDuration: 10,
+			revertDuration: revertTime,
 			containment: '.drag_container',
+			connectToSortable: connectToSortableId,
 			zIndex: 1000,
+			revert: true,
 			cursor: "move", 
 			cursorAt: { top: {{ cellHeight / 2 }}, left: {{ cellWidth / 2 }} },
 			start: function(e, ui) {
@@ -216,6 +496,7 @@
 					top: 0,
 					left: 0
 				});
+				ui.helper.removeClass(selectedClass);
 			},
 			drag: function(e, ui) {
 				// set selected group position to main dragged object
@@ -224,17 +505,32 @@
 					top: ui.position.top,
 					left: ui.position.left
 				});
+				$('.' + selectedClass).popover('hide');
 			}
 		});
 	}
 	
 	function noticeUnsavedMatrix() {		
-		$("#save-btn").addClass('btn-info');
-		$("#save-btn").removeClass('btn-default');
+		matrix.noticeUnsaved();
 	}
 	
-	$(function() {
-		bindCustomDraggable($(".usedResource"));
+	matrix = new Matrix();
+	
+	$(function() {		
+		{% for pov in entity.povs %}
+			{% for level in entity.levels %}
+				matrix.addBox({{ pov.id }}, {{ level.id }}, [
+				{% if entity.sortedResources[pov.id][level.id] is defined %}
+					{% for usedRes in entity.sortedResources[pov.id][level.id] %}
+							new Resource({{ usedRes.resource.id }}),
+					{% endfor %}
+				{% endif %}
+				]);
+			{% endfor %}
+		{% endfor %}
+		
+		bindCustomDraggable($(".tileUsedResource"));
+		bindPopover('.tileUsedResource');
 		// Script to differentiate a click from a mousedown for drag event		
 		
 		$('.addableResource').draggable({
@@ -245,42 +541,41 @@
 		});
 
 		$("#browse_file").droppable({
-			accept: '.usedResource',
+			accept: '.tileUsedResource, .usedResource',
 			drop: function(e, ui) {
-				ui.draggable.prev('input').val(0);
-				$('.usedResource.' + selectedClass).prev('input').val(0);
-				ui.draggable.remove();
-				$('.usedResource.' + selectedClass).remove();
+				matrix.deleteSelection();
 				noticeUnsavedMatrix();
 			}
 		});
 		
 		$("#matrix td").droppable({
-			accept: '.usedResource, .addableResource',
+			accept: '.tileUsedResource, .addableResource, .usedResource',
 			drop: function(e, ui) {
-				if(ui.draggable.hasClass('usedResource')) {
-					if($('.usedResource.'+ selectedClass).length > 1) {
+				if(ui.draggable.hasClass('tileUsedResource')) {
+					if($('.tileUsedResource.'+ selectedClass).length > 1) {
 						alert('Vous ne pouvez pas déplacer plusieurs éléments dans une seule case');
 					}
 					else {
-						ui.draggable.prev('input').val(0);
-						$('> .usedResource', this).remove();
-						$('> input', this).val(ui.draggable.attr('data-resource'));
-						ui.draggable.appendTo($(this)) // ui.draggable is appended by the script, so add it after
-						.removeClass(selectedClass).css({
+						ui.draggable.removeClass(selectedClass).css({
 							top: 0,
 							left: 0
 						});
-						noticeUnsavedMatrix();
+						matrix.transfer(ui.draggable.attr('data-coordinates'), $(this).attr('data-prototype'));
 					}
 				}
-				else {
-					$('> .usedResource', this).remove();
-					$('> input', this).val(ui.draggable.attr('data-resource'));
-					$(this).append('<div class="usedResource" data-resource="' + ui.draggable.attr('data-resource') + '" style="background-image:url(' + ui.draggable.attr('data-thumb') + ');"><div class="resThumbnailHover"><span class="resTitle">' + ui.draggable.attr('data-title') + '</span></div></div>');
-					bindCustomDraggable($('> .usedResource', this));
-					noticeUnsavedMatrix();
+				else if(ui.draggable.hasClass('addableResource')) {
+					matrix.getBox($(this).attr('data-prototype')).addResource(ui.draggable.attr('data-resource'));
 				}
+				else if(ui.draggable.hasClass('usedResource')) {		
+					var idArray = $('.usedResource.' + selectedClass).map(function(){
+						return $(this).attr('data-id');
+					}).get();
+					matrix.getBox($('.usedResource.' + selectedClass).closest('td').attr('data-prototype')).removeResource(idArray);
+					for(var i=0; i < idArray.length; i++) {
+						matrix.getBox($(this).attr('data-prototype')).addResource(idArray[i]);
+					}
+				}
+				noticeUnsavedMatrix();
 				$(this).removeClass('tdOvered');
 			},
 			over: function(e, ui) {
@@ -316,18 +611,27 @@
 
 
 	$('#save-btn').click(function(event) {
-		if($("#save-btn").hasClass('btn-info')) {
-			$(".loading_indicator_inline").css('display', 'inline-block');
-			event.preventDefault();
-			$('#matrix_form').submit();
-		}
+		matrix.prepareSave();
+		$(".loading_indicator_inline").css('display', 'inline-block');
+		event.preventDefault();
+		$('#matrix_form').submit();
 	});
 	
 	$('html').keyup(function(e){
 		if(e.key == 'Delete') {
-			$('.usedResource.' + selectedClass).prev('input').val(0);
-			$('.usedResource.' + selectedClass).remove();
+			matrix.deleteSelection();
 			noticeUnsavedMatrix();
+		}
+		else if(e.keyCode == 17) {
+			// Ctrl released
+			$('.tileUsedResource').popover('enable');
+		}
+	});
+	
+	$('html').keydown(function(e){
+		if(e.ctrlKey) {
+			// Ctrl pressed
+			$('.tileUsedResource').popover('disable');
 		}
 	});
 	

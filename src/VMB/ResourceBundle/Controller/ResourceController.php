@@ -5,6 +5,7 @@ namespace VMB\ResourceBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 use VMB\ResourceBundle\Entity\Resource;
 use VMB\ResourceBundle\Form\ResourceType;
@@ -32,9 +33,11 @@ class ResourceController extends Controller
             'entities' => $entities
         ));
     }
-    
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */    
     public function browseAction($page, $topic=null)
-    {
+    {		
 		$mainTitle = $this->get('translator')->trans('resource.browse');
 		
 		if ($page < 1) {
@@ -52,11 +55,21 @@ class ResourceController extends Controller
 		}
 		
 		$request = $this->get('request');
+		$advancedSearch = explode(',', $request->query->get('advancedSearch'));
+		foreach($advancedSearch as $key => $value) {
+			if(is_numeric($value)) {
+				$advancedSearch[$key] = intval($value);
+			}
+			else {
+				unset($advancedSearch[$key]);
+			}
+		}
+			
 		$official = ($request->query->get('official') == 1) ? true : 'all';
 		$personal = ($request->query->get('personal') == 1);
 		$search = $request->query->get('search');
 		
-        $entities = $em->getRepository('VMBResourceBundle:Resource')->getResources($page, $nbPerPage, $topic, $official, ($personal ? $this->getUser() : null), $search);
+        $entities = $em->getRepository('VMBResourceBundle:Resource')->getResources($page, $nbPerPage, $topic, $official, ($personal ? $this->getUser() : null), $search, $advancedSearch);
         
         // On calcule le nombre total de pages grâce au count($listAdverts) qui retourne le nombre total d'annonces
 		$nbPages = ceil(count($entities)/$nbPerPage);
@@ -83,7 +96,9 @@ class ResourceController extends Controller
 			'page'     	=> $page
         ));
     }
-    
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */    
     public function indexationAction($topic)
     {
 		$mainTitle = $this->get('translator')->trans('browse.multiple_indexation');
@@ -119,6 +134,9 @@ class ResourceController extends Controller
      * Finds and displays a Resource entity.
      *
      */
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
     public function showAction($id)
     {
         $em = $this->getDoctrine()->getManager();
@@ -169,6 +187,9 @@ class ResourceController extends Controller
      * Search an entity.
      *
      */
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
     public function searchAction()
     {
 		$request = $this->container->get('request');
@@ -195,6 +216,9 @@ class ResourceController extends Controller
      * Deletes a Resource entity.
      *
      */
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
     public function deleteAction(Request $request, $id)
     {
         $resource = $this->getResource($id);

@@ -558,7 +558,10 @@
 			if(manual) {
 				this.resetAnnotations();
 			}
-		} 
+		}
+		else { 
+			togglePlay(); 
+		}
 	};
 	
 	Presentation.prototype.nextAuto = function() { this.setResource(this.index + 1, false); }

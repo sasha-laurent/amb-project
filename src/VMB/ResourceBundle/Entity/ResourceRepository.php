@@ -19,7 +19,7 @@ class ResourceRepository extends EntityRepository
 		return $this->findBy(array(),array('dateCreate' => 'DESC'));
 	}
 
-	public function getResources($page, $nbPerPage, $topic=null, $official=true, $user = null, $search = null)
+	public function getResources($page, $nbPerPage, $topic=null, $official=true, $user = null, $search = null, $idArray = null)
 	{
 		$builder = $this->createQueryBuilder('r')
 			->orderBy('r.dateUpdate', 'DESC');
@@ -42,6 +42,11 @@ class ResourceRepository extends EntityRepository
 		
 		if($search != null) {
 			$builder->andWhere('r.title LIKE :keyword OR r.keywords LIKE :keyword OR r.description LIKE :keyword')->setParameter('keyword', '%'.$search.'%');
+		}
+		
+		if($idArray != null) {
+			$builder->andWhere('r.id IN (:idArray)')
+			->setParameter('idArray', $idArray);	
 		}
 
 		$query = $builder->getQuery();

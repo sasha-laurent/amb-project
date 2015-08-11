@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UsedResource
  *
- * @ORM\Table(name="usedresource",uniqueConstraints={@ORM\UniqueConstraint(name="uniq_resource_per_lvl_pov", columns={"pov_id", "level_id", "matrix_id"})})
+ * @ORM\Table(name="usedresource")
  * @ORM\Entity(repositoryClass="VMB\PresentationBundle\Entity\UsedResourceRepository")
  */
 class UsedResource
@@ -44,6 +44,13 @@ class UsedResource
 	* @ORM\JoinColumn(nullable=false)
 	*/
 	private $matrix;
+	
+	/**
+     * @var integer
+     *
+     * @ORM\Column(name="sort", type="integer")
+     */
+    private $sort;
 	
     /**
      * Get id
@@ -153,5 +160,28 @@ class UsedResource
     public function getResource()
     {
         return $this->resource;
+    }
+
+    /**
+     * Set sort
+     *
+     * @param integer $sort
+     * @return UsedResource
+     */
+    public function setSort($sort)
+    {
+        $this->sort = $sort;
+
+        return $this;
+    }
+
+    /**
+     * Get sort
+     *
+     * @return integer 
+     */
+    public function getSort()
+    {
+        return $this->sort;
     }
 }
