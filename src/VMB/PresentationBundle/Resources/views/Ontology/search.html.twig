@@ -1,0 +1,78 @@
+{% extends 'VMBPresentationBundle:Ontology:base.html.twig' %}
+
+{% block h1_title %}
+	<div class="row">
+		<div class="col-md-10">
+			{% if backButtonUrl is defined %}
+				<a title="{{"actions.back"|trans}}" class="btn btn-default" href="{{ backButtonUrl }}" >
+					<span class="left glyphicon glyphicon-chevron-left" aria-hidden="true" >
+					</span>
+				</a>
+			{% endif %}
+			{{ "advanced_search.title"|trans }}
+		</div>
+		<div class="col-md-2">
+			
+		</div>
+{% endblock %}
+
+
+{% block script %}
+	{{ parent() }}
+	
+	<script>
+		$(function(){
+			$('.miller-container').taxonomyBrowser({
+			  columns: 4,
+			  columnheight: 450,    
+			  json         : '{{ asset("bundles/telecomvmb/json/"~ontologyFile~"?p="~random()~"") }}',
+			  jsonIndex    : '{{ asset("bundles/telecomvmb/json/"~indexFile~"?p="~random()~"") }}',
+			  source       : 'json',
+			  ontologyMode : 'search',
+			  id		   : '1'          
+			});
+		});
+	</script>
+
+{% endblock %}
+
+{% block buttons %}
+	<ul class = "main-top-menu">
+  		<li style="margin-top: 7px;"><span id="video-number" style="font-weight:bold; color:red;">0</span> <span id="video-text">videos were</span> found</li>
+  		<li><button class="btn search-button">Search</button></li>
+	</ul>
+{% endblock %}
+
+{% block scriptMiller %}
+	{% raw %}
+	<!-- Miller taxonomy -->
+	<script type="text/x-handlebars-template" id="taxonomy_terms">
+		
+		<div class="miller--terms--container">
+			
+			{#if parent #}
+				<div class="miller--terms--selection">					
+					{{#each parent}} {{#if @index}} &raquo; {{/if}} <a href="#" class="crumb" data-depth="{{depth}}">{{name}}</a>{{/each}}
+				</div>
+			{{/if}}
+
+  		<ul class="terms">
+  			{#each taxonomies#}
+  				<li class="term" id = "data{{id}}" data-id="{{id}}">
+  					<a href="#">
+  					  <span class="title">{{label}}</span> 
+  					  <em class="icon icon-arrow"></em> 			
+  					</a>
+  				</li>
+  			{{/each}}
+  		</ul>
+  		
+		</div>	
+
+	</script>
+	<!-- end of Miller taxonomy -->	
+	{% endraw %}
+	<form style = "display:none; visibility: hidden;" method="GET" name="search-form" id="search-form" action="{{ path('vmb_resource_browse_topic', {topic: ontology.topic.id}) }}">
+		<input type="text" name="advancedSearch" id="search-value">
+	</form>
+{% endblock %}

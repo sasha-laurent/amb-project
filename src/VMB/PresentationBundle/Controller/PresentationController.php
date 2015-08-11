@@ -303,7 +303,7 @@ class PresentationController extends Controller
 			} catch (\Exception $e) {
 				$request->getSession()->getFlashBag()->add('danger', $translator->trans('message.error.occured'));
 			}
-			return $this->redirect($this->generateUrl('presentation_perso'));
+			return $this->redirect($this->generateUrl('vmb_presentation_browse', array('personal' => 1)));
 		}
 		else {
 			$presentation = $this->getPresentation($id);
@@ -313,7 +313,7 @@ class PresentationController extends Controller
 		return $this->render('VMBPresentationBundle:Presentation:copy.html.twig', array(
 			'entityTitle' => '"'.$presentation->toString().'"',
 			'mainTitle' => $translator->trans('presentation.copy_of').' '.$presentation->toString(),
-			'backButtonUrl' => $this->generateUrl('presentation_perso')
+			'backButtonUrl' => $this->generateUrl('vmb_presentation_browse', array('personal' => 1))
 		));
     }
     
@@ -446,11 +446,13 @@ class PresentationController extends Controller
 		foreach($sortedResources as $pov => $subArr) {
 			$nbResTotal = 0;
 			$nbResUsed = 0;
-			foreach($subArr as $lvl => $usedRes) {
-				$nbResTotal++;
-				if(in_array($usedRes->getId(), $checkedResourcesId)) {
-					$nbResUsed++;
-					unset($sortedResources[$pov][$lvl]);
+			foreach($subArr as $lvl => $usedResArr) {
+				foreach($usedResArr as $pos => $usedRes) {
+					$nbResTotal++;
+					if(in_array($usedRes->getId(), $checkedResourcesId)) {
+						$nbResUsed++;
+						unset($sortedResources[$pov][$lvl][$pos]);
+					}
 				}
 			}
 			
@@ -467,23 +469,37 @@ class PresentationController extends Controller
 		$additionalResourcesId = array();
 		$i = 0;
 		while(count($sortedResources) > 0) {
+			//dump($sortedResources);
 			$additionalResourcesId[$i] = array();
 			foreach($sortedResources as $pov => $subArr) {
-				foreach($subArr as $lvl => $usedRes) {
+				foreach($subArr as $lvl => $usedResArr) {
 					// We add the first element we find and break
-					$additionalResourcesId[$i][] = $sortedResources[$pov][$lvl]->getId();
-					unset($sortedResources[$pov][$lvl]);
+					foreach($usedResArr as $pos => $usedRes) {
+						$additionalResourcesId[$i][] = $sortedResources[$pov][$lvl][$pos]->getId();
+						unset($sortedResources[$pov][$lvl][$pos]);
+						break;
+					}
+					
+					// We delete empty boxes
+					if(count($sortedResources[$pov][$lvl]) == 0) {
+						unset($sortedResources[$pov][$lvl]);
+					}
 					break;
 				}
-			}
-			
-			// We delete empty rows
-			foreach($sortedResources as $pov => $subArr) {
-				if(count($subArr) == 0) {
+				
+				// We delete empty rows
+				if(count($sortedResources[$pov]) == 0) {
 					unset($sortedResources[$pov]);
 				}
 			}
 			$i++;
+		}
+		
+		// Fix empty arrays
+		foreach($additionalResourcesId as $key => $val) {
+			if(count($val) == 0) {
+				unset($additionalResourcesId[$key]);
+			}
 		}
 		
         return $this->render('VMBPresentationBundle:Presentation:complement.html.twig', array(
@@ -532,7 +548,7 @@ class PresentationController extends Controller
 		}
 		else {
 			$this->get('request')->getSession()->getFlashBag()->add('danger', $this->get('translator')->trans('message.error.not_enough_rights'));
-			return $this->redirect($this->generateUrl('presentation_perso'));
+			return $this->redirect($this->generateUrl('vmb_presentation_browse', array('personal' => 1)));
 		}
     }
     
@@ -662,7 +678,7 @@ class PresentationController extends Controller
 				$request->getSession()->getFlashBag()->add('success', $flashMessage);
 				
 				if($saveAsCopy) {
-					return $this->redirect($this->generateUrl('presentation_perso'));
+					return $this->redirect($this->generateUrl('vmb_presentation_browse', array('personal' => 1)));
 				}
 				
 			}
@@ -712,7 +728,7 @@ class PresentationController extends Controller
 			} catch (\Exception $e) {
 				$request->getSession()->getFlashBag()->add('danger', $translator->trans('message.error.occured'));
 			}
-			return $this->redirect($this->generateUrl('presentation_perso'));
+			return $this->redirect($this->generateUrl('vmb_presentation_browse', array('personal' => 1)));
 		}
 
 		// Si la requête est en GET, on affiche une page de confirmation avant de delete

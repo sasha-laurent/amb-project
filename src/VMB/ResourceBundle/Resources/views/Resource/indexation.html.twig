@@ -25,8 +25,8 @@
 				{% else %}
 					{% for entity in entities %}
 					<div class="col-md-4 resource-col">
-						<p class="resource-with-desc" data-id="{{ entity.id }}" data-toggle="popover" data-content="<img width='200' height='113' src='{{ asset(entity.getThumbsPath) }}' /><br/>{{ entity.description }}">
-							<span class="glyphicon glyphicon-{{ entity.getGlyphicon }}"></span> {{ entity.title }}
+						<p class="resource-with-desc" data-id="{{ entity.id }}" data-toggle="popover" data-title="{{ entity.title }}" data-content="<img width='200' height='113' src='{{ asset(entity.getThumbsPath) }}' /><br/>{{ entity.description }}">
+							<span class="glyphicon glyphicon-{{ entity.getGlyphicon }}"></span> {{ entity.title|shortenText(27, '...') }}
 						</p>
 					</div>
 					{% else %}

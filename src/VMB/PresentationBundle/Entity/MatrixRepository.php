@@ -47,6 +47,7 @@ class MatrixRepository extends EntityRepository
 			->addSelect('r')
 			->orderBy('lvl.sort')
 			->addOrderBy('pov.sort')
+			->addOrderBy('usedR.sort')
 			->where('m.id = :id')
 			->setParameter('id', $id)
 		;
@@ -70,6 +71,7 @@ class MatrixRepository extends EntityRepository
 			->addSelect('lvl')
 			->orderBy('pov.sort')
 			->addorderBy('lvl.sort')
+			->addOrderBy('usedR.sort')
 			->where('m.id = :id')
 			->setParameter('id', $id)
 		;

@@ -113,22 +113,16 @@ class OntologyController extends Controller
     */
     public function searchAction ($i) 
     {
-        $request  = $this->getRequest();
-        $ont = $request->query->get('ontology');
-        if (isset($ont) && !empty($ont) ) {
-            return $this->redirect($this->generateUrl('search', array('i' => $ont) ) );
-        }
+		$em = $this->getDoctrine()->getManager();
+		$ontology = $em->getRepository('VMBPresentationBundle:Ontology')->find($i);
 
-        $em = $this->getDoctrine()->getManager();
-        $ontologies = $em->getRepository('VMBPresentationBundle:Ontology')->findAll();
-
-        $index = "index".$i.".json";
-        $ontology = "ontology".$i.".json";
-        return $this->render('TelecomVmbBundle:Admin:search.html.twig', array(
-            'indexFile' => $index,
-            'ontologyFile' => $ontology,
-            'value' => $i,
-            'ontologies' => $ontologies));
+		$index = "index".$i.".json";
+		$ontologyFile = "ontology".$i.".json";
+		return $this->render('VMBPresentationBundle:Ontology:search.html.twig', array(
+			'indexFile' => $index,
+			'ontologyFile' => $ontologyFile,
+			'value' => $i,
+			'ontology' => $ontology));
     }
 
 	/**

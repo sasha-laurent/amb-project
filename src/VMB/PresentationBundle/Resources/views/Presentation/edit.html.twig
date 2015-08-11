@@ -89,41 +89,7 @@
 		<tr height="{{ cellHeight }}px">
 			<th class="text-center">{{ pov.title }}</th>
 			{% for level in matrix.levels %}
-			<td data-prototype="{{ pov.id ~ "_" ~ level.id }}" class="text-center">
-				{% if matrix.sortedResources[pov.id][level.id] is defined %}
-					<div class="usedResource" style="background-image:url({{ asset(matrix.sortedResources[pov.id][level.id].resource.getThumbsPath) }});">
-						{% if copy %}
-						<div class="resThumbnailHover" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="{{ matrix.sortedResources[pov.id][level.id].resource.duration|default(11) }}" title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title | shortenText(80, "...")}}" data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description | shortenText(140, "...")}}" data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
-							<span class="resTitle">{{ matrix.sortedResources[pov.id][level.id].resource.title[:30] }}</span>
-							<span class="resCheckBox">
-								{% if presentation.isChecked(matrix.sortedResources[pov.id][level.id].id) %}
-									<span class="glyphicon glyphicon-ok teacherRes" aria-hidden="true"></span>
-								{% elseif presentation.isSuggested(matrix.sortedResources[pov.id][level.id].id) %}
-									<span class="glyphicon glyphicon-ok suggestedRes" aria-hidden="true"></span>
-								{% else %}
-									<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-								{% endif %}
-								<span class="user-glyphicon glyphicon glyphicon-ok" aria-hidden="true"></span>
-							</span>
-						</div>
-						{% else %}
-						<div class="resThumbnailHover
-						{% if presentation.isChecked(matrix.sortedResources[pov.id][level.id].id) %} checkedRes
-						{% elseif presentation.isSuggested(matrix.sortedResources[pov.id][level.id].id) %} suggestedRes
-						{% endif %}" id="usedRes_{{ matrix.sortedResources[pov.id][level.id].id }}" data-id="{{ matrix.sortedResources[pov.id][level.id].id }}" data-toggle="popover" data-trigger="hover" data-duration="{{ matrix.sortedResources[pov.id][level.id].resource.duration|default(11) }}" title="{{ matrix.sortedResources[pov.id][level.id].resource.title | shortenText(80, "...") }}"
-						data-title="{{ matrix.sortedResources[pov.id][level.id].resource.title }}" 
-						data-content="{{ matrix.sortedResources[pov.id][level.id].resource.description | 
-							shortenText(140, "...") }}" 
-						data-resurl="{{ matrix.sortedResources[pov.id][level.id].resource.path }}">
-							<span class="resTitle">{{ matrix.sortedResources[pov.id][level.id].resource.title[:30] }}</span>
-							<span class="resCheckBox">
-								<span class="user-glyphicon glyphicon glyphicon-ok" aria-hidden="true"></span>
-							</span>
-						</div>
-						{% endif %}
-					</div>
-				{% endif %}
-			</td>
+			<td id="td_{{ pov.id ~ "_" ~ level.id }}" data-prototype="{{ pov.id ~ "_" ~ level.id }}" class="text-center"></td>
 			{% endfor %}
 		</tr>
 		{% endfor %}
@@ -194,7 +160,7 @@
 							<p class="text-right">
 								{{ 'show.total_duration'|trans }} : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
 							</p>
-							{% if attribute(presentation, presentation.id) is defined %}
+							{% if presentation.id %}
 								<p class="text-center"><a href="{{ path('annotation_edit', {'id' : presentation.id}) }}"><span class="glyphicon glyphicon-edit"></span> Gérer les annotations</a></p>
 							{% endif %}
 						{% if not copy %}
@@ -239,287 +205,233 @@
 
 {% block script %}
 	{{ parent() }}
-	<script>		
-		resourcesCollection = {
-			{% for usedRes in matrix.resources %}
-				{{ usedRes.id }}: {
-					'title': "{{ usedRes.resource.title }}", 
-					'description': "{{ usedRes.resource.description }}", 
-					'creation': "{{ usedRes.resource.dateCreate|date('d/m/y') }}", 
-					'update': "{{ usedRes.resource.dateUpdate|date('d/m/y') }}", 
-					'duration': {{ usedRes.resource.duration|default(11) }},
-					'duration_str': "{{ "%02d"|format((usedRes.resource.duration|default(11)) // 60) }}:{{ "%02d"|format((usedRes.resource.duration|default(11)) % 60) }}",
-					'src': "{{ asset(usedRes.resource.getResourcePath) }}",
-					'type': "{{ usedRes.resource.type }}",
-					'glyphicon': "{{ usedRes.resource.getGlyphicon }}"
-				},
-			{% endfor %}
-		};
-		selectedRes = 0;
-		$(document.querySelectorAll(".player")[0]).show();
-		
-		{% include '::plyrSetup.html.twig' %}
-		
-		function triggerNewRes(resId) {
-			if(selectedRes != resId) {
-				$('.playableRes_' + selectedRes).removeClass('active');
-				selectedRes = resId;
-				res = resourcesCollection[resId];
-				stopAndHideAll(res['type']);
-				$('.playableRes_' + resId).addClass('active');
-				
-				displayNewRes(res['src'], res['type']);
-			}
+	<script>	
+	var places = ["bottom", "left", "top", "right"];	
+	resourcesCollection = {
+		{% for usedRes in matrix.resources %}
+			{{ usedRes.id }}: {
+				'path': "{{ usedRes.resource.path }}", 
+				'title': "{{ usedRes.resource.title }}", 
+				'shortTitle': "{{ usedRes.resource.title|shortenText(18, '...') }}", 
+				'thumbs': "{{ asset(usedRes.resource.getThumbsPath) }}",
+				'description': "{{ usedRes.resource.description }}", 
+				'shortDesc': "{{ usedRes.resource.description|shortenText(140, "...") }}", 
+				'creation': "{{ usedRes.resource.dateCreate|date('d/m/y') }}", 
+				'update': "{{ usedRes.resource.dateUpdate|date('d/m/y') }}", 
+				'duration': {{ usedRes.resource.duration|default(11) }},
+				'duration_str': "{{ "%02d"|format((usedRes.resource.duration|default(11)) // 60) }}:{{ "%02d"|format((usedRes.resource.duration|default(11)) % 60) }}",
+				'src': "{{ asset(usedRes.resource.getResourcePath) }}",
+				'type': "{{ usedRes.resource.type }}",
+				'glyphicon': "{{ usedRes.resource.getGlyphicon }}"
+			},
+		{% endfor %}
+	};
+	selectedRes = 0;
+	$(document.querySelectorAll(".player")[0]).show();
+	
+	function indexOf(array, item) {
+		for (var i = 0; i < array.length; i++) {
+			if (array[i].toString() === item.toString()) return i;
 		}
+		return -1;
+	}
+	
+	{% include '::plyrSetup.html.twig' %}
+	
+	// Matrix object
+	function Matrix() {	
+		this.boxes = {};
 		
-		$('.playableResource').click(function() {
-			triggerNewRes($(this).attr('data-id'));
+		this.getBox = function(coords) { return this.boxes[coords]; };
+	};
+	
+	Matrix.prototype.addBox = function(pov, lvl, resList) {
+		this.boxes[pov + "_" + lvl] = new Box(pov, lvl, resList);
+		this.boxes[pov + "_" + lvl].generateBox();
+	};
+	
+	Matrix.prototype.generatePopover = function(boxId) {
+		return this.boxes[boxId].generatePopover();
+	};
+	
+	Matrix.prototype.updateResourceStatus = function(resId, newStatus) {
+		$.each(this.boxes, function(key, box) {
+			return !box.updateResourceStatus(resId, newStatus);
 		});
-		
-		function pad(num, size) {
-			var s = num+"";
-			while (s.length < size) s = "0" + s;
-			return s;
-		}
-
-		function convertDurationToString(value) {
-			return (pad(~~(value / 60), 2)) + ':' + pad((value % 60), 2);
-		}
-		
-		function addToDuration(value, toSuggestions) {
-			// Default value
-			toSuggestions = toSuggestions || false;
-			
-			// conv base10
-			var container =  toSuggestions ? "#total_duration_suggestion" : "#total_duration";
-			
-			var current = $(container).html().split(":");
-			total = parseInt(current[0], 10)*60 + parseInt(current[1], 10) + value;
-			$(container).html(convertDurationToString(total));
-			
-			if(!toSuggestions) {
-				$('#vmb_presentationbundle_presentation_duration').val(total);
+	}
+	
+	// Box (td) object
+	function Box(pov, lvl, resList) {
+		this.pov = pov;
+		this.lvl = lvl;
+		this.resList = resList;
+		this.domElt = $('#td_' + this.pov + '_' + this.lvl);
+		this.nbInitial = 0;
+		this.nbChecked = 0;
+		this.nbSuggested = 0;
+	};
+	
+	Box.prototype.updateResourceStatus = function(resId, newStatus) {
+		for(var i=0; i<this.resList.length; i++) {
+			if(this.resList[i].getId() == resId) {
+				oldStatus = this.resList[i].getStatus();
+				if(oldStatus != newStatus) {
+					// If the status update is ok
+					if(this.resList[i].updateStatus(newStatus)) {
+						if(newStatus == 'suggested') { this.nbSuggested++; }
+						else if(newStatus == 'checked') { this.nbChecked++; }
+						
+						if(oldStatus == 'suggested') { this.nbSuggested--; }
+						else if(oldStatus == 'checked') { this.nbChecked--; }
+						
+						this.updateCounters();
+					}
+				}
+				return true;
 			}
 		}
+		return false;
+	}
+	
+	Box.prototype.updateCounters = function() {
+		this.domElt.find('.nbSuggested').html(this.nbSuggested);
+		this.domElt.find('.nbChecked').html(this.nbChecked);
+	}
+	
+	Box.prototype.generateBox = function() {
+		for(var i=0; i<this.resList.length; i++) {
+			if(this.resList[i].isChecked())   { this.nbChecked++; }
+			if(this.resList[i].isSuggested()) { this.nbSuggested++; }
+			if(this.resList[i].isInitial()) { this.nbInitial++; }
+		}
 		
+		var str = '<div class="tileUsedResource" data-coordinates="' + this.pov + '_' + this.lvl + '" data-length="' + this.resList.length + '" data-toggle="popover" ';
+		if(this.resList.length > 0) {
+			str += 'style="' + this.resList[0].getBackgroundStyle() + '"><div class="nbResources"> \
+				<div class="total nbTotal">+' + this.resList.length + '</div> \
+				<div class="counterCheck{% if copy %} copyMode{% endif %}"> {% if copy %}<span class="nbInitial">' + this.nbInitial + '</span> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> | {% endif %}\
+					<span class="nbChecked">' + this.nbChecked + '</span> <span class="glyphicon glyphicon-ok checkedRes" aria-hidden="true"></span> | \
+					<span class="nbSuggested">' + this.nbSuggested + '</span> <span class="glyphicon glyphicon-ok suggestedRes" aria-hidden="true"></span> \
+				</div> \
+			</div>';
+		}
+		else {
+			str += 'style="background-image: none;"><div class="nbResources noBg"></div>';
+		}
+		str += '</div>';
 		
-		function editTime(item) {
-			var li = $(item).closest('.playableResource');
-			var oldDuration = li.attr('data-duration');
-			var newDuration = prompt("Entrez la nouvelle durée pour cet item", oldDuration);
+		this.domElt.html(str);
+	};
+	
+	Box.prototype.generatePopover = function() {
+		var str = '';
+		for(i=0; i < this.resList.length; i++) {
+			str += this.resList[i].getPopoverContent();
+		}
+		return str;
+	};
+		
 
-			if (newDuration != null) {
-				newDuration = parseInt(newDuration, 10);
-				if(newDuration >= 5) {
-					oldDuration = parseInt(oldDuration, 10);
-					addToDuration(newDuration - oldDuration, li.attr('data-type') != 'used');
+	// Used Resource Object
+	function Resource(usedResId, checked, suggested{% if copy %}, initial{% endif %}) {
+		this.usedResId = usedResId;
+		{% if copy %}
+		this.initial = initial;
+		{% endif %}
+		this.suggested = suggested;
+		this.checked = checked;
 
-					
-					li.attr('data-duration', newDuration + '');
-					li.find('.durationContainer').html(convertDurationToString(newDuration));
-					name = li.find('input').attr('name');
-					
-					var regex = /^(usedResource|suggestedResource)_([0-9]+)_([0-9]+)$/;
-					li.find('input').attr('name', name.replace(regex, '$1_$2_' + newDuration));
-				}
-				else {
-					alert('Erreur : le temps doit être supérieur à 5 secondes');
-				}
+		this.isInitial	 		= function() { return (this.initial == 1); }
+		this.isSuggested 		= function() { return (this.suggested == 1); }
+		this.isChecked 			= function() { return (this.checked == 1); }
+		this.setId				= function(newId) { this.usedResId = newId; }
+		this.getId				= function() { return this.usedResId; };
+		this.getTitle 			= function() { return (this.usedResId != 0) ? resourcesCollection[this.usedResId].title 			 	  : ''; };
+		this.getThumbs 			= function() { return (this.usedResId != 0) ? resourcesCollection[this.usedResId].thumbs 			 	  : ''; };
+		this.getDuration		= function() { return (this.usedResId != 0) ? resourcesCollection[this.usedResId].duration 			 	  : ''; };
+		this.getPath			= function() { return (this.usedResId != 0) ? resourcesCollection[this.usedResId].path	 			 	  : ''; };
+		this.getDurationStr		= function() { return (this.usedResId != 0) ? resourcesCollection[this.usedResId].duration_str		 	  : ''; };
+		this.getShortTitle 		= function() { return (this.usedResId != 0) ? resourcesCollection[this.usedResId].shortTitle 		 	  : ''; };
+		this.getDesc 			= function() { return (this.usedResId != 0) ? resourcesCollection[this.usedResId].description 		 	  : ''; };
+		this.getShortDesc 		= function() { return (this.usedResId != 0) ? resourcesCollection[this.usedResId].shortDesc 		 	  : ''; };
+		this.getBackgroundStyle = function() { return (this.usedResId != 0) ? 'background-image: url(' + this.getThumbs() + ');' : 'background-image: none;'; };
+	};
+	
+	Resource.prototype.getPopoverContent = function() {
+		var str = '<div class="usedResource" data-id="' + this.getId() + '" style="background-image:url(' + this.getThumbs() + ');">';
+		str += '<div class="resThumbnailHover{% if not copy %}' + ((this.isSuggested()) ? ' suggestedRes' : '') + ((this.isChecked()) ? ' checkedRes' : '') + '{% endif %}" id="usedRes_' + this.getId() + '" data-id="' + this.getId() + '" data-toggle="popover" data-trigger="hover"';
+		str += ' data-duration="' + this.getDuration()  + '" data-title="' + this.getTitle() + '" data-content="' + this.getDesc() + '" data-resurl="' + this.getPath() + '">';
+		str += '<span class="resTitle">' + this.getShortTitle() + '</span><span class="resCheckBox">';
+		
+		{% if copy %}
+			if(this.isInitial()) {
+				str += '<span class="glyphicon glyphicon-ok teacherRes" aria-hidden="true"></span>';
 			}
-		}
-		
-		function sortAllItems(selector) {
-			$( selector ).each(function( index ) {
-				input = $(this).find('input');
-				if(input.attr('name') !== undefined) {
-					input.val(index);
-				}
-			});
-		}
-		
-		function deleteFromPlaylist(resId, type, duration) {
-			if(type == 'used') {
-				$('#addedRes_' + resId).remove();
-				$('#usedRes_' + resId).removeClass('checkedRes');
-				sortAllItems('#file_list li');
-				
-				if(duration == null)  {
-					addToDuration(-parseInt($('#usedRes_' + resId).attr('data-duration'), 10));
-				}
-				else {
-					addToDuration(-parseInt(duration, 10));
-				}
+			else if(this.isSuggested()) {
+				str += '<span class="glyphicon glyphicon-ok suggestedRes" aria-hidden="true"></span>';
 			}
 			else {
-				$('#suggestedRes_' + resId).remove();
-				$('#usedRes_' + resId).removeClass('suggestedRes');
-				sortAllItems('#suggestion_list li');
-				
-				if(duration == null)  {
-					addToDuration(-parseInt($('#suggestedRes_' + resId).attr('data-duration'), 10), true);
-				}
-				else {
-					addToDuration(-parseInt(duration, 10), true);
-				}
+				str += '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
 			}
-		}
+		{% endif %}
+		str += '<span class="user-glyphicon glyphicon glyphicon-ok" aria-hidden="true"></span>';
 		
-		function addToPlaylist(resId, title, type, duration) {
-			if(type == 'used') {
-				$('#usedRes_' + resId).addClass('checkedRes');
-				$('#file_list').append(generateNewItem(resId, title, 'used', duration));
-				$('#rmRes_' + resId).click(function(event) 	 { event.stopImmediatePropagation(); deleteFromPlaylist($(this).attr('data-id'), 'used', $(this).closest('.playableResource').attr('data-duration')); });
-				
-				if(duration == null)  {
-					addToDuration(parseInt($('#usedRes_' + resId).attr('data-duration'), 10));
-				}
-				else {
-					addToDuration(parseInt(duration, 10));
-				}
+		return str + '</span></div></div>';
+	};
+	
+	Resource.prototype.getStatus = function() {
+		{% if copy %}
+			return (this.isChecked()) ? 'checked' : 'none';
+		{% else %}
+			if(this.isSuggested()) {
+				return 'suggested';
+			}
+			else if(this.isChecked()) {
+				return 'checked';
 			}
 			else {
-				$('#usedRes_' + resId).addClass('suggestedRes');
-				$('#suggestion_list').append(generateNewItem(resId, title, 'suggestion', duration));
-				$('#rmRes_' + resId).click(function(event) 	 { event.stopImmediatePropagation(); deleteFromPlaylist($(this).attr('data-id'), 'suggestion', $(this).closest('.playableResource').attr('data-duration')); });
-				
-				if(duration == null)  {
-					addToDuration(parseInt($('#suggestedRes_' + resId).attr('data-duration'), 10), true);
-				}
-				else {
-					addToDuration(parseInt(duration, 10), true);
-				}
+				return 'none';
 			}
-			$('.playableRes_' + resId).click(function() { triggerNewRes($(this).attr('data-id'));});
-			$('.playableRes_' + resId).find('.editTimeButton').click(function(event) { event.stopImmediatePropagation(); event.preventDefault(); editTime(this); });
+		{% endif %}
+	};
+	
+	Resource.prototype.updateStatus = function(newStatus) {
+		if(newStatus == 'suggested') {
+			this.suggested = 1;
+			this.checked = 0;
+			return true;
 		}
-		
-		function generateNewItem(id, title, type, duration) {
-			var resourceData = resourcesCollection[id];
-			if(duration == null)  {
-				duration = resourceData['duration'];
-			}
-			 
-			var editTime = '';
-			if(resourceData['type'] != 'video' && resourceData['type'] != 'audio') {
-				editTime = '<a class="editTimeButton"><span class="glyphicon glyphicon-edit"></span></a> ';
-			}
-			
-			if(type=='used') {
-				return '<li class="list-group-item playableResource playableRes_' + id + '" id="addedRes_' + id + '" data-duration="' + duration + '" data-type="used" data-id="' + id + '"><div class="row"> \
-					<div class="col-sm-7"><span class="glyphicon glyphicon-' + resourceData['glyphicon'] + '"></span> ' + title + '</div> \
-					<div class="col-sm-3 text-right">' + editTime + '<span class="durationContainer">' + convertDurationToString(duration) + '</span></div> \
-					<div class="col-sm-2 text-right"><a id="rmRes_' + id + '" data-type="used" data-id="' + id + '"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div> \
-					<input type="hidden" id="usedResource_' + id + '" name="usedResource_' + id + '_' + duration + '" value="' + $('#file_list li').length + '" />\
-					</div></li>';
-			}
-			else {
-				return '<li class="list-group-item playableResource playableRes_' + id + '" id="suggestedRes_' + id + '" data-duration="' + duration + '" data-type="suggestion" data-id="' + id + '"><div class="row"> \
-					<div class="col-sm-7"><span class="glyphicon glyphicon-' + resourceData['glyphicon'] + '"></span> ' + title + '</div> \
-					<div class="col-sm-3 text-right">' + editTime + '<span class="durationContainer">' + convertDurationToString(duration) + '</span></div> \
-					<div class="col-sm-2 text-right"><a id="rmRes_' + id + '" data-type="suggestion" data-id="' + id + '"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div> \
-					<input type="hidden" id="suggestedResource_' + id + '" name="suggestedResource_' + id + '_' + duration + '" value="' + $('#suggestion_list li').length + '" />\
-					</div></li>'
-			}
+		else if(newStatus == 'checked') {
+			this.suggested = 0;
+			this.checked = 1;
+			return true;
 		}
-		
-		
-		$(function () {
-			$('#file_list li').draggable({
-				zIndex: 100000,
-				revert: true,
-				revertDuration: 0,
-				connectToSortable: "#file_list"
-			});
-
-			$("#playlist-tab-toggle").droppable({
-				accept: '#suggestion_list li',
-				tolerance: 'touch',
-				over: function (event, ui) {
-					//workaround for bug http://bugs.jqueryui.com/ticket/6259
-					ui.helper.removeData('overSortable');
-				}, 
-				drop: function (event, ui) {
-					//workaround for bug http://bugs.jqueryui.com/ticket/6259
-					if (ui.helper.data('overSortable') != null) {
-						ui.helper.removeData('overSortable'); return;
-					}
-					addToPlaylist(ui.draggable.attr('data-id'), resourcesCollection[ui.draggable.attr('data-id')]['title'], 'used', ui.draggable.attr('data-duration'))
-					deleteFromPlaylist(ui.draggable.attr('data-id'), 'suggestion', ui.draggable.attr('data-duration'));
-					ui.draggable.remove();
-				}
-			});
+		else if(newStatus == 'none') {
+			this.suggested = 0;
+			this.checked = 0;
+			return true;
+		}
+		return false;
+	};
+	
+	function bindPopover(selector) {
+		$(selector).popover({
+			html: true,
+			placement: "bottom",
+			trigger: "click",
+			content: function() { return matrix.generatePopover($(this).attr('data-coordinates')); }
+		}).on("show.bs.popover", function () { 
+			$('.tileUsedResource').not(this).popover('hide');
+			elt = $('> .popover-content', $(this).data("bs.popover").tip());
+			elt.css("height", 67 + 12 * 2 + 'px'); 
+			elt.css("width", ($(this).attr('data-length') * 120 + ($(this).attr('data-length') - 1) * 4 + 12*2) + "px"); 
+		}).on('hidden.bs.popover', function () {
+			$(this).removeClass('activeTile');
+		}).on('shown.bs.popover', function () {
+			$(this).addClass('activeTile');
 			
-			$("#suggestion-tab-toggle").droppable({
-				accept: '#file_list li',
-				tolerance: 'touch',
-				over: function (event, ui) {
-					//workaround for bug http://bugs.jqueryui.com/ticket/6259
-					ui.helper.removeData('overSortable');
-				}, 
-				drop: function (event, ui) {
-					//workaround for bug http://bugs.jqueryui.com/ticket/6259
-					if (ui.helper.data('overSortable') != null) {
-						ui.helper.removeData('overSortable'); return;
-					}
-					addToPlaylist(ui.draggable.attr('data-id'), resourcesCollection[ui.draggable.attr('data-id')]['title'], 'suggestion', ui.draggable.attr('data-duration'))
-					deleteFromPlaylist(ui.draggable.attr('data-id'), 'used', ui.draggable.attr('data-duration'));
-					ui.draggable.remove();
-				}
-			});
-			
-			$('[data-toggle="popover"]').popover({
-				container:'body'
-			});
-			$('#file_list').sortable({
-				out: function (event, ui) {
-					//workaround for bug http://bugs.jqueryui.com/ticket/6259
-					ui.helper.data('overSortable', true);
-				}
-			}).droppable({
-				accept: '#none'
-			});
-			$( "#file_list" ).on( "sortupdate", function( event, ui ) { 
-				sortAllItems('#file_list li');
-			} );
-			
-			$( "#file_list" ).on( "sortupdate", function( event, ui ) { 
-				var input = ui.item.find('input');
-				//input.attr('name', input.attr('id'));
-				
-				
-				$( "#file_list li" ).each(function( index ) {
-					input = $(this).find('input');
-					if(input.attr('name') !== undefined) {
-						input.val(index);
-					}
-				});
-			} );
-			
-			$('#suggestion_list').sortable().droppable({
-				accept: '#none'
-			});
-			$( "#suggestion_list" ).on( "sortupdate", function( event, ui ) { 
-				sortAllItems('#suggestion_list li');
-			} );
-			
-			$( "#suggestion_list" ).on( "sortupdate", function( event, ui ) { 
-				var input = ui.item.find('input');
-				//input.attr('name', input.attr('id'));
-				
-				
-				$( "#suggestion_list li" ).each(function( index ) {
-					input = $(this).find('input');
-					if(input.attr('name') !== undefined) {
-						input.val(index);
-					}
-				});
-			} );
-			
-			$('.rmRes').click(function() {
-				deleteFromPlaylist($(this).attr('data-id'), $(this).attr('data-type'), $(this).closest('.playableResource').attr('data-duration'));
-			});
-			
-			$('.resThumbnailHover').click(function(){
+			// Click behaviour
+			$('> .popover-content', $(this).data("bs.popover").tip()).find('.resThumbnailHover').click(function(){
 				var duration = parseInt($('#usedRes_' + $(this).attr('data-id')).attr('data-duration'), 10);
 				
 				if($(this).hasClass('checkedRes')) {
@@ -536,53 +448,350 @@
 					addToPlaylist($(this).attr('data-id'), $(this).attr('data-title'), 'used');
 				}
 			});
-		})
-		
-		$('.editTimeButton').click(function(event) { 
-			event.stopImmediatePropagation(); 
-			event.preventDefault(); 
-			editTime(this); 
+			
+			// Right click behaviour
+			$('> .popover-content', $(this).data("bs.popover").tip()).unbind('contextmenu');
+			$('> .popover-content', $(this).data("bs.popover").tip()).on('contextmenu', function(event) {
+				// on right click : modify popover position (clockwise)
+				$(this).data("bs.popover").options.placement = places[(indexOf(places, $(this).data("bs.popover").options.placement) + 1) % 4];
+				$(this).popover('show');
+				return false;
+			}.bind(this));
 		});
 		
-		/** TODO: 
-		 * - Submit on condition that form data has changed since page load
-		 * - Validate form
-		 */
-		$('#save-btn').click(function() {
-			if($('#file_list li').length > 0) {
-				$('#presentation_form').submit();
-			} else {
-				alert('Aucun élément dans la liste de lecture');
+		$(selector).on('contextmenu', function(event) {
+			// on right click : modify popover position (clockwise)
+			$(this).data("bs.popover").options.placement = places[(indexOf(places, $(this).data("bs.popover").options.placement) + 1) % 4];
+			$(this).popover('show');
+			return false;
+		});
+	}
+	
+	function triggerNewRes(resId) {
+		if(selectedRes != resId) {
+			$('.playableRes_' + selectedRes).removeClass('active');
+			selectedRes = resId;
+			res = resourcesCollection[resId];
+			stopAndHideAll(res['type']);
+			$('.playableRes_' + resId).addClass('active');
+			
+			displayNewRes(res['src'], res['type']);
+		}
+	}
+	
+	$('.playableResource').click(function() {
+		triggerNewRes($(this).attr('data-id'));
+	});
+	
+	function pad(num, size) {
+		var s = num+"";
+		while (s.length < size) s = "0" + s;
+		return s;
+	}
+
+	function convertDurationToString(value) {
+		return (pad(~~(value / 60), 2)) + ':' + pad((value % 60), 2);
+	}
+	
+	function addToDuration(value, toSuggestions) {
+		// Default value
+		toSuggestions = toSuggestions || false;
+		
+		// conv base10
+		var container =  toSuggestions ? "#total_duration_suggestion" : "#total_duration";
+		
+		var current = $(container).html().split(":");
+		total = parseInt(current[0], 10)*60 + parseInt(current[1], 10) + value;
+		$(container).html(convertDurationToString(total));
+		
+		if(!toSuggestions) {
+			$('#vmb_presentationbundle_presentation_duration').val(total);
+		}
+	}
+	
+	
+	function editTime(item) {
+		var li = $(item).closest('.playableResource');
+		var oldDuration = li.attr('data-duration');
+		var newDuration = prompt("Entrez la nouvelle durée pour cet item", oldDuration);
+
+		if (newDuration != null) {
+			newDuration = parseInt(newDuration, 10);
+			if(newDuration >= 5) {
+				oldDuration = parseInt(oldDuration, 10);
+				addToDuration(newDuration - oldDuration, li.attr('data-type') != 'used');
+
+				
+				li.attr('data-duration', newDuration + '');
+				li.find('.durationContainer').html(convertDurationToString(newDuration));
+				name = li.find('input').attr('name');
+				
+				var regex = /^(usedResource|suggestedResource)_([0-9]+)_([0-9]+)$/;
+				li.find('input').attr('name', name.replace(regex, '$1_$2_' + newDuration));
 			}
+			else {
+				alert('Erreur : le temps doit être supérieur à 5 secondes');
+			}
+		}
+	}
+	
+	function sortAllItems(selector) {
+		$( selector ).each(function( index ) {
+			input = $(this).find('input');
+			if(input.attr('name') !== undefined) {
+				input.val(index);
+			}
+		});
+	}
+	
+	function deleteFromPlaylist(resId, type, duration) {
+		if(type == 'used') {
+			$('#addedRes_' + resId).remove();
+			$('#usedRes_' + resId).removeClass('checkedRes');
+			matrix.updateResourceStatus(resId, 'none');
+			sortAllItems('#file_list li');
+			
+			if(duration == null)  {
+				addToDuration(-parseInt($('#usedRes_' + resId).attr('data-duration'), 10));
+			}
+			else {
+				addToDuration(-parseInt(duration, 10));
+			}
+		}
+		else {
+			$('#suggestedRes_' + resId).remove();
+			$('#usedRes_' + resId).removeClass('suggestedRes');
+			matrix.updateResourceStatus(resId, 'none');
+			sortAllItems('#suggestion_list li');
+			
+			if(duration == null)  {
+				addToDuration(-parseInt($('#suggestedRes_' + resId).attr('data-duration'), 10), true);
+			}
+			else {
+				addToDuration(-parseInt(duration, 10), true);
+			}
+		}
+	}
+	
+	function addToPlaylist(resId, title, type, duration) {
+		if(type == 'used') {
+			$('#usedRes_' + resId).addClass('checkedRes');
+			matrix.updateResourceStatus(resId, 'checked');
+			$('#file_list').append(generateNewItem(resId, title, 'used', duration));
+			$('#rmRes_' + resId).click(function(event) 	 { event.stopImmediatePropagation(); deleteFromPlaylist($(this).attr('data-id'), 'used', $(this).closest('.playableResource').attr('data-duration')); });
+			
+			if(duration == null)  {
+				addToDuration(parseInt($('#usedRes_' + resId).attr('data-duration'), 10));
+			}
+			else {
+				addToDuration(parseInt(duration, 10));
+			}
+		}
+		else {
+			$('#usedRes_' + resId).addClass('suggestedRes');
+			matrix.updateResourceStatus(resId, 'suggested');
+			$('#suggestion_list').append(generateNewItem(resId, title, 'suggestion', duration));
+			$('#rmRes_' + resId).click(function(event) 	 { event.stopImmediatePropagation(); deleteFromPlaylist($(this).attr('data-id'), 'suggestion', $(this).closest('.playableResource').attr('data-duration')); });
+			
+			if(duration == null)  {
+				addToDuration(parseInt($('#suggestedRes_' + resId).attr('data-duration'), 10), true);
+			}
+			else {
+				addToDuration(parseInt(duration, 10), true);
+			}
+		}
+		$('.playableRes_' + resId).click(function() { triggerNewRes($(this).attr('data-id'));});
+		$('.playableRes_' + resId).find('.editTimeButton').click(function(event) { event.stopImmediatePropagation(); event.preventDefault(); editTime(this); });
+	}
+	
+	function generateNewItem(id, title, type, duration) {
+		var resourceData = resourcesCollection[id];
+		if(duration == null)  {
+			duration = resourceData['duration'];
+		}
+		 
+		var editTime = '';
+		if(resourceData['type'] != 'video' && resourceData['type'] != 'audio') {
+			editTime = '<a class="editTimeButton"><span class="glyphicon glyphicon-edit"></span></a> ';
+		}
+		
+		if(type=='used') {
+			return '<li class="list-group-item playableResource playableRes_' + id + '" id="addedRes_' + id + '" data-duration="' + duration + '" data-type="used" data-id="' + id + '"><div class="row"> \
+				<div class="col-sm-7"><span class="glyphicon glyphicon-' + resourceData['glyphicon'] + '"></span> ' + title + '</div> \
+				<div class="col-sm-3 text-right">' + editTime + '<span class="durationContainer">' + convertDurationToString(duration) + '</span></div> \
+				<div class="col-sm-2 text-right"><a id="rmRes_' + id + '" data-type="used" data-id="' + id + '"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div> \
+				<input type="hidden" id="usedResource_' + id + '" name="usedResource_' + id + '_' + duration + '" value="' + $('#file_list li').length + '" />\
+				</div></li>';
+		}
+		else {
+			return '<li class="list-group-item playableResource playableRes_' + id + '" id="suggestedRes_' + id + '" data-duration="' + duration + '" data-type="suggestion" data-id="' + id + '"><div class="row"> \
+				<div class="col-sm-7"><span class="glyphicon glyphicon-' + resourceData['glyphicon'] + '"></span> ' + title + '</div> \
+				<div class="col-sm-3 text-right">' + editTime + '<span class="durationContainer">' + convertDurationToString(duration) + '</span></div> \
+				<div class="col-sm-2 text-right"><a id="rmRes_' + id + '" data-type="suggestion" data-id="' + id + '"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div> \
+				<input type="hidden" id="suggestedResource_' + id + '" name="suggestedResource_' + id + '_' + duration + '" value="' + $('#suggestion_list li').length + '" />\
+				</div></li>'
+		}
+	}
+	
+	
+	matrix = new Matrix();
+	
+	$(function() {		
+		{% for pov in matrix.povs %}
+			{% for level in matrix.levels %}
+				matrix.addBox({{ pov.id }}, {{ level.id }}, [
+				{% if matrix.sortedResources[pov.id][level.id] is defined %}
+					{% for usedRes in matrix.sortedResources[pov.id][level.id] %}
+							new Resource({{ usedRes.id }}, {% if (not copy) and presentation.isChecked(usedRes.id) %}1{% else %}0{% endif %}, {% if presentation.isSuggested(usedRes.id) %}1{% else %}0{% endif %}{% if copy %}, {% if presentation.isChecked(usedRes.id) %}1{% else %}0{% endif %}{% endif %}),
+					{% endfor %}
+				{% endif %}
+				]);
+			{% endfor %}
+		{% endfor %}
+		
+		bindPopover('.tileUsedResource');
+		
+		$('#file_list li').draggable({
+			zIndex: 100000,
+			revert: true,
+			revertDuration: 0,
+			connectToSortable: "#file_list"
 		});
 
-		$('#delete_thumbs').click(function(event) {
-			event.preventDefault();
-			$('#keepThumbs').val(0);
+		$("#playlist-tab-toggle").droppable({
+			accept: '#suggestion_list li',
+			tolerance: 'touch',
+			over: function (event, ui) {
+				//workaround for bug http://bugs.jqueryui.com/ticket/6259
+				ui.helper.removeData('overSortable');
+			}, 
+			drop: function (event, ui) {
+				//workaround for bug http://bugs.jqueryui.com/ticket/6259
+				if (ui.helper.data('overSortable') != null) {
+					ui.helper.removeData('overSortable'); return;
+				}
+				addToPlaylist(ui.draggable.attr('data-id'), resourcesCollection[ui.draggable.attr('data-id')]['title'], 'used', ui.draggable.attr('data-duration'))
+				deleteFromPlaylist(ui.draggable.attr('data-id'), 'suggestion', ui.draggable.attr('data-duration'));
+				ui.draggable.remove();
+			}
+		});
+		
+		$("#suggestion-tab-toggle").droppable({
+			accept: '#file_list li',
+			tolerance: 'touch',
+			over: function (event, ui) {
+				//workaround for bug http://bugs.jqueryui.com/ticket/6259
+				ui.helper.removeData('overSortable');
+			}, 
+			drop: function (event, ui) {
+				//workaround for bug http://bugs.jqueryui.com/ticket/6259
+				if (ui.helper.data('overSortable') != null) {
+					ui.helper.removeData('overSortable'); return;
+				}
+				addToPlaylist(ui.draggable.attr('data-id'), resourcesCollection[ui.draggable.attr('data-id')]['title'], 'suggestion', ui.draggable.attr('data-duration'))
+				deleteFromPlaylist(ui.draggable.attr('data-id'), 'used', ui.draggable.attr('data-duration'));
+				ui.draggable.remove();
+			}
+		});
+		
+		$('[data-toggle="popover"]').popover({
+			container:'body'
+		});
+		$('#file_list').sortable({
+			out: function (event, ui) {
+				//workaround for bug http://bugs.jqueryui.com/ticket/6259
+				ui.helper.data('overSortable', true);
+			}
+		}).droppable({
+			accept: '#none'
+		});
+		$( "#file_list" ).on( "sortupdate", function( event, ui ) { 
+			sortAllItems('#file_list li');
+		} );
+		
+		$( "#file_list" ).on( "sortupdate", function( event, ui ) { 
+			var input = ui.item.find('input');
+			//input.attr('name', input.attr('id'));
+			
+			
+			$( "#file_list li" ).each(function( index ) {
+				input = $(this).find('input');
+				if(input.attr('name') !== undefined) {
+					input.val(index);
+				}
+			});
+		} );
+		
+		$('#suggestion_list').sortable().droppable({
+			accept: '#none'
+		});
+		$( "#suggestion_list" ).on( "sortupdate", function( event, ui ) { 
+			sortAllItems('#suggestion_list li');
+		} );
+		
+		$( "#suggestion_list" ).on( "sortupdate", function( event, ui ) { 
+			var input = ui.item.find('input');
+			//input.attr('name', input.attr('id'));
+			
+			
+			$( "#suggestion_list li" ).each(function( index ) {
+				input = $(this).find('input');
+				if(input.attr('name') !== undefined) {
+					input.val(index);
+				}
+			});
+		} );
+		
+		$('.rmRes').click(function() {
+			deleteFromPlaylist($(this).attr('data-id'), $(this).attr('data-type'), $(this).closest('.playableResource').attr('data-duration'));
+		});
+	})
+	
+	$('.editTimeButton').click(function(event) { 
+		event.stopImmediatePropagation(); 
+		event.preventDefault(); 
+		editTime(this); 
+	});
+	
+	/** TODO: 
+	 * - Submit on condition that form data has changed since page load
+	 * - Validate form
+	 */
+	$('#save-btn').click(function() {
+		if($('#file_list li').length > 0) {
 			$('#presentation_form').submit();
-		});
-		
-		
-		{% if copy %}
-		$('#save_new_presentation').click(function(event) {
-			event.preventDefault();
-			if($('#file_list li').length > 0) {
-				$('#presentation_form').submit();
-			}
-			else {
-				alert('Aucun élément dans la liste de lecture');
-			}
-		});
-		$('#submit_new_presentation').click(function(event) {
-			event.preventDefault();
-			if($('#file_list li').length > 0) {
-				$('#presentation_form').attr("action", "{{ path("presentation_show", {'id': presentation.id}) }}");
-				$('#presentation_form').submit();
-			}
-			else {
-				alert('Aucun élément dans la liste de lecture');
-			}
-		});
-		{% endif %}
+		} else {
+			alert('Aucun élément dans la liste de lecture');
+		}
+	});
+
+	$('#delete_thumbs').click(function(event) {
+		event.preventDefault();
+		$('#keepThumbs').val(0);
+		$('#presentation_form').submit();
+	});
+	
+	
+	{% if copy %}
+	$('#save_new_presentation').click(function(event) {
+		event.preventDefault();
+		if($('#file_list li').length > 0) {
+			$('#presentation_form').submit();
+		}
+		else {
+			alert('Aucun élément dans la liste de lecture');
+		}
+	});
+	$('#submit_new_presentation').click(function(event) {
+		event.preventDefault();
+		if($('#file_list li').length > 0) {
+			$('#presentation_form').attr("action", "{{ path("presentation_show", {'id': presentation.id}) }}");
+			$('#presentation_form').submit();
+		}
+		else {
+			alert('Aucun élément dans la liste de lecture');
+		}
+	});
+	{% endif %}
 	</script>
 {% endblock %}
