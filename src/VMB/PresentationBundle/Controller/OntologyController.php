@@ -15,7 +15,7 @@ class OntologyController extends Controller
 	/**
     * @Security("has_role('ROLE_TEACHER')")
     */
-    public function mainAction()
+    public function mainAction(Request $request)
     {
 		$em = $this->getDoctrine()->getManager();
         $ontologies = $em->getRepository('VMBPresentationBundle:Ontology')->findAll();
@@ -24,6 +24,7 @@ class OntologyController extends Controller
             array(
 				'mainTitle' => $this->get('translator')->trans('menu.ontology'),
 				'addButtonUrl' => $this->generateUrl('ontology_edit'),
+                'backButtonUrl' => $this->get('vmb_presentation.previous_url')->getPreviousUrl($request),
                 'ontologies' => $ontologies
             ));
     }

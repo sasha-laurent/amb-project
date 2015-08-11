@@ -111,7 +111,7 @@ class UploadController extends Controller
             'resource' => $resource);
 
         if(!$is_modal_dialog){
-            $render_opts['backButtonUrl'] = $this->container->get('vmb_presentation.previous_url')
+            $render_opts['backButtonUrl'] = $this->get('vmb_presentation.previous_url')
             ->getPreviousUrl($request, $this->generateUrl('resource'));           
         } else {
             $render_opts['is_modal'] = true;

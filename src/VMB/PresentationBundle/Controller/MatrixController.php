@@ -29,7 +29,7 @@ class MatrixController extends Controller
     /**
     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
     */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 		
@@ -37,6 +37,7 @@ class MatrixController extends Controller
 
         return $this->render('VMBPresentationBundle:Matrix:index.html.twig', array(
             'mainTitle' => $this->get('translator')->trans('matrix.main_title'),
+			'backButtonUrl' => $this->get('vmb_presentation.previous_url')->getPreviousUrl($request),
 			'addButtonUrl' => $this->generateUrl('matrix_new'),
             'entities' => $entities
         ));
@@ -70,8 +71,8 @@ class MatrixController extends Controller
 				'delButtonUrl' => $this->generateUrl('matrix_delete', array('id' => $entity->getId())),
 				'entity' => $entity,
 				'resources' => array('official' => $validResources, 'personal' => $personalResources, 'unofficial' => $unofficialResources, 'bookmarks' => $caddyResources),
-				'forkButtonUrl' => $this->generateUrl('matrix_copy', array('id' => $id))
-				// ,'optionButtonModal' => '#modalEditRows'
+				'forkButtonUrl' => $this->generateUrl('matrix_copy', array('id' => $id)),
+				'hasPlaybackFunction' => true
 			));
 		}
 		else {
@@ -409,7 +410,7 @@ class MatrixController extends Controller
     
     /**
      * Deletes a Matrix Row (level or Pov)
-     * Bug: rowId from form is not real rowId from database table
+     * 
      */
     /**
     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
@@ -424,20 +425,38 @@ class MatrixController extends Controller
 			if ($request->isMethod('POST')) {
 				$rowId = $request->request->get('rowId');
 				$type = $request->request->get('rowType');
-				
+				// Check data integrity
+				if($type != ('Level' || 'Pov'))
+				{
+					return new JsonResponse("Invalid row type",500);
+				} else if ($rowId < 0) {
+					return new JsonResponse("Invalid row id", 500);
+				}
 				try {
-					$elt = $this->getDoctrine()->getManager()
-					->getRepository('VMBPresentationBundle:'.$type)->find($rowId);
+					$em = $this->getDoctrine()->getManager();
+					// Bug: rowId from form is not real rowId from database table
 					// If the element was found
-					if($elt !== null){
-						if($elt->getMatrix()->getId() == intval($matrixId)) {
-							$em = $this->getDoctrine()->getManager();
-							$em->remove($elt);
-							$em->flush();
-							return new JsonResponse('ok');
-						} else {
-							return new JsonResponse('emid:'.$elt->getMatrix()->getId().', reqid:'.intval($matrixId), 500);
-						}
+					if($type == 'Pov'){
+					/* VMB\PresentationBundle\Entity\Pov */
+						$matrix_row = $matrix->removePovAtIndex($rowId);
+					} else if($type == 'Level'){
+					/* VMB\PresentationBundle\Entity\Level */
+						$matrix_row = $matrix->removeLevelAtIndex($rowId);
+					}
+					if(null === $matrix_row){ // Or boolean?
+						// Do something
+					}
+					// Getting the real table row id
+					$db_row_id = $matrix_row->getId();
+					/* VMB\PresentationBundle\Entity\MatrixRow */
+					$db_elt = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:'.$type)->find($db_row_id);
+
+					if($db_elt !== null){
+						// Apply database modification
+						$em->remove($db_elt);
+						$em->persist($matrix);
+						$em->flush();
+						return new JsonResponse('['.$db_elt->getId().':'.$db_elt->getTitle().'] removed successfully');
 					} else {
 						return new JsonResponse('Element not found', 500);
 					}

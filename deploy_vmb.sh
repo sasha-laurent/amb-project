@@ -1,9 +1,8 @@
 #/bin/sh env sh
 # deploy_vmb.sh
 # Script de mise à jour du code de production
-
-# Utiliser une clef privée/public pour le projet
-# En créer une pour l'utilisateur www-data?
+cd /var/www/edu/
+# Utilisation une clef privée/public pour le projet
 # Ajouter command="/bin/git",from="bitbucket.org",no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty au hash rsa pub
 echo "début de la mise à jour"
 git pull

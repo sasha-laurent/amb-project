@@ -7,7 +7,6 @@
 
 {# TODO: Notifications, undo actions could go in H1 header center row?#}
 {% block body %}
-	{{dump(entity)}}
 <div class="well">
 {{ form_start(form) }}
 <div class="form-group">
@@ -112,11 +111,18 @@
 		
 	});
 	$("#myModal #save-btn").on('click', function(e){
-
-			var form_data = $('form[name="vmb_presentationbundle_matrix"]').serializeArray();
-			console.log(form_data);
-			// persistChanges(form_data);
+		var formData = new FormData();
+		var form_fields = $('form[name="vmb_presentationbundle_matrix"]').serializeArray();
+		jQuery.each(form_fields, function(i, field_obj){
+			console.log(field_obj.name, field_obj.value);
+			formData.append(field_obj.name, field_obj.value);
 		});
+		// persistChanges(form_data);
+		});
+
+	function persistChanges(dat){
+		$.ajax();
+	}
 	/*
 	** Helper Functions for modal dialog
 	*/
@@ -133,17 +139,15 @@
 	**/
 	function askConfirmDel(elt)
 	{
-		var row_elt = $(elt).parentsUntil("ul");
+		var row_elt = $(elt).parentsUntil("ul"); 
 		// row_elt[0] -> "Delete" part, row_elt[1] -> Whole row
 		var del_button = $(row_elt[0]).find("button");
 		var input = $(row_elt[1]).find(":input").attr('id');
 		var confirmAlert = '<p class="text-danger">{{"matrix.deleteRowMessage"|trans}}</p><p class="btn-group pull-right"><button type="button" class="btn btn-danger" onclick="deleteRow(this,'+input+')">{{"actions.delete"|trans}}</button><button type="button" class="btn btn-default" onclick="cancelConfirm(this)">{{"actions.cancel"|trans}}</button></p>';
-
 		// 'hidden.bs.popover' triggering twice!
 		$(del_button).one('hidden.bs.popover', function(){
 			$(this).popover('destroy');
 		});
-
 		// Initialize popover if it's undefined , otherwise toggle it
 		if($("#myModal > .popover").length == 0)
 		{
@@ -167,36 +171,32 @@
 	}
 
 	/**
-	 * 
-	 *
-	 * TODO: save elt in undo-list before del?
+	 * Ajax Req to Delete a Matrix Row
+	 * TODO: No Ajax Req for new row..
 	**/
 	function deleteRow(elt, input_name){
 		$('#myModal > .popover').popover('destroy');
-		// explode input "id" attribute by "_"
+		// Explode input "id" attribute by
 		var expl = $(input_name).attr('id').split("_");
+		// Lexical transformation: povs -> Pov, levels -> Level 
 		var typ = expl[3].slice(0,1).toUpperCase() + expl[3].slice(1,expl[3].length-1);
 		var dat = { rowId: expl[4], matrixId: {{ entity.id }}, rowType: typ};
-		console.log(dat);
 		// Actual data request to the server
 		$.ajax({
 			type: "POST",
 			url: "{{ path('matrix_delete_row') }}",
 			data: dat,
 			cache: false,
-			beforeSend: function(){
-				console.log("[deleteRow] with data ["+dat.toString()+"]");
-			},
 			success: function(response){
 				console.log("Response:"+response);
 				// Remove row containing input_name
 				$(input_name).closest(".list-group-item").remove();
+				// TODO: Remove element from MatrixShow table
+			},
+			error: function(){
+				// Handle error
 			}
 		});
-	}
-
-	function persistChanges(){
-	$.ajax();
 	}
 	// Matrix rows management
 	function updateTitle(item, id, type, title) {
