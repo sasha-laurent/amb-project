@@ -29,9 +29,5 @@ chmod -R 775 app/logs
 chmod -R 775 app/config/parameters.yml
 chmod -R 775 app/Resources/translations/
 chmod -R 775 web/upload/
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> fc6c4d5ad1a34e3072292e80e7214be4b5ffb2b0
 echo "Mise à jour effectuée"
