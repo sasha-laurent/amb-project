@@ -5,7 +5,7 @@
 
 #Passage du pull avec la clef
 echo "début de la mise à jour"
-git pull https://bitbucket.org/Taurus17/vmb.git production
+git pull
 
 echo "Migration Base de Données"
 php app/console doctrine:schema:update --force
@@ -13,6 +13,20 @@ php app/console doctrine:schema:update --force
 #Mise à jour du cache
 echo "Nettoyage du code"
 php app/console cache:clear --env=prod
-php app/console cache:warmup
+php app/console cache:warmup --env=prod
 
+echo "Changement de propriétaires"
+chown -R www-data:www-data app/cache/
+chown -R www-data:www-data app/logs/
+chown -R www-data:www-data app/config/parameters.yml
+chown -R www-data:www-data app/Resources/translations/
+chown -R www-data:www-data web/upload/
+
+echo "Changement de droits"
+chmod -R 775 app/cache
+chmod -R 775 app/logs
+chmod -R 775 app/config/parameters.yml
+chmod -R 775 app/Resources/translations/
+chmod -R 775 web/upload/
+ 
 echo "Mise à jour effectuée"
