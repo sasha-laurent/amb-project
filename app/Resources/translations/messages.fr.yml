@@ -87,6 +87,7 @@ homepage:
     presentation_paragraph_3_3: 'des variantes de présentation éclectiques (réécritures, séquences alternatives...).'
     presentation_paragraph_4: 'AMB propose, plus concrètement, une plateforme de construction de présentations (exposition, parcours de visite et de lecture, cours...) personnalisables d’une façon interactive et intuitive. Il est destiné à des médiateurs, dont l’objectif est de créer des contenus (professeurs, conservateurs de musée...), et à des récepteurs, dont le but est de s’informer, de découvrir, d’apprendre, d’explorer, etc. (public général, élèves, visiteurs, spectateurs...). '
     presentation_paragraph_5: 'AMB peut appuyer plusieurs paradigmes éducatifs et culturels, comme par exemple : des MOOC et des SPOC, des projets en pédagogie active, des séances de classe inversée, des cours magistraux classiques, des projets de muséologie numérique centrée sur le visiteur (en phase de préparation, de réalisation ou de capitalisation de visite), des spectacles sur mesure dynamiquement construits, des opérations de communication, etc.'
+    read_more: "En savoir plus..."
     sign_up: 'Inscrivez-vous gratuitement' # pour visualiser des présentations et créer les votres.
 
 label:
@@ -255,6 +256,7 @@ role:
 
 search:
     resultsTitle: 'Résultats de recherche'
+    no_results: 'Pas de résultats pour cette recherche.'
 
 show:
     playlist: 'Liste de lecture'

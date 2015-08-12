@@ -21,7 +21,7 @@ registration:
     email:
         message: 'Suivez le lien afin d''activer votre compte.'
         subject: 'Activez votre compte AMB'
-
+    existing_username: 'Le nom d''utilisateur est déja utilisé.'
     submit: 'S''enregistrer'
 
 resetting:
