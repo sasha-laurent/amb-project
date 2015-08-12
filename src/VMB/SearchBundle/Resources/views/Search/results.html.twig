@@ -1,24 +1,24 @@
 {% extends '::layout.html.twig' %}
 
 {% block h1_title %}
-	
-	<a title="{{"actions.back"|trans}}" class="btn btn-default" href="{{ backButtonUrl }}" >
-					<span class="left glyphicon glyphicon-chevron-left" aria-hidden="true" >
-					</span>
-	</a>{# Num.Results + "Search Results | trans" for "query" #}
+	{# 
+	Back Button + {Num.Results} {Search Results | trans} for {query}
+	#}
 {% endblock %}
+
+{% if page == 1 and (nbPages == 0 or nbPages == 1) %}
+	{% set skipPagination = true %}
+{% endif %}
 
 {% block body %}
 	<div class="row">
 		<div class="btn-group align-center" role="group" aria-label="Type Selection">
 			{# add class btn-primary for queried type#}
 			<button type="button" class="btn">
-				{{"menu.presentations"|trans}} 
-				<span class="badge">{#count#}</span>
+				{{"menu.presentations"|trans}} <span class="badge">{#count#}</span>
 			</button>
 			<button type="button" class="btn">
-				{{"menu.resources"|trans}} 
-				<span class="badge">{#count#}</span>
+				{{"menu.resources"|trans}} <span class="badge">{#count#}</span>
 			</button>
 		</div>
 		{# Mosaic default ?#}
@@ -34,6 +34,10 @@
 	
 	<div id="resultsContainer">
 	</div>
+
+	{% if skipPagination is not defined %}
+		{% include '::pagination.html.twig' %}
+	{% endif %}
 {% endblock %}
 
 {% block script %}
@@ -42,6 +46,6 @@
 	var list_template = "";
 	var mosaic_template = "";
 	// Populate Json with resource entity objects.
-	//$(function(){});
+	$(function(){});
 	</script>
-{% endblock %}
+{% endblock }
