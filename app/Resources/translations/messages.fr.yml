@@ -74,7 +74,7 @@ help:
     no_help_for_this_page: 'Aucune aide contextuelle pour cette page'
 
 homepage:
-    title: 'Bienvenue à Alternative Mediations Builder'
+    title: 'Bienvenue à l''<i>Alternative Mediations Builder</i>'
     presentation_paragraph_1: 'AMB est un univers modulable de services pour la médiation éducative et culturelle. Il offre une palette étendue de possibilités pour réaliser des présentations :'
     presentation_paragraph_1_1: 'adaptables à plusieurs profils d’utilisateurs'
     presentation_paragraph_1_2: 'ouvertes à des médias riches'

@@ -74,88 +74,7 @@
 		<div class="col-md-9">
 			<div class="row">
 				{% for entity in entities %}
-				<div class="col-md-4">
-					<a class="thumbnail-link" href="{{ path('presentation_show', { 'id': entity.id }) }}">
-						<div class="thumbnail block-browse block-presentation{% if not entity.public %} block-presentation-private{% endif %}{% if entity.default %} block-presentation-default{% endif %}{% if entity.official %} block-presentation-official{% endif %}">
-							<div class="thumbnail-description">
-								<h4>{{ 'table.description'|trans }}</h4>
-								<hr/>
-								<p>{{ entity.description }}</p>
-							</div>
-							<img data-holder-rendered="true" src="{{ asset(entity.getThumbsPath) }}" style="height: 155px; width: 100%; display: block;" />
-						
-							<div class="caption">
-								<h3 class="thumbnail-label">{{ entity.title }}</h3>
-							</div>
-							
-							<div class="duration">
-								{{ entity.durationToString }}
-							</div>
-							<div class="caddy-icon">
-								<span class="loading_indicator_inline loading_indicator_{{entity.id}}"></span>
-								
-								<div class="btn-group" role="group" aria-label="...">
-									{% if is_granted('ROLE_ADMIN') or entity.isOwner(app.user) %}
-										<a title="{{"presentation.edit"|trans}}"href="{{ path('presentation_edit', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>					
-										<a title="{{"presentation.parameters"|trans}}" href="#" type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-options-{{ entity.id }}"><span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span></a>					
-									{% else %}
-										<a title="{{"caddy.add"|trans}}" class="btn {% if app.user.presentationIsInCaddy(entity) %}btn-info{% else %}btn-default{% endif %} presentationAddToCaddy" data-id="{{ entity.id }}"><span class="glyphicon glyphicon-star"></span></a>
-									{% endif %}
-									<a title="{{"presentation.copy_of"|trans}}" href="{{ path('presentation_create_copy', { 'id': entity.id }) }}" type="button" class="btn btn-default"><img width="10px" height="16px" style="{% if entity.official or entity.default %}border-top-color:rgb(255,255,255){% else %}padding-bottom:4px{% endif %};" src="{{asset('img/git-branch.svg')}}"></img></a>					
-								</div>
-							</div>
-							
-							<!-- Modal -->
-							<div class="modal fade" id="modal-options-{{ entity.id }}" tabindex="-1" role="dialog" aria-labelledby="modal-options-label-{{ entity.id }}" aria-hidden="true">
-							  <div class="modal-dialog">
-								<div class="modal-content">
-								  <div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-									<h4 class="modal-title" id="modal-options-label-{{ entity.id }}">{{ 'presentation.parameters'|trans({'%title%': entity.title }) }}</h4>
-								  </div>
-								  <div class="modal-body">
-										<div class="row">
-											<div class="col-md-3 text-right">{{ 'presentation.public'|trans }} :</div>
-											<div class="col-md-9">
-												{% if entity.public %}
-													<span class="label label-success">{{ 'label.yes'|trans }}</span> <a href="{{ path('presentation_parameter', {'id': entity.id, 'value':0, 'param': 'public'}) }}"><span class="label label-default">{{ 'label.no'|trans }}</span></a>
-												{% else %}
-													<a href="{{ path('presentation_parameter', {'id': entity.id, 'value':1, 'param': 'public'}) }}"><span class="label label-default">{{ 'label.yes'|trans }}</span></a> <span class="label label-danger">{{ 'label.no'|trans }}</span>
-												{% endif %}
-											</div>
-										</div><br/>
-										{% if is_granted('ROLE_TEACHER') %}
-										<div class="row">
-											<div class="col-md-3 text-right">{{ 'presentation.official'|trans }} :</div>
-											<div class="col-md-9">
-												{% if entity.official %}
-													<span class="label label-success">{{ 'label.yes'|trans }}</span> <a href="{{ path('presentation_parameter', {'id': entity.id, 'value':0, 'param': 'official'}) }}"><span class="label label-default">{{ 'label.no'|trans }}</span></a>
-												{% else %}
-													<a href="{{ path('presentation_parameter', {'id': entity.id, 'value':1, 'param': 'official'}) }}"><span class="label label-default">{{ 'label.yes'|trans }}</span></a> <span class="label label-danger">{{ 'label.no'|trans }}</span>
-												{% endif %}
-											</div>
-										</div><br/>
-										<div class="row">
-											<div class="col-md-3 text-right">{{ 'presentation.default'|trans }} :</div>
-											<div class="col-md-9">
-												{% if entity.default %}
-													<span class="label label-success">{{ 'label.yes'|trans }}</span> <a href="{{ path('presentation_parameter', {'id': entity.id, 'value':0, 'param': 'official'}) }}"><span class="label label-default">{{ 'label.no'|trans }}</span></a>
-												{% else %}
-													<a href="{{ path('presentation_parameter', {'id': entity.id, 'value':1, 'param': 'default'}) }}"><span class="label label-default">{{ 'label.yes'|trans }}</span></a> <span class="label label-danger">{{ 'label.no'|trans }}</span>
-												{% endif %}
-											</div>
-										</div>
-										{% endif %}
-								  </div>
-								  <div class="modal-footer">
-									<button type="button" class="btn btn-default" data-dismiss="modal">{{ 'actions.close'|trans }}</button>
-								  </div>
-								</div>
-							  </div>
-							</div>
-						</div>
-					</a>
-				</div>
+					{% include "VMBPresentationBundle:Presentation:presentationVignette.html.twig" with {'entity' : entity} %}
 				{% else %}
 					<div class="col-md-12 text-center">
 						<em>{{ 'browse.no_presentation'|trans }}</em>
@@ -175,7 +94,6 @@
 
 {% block script %}
 	{{ parent() }}
-	
 	<script>
 		$(function() {
 			if($('.collapse.in').length) {
@@ -206,9 +124,7 @@
 					.addClass('glyphicon-chevron-right');			
 				});
 			});
-
 		});
 	</script>
 	{% include '::addToCaddy.html.twig' %}
 {% endblock %}
-
