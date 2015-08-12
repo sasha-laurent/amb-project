@@ -1,6 +1,6 @@
 vmb_search_action:
-    path:     /search/{query}/{type}/{page}
-    defaults: { _controller: "VMBSearchBundle:Search:index", type: "presentation", page: 1, query:""}
+    path:     /search # /{query}/{type}/{page}
+    defaults: { _controller: "VMBSearchBundle:Search:index" }
     requirements:
         #type: "presentation|resource"
         #page: \d*

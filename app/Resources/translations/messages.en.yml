@@ -251,6 +251,9 @@ role:
     prof: Teacher
     stud: Student
 
+search:
+    resultsTitle: 'Search results'
+
 show:
     playlist: Playlist
     resource_details: Details

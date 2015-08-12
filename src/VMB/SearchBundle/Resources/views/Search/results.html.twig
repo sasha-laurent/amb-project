@@ -1,43 +1,68 @@
 {% extends '::layout.html.twig' %}
-
-{% block h1_title %}
-	{# 
-	Back Button + {Num.Results} {Search Results | trans} for {query}
-	#}
-{% endblock %}
-
-{% if page == 1 and (nbPages == 0 or nbPages == 1) %}
-	{% set skipPagination = true %}
-{% endif %}
-
-{% block body %}
+{# Hereafter the assumption is made that 
+	ressources are searched for by default #}
+{% set stripBodyHeader = true %}
+{% block header %}
+<h3 class="page-header" style="margin-top:20px;">
 	<div class="row">
-		<div class="btn-group align-center" role="group" aria-label="Type Selection">
-			{# add class btn-primary for queried type#}
-			<button type="button" class="btn">
-				{{"menu.presentations"|trans}} <span class="badge">{#count#}</span>
+	<div class="col-md-7">
+		<a title="{{"actions.back"|trans}}" class="btn btn-default" href="{{ backButtonUrl }}" >
+			<span class="left glyphicon glyphicon-chevron-left" aria-hidden="true" >
+			</span>
+		</a>
+		{{"search.resultsTitle"|trans}} {{"for"|trans}} "{{query}}"
+	</div>
+	<div class="col-md-5">
+		{# Type select #}
+		<div class="btn-group" role="group" aria-label="Type Selection">
+			{# add class btn-primary #}
+			{% if presentations is empty %}
+				{% set pres_style = 'default" disabled' %}
+			{% elseif presentations is not empty 
+				and resources is not empty %}
+				{% set pres_style = 'default' %}
+			{% else %}
+				{% set pres_style = 'primary' %}
+			{% endif %}
+
+			{% set res_style = resources is empty ? 'default" disabled' : "primary" %}
+
+			<button type="button" id="presentationsResults" class="btn btn-{{pres_style}}" >
+				{{"menu.presentations"|trans}} <span class="badge">{{presentations|length}}</span>
 			</button>
-			<button type="button" class="btn">
-				{{"menu.resources"|trans}} <span class="badge">{#count#}</span>
+			<button type="button" id="resourceResults" class="btn btn-{{res_style}}">
+				{{"menu.resources"|trans}} <span class="badge">{{resources|length}}</span>
 			</button>
 		</div>
-		{# Mosaic default ?#}
-		<div class="btn-group-lg pull-right" role="group" aria-label="View Selection">
+		{# View select #}
+		<div class="btn-group pull-right" role="group" aria-label="View Selection">
 			<button type="button" class="btn" id="resultsAsList">
-				<span class="glyphicon-th-list"></span>
+				<span class="glyphicon glyphicon-th-list"></span>
 			</button>
 			<button type="button" class="btn btn-primary" id="resultsAsMosaic">
-				<span class="glyphicon-th-large"></span>
+				<span class="glyphicon glyphicon-th-large"></span>
 			</button>
 		</div>
 	</div>
-	
-	<div id="resultsContainer">
-	</div>
+</div>
+</h3>
+{% endblock %}
 
-	{% if skipPagination is not defined %}
-		{% include '::pagination.html.twig' %}
-	{% endif %}
+{% block body %}
+	<div id="resultsContainer">
+		{% for r in resources %}
+			{% include "VMBResourceBundle:Resource:resourceVignette.html.twig" with {'entity' : r, 'nbPerPage' : 12, 'page':1} %}
+		{% else %}
+			{% for p in presentations %}
+				{% include "VMBPresentationBundle:Presentation:presentationVignette.html.twig" with {'entity' : p, 'nbPerPage' : 12, 'page':1} %}
+			{% else %}
+			<div class="col-md-12 text-center">
+				<h1><em>{{ 'search.no_results'|trans }}</em></h1>
+				<br/><br/>
+			</div>
+			{% endfor %}
+		{% endfor %}
+	</div>
 {% endblock %}
 
 {% block script %}
@@ -47,5 +72,14 @@
 	var mosaic_template = "";
 	// Populate Json with resource entity objects.
 	$(function(){});
+
+	$("#resultsAsList").on('click', function(){
+		$("#resultsAsMosaic").removeClass("btn-primary");
+		$(this).addClass("btn-primary");
+	});
+	$("#resultsAsMosaic").on('click', function(){
+		$("#resultsAsList").removeClass("btn-primary");
+		$(this).addClass("btn-primary");
+	});
 	</script>
-{% endblock }
+{% endblock %}
