@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block body %}
+	<div style="display:none; position: absolute; top: 140px; background-color: black; height: 20px; color: white; line-height: 20px;" id="timeline_time_hover"></div>
 	<div class="timeline">
 		{% for res in presentation.resources %}
 			{% if res.suggested == false %}
@@ -217,7 +218,7 @@
 			}
 			else {
 				val = 50;
-				alert('alert.enter_a_valid_decimal_number');
+				alert('{{ 'alert.enter_a_valid_decimal_number'|trans }}');
 			}
 			return val;
 		}
@@ -286,6 +287,40 @@
 			
 			$('#vmb_presentationbundle_annotation_beginning').change(function() { updateAnnotationEdited();	});
 			$('#vmb_presentationbundle_annotation_length').change(function() { updateAnnotationEdited();	});
+			
+			// Tracking mouse in order to display the time at the current point
+			timeoutTimelineHover = false;
+			$('.timeline').hover(function(e) {
+				$('#timeline_time_hover').show();
+				timelineMouseOver();
+			}, function() { 
+				$('#timeline_time_hover').hide(); 
+				if(timeoutTimelineHover !== false) {
+					clearTimeout(timeoutTimelineHover);
+					timeoutTimelineHover = false;
+				}
+			});
+			
+			function pad(num, size) {
+				var s = num+"";
+				while (s.length < size) s = "0" + s;
+				return s;
+			}
+			
+			function convertDurationToString(value) {
+				return (pad(~~(value / 60), 2)) + ':' + pad((value % 60), 2);
+			}
+			
+			function timelineMouseOver() {
+				$(document).one("mousemove", function (e) {
+					var posX = e.pageX - $('.timeline').offset().left;
+					time = Math.floor((posX / $('.timeline').width()) * {{ presentation.duration }});
+					$('#timeline_time_hover').css('left', e.pageX + 'px');
+					$('#timeline_time_hover').html('&nbsp;' + convertDurationToString(time) + '&nbsp;');
+					// set a timeout so the handler will be attached again after a little while
+					timeoutTimelineHover = setTimeout(function() { timelineMouseOver() }, 33);
+				});
+			}
 			
 			$('.timeline_res').popover({
 				trigger: 'hover',
