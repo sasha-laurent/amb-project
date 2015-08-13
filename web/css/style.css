@@ -354,7 +354,7 @@ header {
 	position: relative;
 	width: 100%;
 	height: 100%;
-	background-color: rgba(0,0,0,0.65);
+	background-color: rgba(0,0,0,0.20);
 	color: white;
 	text-align: center;
 	cursor: pointer;
@@ -382,28 +382,27 @@ header {
 }
 
 .tileUsedResource .nbResources .total.nbTotal {
-	top: 8px;
+	width: auto;
+	background: rgba(0,0,0, 0.7);
+	top: 0px;
+	left: 0px;
 	margin-top: 0px;
+	padding: 4px;
+	text-align: center;
+	height: 28px;
 }
 
 .tileUsedResource .nbResources .counterCheck {
-	text-align: right;
+	text-align: center;
 	position: absolute;
-	margin-left: -39px;
-	bottom: 8px;
-	left: 50%;
-	height: 26px;
-	width: 79px;
-	padding: 3px 6px;
-	background-color: rgba(0,0,0,0.5);
+	right: 0px;
+	width: 36px;
+	padding: 3px 0px;
+	background-color: rgba(0,0,0,0.7);
 }
 
 .tileUsedResource .nbResources .counterCheck.copyMode {
-	width: 100%;
-	padding: 3px 0px;
-	left: 0px;
-	margin-left: 0px;
-	text-align: center;
+
 }
 
 #matrix .popover {
