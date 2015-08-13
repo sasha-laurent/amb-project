@@ -1,7 +1,3 @@
-vmb_search:
-    resource: "@VMBSearchBundle/Resources/config/routing.yml"
-    prefix:   /
-
 _welcome:
     path:     /
     defaults: 
@@ -18,6 +14,10 @@ vmb_resource:
 
 vmb_presentation:
     resource: "@VMBPresentationBundle/Resources/config/routing.yml"
+    prefix:   /
+
+vmb_search:
+    resource: "@VMBSearchBundle/Resources/config/routing.yml"
     prefix:   /
 
 vmb_user:

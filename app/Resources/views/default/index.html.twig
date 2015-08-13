@@ -1,9 +1,41 @@
 {% extends '::layout.html.twig' %}
 
+{% block h1_title %}
+    	<div class="text-center">{{"homepage.title"|trans|raw}}</div>
+{% endblock %}
+
 {% block body %}
-    <h4>
-    	Welcome to the Virtual Mediations Builder homepage! <br/>
-    	You can watch the introductive video. (on the right | below ) <br/>
-    	Then you can sign up for free to create your own presentation. <br/>
-    </h4>
+<div class="row">
+<h4 class="col-md-6">
+	<p>{{"homepage.presentation_paragraph_1"|trans}}
+		<ul>
+			<li>{{"homepage.presentation_paragraph_1_1"|trans}}</li>
+			<li>{{"homepage.presentation_paragraph_1_2"|trans}}</li>
+			<li>{{"homepage.presentation_paragraph_1_3"|trans}}</li>
+		</ul>
+	</p>
+	<p>{{"homepage.presentation_paragraph_2"|trans}}</p>
+	<p class="text-right text-primary"><a href="#title" onclick="javascript:$('#expandContent').show();$(this).hide()" ><small>{{"homepage.read_more"|trans}}</small></a></p>
+</h4>
+<div class="col-md-6">
+	<img src="{{asset("img/landingPageArt.jpg")}}" width="460px" height="325px">
+</div>
+</div>
+<div id="expandContent" style="display: none;">
+	<p>{{"homepage.presentation_paragraph_3"|trans}}
+		<ul>
+			<li>{{"homepage.presentation_paragraph_3_1"|trans}}</li>
+			<li>{{"homepage.presentation_paragraph_3_2"|trans}}</li>
+			<li>{{"homepage.presentation_paragraph_3_3"|trans}}</li>
+		</ul>
+	</p>
+	<p>{{"homepage.presentation_paragraph_4"|trans}}</p>
+	<p>{{"homepage.presentation_paragraph_5"|trans}}</p>
+</div>
+<p class="text-center">
+	<a class='btn btn-success btn-lg' href="{{path("fos_user_registration_register")}}">{{"homepage.sign_up"|trans}}
+	</a>	
+</p>
+
+    	
 {% endblock %}

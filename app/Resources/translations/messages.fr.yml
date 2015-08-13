@@ -1,4 +1,5 @@
 'Aide contextuelle': 'Aide contextuelle'
+'for' : 'pour'
 Close: Close
 Fermer: Fermer
 Niveaux: Niveaux
@@ -7,6 +8,7 @@ Titre: Titre
 
 actions:
     add: Ajouter
+    back: 'Aller en arrière'
     cancel: Annuler
     create: Créer
     close: Fermer
@@ -72,6 +74,22 @@ help:
     main_title: 'Gestion des aides contextuelles'
     no_help_for_this_page: 'Aucune aide contextuelle pour cette page'
 
+homepage:
+    title: 'Bienvenue à l''<i>Alternative Mediations Builder</i>'
+    presentation_paragraph_1: 'AMB est un univers modulable de services pour la médiation éducative et culturelle. Il offre une palette étendue de possibilités pour réaliser des présentations :'
+    presentation_paragraph_1_1: 'adaptables à plusieurs profils d’utilisateurs'
+    presentation_paragraph_1_2: 'ouvertes à des médias riches'
+    presentation_paragraph_1_3: 'supportant des discours variés.'
+    presentation_paragraph_2: 'AMB met à disposition des moyens techniques innovants pour développer des projets d’accompagnement et d’assistance en lecture, interprétation et compréhension (d’un thème, d’un concept, d’une situation, d’un objet, etc.).'
+    presentation_paragraph_3: 'AMB assure et stimule des médiations axées sur des niveaux graduels d’implication de la part des récepteurs. Sa conception se fonde sur un nombre considérable de « grains », c’est-à-dire, de ressources ayant une certaine autonomie narrative. Ces grains peuvent être combinés à volonté pour construire des présentations suivant :'
+    presentation_paragraph_3_1: 'des points de vue complémentaires (manières de lire, regards, aspects, topiques...)'
+    presentation_paragraph_3_2: 'des degrés de difficulté multiples (essentiel, étendu, compréhensif...)'
+    presentation_paragraph_3_3: 'des variantes de présentation éclectiques (réécritures, séquences alternatives...).'
+    presentation_paragraph_4: 'AMB propose, plus concrètement, une plateforme de construction de présentations (exposition, parcours de visite et de lecture, cours...) personnalisables d’une façon interactive et intuitive. Il est destiné à des médiateurs, dont l’objectif est de créer des contenus (professeurs, conservateurs de musée...), et à des récepteurs, dont le but est de s’informer, de découvrir, d’apprendre, d’explorer, etc. (public général, élèves, visiteurs, spectateurs...). '
+    presentation_paragraph_5: 'AMB peut appuyer plusieurs paradigmes éducatifs et culturels, comme par exemple : des MOOC et des SPOC, des projets en pédagogie active, des séances de classe inversée, des cours magistraux classiques, des projets de muséologie numérique centrée sur le visiteur (en phase de préparation, de réalisation ou de capitalisation de visite), des spectacles sur mesure dynamiquement construits, des opérations de communication, etc.'
+    read_more: "En savoir plus..."
+    sign_up: 'Inscrivez-vous gratuitement' # pour visualiser des présentations et créer les votres.
+
 label:
     no: Non
     yes: Oui
@@ -87,7 +105,7 @@ matrix:
     error:
         resource_unofficial_not_added: 'Une ressource n''a pu être ajoutée car elle n''est pas officielle'
     levels: Niveaux
-    main_title: 'Gestion de vos matrices de présentation'
+    main_title: 'Gestion des matrices'
     modified: 'Matrice modifiée'
     modify_structure: 'Modifier la structure de la matrice'
     note_resource: 'Cette matrice étant officielle, seules les ressources officielles (et donc indexées) sont ici affichées'
@@ -146,8 +164,11 @@ message:
         warning: Attention
 
 ontology:
+    add: 'Créer une nouvelle ontologie'
     add_node: 'Ajouter un élément'
+    edit: 'Modification de l''ontologie'
     edit_node: 'Modifier l''élément'
+    delete: 'Suppression de l''ontologie'
     delete_node: 'Effacer l''élément'
     save_node: 'Sauvegarder'
     edit: 'Modifier l''ontologie'
@@ -157,7 +178,7 @@ player:
     new_tab: 'Afficher dans un nouvel onglet.'
 
 presentation:
-    add: 'Ajout d''une présentation'
+    add: 'Création d''une nouvelle présentation'
     added: 'Présentation ajoutée'
     added_to_playlist: 'Ajoutée à la liste de lecture'
     advanced_visualisation: 'Visualisation avancée'
@@ -170,7 +191,7 @@ presentation:
     deleted: 'Présentation supprimée'
     details: 'Détails de la présentation'
     edit: "Modifier la présentation"
-    is_empty_add_content: 'La matrice de présentation est vide. Voudriez-vous y ajouter du contenu?'
+    is_empty_add_content: 'La matrice de présentation est vide.<br/>Veuillez ajouter du contenu, tout d’abord !'
     error:
         matrix_unofficial: 'La matrice associée n''est pas officielle'
         presentation_unofficial: 'Une présentation non officielle ne peut être passée en présentation par défaut'
@@ -215,11 +236,12 @@ resource:
     add: 'Ajout d''une ressource'
     added: 'Ressource ajoutée'
     browse: 'Parcourir les ressources'
-    delete: 'Suppression d''une ressource'
+    delete: 'Suppression de la ressource'
     deleted: 'Ressource supprimée'
-    edit: 'Modification d''une ressource'
+    edit: 'Modification de la ressource'
+    index: 'Indexation de la ressource'
     modified: 'Ressource modifiée'
-    none_found_in_this_space: 'Aucune ressource trouvée pour ce sujet dans cet espace'
+    none_found_in_this_space: 'Aucune ressource n''a été trouvée pour ce sujet dans cet espace'
     officials: Officielles
     personals: Personnelles
     bookmarks: Favoris
@@ -231,6 +253,10 @@ resource:
 role:
     prof: Professeur
     stud: Etudiant
+
+search:
+    resultsTitle: 'Résultats de recherche'
+    no_results: 'Pas de résultats pour cette recherche.'
 
 show:
     playlist: 'Liste de lecture'
@@ -266,15 +292,16 @@ topic:
     add: 'Ajouter une thématique'
     added: 'Thématique ajoutée'
     all: 'Toutes les thématiques'
-    delete: 'Suppression d''une thématique'
+    delete: 'Suppression de la thématique'
     deleteMessage: 'la thématique "%title%" [ATTENTION CELA SUPPRIMERA TOUTES LES MATRICES, RESSOURCES ET PRESENTATIONS LIEES]'
     deleted: 'Thématique supprimée'
-    edit: 'Thématique modifiée'
+    edit: 'Modification de la thématique'
     main_title: 'Classification des thématiques'
     modified: 'Thématique modifiée'
     new_root: '+ Nouvelle racine'
 
 user:
+    profile: Profil
     role:
         admin: Administrateur
         student: Étudiant

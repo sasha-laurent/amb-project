@@ -22,12 +22,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
     * Create and process the new users' registration form.
     * TODO:
     * - If the user is already authenticated, redirect him/her to the homepage.
-    * - Role choice customization in the form if user is granted admin rights.
-    * - Ability for the user to set his own password? E-mail and password confirmation (in form)?
     */
     
 class RegistrationController extends BaseController
 {
+
     public function registerAction(Request $request)
     {
         $has_admin_rights = $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN');
@@ -63,14 +62,14 @@ class RegistrationController extends BaseController
             **/
 
             $form_role = $form->getData()->getRoles();
-            $role = 'ROLE_STUDENT';
             if( isset($form_role) 
                 && $has_admin_rights 
                 && in_array($form_role, array('ROLE_ADMIN', 'ROLE_STUDENT', 'ROLE_TEACHER')))
             {
                     $role = $form_role;
-			}
-
+			} else {
+                $role = 'ROLE_STUDENT';
+            }
             $user->addRole($role);
             
             /*
@@ -82,19 +81,33 @@ class RegistrationController extends BaseController
     			$password = substr($tokenGenerator->generateToken(), 0, 8); // 8 chars
                 $user->setPlainPassword($password);
             }
-
-            $userManager->updateUser($user);
+            try {
+                $userManager->updateUser($user);
+            } catch(\Doctrine\DBAL\DBALException $e){
+                // If duplicate entry for username 
+                // then say username not available
+                $flashMessage = $this->get('translator')->trans('registration.existing_username', array(), 'FOSUserBundle');
+                $request->getSession()->getFlashBag()->add('danger', $flashMessage);
+                $url = $this->generateUrl('fos_user_registration_register');
+                return new RedirectResponse($url);
+            }
             
             /*
              * Sending registration mail 
             **/
+            $message_opts = array('username' => $user->getUsername());
+            if($has_admin_rights){
+                $message_opts['password'] = $password;
+            }
+            // Translate email subject?
             $message = \Swift_Message::newInstance()
-				->setSubject('Inscription à VMB')
-				->setFrom('vmb@vmb.com')
+				->setSubject('Inscription à AMB')
+				->setFrom('no-reply@edu3d.enstb.org')
 				->setTo($user->getEmail())
-				->setBody($this->renderView('VMBUserBundle:User:registrationMail.txt.twig', array('username' => $user->getUsername(), 'password' => $password)))
+				->setBody($this->renderView('VMBUserBundle:User:registrationMail.txt.twig',$message_opts))
             ;
 			$this->get('mailer')->send($message);
+
 
             /*
              * User redirect logic
@@ -106,13 +119,14 @@ class RegistrationController extends BaseController
     				$request->getSession()->getFlashBag()->add('success', $flashMessage);
                     $url = $this->generateUrl('admin_user');
                 } else {
+                    $this->get('session')->set('fos_user_send_confirmation_email/email', $user->getEmail());
                     $url = $this->generateUrl('fos_user_registration_check_email');
                 }
                 $response = new RedirectResponse($url);
             }
 
-            //$dispatcher->dispatch(FOSUserEvents::REGISTRATION_COMPLETED, new FilterUserResponseEvent($user, $request, $response));
-            
+            $dispatcher->dispatch(FOSUserEvents::REGISTRATION_COMPLETED, new FilterUserResponseEvent($user, $request, $response));
+
             return $response;
         }
 
@@ -121,7 +135,7 @@ class RegistrationController extends BaseController
             $form_params['mainTitle'] = $this->get('translator')->trans('admin.user.add');
             $form_params['backButtonUrl'] = $this->generateUrl('admin_user');
         } else {
-            $form_params['mainTitle'] = $this->get('translator')->trans('registration.register');
+            $form_params['mainTitle'] = $this->get('translator')->trans('registration.register', array(), 'FOSUserBundle');
         }
         return $this->render('::Backend/form.html.twig', $form_params);
 			

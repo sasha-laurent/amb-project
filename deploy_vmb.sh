@@ -1,9 +1,8 @@
 #/bin/sh env sh
 # deploy_vmb.sh
 # Script de mise à jour du code de production
-
-# Utiliser une clef privée/public pour le projet
-# En créer une pour l'utilisateur www-data?
+cd /var/www/edu/
+# Utilisation une clef privée/public pour le projet
 # Ajouter command="/bin/git",from="bitbucket.org",no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty au hash rsa pub
 echo "début de la mise à jour"
 git pull
@@ -15,7 +14,7 @@ php app/console doctrine:schema:update --force
 #Mise à jour du cache
 echo "Nettoyage du code"
 php app/console cache:clear --env=prod
-php app/console cache:warmup
+php app/console cache:warmup --env=prod
 
 echo "Changement de propriétaires"
 chown -R www-data:www-data app/cache/

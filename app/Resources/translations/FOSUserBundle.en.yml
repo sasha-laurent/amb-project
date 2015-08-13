@@ -15,13 +15,13 @@ profile:
 registration:
     register: 'Sign up'
     back: 'Go back'
-    check_email: 'Last checkpoint to activate your AMB account: follow the activation link sent to the email account provided.'
+    check_email: 'Last checkpoint to activate your AMB account: follow the activation link sent to your email address.'
     confirmed: 'Registration was successful'
 
     email:
         message: 'Follow the link to complete your registration.'
         subject: 'Activate your AMB Account'
-
+    existing_username: 'Username is taken.'
     submit: 'Sign me up'
 
 resetting:
