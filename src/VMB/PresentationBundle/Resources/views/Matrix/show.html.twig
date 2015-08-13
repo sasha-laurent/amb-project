@@ -273,7 +273,7 @@
 	Box.prototype.generateBox = function() {
 		var str = '<div class="tileUsedResource" data-coordinates="' + this.pov + '_' + this.lvl + '" data-length="' + this.resList.length + '" data-toggle="popover" ';
 		if(this.resList.length > 0) {
-			str += 'style="' + this.resList[0].getBackgroundStyle() + '"><div class="nbResources"><div class="total">+' + this.resList.length + '</div></div>';
+			str += 'style="' + this.resList[0].getBackgroundStyle() + '"><div class="nbResources"><div class="total">' + this.resList.length + '</div></div>';
 		}
 		else {
 			str += 'style="background-image: none;"><div class="nbResources noBg"></div>';
@@ -289,7 +289,7 @@
 		if(this.resList.length > 0) {
 			$(elt).css('background-image', 'url(' + this.resList[0].getThumbs() + ')');
 			$('> .nbResources', elt).removeClass('noBg');
-			$('> .nbResources', elt).html('<div class="total">+' + this.resList.length + '</div>');
+			$('> .nbResources', elt).html('<div class="total">' + this.resList.length + '</div>');
 			if($('.tileUsedResource', this.domElt).data("bs.popover").tip().hasClass('in')) {
 				$('.tileUsedResource', this.domElt).popover('show');
 			}

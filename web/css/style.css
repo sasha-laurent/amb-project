@@ -371,17 +371,9 @@ header {
 }
 
 .tileUsedResource .nbResources .total {
-	width: 100%;
 	position: absolute;
-	top: 50%;
-	height: 20px;
-	margin-top: -10px;
 	line-height: 20px;
 	font-size: 20px;
-	text-align: center;
-}
-
-.tileUsedResource .nbResources .total.nbTotal {
 	width: auto;
 	background: rgba(0,0,0, 0.7);
 	top: 0px;
