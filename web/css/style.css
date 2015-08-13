@@ -809,6 +809,7 @@ li.list-group-item.row .form-control {
 
 .timeline {
 	height: 32px;
+	position: relative;
 }
 
 .timeline_res {
