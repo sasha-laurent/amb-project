@@ -110,12 +110,15 @@ class UploadController extends Controller
                 $this->get('translator')->trans('resource.add') : $this->get('translator')->trans('resource.edit')),
             'resource' => $resource);
 
-        if(!$is_modal_dialog){
+        if($is_modal_dialog)
+        {
+            $render_opts['is_modal'] = true;
+        } elseif(!$is_modal_dialog && !$is_new)
+        { // logix fun: this cond === !(is_modal || is_new)
             $render_opts['backButtonUrl'] = $this->get('vmb_presentation.previous_url')
             ->getPreviousUrl($request, $this->generateUrl('resource'));           
-        } else {
-            $render_opts['is_modal'] = true;
         }
+
         return $this->render('VMBResourceBundle:Upload:form.html.twig', $render_opts); 
     }
 

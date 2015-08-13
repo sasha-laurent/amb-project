@@ -51,10 +51,28 @@ class PresentationRepository extends EntityRepository
 		}
 		//die($builder->getDQL());
 		$query = $builder->getQuery();
-		//$query->setFirstResult(($page-1) * $nbPerPage)
-		//	  ->setMaxResults($nbPerPage);
+		$query->setFirstResult(($page-1) * $nbPerPage)
+			  ->setMaxResults($nbPerPage);
 
 		return new Paginator($query, true);
+	}
+
+	public function searchWithQuery($query, $user)
+	{
+		$builder = $this->createQueryBuilder('p')
+					  ->orderBy('p.dateUpdate', 'DESC');
+
+		if($query !== null) {
+			$builder->andWhere('p.title LIKE :q OR p.description LIKE :q')->setParameter('q', '%'.$query.'%');
+		}
+		// Only Mine or Mine & Public
+		if($user !== null) {
+			$builder->andWhere('p.owner = :user OR p.public=true')->setParameter('user', $user);
+		} else {
+			$builder->andWhere('p.public=true');
+		}
+
+		return $builder->getQuery()->getResult();
 	}
 	
 	public function findWithSortedResources($id)

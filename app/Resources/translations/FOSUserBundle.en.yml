@@ -1,0 +1,42 @@
+change_password:
+    submit: 'Change password'
+
+group:
+    edit:
+        submit: 'Edit group'
+
+    new:
+        submit: 'Create new group'
+
+profile:
+    edit:
+        submit: 'Edit profile'
+
+registration:
+    register: 'Sign up'
+    back: 'Go back'
+    check_email: 'Last checkpoint to activate your AMB account: follow the activation link sent to the email account provided.'
+    confirmed: 'Registration was successful'
+
+    email:
+        message: 'Follow the link to complete your registration.'
+        subject: 'Activate your AMB Account'
+
+    submit: 'Sign me up'
+
+resetting:
+    request:
+        request_reset: 'Forgot your password?' 
+        invalid_username: 'Username is invalid'
+        submit: 'Reset password'
+        username: 'Username'
+
+    reset:
+        submit: Reset
+
+security:
+    login:
+        password: Password
+        remember_me: 'Keep me logged in'
+        submit: 'Log In'
+        username: Username

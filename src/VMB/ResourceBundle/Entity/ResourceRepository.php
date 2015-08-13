@@ -128,4 +128,22 @@ class ResourceRepository extends EntityRepository
 		->getQuery()
 		->getResult();
 	}
+
+	public function searchWithQuery($query, $user)
+	{
+		$builder = $this->createQueryBuilder('r')
+					  ->orderBy('r.dateUpdate', 'DESC');
+
+		if($query !== null) {
+			$builder->andWhere('r.title LIKE :q OR r.keywords LIKE :q')->setParameter('q', '%'.$query.'%');
+		}
+		// Mine or Mine & Public
+		if($user !== null) {
+			$builder->andWhere('r.owner = :user')->setParameter('user', $user);
+		} else {
+			$builder->andWhere('r.owner=NULL');
+		}
+
+		return $builder->getQuery()->getResult();
+	}
 }

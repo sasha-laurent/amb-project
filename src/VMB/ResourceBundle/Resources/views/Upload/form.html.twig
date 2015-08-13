@@ -5,6 +5,12 @@
 {% block header %}
 <form action="#" method="post" id="modal_res_add" class="form-horizontal" {{ form_enctype(form) }}>
 <h3 class="page-header" style="margin-top:20px;padding-bottom:20px">
+	{% if backButtonUrl is defined %}
+	<a title="{{"actions.back"|trans}}" class="btn btn-default" href="{{ backButtonUrl }}" >
+		<span class="left glyphicon glyphicon-chevron-left" aria-hidden="true" >
+		</span>
+	</a>
+	{% endif %}
 	{{mainTitle}}
 	<div class="btn-group pull-right">
 		<button id="modal_save_btn" type="submit" title="Save" class="btn btn-default">
@@ -29,22 +35,26 @@
 		{% if form.file is defined %}
 			<div class="form-group">{{form_label(form.file)}}<div class="col-sm-10" style="margin-top:5px;">{{form_widget(form.file)}}</div></div>
 		{% endif %}
-		<div class="row">
-			{{form_label(form.customAudioArt)}}
-		{% if resource.hasCustomArt() %}
-				<div class="col-sm-4 col-sm-offset-2">
-				<img src="{{ asset(resource.getCustomArtPath) }}" id="customArt_thumb" title="{{ 'form.label.current_thumbnail'|trans }}" style="height: 155px; width: 205px;"/> 
-					<button class="btn btn-default" id="delete_thumbs" type="button" role="button">
-						<span class="glyphicon glyphicon-remove"></span>
-					</button>
-				</div>
-		{% endif %}
-				<div class="col-sm-4">
-					<div style="margin-top:5px;">
-				{{form_widget(form.customAudioArt)}}
+		{{dump(resource)}}
+		{% if resource.id is null or 
+			(resource.id is not null and resource.type == "audio") %}
+			<div class="row">
+				{{form_label(form.customAudioArt)}}
+			{% if resource.hasCustomArt() %}
+					<div class="col-sm-4 col-sm-offset-2">
+					<img src="{{ asset(resource.getCustomArtPath) }}" id="customArt_thumb" title="{{ 'form.label.current_thumbnail'|trans }}" style="height: 155px; width: 205px;"/> 
+						<button class="btn btn-default" id="delete_thumbs" type="button" role="button">
+							<span class="glyphicon glyphicon-remove"></span>
+						</button>
 					</div>
-				</div>
-		</div>
+			{% endif %}
+					<div class="col-sm-4">
+						<div style="margin-top:5px;">
+					{{form_widget(form.customAudioArt)}}
+						</div>
+					</div>
+			</div>
+		{% endif %}
 	</div>
 {% if resource.hasCustomArt %}
 	<input type="hidden" name="keepThumbs" id="keepThumbs" value="1"/>
@@ -56,12 +66,14 @@
 
 {% block script %}
 {% if is_modal is not defined %}
-	{{parent()}} {# Import jQuery (+UI), Bootstrap, Plyr #}
+	{{parent()}} {# Import jQuery (+UI), Bootstrap #}
 {% endif %} 
 	
 <script type="text/javascript">
-{# Frameworks should be imported, load our custom Ajax code #}
+{# Ajax logic #}
 {% if is_modal is defined %}
+
+$(document).ready(function(){
 	$("#modal_res_add").on('submit', function(evt){
 
 		/*
@@ -150,6 +162,7 @@
 			processData: false
 		});
 	});
+});
 {% endif %}
 
 // Defining some selectors that will come in handy 
@@ -158,10 +171,9 @@ var thumbnail_row = $("#vmb_resourcebundle_resource_customAudioArt").parentsUnti
 var thumbnail_form = $("#vmb_resourcebundle_resource_customAudioArt").parentsUntil(".row")[1];
 
 {% if resource.hasCustomArt() %}
-{# Manage thumb deletion with an ajax request. ?#}
+{# TODO: Manage thumb deletion with confirmation and then ajax request.#}
 	$('#delete_thumbs').click(function(event) {
 		event.preventDefault();
-		// TODO: If confirm ajax req.
 		$('#keepThumbs').val(0);
 		$(this).parent().hide();
 		$(thumbnail_form).show();

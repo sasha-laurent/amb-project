@@ -9,9 +9,11 @@ class VMBPreviousUrl
 	{
 		$this->router = $router;
 	}
-	// TODO: - Fix the locale switcheroo which requires to memorize pre-switch URL
-        // Check if _locale param is set
-	// 		 - Always pass and check CSRF token? Prevents most CSRF attacks
+        /*
+        How to memorize more than One Previous Url?
+                Solution would be to have a 'navigation history stack' which gets popped or stacked on with each page change (kernel listener implementation required), bind it to the user's session and profit from infinite "back" button click
+        - Always pass and check CSRF token? Prevents most CSRF attacks
+        */ 
 	public function getPreviousUrl($request, $default = '/')
 	{
 		$pos = null;
