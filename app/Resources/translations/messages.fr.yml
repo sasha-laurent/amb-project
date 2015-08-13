@@ -1,4 +1,5 @@
 'Aide contextuelle': 'Aide contextuelle'
+'for' : 'pour'
 Close: Close
 Fermer: Fermer
 Niveaux: Niveaux
@@ -74,7 +75,7 @@ help:
     no_help_for_this_page: 'Aucune aide contextuelle pour cette page'
 
 homepage:
-    title: 'Bienvenue à Alternative Mediations Builder'
+    title: 'Bienvenue à l''<i>Alternative Mediations Builder</i>'
     presentation_paragraph_1: 'AMB est un univers modulable de services pour la médiation éducative et culturelle. Il offre une palette étendue de possibilités pour réaliser des présentations :'
     presentation_paragraph_1_1: 'adaptables à plusieurs profils d’utilisateurs'
     presentation_paragraph_1_2: 'ouvertes à des médias riches'
@@ -86,6 +87,7 @@ homepage:
     presentation_paragraph_3_3: 'des variantes de présentation éclectiques (réécritures, séquences alternatives...).'
     presentation_paragraph_4: 'AMB propose, plus concrètement, une plateforme de construction de présentations (exposition, parcours de visite et de lecture, cours...) personnalisables d’une façon interactive et intuitive. Il est destiné à des médiateurs, dont l’objectif est de créer des contenus (professeurs, conservateurs de musée...), et à des récepteurs, dont le but est de s’informer, de découvrir, d’apprendre, d’explorer, etc. (public général, élèves, visiteurs, spectateurs...). '
     presentation_paragraph_5: 'AMB peut appuyer plusieurs paradigmes éducatifs et culturels, comme par exemple : des MOOC et des SPOC, des projets en pédagogie active, des séances de classe inversée, des cours magistraux classiques, des projets de muséologie numérique centrée sur le visiteur (en phase de préparation, de réalisation ou de capitalisation de visite), des spectacles sur mesure dynamiquement construits, des opérations de communication, etc.'
+    read_more: "En savoir plus..."
     sign_up: 'Inscrivez-vous gratuitement' # pour visualiser des présentations et créer les votres.
 
 label:
@@ -251,6 +253,10 @@ resource:
 role:
     prof: Professeur
     stud: Etudiant
+
+search:
+    resultsTitle: 'Résultats de recherche'
+    no_results: 'Pas de résultats pour cette recherche.'
 
 show:
     playlist: 'Liste de lecture'
