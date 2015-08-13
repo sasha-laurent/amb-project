@@ -39,4 +39,4 @@
 /composer.phar
 
 # Backups
-/backup/
+/backup/*
