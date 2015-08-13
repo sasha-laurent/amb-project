@@ -10,13 +10,22 @@ actions:
     back: 'Go Back'
     cancel: Cancel
     close: Close
+<<<<<<< HEAD
     confirm: Confirm
     create: Create
+=======
+    create: Create
+    confirm: Confirm
+>>>>>>> parent of 06f1f57... server gitignore changes
     delete: Delete
     duplicate: Duplicate
     edit: Edit
     import: Import
+<<<<<<< HEAD
     index: 'Add to index'
+=======
+    index: Add to index   # FIXME
+>>>>>>> parent of 06f1f57... server gitignore changes
     next: Next
     options: Options
     previous: Previous
@@ -36,7 +45,11 @@ browse:
     advanced_search: 'Advanced Search'
     default_presentations: 'Default presentations'
     filters: Filters
+<<<<<<< HEAD
     multiple_indexation: 'Multiple Indexation'
+=======
+    multiple_indexation: 'Multiple Indexation'   # FIXME
+>>>>>>> parent of 06f1f57... server gitignore changes
     mutliple_indexation: browse.multiple_indexation
     no_presentation: 'No Presentation corresponds to these search criteria.'
     official: Official
@@ -74,6 +87,10 @@ help:
     no_help_for_this_page: 'No help content corresponds to this page'
 
 homepage:
+<<<<<<< HEAD
+=======
+    title: 'Welcome to the Alternative Mediations Builder'
+>>>>>>> parent of 06f1f57... server gitignore changes
     presentation_paragraph_1: 'AMB is a modular universe of services for educative and cultural mediation. It offers an extensive range of possibilities for setting up presentations:'
     presentation_paragraph_1_1: 'adaptive to different user profiles'
     presentation_paragraph_1_2: 'open to rich media'
@@ -85,17 +102,26 @@ homepage:
     presentation_paragraph_3_3: 'eclectic presentation variants (rewritings, alternative sequences...).'
     presentation_paragraph_4: 'AMB proposes, more precisely, a platform for constructing personalized presentations (showing, exhibition, visit and reading tour, course...) in an interactive and intuitive manner. It is intended for mediators whose objective is to create content (professors, curators...), and for receptors, whose goal is to be informed, discover, learn, explore, etc. (general public, students, visitors, spectators...). '
     presentation_paragraph_5: 'AMP may give grounds to numerous educational and cultural paradigms, as, for instance : MOOCs, SPOCs, active pedagogy projects, inverse class sessions, classical lectures, projects of visitor-centered digital museology, dynamically composed tailored shows, communication operations, etc. '
+<<<<<<< HEAD
     sign_up: 'Sign up for free'
     title: 'Welcome to the Alternative Mediations Builder'
 
 label:
     'no': 'no'
     'yes': 'yes'
+=======
+    sign_up: 'Sign up for free' #  to watch and create your own presentations.
+
+label:
+    no: 'no'
+    yes: 'yes'
+>>>>>>> parent of 06f1f57... server gitignore changes
 
 matrix:
     add: 'Add matrix'
     added: 'Matrix was added'
     delete: 'Delete matrix'
+<<<<<<< HEAD
     deleteRowMessage: 'This action will delete all resources currently associated to this element.'
     deleteRowTitle: 'Confirm you wish to proceed.'
     deleted: 'Matrix was deleted'
@@ -104,6 +130,14 @@ matrix:
     error:
         resource_unofficial_not_added: 'The resource is not official and could not be added.'
 
+=======
+    deleteRowTitle: 'Confirm you wish to proceed.'
+    deleteRowMessage: 'This action will delete all resources currently associated to this element.'
+    deleted: 'Matrix was deleted'
+    edit: 'Edit matrix'
+    error:
+        resource_unofficial_not_added: 'The resource is not official and could not be added.'
+>>>>>>> parent of 06f1f57... server gitignore changes
     levels: Levels
     main_title: 'Manage your presentation matrices'
     modified: 'Matrix was modified'
@@ -164,6 +198,7 @@ message:
         warning: Warning
 
 ontology:
+<<<<<<< HEAD
     add: 'Add ontology'
     add_node: 'Add Node'
     create_index: 'Add tags to index'
@@ -172,6 +207,16 @@ ontology:
     edit: 'Edit ontology'
     edit_node: 'Edit node'
     save_node: 'Save Node'
+=======
+    add: 'Add ontology' 
+    add_node: 'Add Node'
+    delete_node: 'Delete node'
+    edit: 'Edit ontology'
+    edit_node: 'Edit node'
+    delete: 'Delete ontology'
+    save_node: 'Save Node'
+    create_index: 'Add tags to index'
+>>>>>>> parent of 06f1f57... server gitignore changes
 
 player:
     new_tab: 'Show this file in a new tab.'
@@ -189,15 +234,23 @@ presentation:
     delete: 'Delete presentation'
     deleted: 'Presentation was deleted'
     details: 'Show presentation details'
+<<<<<<< HEAD
     edit: 'Edit presentation'
 
+=======
+    edit: "Edit presentation"
+    is_empty_add_content: 'The presentation matrix is empty.<br/> Add some first!'
+>>>>>>> parent of 06f1f57... server gitignore changes
     error:
         matrix_unofficial: 'Associated matrix is unofficial'
         presentation_unofficial: 'A unofficial presentation cannot be made a default presentation.'
 
     generate_complement: 'Generate more content'
     initial_presentation: 'Initial presentation'
+<<<<<<< HEAD
     is_empty_add_content: 'The presentation matrix is empty.<br/> Add some first!'
+=======
+>>>>>>> parent of 06f1f57... server gitignore changes
     main_title: 'All presentations'
 
     modal:
@@ -218,9 +271,15 @@ presentation:
     my_selection: 'My selection'
     new_playlist: 'New playlist'
     official: Official
+<<<<<<< HEAD
     parameters: Parameters
     personal_copy: 'Personal copy'
     personal_presentation: 'Personal presentation'
+=======
+    parameters: 'Parameters'
+    personal_presentation: 'Personal presentation'
+    personal_copy: 'Personal copy'
+>>>>>>> parent of 06f1f57... server gitignore changes
     play_selection: 'Play new selection'
     public: Public
     same_topic: 'Presentations with the same topic'
@@ -257,10 +316,17 @@ role:
 show:
     playlist: Playlist
     resource_details: Details
+<<<<<<< HEAD
     total_duration: 'Total duration'
 
 tab:
     mail: 'E-mail Address'
+=======
+    total_duration: Total duration
+
+tab:
+    mail: E-mail Address
+>>>>>>> parent of 06f1f57... server gitignore changes
     password: Password
     role: Role
     user: User
@@ -292,15 +358,28 @@ topic:
     deleteMessage: 'Topic %title% will be deleted [Warning: This action will also delete all associated matrices, resources and presentations.]'
     deleted: 'Topic was successfuly deleted'
     edit: 'Edit topic'
+<<<<<<< HEAD
     main_title: Topics
+=======
+    main_title: 'Topics'
+>>>>>>> parent of 06f1f57... server gitignore changes
     modified: 'Topic was modified'
     new_root: '+ New root'
 
 user:
+<<<<<<< HEAD
     profile: Profile
     register: 'Sign up'
 
+=======
+    register: 'Sign up'
+    profile: Profile
+>>>>>>> parent of 06f1f57... server gitignore changes
     role:
         admin: Admin
         student: Student
         teacher: Teacher
+<<<<<<< HEAD
+=======
+    register: 'Sign up'
+>>>>>>> parent of 06f1f57... server gitignore changes

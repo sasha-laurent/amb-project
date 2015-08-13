@@ -39,7 +39,4 @@
 /composer.phar
 
 # Backups
-/backup/*
-
-# Translations
-/app/Resources/translations/*
+/backup/
