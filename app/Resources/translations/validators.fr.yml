@@ -1,0 +1,17 @@
+fos_user:
+    email:
+        already_used: 'Adresse mail déjà utilisée'
+        blank: 'Pas d''adresse mail renseignée'
+        invalid: 'Format de l''adresse mail invalide'
+        long: 'Adresse mail trop longue'
+        short: 'Adresse mail trop courte'
+
+    password:
+        blank: 'Mot de passe vide'
+        short: 'Mot de passe trop court'
+
+    username:
+        already_used: 'Nom d''utilisateur déjà utilisé'
+        blank: 'Pas de nom d''utilisateur renseigné'
+        long: 'Nom d''utilisateur trop long'
+        short: 'Nom d''utilisateur trop court'
