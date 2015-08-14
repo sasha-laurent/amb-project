@@ -308,9 +308,9 @@
 		var str = '<div class="tileUsedResource" data-coordinates="' + this.pov + '_' + this.lvl + '" data-length="' + this.resList.length + '" data-toggle="popover" ';
 		if(this.resList.length > 0) {
 			str += 'style="' + this.resList[0].getBackgroundStyle() + '"><div class="nbResources"> \
-				<div class="total nbTotal">+' + this.resList.length + '</div> \
-				<div class="counterCheck{% if copy %} copyMode{% endif %}"> {% if copy %}<span class="nbInitial">' + this.nbInitial + '</span> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> | {% endif %}\
-					<span class="nbChecked">' + this.nbChecked + '</span> <span class="glyphicon glyphicon-ok checkedRes" aria-hidden="true"></span> | \
+				<div class="total nbTotal">' + this.resList.length + '</div> \
+				<div class="counterCheck{% if copy %} copyMode{% endif %}"> {% if copy %}<span class="nbInitial">' + this.nbInitial + '</span> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span><br/>{% endif %}\
+					<span class="nbChecked">' + this.nbChecked + '</span> <span class="glyphicon glyphicon-ok checkedRes" aria-hidden="true"></span><br/>\
 					<span class="nbSuggested">' + this.nbSuggested + '</span> <span class="glyphicon glyphicon-ok suggestedRes" aria-hidden="true"></span> \
 				</div> \
 			</div>';
