@@ -9,8 +9,7 @@ echo "début de la mise à jour"
 TODAY=$(date +%c)
 git add .
 git commit -am "Automatic server commit $TODAY"
-git fetch
-git merge -s recursive -X theirs
+git pull -s recursive -X theirs
 
 echo "Migration Base de Données" 
 # TODO: Voir comment on pourrait mieux migrer les changements DB
