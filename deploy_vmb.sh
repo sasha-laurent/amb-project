@@ -4,11 +4,11 @@
 cd /var/www/edu/
 # Utilisation une clef privée/public pour le projet
 # Ajouter command="/bin/git",from="bitbucket.org",no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty au hash rsa pub
-echo "début de la mise à jour"
+echo "Début de la mise à jour"
 
-TODAY=$(date +%c)
+NOW=$(date +%c)
 git add .
-git commit -am "Automatic server commit $TODAY"
+git commit -am "Automatic server commit $NOW"
 git pull -s recursive -X theirs
 
 echo "Migration Base de Données" 
