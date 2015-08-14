@@ -13,7 +13,6 @@ profile:
         submit: 'Edit profile'
 
 registration:
-    register: 'Sign up'
     back: 'Go back'
     check_email: 'Last checkpoint to activate your AMB account: follow the activation link sent to your email address.'
     confirmed: 'Registration was successful'
@@ -21,15 +20,17 @@ registration:
     email:
         message: 'Follow the link to complete your registration.'
         subject: 'Activate your AMB Account'
+
     existing_username: 'Username is taken.'
+    register: 'Sign up'
     submit: 'Sign me up'
 
 resetting:
     request:
-        request_reset: 'Forgot your password?' 
         invalid_username: 'Username is invalid'
+        request_reset: 'Forgot your password?'
         submit: 'Reset password'
-        username: 'Username'
+        username: Username
 
     reset:
         submit: Reset

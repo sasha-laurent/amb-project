@@ -5,6 +5,9 @@ cd /var/www/edu/
 # Utilisation une clef privée/public pour le projet
 # Ajouter command="/bin/git",from="bitbucket.org",no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty au hash rsa pub
 echo "début de la mise à jour"
+
+TODAY=$(date +%F)
+git commit -am "Automatic server commit $TODAY"
 git pull
 
 echo "Migration Base de Données" 
@@ -30,4 +33,5 @@ chmod -R 775 app/config/parameters.yml
 chmod -R 775 app/Resources/translations/
 chmod -R 775 web/upload/
 
+git push
 echo "Mise à jour effectuée"
