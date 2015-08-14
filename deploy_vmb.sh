@@ -6,9 +6,11 @@ cd /var/www/edu/
 # Ajouter command="/bin/git",from="bitbucket.org",no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty au hash rsa pub
 echo "début de la mise à jour"
 
-TODAY=$(date +%F)
+TODAY=$(date +%c)
+git add .
 git commit -am "Automatic server commit $TODAY"
-git pull
+git fetch
+git merge -s recursive -X theirs
 
 echo "Migration Base de Données" 
 # TODO: Voir comment on pourrait mieux migrer les changements DB
