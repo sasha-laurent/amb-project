@@ -548,6 +548,12 @@
 			// Managing display
 			$('#file_list li').removeClass('active');
 			$('#addedRes_' + this.order[index]).addClass('active');
+			
+			// If we need to scroll to see the item
+			if(42 * (index+1) > $('#file_list').height()) {
+				$('#file_list').scrollTop(42 * index);
+			}
+			
 			$('#current-res-title').html(res['title']);
 			$('#current-res-position').html(res['pov'] + ' - ' + res['level']);
 			$('#current-res-creation').html(res['creation']);
