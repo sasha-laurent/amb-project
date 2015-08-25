@@ -120,6 +120,8 @@ class Presentation
 	
 	private $sortedResources = null;
 	
+	private $suggestionDuration = 0;
+	
 	/**
      * @var string
      *
@@ -281,6 +283,17 @@ class Presentation
     {
         return $this->duration;
     }
+    
+    public function getSuggestionDuration()    
+    {
+		$this->suggestionDuration = 0;
+		foreach($this->resources as $checkedRes) {
+			if($checkedRes->getSuggested()) {
+				$this->suggestionDuration += $checkedRes->getDuration();
+			}
+		}
+		return $this->suggestionDuration;
+	}
     
     public function durationToString()
     {

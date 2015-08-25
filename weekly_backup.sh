@@ -9,10 +9,12 @@
 # - Success/fail status for each op output to $HOME_DIR/backup/log/dated_log.txt
 #	-> Bonus if we commit log files
 # - /var/www/{site placeholder} should be an argument
-# To copy the files use: (should be output in help option)
-# scp username@10.77.6.23:/var/www/edu/backup /local_folder
-# DB credentials should be parsed from app/config/parameters.yml (or given as arguments)
-# pass = awk -F: '/database_password:\s\w/{print $2}' $HOME_DIR/app/config/parameters.yml
+#	 DB credentials should be parsed from app/config/parameters.yml (or given as arguments)
+#	 pass = awk -F: '/database_password:\s\w/{print $2}' $HOME_DIR/app/config/parameters.yml
+# 	 Usage should be output in help option
+
+# To copy the files use:
+# scp -r username@10.77.6.23:/var/www/edu/backup/ /folder_on_local_machine
 TODAY=$(date +%F)
 HOME_DIR=/var/www/edu
 

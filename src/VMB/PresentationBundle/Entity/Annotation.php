@@ -95,6 +95,13 @@ class Annotation
 	private $presentation;
 	
 	/**
+     * @var boolean
+     *
+     * @ORM\Column(name="suggested", type="boolean")
+     */
+    private $suggested;
+	
+	/**
      * @Assert\File(maxSize="128000000000")
      * 
      */
@@ -411,5 +418,28 @@ class Annotation
     public function getFont()
     {
         return $this->font;
+    }
+
+    /**
+     * Set suggested
+     *
+     * @param boolean $suggested
+     * @return Annotation
+     */
+    public function setSuggested($suggested)
+    {
+        $this->suggested = $suggested;
+
+        return $this;
+    }
+
+    /**
+     * Get suggested
+     *
+     * @return boolean 
+     */
+    public function getSuggested()
+    {
+        return $this->suggested;
     }
 }

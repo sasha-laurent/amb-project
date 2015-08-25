@@ -17,7 +17,7 @@
 			<link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
 		<![endif]-->
 		
-        <title>{% block title %}VMB{% endblock %}</title>
+        <title>{% block title %}AMB{% endblock %}</title>
         {% block stylesheets %}
 			<!-- Latest compiled and minified CSS -->
 			<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,700' rel='stylesheet' type='text/css'>
@@ -82,7 +82,7 @@
 						</div>
 					</div>
 				</div>
-				<h3><a href="{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}{{ path('vmb_presentation_browse') }}{% else %}{{path('_welcome')}}{% endif %}"><img src="{{ asset('img/vmb.png') }}" alt="VMB" title="{{ "menu.homepage"|trans}}" /></a></h3>
+				<h3><a href="{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}{{ path('vmb_presentation_browse') }}{% else %}{{path('_welcome')}}{% endif %}"><img src="{{ asset('img/amb.jpg') }}" alt="AMB" title="{{ "menu.homepage"|trans}}" /></a></h3>
 				
 				
 				{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
@@ -152,7 +152,7 @@
 			{% block body %}{% endblock %}
 		</div>
 		<footer class="footer">
-			<div class="container">&copy; VMB 2015</div>
+			<div class="container">&copy; AMB 2015</div>
 		</footer>
 		
 	<!-- Modal -->

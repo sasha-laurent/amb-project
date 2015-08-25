@@ -34,10 +34,13 @@ class AnnotationController extends Controller
         }
         
         if($this->get('security.context')->isGranted('ROLE_ADMIN') || $entity->isOwner($this->getUser())) {	
+			
+			$suggestion = ($request->query->get('suggestion') == 1) ? true : false;
 			if($a != null) {
 				$annotation = $em->getRepository('VMBPresentationBundle:Annotation')->find($a);
 				if($annotation->getPresentation() == $entity) {
 					$mode = 'edit';
+					$suggestion = $annotation->getSuggested();
 				}
 				else { $a = null; }
 			}
@@ -45,6 +48,7 @@ class AnnotationController extends Controller
 			if($a == null) {
 				$annotation = new Annotation();
 				$annotation->setPresentation($entity);
+				$annotation->setSuggested($suggestion);
 				$mode = 'new';
 			}
 			
@@ -63,7 +67,7 @@ class AnnotationController extends Controller
 					if($annotation->preUpload()) {
 						$em->flush();
 						$annotation->upload();
-						return $this->redirect($this->generateUrl('annotation_edit', array('id' => $id)));
+						return $this->redirect($this->generateUrl('annotation_edit', array('id' => $id, 'suggestion' => ($suggestion ? 1 : 0))));
 					}
 					else {
 						$request->getSession()->getFlashBag()->add('danger',"An error occured");
@@ -71,10 +75,12 @@ class AnnotationController extends Controller
 				}
 			}
 			
+			
 			$args = array(
 				'backButtonUrl' => $this->generateUrl('presentation_edit', array('id' => $id)),
-				'mainTitle' => $entity->getTitle(),
+				'mainTitle' => ($suggestion ? '[Suggestions] ' : '') . $entity->getTitle(),
 				'presentation' => $entity,
+				'suggestion' => $suggestion,
 				'form' => $form->createView(),
 				'mode' => $mode,
 				'annotation' => $annotation
@@ -98,8 +104,10 @@ class AnnotationController extends Controller
     {
         $annotation = $this->getAnnotation($id);
 		$presentation_id = $annotation->getPresentation()->getId();
+		$suggestion = false;
 		if($this->get('security.context')->isGranted('ROLE_ADMIN') || $annotation->getPresentation()->isOwner($this->getUser())) {	
 			try {
+				$suggestion = $annotation->getSuggested();
 				$em = $this->getDoctrine()->getManager();
 				$em->remove($annotation);
 				$em->flush();
@@ -108,7 +116,7 @@ class AnnotationController extends Controller
 			} catch (\Exception $e) {
 				$request->getSession()->getFlashBag()->add('danger',"An error occured");
 			}
-			return $this->redirect($this->generateUrl('annotation_edit', array('id' => $presentation_id)));
+			return $this->redirect($this->generateUrl('annotation_edit', array('id' => $presentation_id, 'suggestion' => ($suggestion ? 1 : 0))));
 		}
 		else {
 			throw $this->createNotFoundException($this->get('translator')->trans('message.error.entity_not_found', array('%class%' => 'Presentation')));

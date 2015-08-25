@@ -40,6 +40,12 @@ presentation_edit:
     requirements:
         id:   \d{1,}
 
+presentation_advanced_visualisation:
+    path:     /advanced/{id}
+    defaults: { _controller: "VMBPresentationBundle:Presentation:advancedVisualisation" }
+    requirements:
+        id:   \d{1,}
+        
 presentation_create_copy:
     path:     /createFrom/{id}
     defaults: { _controller: "VMBPresentationBundle:Presentation:createFrom" }
