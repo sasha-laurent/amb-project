@@ -91,38 +91,61 @@
 	$(document).ready(function(){
 		{#
 		TODO: 
-		- Declare action-undo list, helper functions to manage it
+		- Action-undo list & helper functions to manage it
  		- Make sure indexes are consistent with database repr. 
  			(for example when something is deleted and the deletion is
   		undone it should be put back at its original index, 
  			not at a new index value, and next input names' indexes
   		changed accordingly)
-		- Prep. batch request (to help minimize server diff processing) and persist at matrix/edit
+		- Batch request (to help minimize server diff processing) and persist at matrix/edit
 		- Add hook to persistChanges (modal dialog floppy-disk button)
  		- Calculate resources to be deleted, notify user of cascade 
 	 		consequences in a big red alert container? 
+		- Generally refresh MatrixShow table to match new state/content
 		// Enable popovers
 		$('[data-toggle="popover"]').popover(); 
 		#}
-
-		// Loop through symfony-baked content to populate
-		$("#vmb_presentationbundle_matrix_povs, #vmb_presentationbundle_matrix_levels").each(function(index, elt) {
+		// Loop through symfony-baked content
+		$("#vmb_presentationbundle_matrix_povs, #vmb_presentationbundle_matrix_levels")
+			.each(function(index, elt) {
 		});
-		
 	});
 	$("#myModal #save-btn").on('click', function(e){
+		e.stopPropagation();
+		e.preventDefault();
+
 		var formData = new FormData();
 		var form_fields = $('form[name="vmb_presentationbundle_matrix"]').serializeArray();
 		jQuery.each(form_fields, function(i, field_obj){
 			console.log(field_obj.name, field_obj.value);
 			formData.append(field_obj.name, field_obj.value);
 		});
-		// persistChanges(form_data);
+		$.ajax({
+			url: "{{path('matrix_edit', {'id': entity.id}) }}",
+			method: "POST",
+			data: form_fields,
+			beforeSend: function(){
+				$("#loading_indicator_inline{{entity.id}}").css('display', 'inline-block');
+			},
+			complete: function(){
+				$("#loading_indicator_inline{{entity.id}}").css('display', 'none');				
+			},
+			success: function(data, textStatus, jqXHR){
+				$(this).removeClass("btn-default").addClass("btn-primary");
+				$(this).find(".glyphicon").removeClass("glyphicon-floppy-disk").addClass("glyphicon-floppy-saved");
+				window.setTimeout(function(){
+					$("#myModal").modal('hide');
+					window.location = "{{path('matrix_show', {'id': entity.id}) }}";
+				}, 500);
+				// console.log(data, textStatus);
+			},
+			error: function(jqXHR, textStatus, errorThrown){
+				console.log(textStatus, errorThrown);
+			}
 		});
+		console.log($(this));
+	});
 
-	function persistChanges(dat){
-		$.ajax();
-	}
 	/*
 	** Helper Functions for modal dialog
 	*/
@@ -131,7 +154,7 @@
 		var typ_str = type.toLowerCase()+"s";
 		var nxt_id = $(ul_container).children().length - 1;
 		// console.log(ul_container, nxt_id);
-		$(ul_container).append('<li class="list-group-item row"><div class="col-md-10 matrix-row-title"><input type="text" id="vmb_presentationbundle_matrix_'+typ_str+'_'+nxt_id+'_title" name="vmb_presentationbundle_matrix['+typ_str+']['+nxt_id+'][title]" required="required" maxlength="64" class="form-control"></div><div class="col-md-2 text-right"><button type="button" class="btn btn-danger" onclick="askConfirmDel(this)"><span class="glyphicon glyphicon-remove"></span></button></div></li>');
+		$(ul_container).append('<li class="list-group-item row"><div class="col-md-10 matrix-row-title"><input type="text" data-ui_added="true" id="vmb_presentationbundle_matrix_'+typ_str+'_'+nxt_id+'_title" name="vmb_presentationbundle_matrix['+typ_str+']['+nxt_id+'][title]" required="required" maxlength="64" class="form-control"></div><div class="col-md-2 text-right"><button type="button" class="btn btn-danger" onclick="askConfirmDel(this)"><span class="glyphicon glyphicon-remove"></span></button></div></li>');
 	}
 
 	/**
@@ -139,11 +162,21 @@
 	**/
 	function askConfirmDel(elt)
 	{
+
 		var row_elt = $(elt).parentsUntil("ul"); 
 		// row_elt[0] -> "Delete" part, row_elt[1] -> Whole row
 		var del_button = $(row_elt[0]).find("button");
 		var input = $(row_elt[1]).find(":input").attr('id');
-		var confirmAlert = '<p class="text-danger">{{"matrix.deleteRowMessage"|trans}}</p><p class="btn-group pull-right"><button type="button" class="btn btn-danger" onclick="deleteRow(this,'+input+')">{{"actions.delete"|trans}}</button><button type="button" class="btn btn-default" onclick="cancelConfirm(this)">{{"actions.cancel"|trans}}</button></p>';
+		var is_new = $('#'+input).data("ui_added");
+		// If the row is UI-Added don't ask for confirmation dialog
+		is_new = typeof is_new !== "undefined" ? is_new : false;
+		if(is_new)
+		{
+			deleteRow('#'+input, false);
+			return false;
+		}
+		var confirmAlert = '<p class="text-danger">{{"matrix.deleteRowMessage"|trans}}</p><p class="btn-group pull-right"><button type="button" class="btn btn-danger" onclick="deleteRow('+input+')">{{"actions.delete"|trans}}</button><button type="button" class="btn btn-default" onclick="cancelConfirm(this)">{{"actions.cancel"|trans}}</button></p>';
+
 		// 'hidden.bs.popover' triggering twice!
 		$(del_button).one('hidden.bs.popover', function(){
 			$(this).popover('destroy');
@@ -171,32 +204,48 @@
 	}
 
 	/**
-	 * Ajax Req to Delete a Matrix Row
-	 * TODO: No Ajax Req for new row..
+	 * Ajax request to delete a matrix row
+	 * @param push: persist request to server or not (defaults to true)
 	**/
-	function deleteRow(elt, input_name){
-		$('#myModal > .popover').popover('destroy');
-		// Explode input "id" attribute by
-		var expl = $(input_name).attr('id').split("_");
-		// Lexical transformation: povs -> Pov, levels -> Level 
-		var typ = expl[3].slice(0,1).toUpperCase() + expl[3].slice(1,expl[3].length-1);
-		var dat = { rowId: expl[4], matrixId: {{ entity.id }}, rowType: typ};
-		// Actual data request to the server
-		$.ajax({
-			type: "POST",
-			url: "{{ path('matrix_delete_row') }}",
-			data: dat,
-			cache: false,
-			success: function(response){
-				console.log("Response:"+response);
-				// Remove row containing input_name
-				$(input_name).closest(".list-group-item").remove();
-				// TODO: Remove element from MatrixShow table
-			},
-			error: function(){
-				// Handle error
-			}
-		});
+	function deleteRow(input_name, push){
+		push = typeof push !== "undefined" ? push : true;
+		if(push){
+			$('#myModal > .popover').popover('destroy');
+			// Explode input "id" attribute by
+			var expl = $(input_name).attr('id').split("_");
+			// Lexical transformation: povs -> Pov, levels -> Level 
+			var typ = expl[3].slice(0,1).toUpperCase() + 
+						expl[3].slice(1,expl[3].length-1);
+			var dat = { rowId: expl[4], 
+						matrixId: {{ entity.id }}, 
+						rowType: typ
+						};
+			// Actual data request to the server
+			$.ajax({
+				type: "POST",
+				url: "{{ path('matrix_delete_row') }}",
+				data: dat,
+				cache: false,
+				success: function(response){
+					console.log("Response:"+response);
+					// Remove row containing input_name
+					$(input_name).closest(".list-group-item").remove();
+				},
+				error: function(){
+					// Handle error
+				}
+			});			
+		}
+		normalizeIndexes(typ);
+	}
+
+	function normalizeIndexes(typ)
+	{
+		var list = $("."+typ+"-list");
+		// first item is list typ header
+		/* for(int i=0; i<inputs.length; i++){
+		 		inputs[0].preg_replace("/\[\d\]/",i); 
+		*/
 	}
 	// Matrix rows management
 	function updateTitle(item, id, type, title) {

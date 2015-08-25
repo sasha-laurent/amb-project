@@ -69,6 +69,18 @@
 	{% endfor %}
 	</div>
 <div id="presentations_container"> {# Titre, duree, auteur, matrice#}
+	<div id="tbl_header" style="display: none;">
+	    <div class="panel panel-default">
+			<div class="panel-heading">
+				<div class="row">			
+					<div class="col-md-4">{{ 'table.title'|trans }}</div>
+					<!-- type -->
+					<div class="col-md-1 text-center">{{ 'table.duration'|trans }}</div>
+					<div class="col-md-2 text-center">{{ 'table.action'|trans }}</div>
+	        	</div>
+			</div>
+		</div>	
+	</div>
 	{% for p in presentations %}
 		{% include "VMBPresentationBundle:Presentation:presentationVignette.html.twig" with {'entity' : p, 'nbPerPage' : 12, 'page':1} %}
 	{% endfor %}
@@ -89,9 +101,9 @@
 	<script type="text/javascript">
 	var view_switch = 0; // 0 for Mosaic, 1 for List
 	var typ_switch = 0; // 0 for Resources, 1 for Presentations
-	var view_matrix=[[['a1','a2'],['b1','b2']],
-						[['c1','c2'],['d1','d2']]];
-	console.log(secondary_view);
+	var view_matrix=[[['pres_mosaic_lst'],['pres_vignette_lst']],
+						[['res_mosaic_lst'],['res_vignette_lst']]];
+	console.log(view_matrix);
 	var typ_enum = ["resources_container", "presentations_container"];
 	// [1-view_switch]
 	{#
@@ -105,7 +117,9 @@
 	#}
 	// Init with Resources as Mosaic
 	$(function(){
+		view_matrix[0][1] = ''
 		$("#presentations_container").hide();
+		$(".col-md-4").
 	});
 	// Entity type selection
 	$("#pres_select").on('click', 

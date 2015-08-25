@@ -47,7 +47,7 @@ class MatrixController extends Controller
      * Finds and displays a Matrix entity.
      * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
      */
-    public function showAction(Request $request, $id)
+    public function showAction	(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -290,16 +290,31 @@ class MatrixController extends Controller
 			$form->handleRequest($request);
 			if ($form->isValid()) 
 			{
+
 				$em = $this->getDoctrine()->getManager();
 				$matrix->setOwner($this->getUser());
 				$em->persist($matrix);
 				$em->flush();
 
-				$flashMessage = !$matrix->toString() ? 
+				if($request->isXMLHttpRequest())
+				{
+					return new JsonResponse($translator->trans('matrix.modified'));
+				} else {
+					$flashMessage = !$matrix->toString() ? 
 					$translator->trans('matrix.added') : $translator->trans('matrix.modified');
-				$request->getSession()->getFlashBag()->add('success', $flashMessage);
-				return $this->redirect($this->generateUrl('matrix_show', array('id' => $matrix->getId())));
-			}
+					$request->getSession()->getFlashBag()->add('success', $flashMessage);
+					return $this->redirect($this->generateUrl('matrix_show', array('id' => $matrix->getId())));
+				}
+
+			} else { // if a form is not submitted (submit button pressed) it is considered invalid
+                if($request->isXmlHttpRequest()){ 
+                    //$err_str = (string) $form->getErrors(true); //debug
+                    $err_str = $this->get('translator')->trans('message.error.occured');
+                    return new JsonResponse(array('success' => false, 
+                                                  'code' => 400,
+                                                  'message' => $err_str));
+                }
+            }
 		}
 		$render_opts = array(
 			'form' => $form->createView(),

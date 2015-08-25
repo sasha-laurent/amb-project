@@ -82,7 +82,7 @@
 						</div>
 					</div>
 				</div>
-				<h3><a href="{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}{{ path('vmb_presentation_browse') }}{% else %}{{path('_welcome')}}{% endif %}"><img src="{{ asset('img/amb.jpg') }}" alt="AMB" title="{{ "menu.homepage"|trans}}" /></a></h3>
+				<h3><a href="{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}{{ path('vmb_presentation_browse') }}{% else %}{{path('_welcome')}}{% endif %}"><img height="43px" width="50px" src="{{ asset('img/amb.jpg') }}" alt="AMB" title="{{ "menu.homepage"|trans}}" /></a></h3>
 				
 				
 				{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
