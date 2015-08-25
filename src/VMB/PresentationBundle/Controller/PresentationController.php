@@ -563,7 +563,21 @@ class PresentationController extends Controller
     {
         $presentation = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Presentation')->findWithSortedResources($id);
 
-		return $this->renderForm($presentation, true, $this->generateUrl('presentation_complementary', array('id' => $id)));
+		return $this->renderForm($presentation, true, 'normal');
+    }
+    
+    /**
+     * Displays a form to create a new presentation from an existing Presentation entity.
+     *
+     */
+    /**
+    * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+    */
+    public function advancedVisualisationAction($id)
+    {
+        $presentation = $this->getDoctrine()->getManager()->getRepository('VMBPresentationBundle:Presentation')->findWithSortedResources($id);
+
+		return $this->renderForm($presentation, true, 'advanced', $this->generateUrl('presentation_complementary', array('id' => $id)));
     }
 
     /**
@@ -572,7 +586,7 @@ class PresentationController extends Controller
     /**
     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
     */
-    protected function renderForm($presentation, $saveAsCopy = false, $backUrl = null)
+    protected function renderForm($presentation, $saveAsCopy = false, $display = 'normal', $backUrl = null)
     {
 		$request = $this->get('request');
 		$translator = $this->get('translator');
@@ -695,6 +709,7 @@ class PresentationController extends Controller
 				'copy' => $saveAsCopy,
 				'matrix' => $presentation->getMatrix(),
 				'presentation' => $shownPresentation,
+				'display' => $display,
 				'alertDismissible' => true,
 				'hasPlaybackFunction' => true,
 			);

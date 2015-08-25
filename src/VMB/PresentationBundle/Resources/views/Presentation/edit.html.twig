@@ -97,7 +97,7 @@
 	<div class="presentation-legend text-center">
 		<br/>
 		<i>
-			{% if copy %}
+			{% if display != 'normal' %}
 				<span class="teacherRes glyphicon glyphicon-ok" aria-hidden="true"></span> = {{ 'presentation.initial_presentation'|trans }} |
 				<span class="suggestedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = {{ 'presentation.suggested_presentation'|trans }} |
 				<span class="checkedRes glyphicon glyphicon-ok" aria-hidden="true"></span> = {{ 'presentation.my_selection'|trans }}
@@ -107,7 +107,7 @@
 			{% endif %}
 		</i>
 	</div>
-	{% if copy %}
+	{% if display != 'normal' %}
 	<div class="text-center">
 		<br/>
 		<button id="save_new_presentation" class="wide-btn btn btn-info" role="button" type="button"><span class="left glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> {{ 'presentation.save_selection'|trans }}</button>
@@ -126,7 +126,7 @@
 			{% set totalDuration = 0 %}
 			{% set totalDurationSuggestion = 0 %}
 			<h4><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> {{ 'show.playlist'|trans }}</h4>
-			{% if not copy %}
+			{% if display == 'normal' %}
 				<div role="tab-panel">
 					<ul class="nav nav-tabs" role="tablist">
 						<li role="presentation" class="active" id="playlist-tab-toggle"><a href="#playlist_tab" aria-controls="playlist_tab" role="tab" data-toggle="tab">{{ 'show.playlist'|trans }}</a></li>
@@ -136,7 +136,7 @@
 						<div role="tabpanel" class="tab-pane active" id="playlist_tab">
 			{% endif %}
 							<ul class="list-group" id="file_list">
-								{% if copy == false %}
+								{% if display == 'normal' %}
 									{% for res in presentation.resources %}
 										{% if res.suggested == false %}
 											{% set totalDuration = totalDuration + res.duration %}
@@ -160,10 +160,10 @@
 							<p class="text-right">
 								{{ 'show.total_duration'|trans }} : <span id="total_duration">{{ "%02d"|format(totalDuration // 60) }}:{{ "%02d"|format(totalDuration % 60) }}</span>
 							</p>
-							{% if presentation.id %}
+							{% if presentation.id and (not copy) %}
 								<p class="text-center"><a href="{{ path('annotation_edit', {'id' : presentation.id}) }}"><span class="glyphicon glyphicon-edit"></span> Gérer les annotations</a></p>
 							{% endif %}
-						{% if not copy %}
+						{% if display == 'normal' %}
 						</div>
 						<!-- Suggestions -->
 						<div role="tabpanel" class="tab-pane" id="suggestion_tab">
@@ -309,7 +309,7 @@
 		if(this.resList.length > 0) {
 			str += 'style="' + this.resList[0].getBackgroundStyle() + '"><div class="nbResources"> \
 				<div class="total nbTotal">' + this.resList.length + '</div> \
-				<div class="counterCheck{% if copy %} copyMode{% endif %}"> {% if copy %}<span class="nbInitial">' + this.nbInitial + '</span> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span><br/>{% endif %}\
+				<div class="counterCheck{% if display != 'normal' %} copyMode{% endif %}"> {% if display != 'normal' %}<span class="nbInitial">' + this.nbInitial + '</span> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span><br/>{% endif %}\
 					<span class="nbChecked">' + this.nbChecked + '</span> <span class="glyphicon glyphicon-ok checkedRes" aria-hidden="true"></span><br/>\
 					<span class="nbSuggested">' + this.nbSuggested + '</span> <span class="glyphicon glyphicon-ok suggestedRes" aria-hidden="true"></span> \
 				</div> \
@@ -333,9 +333,9 @@
 		
 
 	// Used Resource Object
-	function Resource(usedResId, checked, suggested{% if copy %}, initial{% endif %}) {
+	function Resource(usedResId, checked, suggested{% if display != 'normal' %}, initial{% endif %}) {
 		this.usedResId = usedResId;
-		{% if copy %}
+		{% if display != 'normal' %}
 		this.initial = initial;
 		{% endif %}
 		this.suggested = suggested;
@@ -359,11 +359,11 @@
 	
 	Resource.prototype.getPopoverContent = function() {
 		var str = '<div class="usedResource" data-id="' + this.getId() + '" style="background-image:url(' + this.getThumbs() + ');">';
-		str += '<div class="resThumbnailHover{% if not copy %}' + ((this.isSuggested()) ? ' suggestedRes' : '') + ((this.isChecked()) ? ' checkedRes' : '') + '{% endif %}" id="usedRes_' + this.getId() + '" data-id="' + this.getId() + '" data-toggle="popover" data-trigger="hover"';
+		str += '<div class="resThumbnailHover{% if display == 'normal' %}' + ((this.isSuggested()) ? ' suggestedRes' : '') + ((this.isChecked()) ? ' checkedRes' : '') + '{% endif %}" id="usedRes_' + this.getId() + '" data-id="' + this.getId() + '" data-toggle="popover" data-trigger="hover"';
 		str += ' data-duration="' + this.getDuration()  + '" data-title="' + this.getTitle() + '" data-content="' + this.getDesc() + '" data-resurl="' + this.getPath() + '">';
 		str += '<span class="resTitle">' + this.getShortTitle() + '</span><span class="resCheckBox">';
 		
-		{% if copy %}
+		{% if display != 'normal' %}
 			if(this.isInitial()) {
 				str += '<span class="glyphicon glyphicon-ok teacherRes" aria-hidden="true"></span>';
 			}
@@ -380,7 +380,7 @@
 	};
 	
 	Resource.prototype.getStatus = function() {
-		{% if copy %}
+		{% if display != 'normal' %}
 			return (this.isChecked()) ? 'checked' : 'none';
 		{% else %}
 			if(this.isSuggested()) {
@@ -437,7 +437,7 @@
 				if($(this).hasClass('checkedRes')) {
 					deleteFromPlaylist($(this).attr('data-id'), 'used');
 					
-					{% if copy == false %}
+					{% if display == 'normal' %}
 					addToPlaylist($(this).attr('data-id'), $(this).attr('data-title'), 'suggestion');
 					{% endif %}
 				}
@@ -642,7 +642,7 @@
 				matrix.addBox({{ pov.id }}, {{ level.id }}, [
 				{% if matrix.sortedResources[pov.id][level.id] is defined %}
 					{% for usedRes in matrix.sortedResources[pov.id][level.id] %}
-							new Resource({{ usedRes.id }}, {% if (not copy) and presentation.isChecked(usedRes.id) %}1{% else %}0{% endif %}, {% if presentation.isSuggested(usedRes.id) %}1{% else %}0{% endif %}{% if copy %}, {% if presentation.isChecked(usedRes.id) %}1{% else %}0{% endif %}{% endif %}),
+							new Resource({{ usedRes.id }}, {% if (display == 'normal') and presentation.isChecked(usedRes.id) %}1{% else %}0{% endif %}, {% if presentation.isSuggested(usedRes.id) %}1{% else %}0{% endif %}{% if display != 'normal' %}, {% if presentation.isChecked(usedRes.id) %}1{% else %}0{% endif %}{% endif %}),
 					{% endfor %}
 				{% endif %}
 				]);
@@ -772,7 +772,7 @@
 	});
 	
 	
-	{% if copy %}
+	{% if display != 'normal' %}
 	$('#save_new_presentation').click(function(event) {
 		event.preventDefault();
 		if($('#file_list li').length > 0) {

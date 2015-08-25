@@ -6,12 +6,18 @@
 	<link rel='stylesheet' id='stylesheet-css'  href='{{ asset('js/spectrum/spectrum.css') }}' type='text/css' media='all' />
 {% endblock %}
 
+{% if suggestion %}
+	{% set presentationDuration = presentation.suggestionDuration %}
+{% else %}
+	{% set presentationDuration = presentation.duration %}
+{% endif %}
+
 {% block body %}
 	<div style="display:none; position: absolute; top: 140px; background-color: black; height: 20px; color: white; line-height: 20px;" id="timeline_time_hover"></div>
 	<div class="timeline">
 		{% for res in presentation.resources %}
-			{% if res.suggested == false %}
-				<div style="width: {{ (res.getDuration / presentation.duration)*100 }}%;" class="timeline_res" data-container="body" title="{{ res.usedResource.resource.title }}" data-toggle="popover" data-placement="bottom" data-content="<img width='200' height='112' src='{{ asset(res.usedResource.resource.getThumbsPath) }}' /><br/>{{ res.usedResource.resource.description }}"></div>
+			{% if res.suggested == suggestion %}
+				<div style="width: {{ (res.getDuration / presentationDuration)*100 }}%;" class="timeline_res" data-container="body" title="{{ res.usedResource.resource.title }}" data-toggle="popover" data-placement="bottom" data-content="<img width='200' height='112' src='{{ asset(res.usedResource.resource.getThumbsPath) }}' /><br/>{{ res.usedResource.resource.description }}"></div>
 			{% endif %}
 		{% endfor %}
 	</div>
@@ -21,25 +27,26 @@
 	<div class="annotations">
 		{% set annotRows = [] %}
 		{% for a in presentation.annotations %}
-			{% set topValue = 0 %}
-			
-			{# Looking for an available slot to display the annotation #}
-			{% set break = false %}
-			{% for r in annotRows if not break %}
-				{% if (r.beginning + r.length < a.beginning) %}
-					{% set annotRows = annotRows|merge({ ('r'~(loop.index0)): a}) %} 
-					{% set topValue = loop.index0 * 18 %}
-					{% set break = true %}
+			{% if a.suggested == suggestion %}
+				{% set topValue = 0 %}
+				
+				{# Looking for an available slot to display the annotation #}
+				{% set break = false %}
+				{% for r in annotRows if not break %}
+					{% if (r.beginning + r.length < a.beginning) %}
+						{% set annotRows = annotRows|merge({ ('r'~(loop.index0)): a}) %} 
+						{% set topValue = loop.index0 * 18 %}
+						{% set break = true %}
+					{% endif %}
+				{% endfor %}
+				
+				{% if not break %}
+					{% set annotRows = annotRows|merge({ ('r'~(annotRows|length)): a}) %} 
+					{% set topValue = (annotRows|length - 1) * 18 %}
 				{% endif %}
-			{% endfor %}
-			
-			{% if not break %}
-				{% set annotRows = annotRows|merge({ ('r'~(annotRows|length)): a}) %} 
-				{% set topValue = (annotRows|length - 1) * 18 %}
+				
+				<a role="button" tabindex="{{ loop.index0 }}" style="width: {{ (a.length / presentationDuration)*100 }}%; left:{{ (a.beginning / presentationDuration)*100 }}%; top: {{ topValue }}px;" class="timeline_annot{% if a.isAudio %} timeline_annot_audio{% endif %}{% if annotation.id == a.id %} timeline_annot_current{% endif %}" data-toggle="popover" data-content="<a href='{{ path('annotation_edit', {'id': presentation.id, 'a': a.id}) }}'><span class='glyphicon glyphicon-pencil'></span></a> &nbsp;&nbsp; <a href='{{ path('annotation_delete', {'id': a.id}) }}'><span class='glyphicon glyphicon-remove'></span></a><br/>{{ a.text|e('html_attr') }}"></a>
 			{% endif %}
-			
-			
-			<a role="button" tabindex="{{ loop.index0 }}" style="width: {{ (a.length / presentation.duration)*100 }}%; left:{{ (a.beginning / presentation.duration)*100 }}%; top: {{ topValue }}px;" class="timeline_annot{% if a.isAudio %} timeline_annot_audio{% endif %}{% if annotation.id == a.id %} timeline_annot_current{% endif %}" data-toggle="popover" data-content="<a href='{{ path('annotation_edit', {'id': presentation.id, 'a': a.id}) }}'><span class='glyphicon glyphicon-pencil'></span></a> &nbsp;&nbsp; <a href='{{ path('annotation_delete', {'id': a.id}) }}'><span class='glyphicon glyphicon-remove'></span></a><br/>{{ a.text|e('html_attr') }}"></a>
 		{% endfor %}
 		
 		{# filler so that the block has a good height #}
@@ -207,8 +214,8 @@
 		}
 		
 		function updateAnnotationEdited() {
-			$('.timeline_annot_edited').css('width', Math.floor(($('#vmb_presentationbundle_annotation_length').val() / {{ presentation.duration }}) * $('.timeline').width()) + 'px');
-			$('.timeline_annot_edited').css('left', Math.floor(($('#vmb_presentationbundle_annotation_beginning').val() / {{ presentation.duration }}) * $('.timeline').width()) + 'px');
+			$('.timeline_annot_edited').css('width', Math.floor(($('#vmb_presentationbundle_annotation_length').val() / {{ presentationDuration }}) * $('.timeline').width()) + 'px');
+			$('.timeline_annot_edited').css('left', Math.floor(($('#vmb_presentationbundle_annotation_beginning').val() / {{ presentationDuration }}) * $('.timeline').width()) + 'px');
 		}
 		
 		function parsePosValue(val) {
@@ -280,13 +287,19 @@
 			
 			$('.timeline').click(function(e) {
 				var posX = e.pageX - $(this).offset().left;
-				time = Math.floor((posX / $(this).width()) * {{ presentation.duration }});
+				time = Math.floor((posX / $(this).width()) * {{ presentationDuration }});
 				$('#vmb_presentationbundle_annotation_beginning').val(time);
 				updateAnnotationEdited();
 			});
 			
 			$('#vmb_presentationbundle_annotation_beginning').change(function() { updateAnnotationEdited();	});
-			$('#vmb_presentationbundle_annotation_length').change(function() { updateAnnotationEdited();	});
+			$('#vmb_presentationbundle_annotation_length').change(function() { 
+				if(parseInt($(this).val(), 10) < 0) {
+					alert('This value must be positive');
+					$(this).val(1);
+				}
+				updateAnnotationEdited();	
+			});
 			
 			// Tracking mouse in order to display the time at the current point
 			timeoutTimelineHover = false;
@@ -314,7 +327,7 @@
 			function timelineMouseOver() {
 				$(document).one("mousemove", function (e) {
 					var posX = e.pageX - $('.timeline').offset().left;
-					time = Math.floor((posX / $('.timeline').width()) * {{ presentation.duration }});
+					time = Math.floor((posX / $('.timeline').width()) * {{ presentationDuration }});
 					$('#timeline_time_hover').css('left', e.pageX + 'px');
 					$('#timeline_time_hover').html('&nbsp;' + convertDurationToString(time) + '&nbsp;');
 					// set a timeout so the handler will be attached again after a little while
