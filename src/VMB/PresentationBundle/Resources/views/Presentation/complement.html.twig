@@ -48,7 +48,7 @@
 		</div>
 		<div class="col-sm-3">
 			<h4><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span> + d'options</h4>
-			<a href="{{ path('presentation_create_copy', {'id' : entity.id}) }}"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> {{ 'presentation.advanced_visualisation'|trans }}</a><br/>
+			<a href="{{ path('presentation_advanced_visualisation', {'id' : entity.id}) }}"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> {{ 'presentation.advanced_visualisation'|trans }}</a><br/>
 			<a href="{{ path('vmb_presentation_browse_topic',  {'topic': entity.topic.id}) }}"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> {{ 'presentation.same_topic'|trans }}</a><br/>		
 			<a href="{{ path('vmb_presentation_browse_topic',  {'topic': entity.topic.id, 'default':1}) }}"><span class="glyphicon glyphicon-education" aria-hidden="true"></span> {{ 'presentation.default_topic'|trans }}</a><br/>		
 		</div>

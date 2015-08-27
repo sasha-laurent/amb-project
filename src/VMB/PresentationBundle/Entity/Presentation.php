@@ -412,6 +412,15 @@ class Presentation
         return $this->resources;
     }
     
+    public function isUsed($usedResourceId)
+    {
+		if(!is_array($this->sortedResources)) {
+			$this->sortResources();
+		}
+        
+        return isset($this->sortedResources[$usedResourceId]);
+	}
+    
     public function isChecked($usedResourceId)
     {
 		if(!is_array($this->sortedResources)) {

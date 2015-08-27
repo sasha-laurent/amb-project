@@ -336,6 +336,7 @@ class PresentationController extends Controller
     */
     public function showAction($id)
     {
+		$translator = $this->get('translator');
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('VMBPresentationBundle:Presentation')
@@ -355,6 +356,12 @@ class PresentationController extends Controller
 			$matrix = $em->getRepository('VMBPresentationBundle:Matrix')
 				->getMatrixWithResources($entity->getMatrix()->getId());
 
+			// Used to store beginning times of each part if they exist
+			$breakpoints = array('initial' => null, 'suggested' => null);
+			$currentTime = 0;
+			$previousStatus = null;
+			$nbErrors = 0;
+			
 			foreach($postValues as $key => $position) {
 				if(preg_match('`usedResource_([0-9]+)_([0-9]+)`', $key, $matches)) {
 					$resId = intval($matches[1]);
@@ -366,7 +373,72 @@ class PresentationController extends Controller
 					
 					if($newRes != null) {
 						$alternativeResources[] = $newRes;
+						
+						// If the form that was sent was not from advanced visualisation
+						if($request->request->get('vmb_presentationbundle_presentation') === null) {
+							// If the resource is used in the initial or the suggested presentation
+							if($entity->isUsed($newRes->getUsedResource()->getId())) {
+								if($entity->isSuggested($newRes->getUsedResource()->getId())) {
+									// If it's a suggestion
+									if($previousStatus != 'suggested') {
+										$previousStatus = 'suggested';
+										if($breakpoints['suggested'] !== null) {
+											$nbErrors++;
+										}
+										$breakpoints['suggested'] = $currentTime;
+									}
+								}
+								else {
+									// If it's in the initial presentation
+									if($previousStatus != 'initial') {
+										$previousStatus = 'initial';
+										if($breakpoints['initial'] !== null) {
+											$nbErrors++;
+										}
+										$breakpoints['initial'] = $currentTime;
+									}
+								}
+							}
+							else { $previousStatus = null; }
+							$currentTime += $newRes->getDuration();
+						}
 					}
+				}
+			}
+			
+			$annotations = array();
+			// If we didn't encounter any error
+			if($nbErrors == 0) {
+				// If the form that was sent was not from advanced visualisation
+				if($request->request->get('vmb_presentationbundle_presentation') === null) {
+					// We browse annotations and reorder them if needed
+					foreach($entity->getAnnotations() as $a) {
+						if($a->getSuggested() && $breakpoints['suggested'] !== null) {
+							$a->setBeginning($a->getBeginning() + $breakpoints['suggested']);
+							$annotations[] = $a;
+						}
+						elseif(!($a->getSuggested()) && $breakpoints['initial'] !== null) {
+							$a->setBeginning($a->getBeginning() + $breakpoints['initial']);
+							$annotations[] = $a;
+						}
+					}
+					
+					// We sort annotations so that the javascript can be executed correctly
+					usort($annotations, array("VMB\PresentationBundle\Entity\Annotation", "startsFirst"));
+				}
+			}
+			else {
+				// If an error occured, we deactivate annotations
+				$request->getSession()->getFlashBag()->add('danger', $translator->trans('message.error.occured'));
+			}
+			
+		}
+		else {
+			// If we simply want the initial presentation, we ignore annotations that are meant for the suggested part
+			$annotations = array();
+			foreach($entity->getAnnotations() as $a) {
+				if(!($a->getSuggested())) {
+					$annotations[] = $a;
 				}
 			}
 		}
@@ -379,6 +451,7 @@ class PresentationController extends Controller
             'inCaddy' => $user->presentationIsInCaddy($entity),
             'hasPlaybackFunction' => true,
 			'entity' => $entity,
+			'annotations' => $annotations,
 			'alternativeResources' => $alternativeResources,
         );
         if($entity->isOwner($user)) {
@@ -469,7 +542,6 @@ class PresentationController extends Controller
 		$additionalResourcesId = array();
 		$i = 0;
 		while(count($sortedResources) > 0) {
-			//dump($sortedResources);
 			$additionalResourcesId[$i] = array();
 			foreach($sortedResources as $pov => $subArr) {
 				foreach($subArr as $lvl => $usedResArr) {

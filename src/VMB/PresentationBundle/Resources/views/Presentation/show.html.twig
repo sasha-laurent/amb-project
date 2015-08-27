@@ -586,7 +586,7 @@
 	}
 	
 	presentation = new Presentation(resourcesCollection, resourcesOrder, [
-		{% for a in entity.annotations %}{
+		{% for a in annotations %}{
 			'id' : {{ a.id }}, 
 			'beginning': {{ a.beginning }},
 			'duration': {{ a.length }},

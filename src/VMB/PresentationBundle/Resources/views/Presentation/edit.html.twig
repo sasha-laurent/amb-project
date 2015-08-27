@@ -190,6 +190,9 @@
 							<p class="text-right">
 								{{ 'show.total_duration'|trans }} : <span id="total_duration_suggestion">{{ "%02d"|format(totalDurationSuggestion // 60) }}:{{ "%02d"|format(totalDurationSuggestion % 60) }}</span>
 							</p>
+							{% if presentation.id and (not copy) %}
+								<p class="text-center"><a href="{{ path('annotation_edit', {'id' : presentation.id, 'suggestion': 1}) }}"><span class="glyphicon glyphicon-edit"></span> Gérer les annotations</a></p>
+							{% endif %}
 						</div>
 					</div><!-- .tab-content -->
 				</div><!-- role=tab-panel -->

@@ -110,6 +110,15 @@ class Annotation
 	private $filenameForRemove;
 
 
+	// Compare the position of two annotations
+	static public function startsFirst($a, $b)
+	{
+		if($a->getBeginning() == $b->getBeginning()) {
+			return 0;
+		}
+		return ($a->getBeginning() < $b->getBeginning()) ? -1 : 1;
+	}
+
     /**
      * Get id
      *
