@@ -35,7 +35,6 @@
 		{% if form.file is defined %}
 			<div class="form-group">{{form_label(form.file)}}<div class="col-sm-10" style="margin-top:5px;">{{form_widget(form.file)}}</div></div>
 		{% endif %}
-		{{dump(resource)}}
 		{% if resource.id is null or 
 			(resource.id is not null and resource.type == "audio") %}
 			<div class="row">

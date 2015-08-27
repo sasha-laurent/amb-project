@@ -67,8 +67,10 @@ class UploadController extends Controller
                     $em->persist($resource);
                     $em->flush();
 
-					if($request->isXmlHttpRequest()){ 
-                    // Return new resource entity as JSON Object to be nserted in File List available immediately 
+					if($request->isXmlHttpRequest())
+                    { 
+                    // Return new resource entity as JSON Object 
+                    // so it can be used immediately 
                     $res = new JsonResponse(
                     	array('success' => true, 
                     		'message' => $this->get('translator')->trans('resource.added'),
