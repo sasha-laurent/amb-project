@@ -18,6 +18,7 @@ git merge -s recursive -X theirs --abort
 
 echo "Migration Base de Données" 
 # TODO: Voir comment on pourrait mieux migrer les changements DB
+php app/console doctrine:schema:update --dump-sql
 php app/console doctrine:schema:update --force
 
 #Mise à jour du cache
