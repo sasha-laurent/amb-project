@@ -1,3 +1,5 @@
+{% spaceless %}
+{% if entity is defined %}
 <div class="col-md-4">
 	<a class="thumbnail-link" href="{{ path('resource_show', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'page':null, 'position': nbPerPage*(page-1) + loop.index, 'id': entity.id })) }}">
 		<div class="thumbnail block-browse block-resource">
@@ -20,9 +22,9 @@
 				<span class="loading_indicator_inline loading_indicator_{{entity.id}}"></span>
 				<div class="btn-group " role="group" aria-label="...">
 					{% if is_granted('ROLE_ADMIN') or entity.isOwner(app.user) %}
-						<a title="{{"resource.edit"|trans}}" href="{{ path('resource_edit', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>					
+						<a title="{{"resource.edit"|trans}}" href="{{ path('resource_edit', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>                  
 						<a title="{{"resource.index"|trans}}" href="#" type="button" class="btn btn-{% if entity.indexed %}success{% else %}default{% endif %}" data-toggle="modal" data-target="#modal-tag-{{ entity.id }}"><span class="glyphicon glyphicon-tags" aria-hidden="true"></span></a>
-						<a title="{{"resource.delete"|trans|desc('Delete')}}" href="{{ path('resource_delete', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>					
+						<a title="{{"resource.delete"|trans|desc('Delete')}}" href="{{ path('resource_delete', { 'id': entity.id }) }}" type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>                   
 					{% else %}
 						<a type="button" class="btn {% if app.user.resourceIsInCaddy(entity) %}btn-info{% else %}btn-default{% endif %} resourceAddToCaddy" data-id="{{ entity.id }}"><span class="glyphicon glyphicon-star"></span></a>
 					{% endif %}
@@ -37,13 +39,10 @@
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 					<h4 class="modal-title" id="modal-tag-label-{{ entity.id }}">Indexer une ressource</h4>
 				  </div>
-				  <div class="modal-body">
-					  {{ 'message.ontology.modalMultiple'|trans }}
-					  <hr/>
-					  <ul>
+				  <div class="modal-body">{{ 'message.ontology.modalMultiple'|trans|trim}}<hr/>
+					<ul>
 					  {% for t in entity.topic %}
-						<li>{{ t.title }}
-							<ul>
+						<li>{{t.title|trim}}<ul>
 							{% for o in t.ontologies %}
 								<li><a href="{{ path('ontology_index', {'video[]': entity.id, 'ontology': o.id}) }}">{{ o.name }}</a></li>
 							{% else %}
@@ -60,3 +59,8 @@
 		</div>
 	</a>
 </div>
+{% else %}
+{# Vanilla, minimized template with placeholder for javascript variable replacements - spaceless tag only works between html tags#}
+"<p>Vanilla Vignette</p>                                                                                                  <p>... Some spaces trimmed..</p>                                           <strong>Hopefully</strong>"
+{% endif %}
+{% endspaceless %}

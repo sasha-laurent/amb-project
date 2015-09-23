@@ -1,3 +1,5 @@
+{% spaceless %}
+{% if entity is defined %}
 <div class="col-md-4">
 	<a class="thumbnail-link" href="{{ path('presentation_show', { 'id': entity.id }) }}">
 		<div class="thumbnail block-browse block-presentation{% if not entity.public %} block-presentation-private{% endif %}{% if entity.default %} block-presentation-default{% endif %}{% if entity.official %} block-presentation-official{% endif %}">
@@ -11,10 +13,7 @@
 			<div class="caption">
 				<h3 class="thumbnail-label">{{ entity.title }}</h3>
 			</div>
-			
-			<div class="duration">
-				{{ entity.durationToString }}
-			</div>
+			<div class="duration">{{ entity.durationToString|trim }}</div>
 			<div class="caddy-icon">
 				<span class="loading_indicator_inline loading_indicator_{{entity.id}}"></span>
 				
@@ -80,3 +79,7 @@
 		</div>
 	</a>
 </div>
+{% else %}
+{# Vanilla, minimized template #}
+"Hello from pVign"
+{% endif %}{% endspaceless %}

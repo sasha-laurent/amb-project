@@ -1,6 +1,10 @@
 #/bin/sh env sh
 # deploy_vmb.sh
 # Script de mise à jour du code de production
+# Options d'erreurs, IFS= Internal Field Separator
+set -euo pipefail
+IFS=$'\n\t'
+
 cd /var/www/edu/
 # Utilisation une clef privée/public pour le projet
 # Ajouter command="/bin/git",from="bitbucket.org",no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty au hash rsa pub
