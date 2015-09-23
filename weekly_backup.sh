@@ -15,8 +15,13 @@
 
 # To copy the files use:
 # scp -r username@10.77.6.23:/var/www/edu/backup/ /folder_on_local_machine
+# -- Exit on first fail, warn of wrong variable references, pipe error reporting 
+set -euo pipefail
+IFS=$'\n\t'
+
 TODAY=$(date +%F)
 HOME_DIR=/var/www/edu
+HOME_DIR_USE = $(du -h -d 1 $(HOME_DIR))
 
 if [[ ! -d "$HOME_DIR/backup/" ]]; then
 	echo "Creating backup directories if not found"
@@ -29,14 +34,17 @@ fi
 TAR_OPTS=--ignore-failed-read
 echo "Compressing and saving ontologies."
 tar -czf $HOME_DIR/backup/ontologies/ont_$TODAY.tar.gz $HOME_DIR/web/bundles/telecomvmb/json $TAR_OPTS
-echo "Compressing and saving upload directory."
-tar -czf $HOME_DIR/backup/upload/uploaded_files_$TODAY.tar.gz $HOME_DIR/web/upload $TAR_OPTS
+#echo "Compressing and saving upload directory."
+#tar -czf $HOME_DIR/backup/upload/uploaded_files_$TODAY.tar.gz $HOME_DIR/web/upload $TAR_OPTS
 
-echo "Dumping database data."
+echo "Copying database data."
 mysqldump vmb -u root -pJGIRZrRk > $HOME_DIR/backup/data/amb_sql_$TODAY
 
-echo "Removing backup files older than a month" 
-find $HOME_DIR/backup/ -mtime +30 -exec rm {} \;
+echo "Removing old backup files" 
+find $HOME_DIR/backup/ -type f -mtime +7 -exec rm {} \;
 
-echo "Ok means Ola Kala."
+echo "Disk usage"
+echo $HOME_DIR_USE
+
+echo "End."
 exit 0

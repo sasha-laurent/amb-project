@@ -1,6 +1,5 @@
 {% extends '::layout.html.twig' %}
-{# Hereafter the assumption is made that 
-	ressources are searched for by default #}
+{# We assume is that the default type is ressources #}
 {% set stripBodyHeader = true %}
 {% block header %}
 <h3 class="page-header" style="margin-top:20px;">
@@ -26,7 +25,7 @@
 			{% endif %}
 
 			{% set res_style = resources is empty ? 
-				'default" disabled' : "primary" %}
+				'default" disabled' : "default btn-primary" %}
 
 			<button type="button" id="pres_select" class="btn btn-{{pres_style}}" >
 				{{"menu.presentations"|trans}} <span class="badge">{{presentations|length}}</span>
@@ -37,10 +36,10 @@
 		</div>
 		{# View transformation selection #}
 		<div class="btn-group pull-right" role="group" aria-label="View Selection">
-			<button type="button" class="btn" id="list_view">
+			<button type="button" class="btn btn-default" id="list_view">
 				<span class="glyphicon glyphicon-th-list"></span>
 			</button>
-			<button type="button" class="btn btn-primary" id="mosaic_view">
+			<button type="button" class="btn btn-default btn-primary" id="mosaic_view">
 				<span class="glyphicon glyphicon-th-large"></span>
 			</button>
 		</div>
@@ -50,41 +49,33 @@
 {% endblock %}
 
 {% block body %}
-<div id="resources_container">
-	{# Table header #}
-	<div id="tbl_header" style="display: none;">
-	    <div class="panel panel-default">
-			<div class="panel-heading">
-				<div class="row">			
-					<div class="col-md-4">{{ 'table.title'|trans }}</div>
-					<!-- type -->
-					<div class="col-md-1 text-center">{{ 'table.duration'|trans }}</div>
-					<div class="col-md-2 text-center">{{ 'table.action'|trans }}</div>
-	        	</div>
+<div id="resources_container_header" class="epsilon" style="display: none;">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<div class="row">			
+				<div class="col-md-6">{{ 'table.title'|trans }}</div>
+				<div class="col-md-2">{{ 'table.type'|trans }}</div>
+				<div class="col-md-2 text-center">{{ 'table.duration'|trans }}</div>
+				<div class="col-md-2 text-center">{{ 'table.action'|trans }}</div>
 			</div>
-		</div>	
-	</div>
-	{% for r in resources %}
-		{% include "VMBResourceBundle:Resource:resourceVignette.html.twig" with {'entity' : r, 'nbPerPage' : 12, 'page':1} %}
-	{% endfor %}
-	</div>
-<div id="presentations_container"> {# Titre, duree, auteur, matrice#}
-	<div id="tbl_header" style="display: none;">
-	    <div class="panel panel-default">
-			<div class="panel-heading">
-				<div class="row">			
-					<div class="col-md-4">{{ 'table.title'|trans }}</div>
-					<!-- type -->
-					<div class="col-md-1 text-center">{{ 'table.duration'|trans }}</div>
-					<div class="col-md-2 text-center">{{ 'table.action'|trans }}</div>
-	        	</div>
-			</div>
-		</div>	
-	</div>
-	{% for p in presentations %}
-		{% include "VMBPresentationBundle:Presentation:presentationVignette.html.twig" with {'entity' : p, 'nbPerPage' : 12, 'page':1} %}
-	{% endfor %}
+		</div>
+	</div>	
 </div>
+<div id="resources_container">{% for r in resources %}{% include "VMBResourceBundle:Resource:resourceVignette.html.twig" with {'entity' : r, 'nbPerPage' : 12, 'page':1} %}{% endfor %}</div>
+<div id="presentations_container_header" class="epsilon" style="display: none;">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<div class="row">			
+					<div class="col-md-4">{{ 'table.title'|trans }}</div>
+					<div class="col-md-1 text-center">{{ 'table.duration'|trans }}</div>
+					<div class="col-md-2 text-center">{{ 'table.author'|trans }}</div>
+					<div class="col-md-2 text-center">{{ 'table.matrix'|trans }}</div>
+					<div class="col-md-2 text-center">{{ 'table.action'|trans }}</div>
+				</div>
+			</div>
+		</div>	
+</div>
+<div id="presentations_container">{% for p in presentations %}{% include "VMBPresentationBundle:Presentation:presentationVignette.html.twig" with {'entity' : p, 'nbPerPage' : 12, 'page':1} %}{% endfor %}
 </div>
 {% if presentations is empty and resources is empty %}
 <div class="col-md-12 text-center">
@@ -97,78 +88,144 @@
 
 {% block script %}
 	{{parent()}}
-	{# TODO: Include caddy.js #}
-	<script type="text/javascript">
-	var view_switch = 0; // 0 for Mosaic, 1 for List
-	var typ_switch = 0; // 0 for Resources, 1 for Presentations
-	var view_matrix=[[['pres_mosaic_lst'],['pres_vignette_lst']],
-						[['res_mosaic_lst'],['res_vignette_lst']]];
-	console.log(view_matrix);
-	var typ_enum = ["resources_container", "presentations_container"];
-	// [1-view_switch]
-	{#
-	{% for r in resources %}
-		{% include "VMBResourceBundle:Resource:resourceListItem.html.twig" with {'entity' : r} %}
-	{% endfor %}
-
-	{% for p in presentations %}
-		{% include "VMBPresentationBundle:Presentation:presentationListItem.html.twig" with {'entity' : p} %}
-	{% endfor %}
+	{# TODO: Include caddy.js 
+	   Can expose routes in JS with https://github.com/FriendsOfSymfony/FOSJsRoutingBundle
 	#}
-	// Init with Resources as Mosaic
+	<script type="text/javascript">
+	const LST_SWITCH = 0; 
+	const MOZ_SWITCH = 1;
+	const RESS_SWITCH = 0; 
+	const PRES_SWITCH = 1;
+
+	var entity_ctnr = ["#resources_container", "#presentations_container"];
+	// Switch values kept up-to-date
+	var view_switch; 
+	var typ_switch;
+	/**
+	 *	Usage: 
+	 *	tmpl_matrix[typ_switch][view_switch] -> html boilerplate template
+	*/
+	var tmpl_matrix = [['{% include "VMBResourceBundle:Resource:resourceListItem.html.twig" %}','{% include "VMBResourceBundle:Resource:resourceVignette.html.twig"%}'],['{% include "VMBPresentationBundle:Presentation:presentationListItem.html.twig" %}','{% include "VMBPresentationBundle:Presentation:presentationVignette.html.twig" %}']];
+	var buffered_content = new Array(2);
+	/**
+	 * Results Json Objects
+	 *
+	**/
+	var results = {
+		presentations_container : [
+	{% for p in presentations %}
+		{
+			id: "{{p.id}}",
+			title : "{{ p.title | shortenText(60, "...") }}",
+			duration : "{{p.durationToString}}",
+			author : "",
+			matrix : "",
+		},
+	{% endfor %}],
+		resources_container : [
+	{% for r in resources %}
+		{ 
+		id : "{{r.id}}", 
+		title : "{{ r.title | shortenText(60, "...") }}",
+		description : "{{ r.description | shortenText(160, "...")  }}",
+		glyphicon : "{{r.getGlyphicon}}",   
+		thumbPath: "{{ asset(r.getThumbsPath) }}", 
+		duration : "{{r.durationToString}}",
+		isBkmarked : "{{app.user.resourceIsInCaddy(r)}}",
+		indexation: {
+			is_indexed : "{{r.indexed}}",
+			topics : [ {% for t in r.topic %}
+				{ 
+					title : "{{t.title}}", 
+					onts : {% for o in t.ontologies %}{ id : "{{o.id}}", name : "{{o.name}}"}{% endfor %}
+				}	
+				{% endfor %} ]
+			}
+		},
+	{% endfor %} ]
+	};
+	// Initialize UI with Resources as Mosaic
 	$(function(){
-		view_matrix[0][1] = ''
-		$("#presentations_container").hide();
-		$(".col-md-4").
+		buffered_content[LST_SWITCH] = $(entity_ctnr[LST_SWITCH]).html();
+		buffered_content[MOZ_SWITCH] = $(entity_ctnr[MOZ_SWITCH]).html();
+		switchTyp(RESS_SWITCH);
+		switchView(MOZ_SWITCH);
 	});
 	// Entity type selection
-	$("#pres_select").on('click', 
-		function(){
-			$(this).addClass("btn-primary");
-			$("#res_select").removeClass("btn-primary");
-			$("#resources_container").hide();
-			$("#presentations_container").show();
-			typ_switch = 0;
+	$("#pres_select").on('click', function(){
+		switchTyp(PRES_SWITCH);
 	});
 
-	$("#res_select").on('click', 
-		function(){
-			$(this).addClass("btn-primary");
-			$("#pres_select").removeClass("btn-primary");
-			$("#presentations_container").hide();
-			$("#resources_container").show();
-			typ_switch = 1;
+	$("#res_select").on('click', function(){
+		switchTyp(RESS_SWITCH);
 	});
 	// View transformation
 	$("#list_view").on('click', function(){
-		switchView("#list_view", "#mosaic_view");
+		switchView(LST_SWITCH);
 	});
 	$("#mosaic_view").on('click', function(){
-		switchView("#mosaic_view", "#list_view");
+		// Hide both table headers (epsilon : dummy class)
+		$(".main_body > .epsilon").hide();
+		switchView(MOZ_SWITCH);
 	});
 
-	function switchView(from, to)
+	function switchView(to)
 	{
-		$(to).removeClass("btn-primary");
-		$(from).addClass("btn-primary");
-		// Toggle table header
-		if(to.substring("list")){
-			$("#tbl_header").show();
-		} else {
-			$("#tbl_header").hide();
+		var view_selectors = ["#list_view", "#mosaic_view"];
+		$(view_selectors[to]).addClass("btn-primary");
+		$(view_selectors[1-to]).removeClass("btn-primary");
+		
+		// Update current view value
+		view_switch = to;
+		/* Populate & Attach new list content to container */
+		if(view_switch == LST_SWITCH)
+		{	
+			// Toggle active view table header
+			$(entity_ctnr[typ_switch]+"_header").show();		
+			$(entity_ctnr[1-typ_switch]+"_header").hide();	
+			// Listify
+			var baked_content = '<ul class="list-group" id="sortable">';
+			var which = entity_ctnr[typ_switch].substring(1); // removing trailing "#"
+			var res_arr = results[which];
+			for(item in res_arr) {
+				baked_content += nano(tmpl_matrix[typ_switch][view_switch], res_arr[item]);
+			}
+			baked_content += '</ul>';
+			$(entity_ctnr[typ_switch]).html(baked_content);
+		} else
+		{
+			// Use buffered content
+			$(entity_ctnr[typ_switch]).html(buffered_content[typ_switch]);
 		}
-		// Save current content as secondary view
-		secondary_view[view_switch][typ_switch].push(
-			$("#"+typ_enum[typ_switch]).html()
-		);
-		// Empty container from old view
-		$("#"+typ_enum[typ_switch]).detach();
-		// Switch current view value
-		view_switch = 1 - view_switch;
-		// Attach new content to container - listify
-		$("#"+typ_enum[typ_switch]).html(
-			secondary_view[view_switch][typ_switch]
-		);
+	}
+
+	function switchTyp(to)
+	{
+		var bt_selectors = ["#res_select", "#pres_select"];
+		$(bt_selectors[to]).addClass("btn-primary");
+		$(bt_selectors[1-to]).removeClass("btn-primary");
+
+		$(entity_ctnr[1-to]).hide();
+		$(entity_ctnr[to]).show();
+
+		// Update current entity value
+		typ_switch = to;
+
+		switchView(view_switch);
+	}
+	/** 
+	 * Nano Templates - https://github.com/trix/nano 
+	 *
+	**/
+	function nano(template, data) {
+		return template.replace(/\{([\w\.]*)\}/g, function(str, key) {
+			return data[key];
+			/*
+			var keys = key.split("."), v = data[keys.shift()];
+			for (var i = 0, l = keys.length; i < l; i++) v = v[keys[i]];
+				return (typeof v !== "undefined" && v !== null) ? v : "";
+			*/
+		});
 	}
 	</script>
 {% endblock %}

@@ -45,7 +45,7 @@ presentation_advanced_visualisation:
     defaults: { _controller: "VMBPresentationBundle:Presentation:advancedVisualisation" }
     requirements:
         id:   \d{1,}
-        
+
 presentation_create_copy:
     path:     /createFrom/{id}
     defaults: { _controller: "VMBPresentationBundle:Presentation:createFrom" }
