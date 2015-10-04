@@ -21,7 +21,7 @@ IFS=$'\n\t'
 
 TODAY=$(date +%F)
 HOME_DIR=/var/www/edu
-HOME_DIR_USE = $(du -h -d 1 $(HOME_DIR))
+HOME_DIR_USE = $()
 
 if [[ ! -d "$HOME_DIR/backup/" ]]; then
 	echo "Creating backup directories if not found"
@@ -43,8 +43,8 @@ mysqldump vmb -u root -pJGIRZrRk > $HOME_DIR/backup/data/amb_sql_$TODAY
 echo "Removing old backup files" 
 find $HOME_DIR/backup/ -type f -mtime +7 -exec rm {} \;
 
-echo "Disk usage"
-echo $HOME_DIR_USE
+echo "Home directory disk usage statistics"
+du -h -d 1 $(HOME_DIR)
 
 echo "End."
 exit 0
