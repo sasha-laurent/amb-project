@@ -26,7 +26,6 @@ class User extends BaseUser
 	* @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
 	*/
 	
-	
 	protected $presentation;
 	
 	/**
@@ -35,10 +34,6 @@ class User extends BaseUser
 	 */
 	
 	protected $resource;
-	
-	
-	
-	
 	
     /**
      * Constructor
