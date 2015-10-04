@@ -37,7 +37,7 @@ browse:
     default_presentations: 'Default presentations'
     filters: Filters
     multiple_indexation: 'Multiple Indexation'
-    mutliple_indexation: browse.multiple_indexation
+    mutliple_indexation: 'Multiple indexation'
     no_presentation: 'No Presentation corresponds to these search criteria.'
     official: Official
     parameters_title: 'Filter by'
@@ -256,8 +256,8 @@ role:
     stud: Student
 
 search:
-    resultsTitle: 'Search results'
     no_results: 'No results correspond to this search.'
+    resultsTitle: 'Search results'
 
 show:
     playlist: Playlist
