@@ -38,7 +38,7 @@ browse:
     filters: Filters
     multiple_indexation: 'Multiple Indexation'
     mutliple_indexation: 'Multiple indexation'
-    no_presentation: 'No Presentation corresponds to these search criteria.'
+    no_presentation: 'No presentation matches those search criteria.'
     official: Official
     parameters_title: 'Filter by'
     personal_presentation: 'Personal presentations'
