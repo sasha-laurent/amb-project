@@ -131,9 +131,9 @@
 				$(this).find(".glyphicon").removeClass("glyphicon-floppy-disk").addClass("glyphicon-floppy-saved");
 				$("#myModal").modal('hide');
 				*/
-				window.setTimeout(function(){
-					window.location = "{{path('matrix_show', {'id': entity.id}) }}";
-				}, 500);
+				//window.setTimeout(function(){
+				//	window.location = "{{path('matrix_show', {'id': entity.id}) }}";
+				//}, 500);
 			},
 			error: function(jqXHR, textStatus, errorThrown){
 				console.log(textStatus, errorThrown);
@@ -202,9 +202,9 @@
 	 * @param push: persist request to server or not (defaults to true)
 	**/
 	function deleteRow(input_name, push){
-		push = typeof push !== "undefined" ? push : true;
+		push = (typeof push !== "undefined") ? push : true;
 		if(push){
-			$('#myModal > .popover').po pover('destroy');
+			$('#myModal > .popover').popover('destroy');
 			// Explode input "id" attribute by
 			var expl = $(input_name).attr('id').split("_");
 			// Lexical transformation: povs -> Pov, levels -> Level 

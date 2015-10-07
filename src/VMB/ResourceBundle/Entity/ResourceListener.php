@@ -18,11 +18,11 @@ class ResourceListener
         $em = $args->getEntityManager();
         if (null !== $resource->file)
         {
-        	// TODO: Whitelist extensions and mime types?
+        	// Supported File Formats
             $exts_whitelist = array(
                 'ogg' => 'audio', 'mp3'  => 'audio',
                 'jpeg' => 'image', 'jpg' => 'image', 'png' => 'image',
-                'mp4' => 'video',
+                'mp4' => 'video', 'webm' => 'video', 'ogg' => 'video',
                 'pdf' => 'pdf');
             $mime_type_whitelist = array();
 
@@ -133,8 +133,8 @@ class ResourceListener
     		return $e;
     	}
         // Le fichier a été déplacé, on peut créer les miniatures.
-
-        if(in_array($resource->getExtension(), 
+        $extension = $resource->getExtension();
+        if(in_array($extension, 
             array('jpeg', 'jpg', 'png'))){
             // on crée la miniature
             // http://php.net/manual/en/function.imagecreate.php
