@@ -29,7 +29,7 @@ class UploadController extends Controller
                 'message' => $err_str));
             // Could output whole stack trace for exception '.$e->__toString())
         } else {
-            $request->getSession()->getFlashBag()->add('error', $err_str;
+            $request->getSession()->getFlashBag()->add('error', $err_str);
 
             return $this->redirect($this->generateUrl('resource'));
         }
