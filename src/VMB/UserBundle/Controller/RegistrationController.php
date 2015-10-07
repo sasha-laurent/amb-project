@@ -84,14 +84,14 @@ class RegistrationController extends BaseController
             try {
                 $userManager->updateUser($user);
             } catch(\Doctrine\DBAL\DBALException $e){
-                // If duplicate entry for username 
+                // If there is a duplicate entry for username 
                 // then say username not available
                 $flashMessage = $this->get('translator')->trans('registration.existing_username', array(), 'FOSUserBundle');
                 $request->getSession()->getFlashBag()->add('danger', $flashMessage);
                 $url = $this->generateUrl('fos_user_registration_register');
                 return new RedirectResponse($url);
             }
-            
+
             /*
              * Sending registration mail 
             **/
@@ -111,7 +111,7 @@ class RegistrationController extends BaseController
 
             /*
              * User redirect logic
-             * TODO: Doesn't work for admin panel - probably new user session created doesn't have admin rights after new user is added.
+             * TODO: Doesn't work for admin panel - probably user session gets refreshed without admin rights.
             **/
             if (null === $response = $event->getResponse()) {
                 if($has_admin_rights){
@@ -119,8 +119,9 @@ class RegistrationController extends BaseController
     				$request->getSession()->getFlashBag()->add('success', $flashMessage);
                     $url = $this->generateUrl('admin_user');
                 } else {
-                    $this->get('session')->set('fos_user_send_confirmation_email/email', $user->getEmail());
-                    $url = $this->generateUrl('fos_user_registration_check_email');
+                    // $this->get('session')->set('fos_user_send_confirmation_email/email', $user->getEmail());
+                    // $url = $this->generateUrl('fos_user_registration_check_email');
+                    $url = $this->generateUrl('fos_user_registration_confirmed');
                 }
                 $response = new RedirectResponse($url);
             }

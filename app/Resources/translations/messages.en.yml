@@ -34,12 +34,14 @@ admin:
 
 browse:
     advanced_search: 'Advanced Search'
+    #advanced_search.modal_text: browse.advanced_search.modal_text
     default_presentations: 'Default presentations'
     filters: Filters
     multiple_indexation: 'Multiple Indexation'
     mutliple_indexation: 'Multiple indexation'
     no_presentation: 'No presentation matches those search criteria.'
     official: Official
+    official_only: Official
     parameters_title: 'Filter by'
     personal_presentation: 'Personal presentations'
     personal_resources: 'Personal resources'
@@ -122,6 +124,7 @@ menu:
     connexion: Connexion
     contextual_help: 'Contextual help'
     homepage: Homepage
+    help: Help
     login: Login
     logout: Logout
     manage: Manage
@@ -151,6 +154,7 @@ message:
 
     ontology:
         modal: 'Click on the ontology that you wish to use. Ontologies are indexed by topic. Presented topics are those linked to this particular resource.'
+        modalMultiple: 'Multiple indexation'
         none_for_this_topic: 'No ontology corresponds to this topic.'
 
     presentation:

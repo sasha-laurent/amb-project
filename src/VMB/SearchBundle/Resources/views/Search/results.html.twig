@@ -111,6 +111,7 @@
 	 * Results Json Objects
 	 *
 	**/
+{% spaceless %}
 	var results = {
 		presentations_container : [
 	{% for p in presentations %}
@@ -123,27 +124,33 @@
 		},
 	{% endfor %}],
 		resources_container : [
-	{% for r in resources %}
+		{% for r in resources %}
 		{ 
-		id : "{{r.id}}", 
-		title : "{{ r.title | shortenText(60, "...") }}",
-		description : "{{ r.description | shortenText(160, "...")  }}",
-		glyphicon : "{{r.getGlyphicon}}",   
-		thumbPath: "{{ asset(r.getThumbsPath) }}", 
-		duration : "{{r.durationToString}}",
-		isBkmarked : "{{app.user.resourceIsInCaddy(r)}}",
-		indexation: {
-			is_indexed : "{{r.indexed}}",
-			topics : [ {% for t in r.topic %}
-				{ 
-					title : "{{t.title}}", 
-					onts : {% for o in t.ontologies %}{ id : "{{o.id}}", name : "{{o.name}}"}{% endfor %}
-				}	
+			id : "{{r.id}}", 
+			title : "{{ r.title | shortenText(60, "...") }}",
+			description : "{{ r.description | shortenText(160, "...")  }}",
+			glyphicon : "{{r.getGlyphicon}}",   
+			thumbPath: "{{ asset(r.getThumbsPath) }}", 
+			duration : "{{r.durationToString}}",
+			isBkmarked : "{{app.user.resourceIsInCaddy(r)}}",
+			indexation: {
+				is_indexed : "{{r.indexed}}",
+				topics : [
+				{% for t in r.topic %}{ 
+						title : "{{t.title}}"
+						{% if t.ontologies is not empty %}, 
+						onts : 
+							{% for o in t.ontologies %}
+								{ id : "{{o.id}}", name : "{{o.name}}"}
+							{% endfor %}
+						{% endif %}}
 				{% endfor %} ]
-			}
-		},
-	{% endfor %} ]
+				}
+			},
+{% endfor %} ]
 	};
+{% endspaceless %}
+
 	// Initialize UI with Resources as Mosaic
 	$(function(){
 		buffered_content[LST_SWITCH] = $(entity_ctnr[LST_SWITCH]).html();

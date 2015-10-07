@@ -25,7 +25,8 @@
 		"phansys/getid3": "2.1.*@dev",
         "php-ffmpeg/php-ffmpeg": "~0.5",
         "jms/translation-bundle": "1.1.*@dev",
-        "jms/di-extra-bundle": "1.4.*@dev"
+        "jms/di-extra-bundle": "1.4.*@dev",
+        "swiftmailer/swiftmailer": "^5.4"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

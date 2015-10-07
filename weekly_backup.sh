@@ -21,19 +21,21 @@ IFS=$'\n\t'
 
 TODAY=$(date +%F)
 HOME_DIR=/var/www/edu
-HOME_DIR_USE = $(du -h -d 1 $(HOME_DIR))
 
 if [[ ! -d "$HOME_DIR/backup/" ]]; then
-	echo "Creating backup directories if not found"
-	mkdir "$HOME_DIR/backup/" || { exit "[FAIL] Can't create backup directory." ;}
-	mkdir "$HOME_DIR/backup/ontologies/"
-	mkdir "$HOME_DIR/backup/upload/"
-	mkdir "$HOME_DIR/backup/data/"
+	echo "Backup directory not found: creating it and sub-directories"
+	# mkdir "$HOME_DIR/backup/" || { exit "[FAIL] Can't create backup directory." ;}
+	# mkdir "$HOME_DIR/backup/upload/"
+	mkdir -p "$HOME_DIR/backup/ontologies/"
+	mkdir -p "$HOME_DIR/backup/data/"
 fi
 
 TAR_OPTS=--ignore-failed-read
 echo "Compressing and saving ontologies."
-tar -czf $HOME_DIR/backup/ontologies/ont_$TODAY.tar.gz $HOME_DIR/web/bundles/telecomvmb/json $TAR_OPTS
+tar -czf $HOME_DIR/backup/ontologies/ont_$TODAY.tar.gz \
+		 $HOME_DIR/web/bundles/telecomvmb/json \
+		 $TAR_OPTS
+
 #echo "Compressing and saving upload directory."
 #tar -czf $HOME_DIR/backup/upload/uploaded_files_$TODAY.tar.gz $HOME_DIR/web/upload $TAR_OPTS
 
@@ -43,8 +45,8 @@ mysqldump vmb -u root -pJGIRZrRk > $HOME_DIR/backup/data/amb_sql_$TODAY
 echo "Removing old backup files" 
 find $HOME_DIR/backup/ -type f -mtime +7 -exec rm {} \;
 
-echo "Disk usage"
-echo $HOME_DIR_USE
+echo "Home directory disk usage statistics"
+du -h -d 1 $(HOME_DIR)
 
 echo "End."
 exit 0

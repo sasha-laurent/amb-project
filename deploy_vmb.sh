@@ -1,19 +1,22 @@
 #/bin/sh env sh
 # deploy_vmb.sh
 # Script de mise à jour du code de production
+# Utilisation d'une clef privée/public pour git
+# Ajouter command="/bin/git",from="bitbucket.org",no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty pour securiser un peu l'acces sur le serveurhash rsa pub
 # Options d'erreurs, IFS= Internal Field Separator
 set -euo pipefail
 IFS=$'\n\t'
 
 cd /var/www/edu/
-# Utilisation une clef privée/public pour le projet
-# Ajouter command="/bin/git",from="bitbucket.org",no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty au hash rsa pub
 echo "Début de la mise à jour"
 
 NOW=$(date +%c)
 git add .
-git commit -am "Automatic server commit $NOW"
+if [[ `git status --porcelain` ]]; then
+	git commit -am "Automatic server commit $NOW"
+fi
 git pull 
+git push
 
 echo "Migration Base de Données" 
 # TODO: Voir comment on pourrait mieux migrer les changements DB
@@ -39,5 +42,4 @@ chmod -R 775 app/config/parameters.yml
 chmod -R 775 app/Resources/translations/
 chmod -R 775 web/upload/
 
-git push
 echo "Mise à jour effectuée"

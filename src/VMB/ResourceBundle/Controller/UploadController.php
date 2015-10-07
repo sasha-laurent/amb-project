@@ -22,13 +22,14 @@ class UploadController extends Controller
      * with some customization
     */
     private function exceptionManager($request, $e){
+        $err_str = $this->get('translator')->trans('resource.upload_error');
         if($request->isXmlHttpRequest()){ 
-            $err_str = $this->get('translator')->trans('resource.upload_error');
             return new JsonResponse(array('success' => false, 
                 'code' => 500,
-                'message' => $err_str.' with exception '.$e->__toString()));
+                'message' => $err_str));
+            // Could output whole stack trace for exception '.$e->__toString())
         } else {
-            $request->getSession()->getFlashBag()->add('error', $e->__toString());
+            $request->getSession()->getFlashBag()->add('error', $err_str;
 
             return $this->redirect($this->generateUrl('resource'));
         }

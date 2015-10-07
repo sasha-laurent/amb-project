@@ -65,7 +65,7 @@ class UserController extends Controller
 
     /**
      * Deletes a User entity.
-     * @Security("has_role('ROLE_SUPER_ADMIN')")
+     * @Security("has_role('ROLE_ADMIN')")
      *
      */
     public function deleteAction(Request $request, $id)

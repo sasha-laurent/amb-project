@@ -325,7 +325,7 @@ class MatrixController extends Controller
 		if($is_modal_dialog){
 			$render_opts['saveButton'] = true;		
 			$render_opts['is_modal'] = true;		
-			$render_opts['delButtonUrl'] = '#" data-dismiss="modal"'; // small hack to inject the dismiss attribute
+			$render_opts['delButtonUrl'] = '#" data-dismiss="modal'; // small hack to inject the dismiss attribute
 			return $this->render('VMBPresentationBundle:Matrix:modalEdit.html.twig', $render_opts);	
 		} else {
 			$render_opts['backButtonUrl'] = $this->container->get('vmb_presentation.previous_url')

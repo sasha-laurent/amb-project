@@ -152,7 +152,7 @@ class Resource
     private $indexed = 0;
     
     /**
-     * @Assert\File(maxSize="128000000000")
+     * @Assert\File(maxSize="12800000000000")
      */
     public $file;
 
