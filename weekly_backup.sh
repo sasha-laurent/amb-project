@@ -26,8 +26,8 @@ if [[ ! -d "$HOME_DIR/backup/" ]]; then
 	echo "Backup directory not found: creating it and sub-directories"
 	# mkdir "$HOME_DIR/backup/" || { exit "[FAIL] Can't create backup directory." ;}
 	# mkdir "$HOME_DIR/backup/upload/"
-	mkdir -p "$HOME_DIR/backup/ontologies/"
-	mkdir -p "$HOME_DIR/backup/data/"
+	mkdir -p $HOME_DIR/backup/ontologies
+	mkdir -p $HOME_DIR/backup/data
 fi
 
 TAR_OPTS=--ignore-failed-read
@@ -46,7 +46,7 @@ echo "Removing old backup files"
 find $HOME_DIR/backup/ -type f -mtime +7 -exec rm {} \;
 
 echo "Home directory disk usage statistics"
-du -h -d 1 $(HOME_DIR)
+du -h -d 1 $HOME_DIR
 
 echo "End."
 exit 0
