@@ -2,16 +2,27 @@
 Close: Close
 Fermer: Fermer
 Niveaux: Niveaux
+'Points de vue': 'Points de vue'
 'Points de vues': 'Points de vues'
+Présentation: Présentation
 Titre: Titre
+
+action:
+    save_node: action.save_node
 
 actions:
     add: Add
     back: 'Go Back'
+
+    # Desc: Cancel
     cancel: Cancel
     close: Close
+
+    # Desc: Confirm
     confirm: Confirm
     create: Create
+
+    # Desc: Delete
     delete: Delete
     duplicate: Duplicate
     edit: Edit
@@ -32,9 +43,15 @@ admin:
     user.delete: 'Delete user'
     user.manage: 'Manage users'
 
+advanced_search:
+    title: advanced_search.title
+
+alert:
+    enter_a_valid_decimal_number: alert.enter_a_valid_decimal_number
+
 browse:
     advanced_search: 'Advanced Search'
-    #advanced_search.modal_text: browse.advanced_search.modal_text
+    advanced_search.modal_text: browse.advanced_search.modal_text
     default_presentations: 'Default presentations'
     filters: Filters
     multiple_indexation: 'Multiple Indexation'
@@ -46,10 +63,13 @@ browse:
     personal_presentation: 'Personal presentations'
     personal_resources: 'Personal resources'
     preview_current_resource: 'Preview current resource'
+    stop_advanced_search: browse.stop_advanced_search
 
 caddy:
     add: 'Add to bookmarks'
     remove: 'Remove from bookmarks'
+
+for: for
 
 form:
     label:
@@ -65,15 +85,15 @@ form:
         topic: Topic
         video: Video
 
-help:
-    add: 'Add help'
-    added: 'Help was added'
-    delete: 'Delete help'
-    deleted: 'Help was deleted'
-    edit: 'Edit help'
-    edited: 'Help was edited'
-    main_title: 'Help content management'
-    no_help_for_this_page: 'No help content corresponds to this page'
+help: help
+help.add: 'Add help'
+help.added: 'Help was added'
+help.delete: 'Delete help'
+help.deleted: 'Help was deleted'
+help.edit: 'Edit help'
+help.edited: 'Help was edited'
+help.main_title: 'Help content management'
+help.no_help_for_this_page: 'No help content corresponds to this page'
 
 homepage:
     presentation_paragraph_1: 'AMB is a modular universe of services for educative and cultural mediation. It offers an extensive range of possibilities for setting up presentations:'
@@ -98,6 +118,7 @@ label:
 matrix:
     add: 'Add matrix'
     added: 'Matrix was added'
+    copy_success: matrix.copy_success
     delete: 'Delete matrix'
     deleteRowMessage: 'This action will delete all resources currently associated to this element.'
     deleteRowTitle: 'Confirm you wish to proceed.'
@@ -123,8 +144,8 @@ menu:
     browse: Browse
     connexion: Connexion
     contextual_help: 'Contextual help'
-    homepage: Homepage
     help: Help
+    homepage: Homepage
     login: Login
     logout: Logout
     manage: Manage
@@ -140,6 +161,7 @@ menu:
     users_management: 'User management'
 
 message:
+    # Desc: You chose to delete %title%, are you sure ?
     delete: 'You chose to delete %title%, are you sure ?'
 
     error:
@@ -157,15 +179,22 @@ message:
         modalMultiple: 'Multiple indexation'
         none_for_this_topic: 'No ontology corresponds to this topic.'
 
+    playlist_3D:
+        modal_link: message.playlist_3D.modal_link
+        modal_text: message.playlist_3D.modal_text
+        modal_title: message.playlist_3D.modal_title
+
     presentation:
         copy: 'You chose to copy presentation named %title%. Do you wish to proceed with the import of this presentation and associated matrix in your personal space?'
 
     resource:
         none_for_this_search: 'No resources match your search.'
+        you_must_select_a_topic_first: message.resource.you_must_select_a_topic_first
 
     save: Save
 
     title:
+        # Desc: Warning
         warning: Warning
 
 ontology:
@@ -227,6 +256,7 @@ presentation:
     personal_copy: 'Personal copy'
     personal_presentation: 'Personal presentation'
     play_selection: 'Play new selection'
+    playlist_3D: presentation.playlist_3D
     public: Public
     same_topic: 'Presentations with the same topic'
     save_selection: 'Save selection'
@@ -277,10 +307,12 @@ tab:
 
 table:
     action: Action
+    author: table.author
     created: 'Created on'
     creation: 'Creation date'
     description: Description
     duration: Duration
+    matrix: table.matrix
     official: Official
     routes: Routes
     size: Size
