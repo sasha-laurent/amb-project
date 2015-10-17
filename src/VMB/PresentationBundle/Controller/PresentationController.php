@@ -117,8 +117,9 @@ class PresentationController extends Controller
 		
 		// Si la page n'existe pas, (on retourne une 404)
 		// on redirige l'utilisateur vers la dernière page
-		if ($page > $nbPages) {
+		if ($page > $nbPages && $nbPages > 0) {
 			return $this->browseAction($nbPages, $topic);
+			
 			// throw $this->createNotFoundException("La page ".$page." n'existe pas.");
 		}
 

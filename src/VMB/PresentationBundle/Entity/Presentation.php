@@ -42,21 +42,21 @@ class Presentation
     /**
      * @var boolean
      *
-     * @ORM\Column(name="public", type="boolean", options={"dfault":0})
+     * @ORM\Column(name="public", type="boolean", options={"default":0})
      */
     private $public = 0;
     
     /**
      * @var boolean
      *
-     * @ORM\Column(name="official", type="boolean", options={"dfault":0})
+     * @ORM\Column(name="official", type="boolean", options={"default":0})
      */
     private $official = 0;
     
     /**
      * @var boolean
      *
-     * @ORM\Column(name="dfault", type="boolean", options={"dfault":0})
+     * @ORM\Column(name="dfault", type="boolean", options={"default":0})
      */
     private $dfault = 0;
 
