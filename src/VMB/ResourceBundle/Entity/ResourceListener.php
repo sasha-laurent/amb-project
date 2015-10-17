@@ -190,7 +190,7 @@ class ResourceListener
                 ->synchronize();
 
             $snapTime = 10;
-            if($resource->duration <= 10) {
+            if($resource->getDuration() <= 10) {
                 $snapTime = 0;                
             }
 
