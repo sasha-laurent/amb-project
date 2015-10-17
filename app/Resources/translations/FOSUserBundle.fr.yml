@@ -13,7 +13,6 @@ profile:
         submit: 'Modifier le profil'
 
 registration:
-    register: 'S''inscrire'
     back: 'Aller en arrière'
     check_email: 'Dernière étape avant l''inscription: activez votre compte AMB en suivant le lien de confirmation envoyé à l''adresse mail fournie.'
     confirmed: 'L''inscription à AMB est réussie.'
@@ -21,18 +20,20 @@ registration:
     email:
         message: 'Suivez le lien afin d''activer votre compte.'
         subject: 'Activez votre compte AMB'
+
     existing_username: 'Le nom d''utilisateur est déja utilisé.'
+    register: 'S''inscrire'
     submit: 'S''enregistrer'
 
 resetting:
     request:
-        request_reset: 'Mot de passe oublié?'
         invalid_username: 'Nom d''utilisateur non valide'
+        request_reset: 'Mot de passe oublié?'
         submit: 'Ré-initialiser mot de passe'
         username: 'Nom d''utilisateur'
 
     reset:
-        submit: 'Ré-initialiser'
+        submit: Ré-initialiser
 
 security:
     login:

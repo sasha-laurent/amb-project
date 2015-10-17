@@ -1,18 +1,28 @@
 'Aide contextuelle': 'Aide contextuelle'
-'for' : 'pour'
 Close: Close
 Fermer: Fermer
 Niveaux: Niveaux
+'Points de vue': 'Points de vue'
 'Points de vues': 'Points de vues'
+Présentation: Présentation
 Titre: Titre
+
+action:
+    save_node: action.save_node
 
 actions:
     add: Ajouter
     back: 'Aller en arrière'
+
+    # Desc: Cancel
     cancel: Annuler
-    create: Créer
     close: Fermer
+
+    # Desc: Confirm
     confirm: Confirmer
+    create: Créer
+
+    # Desc: Delete
     delete: Supprimer
     duplicate: Dupliquer
     edit: Modifier
@@ -33,22 +43,33 @@ admin:
     user.delete: 'Suppression d''un utilisateur'
     user.manage: 'Gestion des utilisateurs'
 
+advanced_search:
+    title: advanced_search.title
+
+alert:
+    enter_a_valid_decimal_number: alert.enter_a_valid_decimal_number
+
 browse:
     advanced_search: 'Recherche avancée'
+    advanced_search.modal_text: browse.advanced_search.modal_text
     default_presentations: 'Par défaut'
     filters: Filtres
     multiple_indexation: 'Indexation multiple'
     mutliple_indexation: 'Indexation multiple'
     no_presentation: 'Aucune présentation publique dans cet espace pour ces paramètres de recherche'
-    official: 'Officielles'
+    official: Officielles
+    official_only: browse.official_only
     parameters_title: 'Affiner par'
     personal_presentation: 'Présentations personnelles'
     personal_resources: 'Ressources personnelles'
     preview_current_resource: 'Aperçu de la ressource courante'
+    stop_advanced_search: browse.stop_advanced_search
 
 caddy:
     add: 'Ajouter aux favoris'
     remove: 'Supprimer des favoris'
+
+for: pour
 
 form:
     label:
@@ -64,46 +85,49 @@ form:
         topic: Thématique
         video: Vidéo
 
-help:
-    add: 'Ajouter une aide'
-    added: 'Aide ajoutée'
-    delete: 'Suppression d''une aide'
-    deleted: 'Aide supprimée'
-    edit: 'Modification d''une aide'
-    edited: 'Aide modifiée'
-    main_title: 'Gestion des aides contextuelles'
-    no_help_for_this_page: 'Aucune aide contextuelle pour cette page'
+help: help
+help.add: 'Ajouter une aide'
+help.added: 'Aide ajoutée'
+help.delete: 'Suppression d''une aide'
+help.deleted: 'Aide supprimée'
+help.edit: 'Modification d''une aide'
+help.edited: 'Aide modifiée'
+help.main_title: 'Gestion des aides contextuelles'
+help.no_help_for_this_page: 'Aucune aide contextuelle pour cette page'
 
 homepage:
-    title: 'Bienvenue à l''<i>Alternative Mediations Builder</i>'
-    presentation_paragraph_1: 'AMB est un univers modulable de services pour la médiation éducative et culturelle. Il offre une palette étendue de possibilités pour réaliser des présentations :'
+    presentation_paragraph_1: "AMB est un univers modulable de services pour la médiation éducative et culturelle. Il offre une palette étendue de possibilités pour réaliser des présentations\_:"
     presentation_paragraph_1_1: 'adaptables à plusieurs profils d’utilisateurs'
     presentation_paragraph_1_2: 'ouvertes à des médias riches'
     presentation_paragraph_1_3: 'supportant des discours variés.'
     presentation_paragraph_2: 'AMB met à disposition des moyens techniques innovants pour développer des projets d’accompagnement et d’assistance en lecture, interprétation et compréhension (d’un thème, d’un concept, d’une situation, d’un objet, etc.).'
-    presentation_paragraph_3: 'AMB assure et stimule des médiations axées sur des niveaux graduels d’implication de la part des récepteurs. Sa conception se fonde sur un nombre considérable de « grains », c’est-à-dire, de ressources ayant une certaine autonomie narrative. Ces grains peuvent être combinés à volonté pour construire des présentations suivant :'
+    presentation_paragraph_3: "AMB assure et stimule des médiations axées sur des niveaux graduels d’implication de la part des récepteurs. Sa conception se fonde sur un nombre considérable de «\_grains\_», c’est-à-dire, de ressources ayant une certaine autonomie narrative. Ces grains peuvent être combinés à volonté pour construire des présentations suivant :"
     presentation_paragraph_3_1: 'des points de vue complémentaires (manières de lire, regards, aspects, topiques...)'
     presentation_paragraph_3_2: 'des degrés de difficulté multiples (essentiel, étendu, compréhensif...)'
     presentation_paragraph_3_3: 'des variantes de présentation éclectiques (réécritures, séquences alternatives...).'
     presentation_paragraph_4: 'AMB propose, plus concrètement, une plateforme de construction de présentations (exposition, parcours de visite et de lecture, cours...) personnalisables d’une façon interactive et intuitive. Il est destiné à des médiateurs, dont l’objectif est de créer des contenus (professeurs, conservateurs de musée...), et à des récepteurs, dont le but est de s’informer, de découvrir, d’apprendre, d’explorer, etc. (public général, élèves, visiteurs, spectateurs...). '
-    presentation_paragraph_5: 'AMB peut appuyer plusieurs paradigmes éducatifs et culturels, comme par exemple : des MOOC et des SPOC, des projets en pédagogie active, des séances de classe inversée, des cours magistraux classiques, des projets de muséologie numérique centrée sur le visiteur (en phase de préparation, de réalisation ou de capitalisation de visite), des spectacles sur mesure dynamiquement construits, des opérations de communication, etc.'
-    read_more: "En savoir plus..."
-    sign_up: 'Inscrivez-vous gratuitement' # pour visualiser des présentations et créer les votres.
+    presentation_paragraph_5: "AMB peut appuyer plusieurs paradigmes éducatifs et culturels, comme par exemple\_: des MOOC et des SPOC, des projets en pédagogie active, des séances de classe inversée, des cours magistraux classiques, des projets de muséologie numérique centrée sur le visiteur (en phase de préparation, de réalisation ou de capitalisation de visite), des spectacles sur mesure dynamiquement construits, des opérations de communication, etc."
+    read_more: 'En savoir plus...'
+    sign_up: 'Inscrivez-vous gratuitement'
+    title: 'Bienvenue à l''<i>Alternative Mediations Builder</i>'
 
 label:
-    no: Non
-    yes: Oui
+    'no': Non
+    'yes': Oui
 
 matrix:
     add: 'Ajout d''une matrice'
     added: 'Matrice ajoutée'
+    copy_success: matrix.copy_success
     delete: 'Suppression d''une matrice'
-    deleteRowTitle: 'Veuillez confirmer que vous souhaitez procéder.'
     deleteRowMessage: 'Cette action supprimera toute ressource associée à l''élément sélectionné.'
+    deleteRowTitle: 'Veuillez confirmer que vous souhaitez procéder.'
     deleted: 'Matrice supprimée'
     edit: 'Modification d''une matrice'
+
     error:
         resource_unofficial_not_added: 'Une ressource n''a pu être ajoutée car elle n''est pas officielle'
+
     levels: Niveaux
     main_title: 'Gestion des matrices'
     modified: 'Matrice modifiée'
@@ -120,6 +144,7 @@ menu:
     browse: Consulter
     connexion: Connexion
     contextual_help: 'Aide contextuelle'
+    help: menu.help
     homepage: Accueil
     login: Connexion
     logout: Déconnexion
@@ -136,6 +161,7 @@ menu:
     users_management: 'Gestion des utilisateurs'
 
 message:
+    # Desc: You chose to delete %title%, are you sure ?
     delete: 'Vous avez choisi de supprimer %title%, êtes-vous sûr ?'
 
     error:
@@ -150,29 +176,36 @@ message:
 
     ontology:
         modal: 'Cliquez sur la structure de connaissance que vous souhaitez renseigner ci-dessous. Ces dernières sont classées par thématique. Seules les thématiques associées à la ressource vous sont présentées.'
+        modalMultiple: message.ontology.modalMultiple
         none_for_this_topic: 'Aucune structure de connaissance pour cette thématique'
+
+    playlist_3D:
+        modal_link: message.playlist_3D.modal_link
+        modal_text: message.playlist_3D.modal_text
+        modal_title: message.playlist_3D.modal_title
 
     presentation:
         copy: 'Vous avez choisi de copier la présentation %title%, cette opération entraînera la copie de la présentation ainsi que de la matrice associée dans votre espace personnel, êtes-vous sûr ?'
 
     resource:
         none_for_this_search: 'Aucune ressource trouvée pour ces paramètres de recherche'
+        you_must_select_a_topic_first: message.resource.you_must_select_a_topic_first
 
     save: Sauvegarder
 
     title:
+        # Desc: Warning
         warning: Attention
 
 ontology:
     add: 'Créer une nouvelle ontologie'
     add_node: 'Ajouter un élément'
-    edit: 'Modification de l''ontologie'
-    edit_node: 'Modifier l''élément'
+    create_index: 'Ajouter des éléments à l''index'
     delete: 'Suppression de l''ontologie'
     delete_node: 'Effacer l''élément'
-    save_node: 'Sauvegarder'
-    edit: 'Modifier l''ontologie'
-    create_index: 'Ajouter des éléments à l''index'
+    edit: 'Modification de l''ontologie'
+    edit_node: 'Modifier l''élément'
+    save_node: Sauvegarder
 
 player:
     new_tab: 'Afficher dans un nouvel onglet.'
@@ -190,14 +223,15 @@ presentation:
     delete: 'Suppression d''une présentation'
     deleted: 'Présentation supprimée'
     details: 'Détails de la présentation'
-    edit: "Modifier la présentation"
-    is_empty_add_content: 'La matrice de présentation est vide.<br/>Veuillez ajouter du contenu, tout d’abord !'
+    edit: 'Modifier la présentation'
+
     error:
         matrix_unofficial: 'La matrice associée n''est pas officielle'
         presentation_unofficial: 'Une présentation non officielle ne peut être passée en présentation par défaut'
 
     generate_complement: 'Générer du contenu complémentaire'
     initial_presentation: 'Présentation initiale'
+    is_empty_add_content: "La matrice de présentation est vide.<br/>Veuillez ajouter du contenu, tout d’abord\_!"
     main_title: 'Toutes les présentations'
 
     modal:
@@ -218,10 +252,11 @@ presentation:
     my_selection: 'Ma sélection'
     new_playlist: 'Nouvelle liste de lecture'
     official: Officielle
-    parameters: 'Paramètres'
-    personal_presentation: 'Présentation personnelle'
+    parameters: Paramètres
     personal_copy: 'Copie personnelle'
+    personal_presentation: 'Présentation personnelle'
     play_selection: 'Lancer la nouvelle présentation'
+    playlist_3D: presentation.playlist_3D
     public: Publique
     same_topic: 'Présentations de cette thématique'
     save_selection: 'Sauvegarder ma sélection'
@@ -235,6 +270,7 @@ removed: Retraits
 resource:
     add: 'Ajout d''une ressource'
     added: 'Ressource ajoutée'
+    bookmarks: Favoris
     browse: 'Parcourir les ressources'
     delete: 'Suppression de la ressource'
     deleted: 'Ressource supprimée'
@@ -244,10 +280,9 @@ resource:
     none_found_in_this_space: 'Aucune ressource n''a été trouvée pour ce sujet dans cet espace'
     officials: Officielles
     personals: Personnelles
-    bookmarks: Favoris
     shared: Partagées
     show: 'Examiner la ressource'
-    type_error: "Type de ressource non reconnu."
+    type_error: 'Type de ressource non reconnu.'
     upload_error: 'Echec lors de l''import. Veuillez ré-essayer.'
 
 role:
@@ -255,8 +290,8 @@ role:
     stud: Etudiant
 
 search:
-    resultsTitle: 'Résultats de recherche'
     no_results: 'Pas de résultats pour cette recherche.'
+    resultsTitle: 'Résultats de recherche'
 
 show:
     playlist: 'Liste de lecture'
@@ -264,18 +299,20 @@ show:
     total_duration: 'Durée totale'
 
 tab:
-    mail: Adresse Mail
-    password: Mot de passe
+    mail: 'Adresse Mail'
+    password: 'Mot de passe'
     role: Rôle
     user: Utilisateur
     users: Utilisateurs
 
 table:
     action: Action
+    author: table.author
     created: Créé
     creation: 'Date de création'
     description: Description
     duration: Durée
+    matrix: table.matrix
     official: Officiel
     routes: Routes
     size: Taille
@@ -302,8 +339,9 @@ topic:
 
 user:
     profile: Profil
+    register: 'S''inscrire'
+
     role:
         admin: Administrateur
         student: Étudiant
         teacher: Professeur
-    register: 'S''inscrire'
