@@ -118,15 +118,16 @@ class RegistrationController extends BaseController
     				$flashMessage = $this->get('translator')->trans('admin.user.added');
     				$request->getSession()->getFlashBag()->add('success', $flashMessage);
                     $url = $this->generateUrl('admin_user');
+					$response = new RedirectResponse($url);
                 } else {
                     // $this->get('session')->set('fos_user_send_confirmation_email/email', $user->getEmail());
                     // $url = $this->generateUrl('fos_user_registration_check_email');
                     $url = $this->generateUrl('fos_user_registration_confirmed');
+					$response = new RedirectResponse($url);
+					$dispatcher->dispatch(FOSUserEvents::REGISTRATION_COMPLETED, new FilterUserResponseEvent($user, $request, $response));
                 }
-                $response = new RedirectResponse($url);
             }
 
-            $dispatcher->dispatch(FOSUserEvents::REGISTRATION_COMPLETED, new FilterUserResponseEvent($user, $request, $response));
 
             return $response;
         }
