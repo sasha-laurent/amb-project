@@ -1,8 +1,12 @@
+
 #/bin/sh env sh
 # deploy_vmb.sh
 # Script de mise à jour du code de production
 # Utilisation d'une clef privée/public pour git
-# Ajouter command="/bin/git",from="bitbucket.org",no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty pour securiser un peu l'acces sur le serveurhash rsa pub
+
+# TODO: Voir comment on pourrait mieux migrer les changements DB
+# HARDENING: Ajouter command="/bin/git",from="bitbucket.org",no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty pour securiser un peu l'acces sur le serveurhash rsa pub
+
 # Options d'erreurs, IFS= Internal Field Separator
 set -euo pipefail
 IFS=$'\n\t'
@@ -18,8 +22,17 @@ fi
 git pull 
 git push
 
+echo "Mise à jour des modules externes"
+composer self-update -n
+composer update -n 
+
+echo "Regénération des termes de traduction"
+php app/console translation:extract fr --output-dir=./app/Resources/translations --dir=./src --keep
+php app/console translation:extract fr --output-dir=./app/Resources/translations --dir=./app/Resources/views --keep
+php app/console translation:extract en --output-dir=./app/Resources/translations --dir=./src --keep
+php app/console translation:extract en --output-dir=./app/Resources/translations --dir=./app/Resources/views --keep
+
 echo "Migration Base de Données" 
-# TODO: Voir comment on pourrait mieux migrer les changements DB
 php app/console doctrine:schema:update --dump-sql
 php app/console doctrine:schema:update --force
 

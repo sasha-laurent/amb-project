@@ -126,14 +126,12 @@
 				$("#loading_indicator_inline{{entity.id}}").css('display', 'none');				
 			}, */
 			success: function(data, textStatus, jqXHR){
-				/*
 				$(this).removeClass("btn-default").addClass("btn-primary");
 				$(this).find(".glyphicon").removeClass("glyphicon-floppy-disk").addClass("glyphicon-floppy-saved");
 				$("#myModal").modal('hide');
-				*/
-				//window.setTimeout(function(){
-				//	window.location = "{{path('matrix_show', {'id': entity.id}) }}";
-				//}, 500);
+				window.setTimeout(function(){
+					window.location = "{{path('matrix_show', {'id': entity.id}) }}";
+				}, 500);
 			},
 			error: function(jqXHR, textStatus, errorThrown){
 				console.log(textStatus, errorThrown);
