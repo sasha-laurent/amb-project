@@ -1,11 +1,11 @@
-'Aide contextuelle': 'Aide contextuelle'
+'Aide contextuelle': 'Contextual help'
 Close: Close
 Fermer: Fermer
 Niveaux: Niveaux
 'Points de vue': 'Points de vue'
 'Points de vues': 'Points de vues'
 Présentation: Présentation
-Titre: Titre
+Titre: Title
 
 action:
     save_node: action.save_node
@@ -13,16 +13,10 @@ action:
 actions:
     add: Add
     back: 'Go Back'
-
-    # Desc: Cancel
     cancel: Cancel
     close: Close
-
-    # Desc: Confirm
     confirm: Confirm
     create: Create
-
-    # Desc: Delete
     delete: Delete
     duplicate: Duplicate
     edit: Edit
@@ -47,7 +41,7 @@ advanced_search:
     title: advanced_search.title
 
 alert:
-    enter_a_valid_decimal_number: alert.enter_a_valid_decimal_number
+    enter_a_valid_decimal_number: 'Enter a valid decimal number, please!'
 
 browse:
     advanced_search: 'Advanced Search'
@@ -56,9 +50,9 @@ browse:
     filters: Filters
     multiple_indexation: 'Multiple Indexation'
     mutliple_indexation: 'Multiple indexation'
-    no_presentation: 'No presentation matches those search criteria.'
+    no_presentation: 'No presentation matches those search criteria'
     official: Official
-    official_only: Official
+    official_only: 'Official only'
     parameters_title: 'Filter by'
     personal_presentation: 'Personal presentations'
     personal_resources: 'Personal resources'
@@ -118,7 +112,7 @@ label:
 matrix:
     add: 'Add matrix'
     added: 'Matrix was added'
-    copy_success: matrix.copy_success
+    copy_success: 'Matrix copy succeeded'
     delete: 'Delete matrix'
     deleteRowMessage: 'This action will delete all resources currently associated to this element.'
     deleteRowTitle: 'Confirm you wish to proceed.'
@@ -161,8 +155,7 @@ menu:
     users_management: 'User management'
 
 message:
-    # Desc: You chose to delete %title%, are you sure ?
-    delete: 'You chose to delete %title%, are you sure ?'
+    delete: 'You chose to delete %title%, are you sure?'
 
     error:
         entity_not_found: 'Entity of type %class% was not found.'
@@ -170,9 +163,9 @@ message:
         occured: 'An error occured.'
 
     matrix:
-        warning_official: 'this action will not automatically render official any presentation created from this matrix'
+        warning_official: 'This action will not automatically render official any presentation created from this matrix'
 
-    no_elt_found: 'No element was found.'
+    no_elt_found: 'No element was found'
 
     ontology:
         modal: 'Click on the ontology that you wish to use. Ontologies are indexed by topic. Presented topics are those linked to this particular resource.'
@@ -180,21 +173,20 @@ message:
         none_for_this_topic: 'No ontology corresponds to this topic.'
 
     playlist_3D:
-        modal_link: message.playlist_3D.modal_link
-        modal_text: message.playlist_3D.modal_text
-        modal_title: message.playlist_3D.modal_title
+        modal_link: 'Stereoscopic 3D playlist'
+        modal_text: '3D playlist text'
+        modal_title: '3D playlist title'
 
     presentation:
         copy: 'You chose to copy presentation named %title%. Do you wish to proceed with the import of this presentation and associated matrix in your personal space?'
 
     resource:
-        none_for_this_search: 'No resources match your search.'
-        you_must_select_a_topic_first: message.resource.you_must_select_a_topic_first
+        none_for_this_search: 'No resources match your search'
+        you_must_select_a_topic_first: 'You must select a topic'
 
     save: Save
 
     title:
-        # Desc: Warning
         warning: Warning
 
 ontology:
@@ -217,9 +209,9 @@ presentation:
     advanced_visualisation: 'Advanced options'
     browse: 'Browse presentations'
     copy_of: 'Copy the presentation'
-    copy_success: 'Presentation was copied successfuly.'
+    copy_success: 'Presentation was copied successfuly'
     default: Default
-    default_topic: 'Default presentations for this topic.'
+    default_topic: 'Default presentations for this topic'
     delete: 'Delete presentation'
     deleted: 'Presentation was deleted'
     details: 'Show presentation details'
@@ -227,7 +219,7 @@ presentation:
 
     error:
         matrix_unofficial: 'Associated matrix is unofficial'
-        presentation_unofficial: 'A unofficial presentation cannot be made a default presentation.'
+        presentation_unofficial: 'A unofficial presentation cannot be made a default presentation'
 
     generate_complement: 'Generate more content'
     initial_presentation: 'Initial presentation'
@@ -236,17 +228,17 @@ presentation:
 
     modal:
         browse_existing: 'Browse existing presentations'
-        create_from_matrix: 'Create a presentation from your matrices.'
-        create_matrix: 'Create a presentation matrix.'
-        from_existing: 'Create from an pre-existing presentation.'
+        create_from_matrix: 'Create a presentation from your matrices'
+        create_matrix: 'Create a presentation matrix'
+        from_existing: 'Create from an pre-existing presentation'
         from_existing_0: "If you wish to create a presentation without having to define the presentation matrix by yourself, it is possible to do it from a pre-existing matrix.\n\t\t\t To do that, all you need to do is browse the existing presentations and choose the one you want to use as a model. Two choices will be offered to you once you view a presentation."
         from_existing_1: 'Click to duplicate both the presentation and the presentation matrix.'
         from_existing_2: 'You can also click on "Show more" and then on "Advanced Options" to create a presentation that conserves the original presentation matrix (as a consequence you won''t be able to edit said matrix, or add any more resources to it).'
-        from_scratch: 'Create a presentation from scratch.'
+        from_scratch: 'Create a presentation from scratch'
         from_scratch_0: 'Creating a presentation from scratch is done in three steps:'
         from_scratch_1: 'Choose the presentation''s topic'
         from_scratch_2: 'Create a presentation matrix and completing it using resources from the presentation''s topic'
-        from_scratch_3: 'Finally make your presentation using the previously created matrix.'
+        from_scratch_3: 'Finally, make your presentation using the previously created matrix'
 
     modified: 'Presentation was modified'
     my_selection: 'My selection'
@@ -307,7 +299,7 @@ tab:
 
 table:
     action: Action
-    author: table.author
+    author: Author
     created: 'Created on'
     creation: 'Creation date'
     description: Description
