@@ -248,7 +248,7 @@ presentation:
     personal_copy: 'Copie personnelle'
     personal_presentation: 'Présentation personnelle'
     play_selection: 'Lancer la nouvelle présentation'
-    playlist_3D: presentation.playlist_3D
+    playlist_3D: 'Présentation en 3D stéréoscopique'
     public: Publique
     same_topic: 'Présentations de cette thématique'
     save_selection: 'Sauvegarder ma sélection'

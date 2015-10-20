@@ -116,14 +116,14 @@ matrix:
     delete: 'Delete matrix'
     deleteRowMessage: 'This action will delete all resources currently associated to this element.'
     deleteRowTitle: 'Confirm you wish to proceed.'
-    deleted: 'Matrix was deleted'
+    deleted: 'Matrix was deleted.'
     edit: 'Edit matrix'
 
     error:
         resource_unofficial_not_added: 'The resource is not official and could not be added.'
 
     levels: Levels
-    main_title: 'Manage your presentation matrices'
+    main_title: 'Manage your presentation matrices.'
     modified: 'Matrix was modified'
     modify_structure: 'Modify matrix structure'
     note_resource: 'This matrix is official. Only official resources are shown here.'
@@ -160,10 +160,10 @@ message:
     error:
         entity_not_found: 'Entity of type %class% was not found.'
         not_enough_rights: 'Not enough rights to complete this action.'
-        occured: 'An error occured.'
+        occured: 'An error occurred.'
 
     matrix:
-        warning_official: 'This action will not automatically render official any presentation created from this matrix'
+        warning_official: 'This action will not automatically render official any presentation created from this matrix.'
 
     no_elt_found: 'No element was found'
 
@@ -248,7 +248,7 @@ presentation:
     personal_copy: 'Personal copy'
     personal_presentation: 'Personal presentation'
     play_selection: 'Play new selection'
-    playlist_3D: presentation.playlist_3D
+    playlist_3D: 'Stereoscopic 3D playlist'
     public: Public
     same_topic: 'Presentations with the same topic'
     save_selection: 'Save selection'
