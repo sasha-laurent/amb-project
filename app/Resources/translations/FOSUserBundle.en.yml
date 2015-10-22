@@ -39,5 +39,5 @@ security:
     login:
         password: Password
         remember_me: 'Keep me logged in'
-        submit: 'Log In'
+        submit: 'Log In!'
         username: Username

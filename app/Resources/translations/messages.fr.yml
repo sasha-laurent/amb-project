@@ -41,7 +41,7 @@ advanced_search:
     title: advanced_search.title
 
 alert:
-    enter_a_valid_decimal_number: alert.enter_a_valid_decimal_number
+    enter_a_valid_decimal_number: 'Veuillez entrer une valeur décimale valide.'
 
 browse:
     advanced_search: 'Recherche avancée'
