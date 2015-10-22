@@ -23,8 +23,8 @@ git pull
 git push
 
 echo "Mise à jour des modules externes"
-composer self-update -n
-composer update -n 
+php composer.phar self-update -n
+php composer.phar update -n 
 
 echo "Regénération des termes de traduction"
 php app/console translation:extract fr --output-dir=./app/Resources/translations --dir=./src --keep
