@@ -13,16 +13,10 @@ action:
 actions:
     add: Ajouter
     back: 'Aller en arrière'
-
-    # Desc: Cancel
     cancel: Annuler
     close: Fermer
-
-    # Desc: Confirm
     confirm: Confirmer
     create: Créer
-
-    # Desc: Delete
     delete: Supprimer
     duplicate: Dupliquer
     edit: Modifier
@@ -109,7 +103,7 @@ homepage:
     presentation_paragraph_5: "AMB peut appuyer plusieurs paradigmes éducatifs et culturels, comme par exemple\_: des MOOC et des SPOC, des projets en pédagogie active, des séances de classe inversée, des cours magistraux classiques, des projets de muséologie numérique centrée sur le visiteur (en phase de préparation, de réalisation ou de capitalisation de visite), des spectacles sur mesure dynamiquement construits, des opérations de communication, etc."
     read_more: 'En savoir plus...'
     sign_up: 'Inscrivez-vous gratuitement'
-    title: 'Bienvenue à l''<i>Alternative Mediations Builder</i>'
+    title: 'Bienvenue à l''<i>Adaptive Mediations Builder</i>'
 
 label:
     'no': Non
@@ -161,7 +155,6 @@ menu:
     users_management: 'Gestion des utilisateurs'
 
 message:
-    # Desc: You chose to delete %title%, are you sure ?
     delete: 'Vous avez choisi de supprimer %title%, êtes-vous sûr ?'
 
     error:
@@ -194,7 +187,6 @@ message:
     save: Sauvegarder
 
     title:
-        # Desc: Warning
         warning: Attention
 
 ontology:

@@ -13,16 +13,10 @@ action:
 actions:
     add: Add
     back: 'Go Back'
-
-    # Desc: Cancel
     cancel: Cancel
     close: Close
-
-    # Desc: Confirm
     confirm: Confirm
     create: Create
-
-    # Desc: Delete
     delete: Delete
     duplicate: Duplicate
     edit: Edit
@@ -109,7 +103,7 @@ homepage:
     presentation_paragraph_5: 'AMB may give grounds to numerous educational and cultural paradigms, as, for instance : MOOCs, SPOCs, active pedagogy projects, inverse class sessions, classical lectures, projects of visitor-centered digital museology, dynamically composed tailored shows, communication operations, etc. '
     read_more: 'Learn more...'
     sign_up: 'Sign up for free'
-    title: 'Welcome to the Alternative Mediations Builder'
+    title: 'Welcome to the Adaptive Mediations Builder'
 
 label:
     'no': 'no'
@@ -161,7 +155,6 @@ menu:
     users_management: 'User management'
 
 message:
-    # Desc: You chose to delete %title%, are you sure ?
     delete: 'You chose to delete %title%, are you sure?'
 
     error:
@@ -194,7 +187,6 @@ message:
     save: Save
 
     title:
-        # Desc: Warning
         warning: Warning
 
 ontology:
