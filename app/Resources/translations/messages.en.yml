@@ -13,10 +13,16 @@ action:
 actions:
     add: Add
     back: 'Go Back'
+
+    # Desc: Cancel
     cancel: Cancel
     close: Close
+
+    # Desc: Confirm
     confirm: Confirm
     create: Create
+
+    # Desc: Delete
     delete: Delete
     duplicate: Duplicate
     edit: Edit
@@ -155,6 +161,7 @@ menu:
     users_management: 'User management'
 
 message:
+    # Desc: You chose to delete %title%, are you sure ?
     delete: 'You chose to delete %title%, are you sure?'
 
     error:
@@ -187,6 +194,7 @@ message:
     save: Save
 
     title:
+        # Desc: Warning
         warning: Warning
 
 ontology:
