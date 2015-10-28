@@ -22,6 +22,16 @@ IFS=$'\n\t'
 TODAY=$(date +%F)
 HOME_DIR=/var/www/edu
 
+echo "Mise à jour des modules externes"
+php composer.phar self-update -n
+php composer.phar update -n 
+
+echo "Regénération des termes de traduction"
+php app/console translation:extract fr --output-dir=./app/Resources/translations --dir=./src --keep
+php app/console translation:extract fr --output-dir=./app/Resources/translations --dir=./app/Resources/views --keep
+php app/console translation:extract en --output-dir=./app/Resources/translations --dir=./src --keep
+php app/console translation:extract en --output-dir=./app/Resources/translations --dir=./app/Resources/views --keep
+
 if [[ ! -d "$HOME_DIR/backup/" ]]; then
 	echo "Backup directory not found: creating it and sub-directories"
 	# mkdir "$HOME_DIR/backup/" || { exit "[FAIL] Can't create backup directory." ;}
