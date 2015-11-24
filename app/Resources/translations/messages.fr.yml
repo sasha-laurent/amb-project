@@ -47,7 +47,7 @@ advanced_search:
     title: advanced_search.title
 
 alert:
-    enter_a_valid_decimal_number: alert.enter_a_valid_decimal_number
+    enter_a_valid_decimal_number: 'Veuillez entrer une valeur décimale valide.'
 
 browse:
     advanced_search: 'Recherche avancée'
@@ -109,7 +109,7 @@ homepage:
     presentation_paragraph_5: "AMB peut appuyer plusieurs paradigmes éducatifs et culturels, comme par exemple\_: des MOOC et des SPOC, des projets en pédagogie active, des séances de classe inversée, des cours magistraux classiques, des projets de muséologie numérique centrée sur le visiteur (en phase de préparation, de réalisation ou de capitalisation de visite), des spectacles sur mesure dynamiquement construits, des opérations de communication, etc."
     read_more: 'En savoir plus...'
     sign_up: 'Inscrivez-vous gratuitement'
-    title: 'Bienvenue à l''<i>Alternative Mediations Builder</i>'
+    title: 'Bienvenue à l''<i>Adaptive Mediations Builder</i>'
 
 label:
     'no': Non
@@ -256,7 +256,7 @@ presentation:
     personal_copy: 'Copie personnelle'
     personal_presentation: 'Présentation personnelle'
     play_selection: 'Lancer la nouvelle présentation'
-    playlist_3D: presentation.playlist_3D
+    playlist_3D: 'Présentation en 3D stéréoscopique'
     public: Publique
     same_topic: 'Présentations de cette thématique'
     save_selection: 'Sauvegarder ma sélection'
