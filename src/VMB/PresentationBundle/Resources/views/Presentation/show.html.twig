@@ -138,10 +138,10 @@
 			{% for res in entity.resources %}
 				{% if res.suggested == false %}
 					{{ res.usedResource.id }}: {
-						'pov': "{{ res.usedResource.pov.title }}", 
-						'level': "{{ res.usedResource.level.title }}", 
-						'title': "{{ res.usedResource.resource.title }}", 
-						'description': "{{ res.usedResource.resource.description }}", 
+						'pov': "{{ res.usedResource.pov.title|escape('js') }}", 
+						'level': "{{ res.usedResource.level.title|escape('js') }}", 
+						'title': "{{ res.usedResource.resource.title|escape('js') }}", 
+						'description': "{{ res.usedResource.resource.description|escape('js') }}", 
 						'creation': "{{ res.usedResource.resource.dateCreate|date('d/m/y') }}", 
 						'update': "{{ res.usedResource.resource.dateUpdate|date('d/m/y') }}", 
 						'duration': {{ res.getDuration|default(11) }},
@@ -154,10 +154,10 @@
 		{% else %}
 			{% for res in alternativeResources %}
 				{{ res.usedResource.id }}: {
-					'pov': "{{ res.usedResource.pov.title }}", 
-					'level': "{{ res.usedResource.level.title }}", 
-					'title': "{{ res.usedResource.resource.title }}", 
-					'description': "{{ res.usedResource.resource.description }}", 
+					'pov': "{{ res.usedResource.pov.title|escape('js') }}", 
+					'level': "{{ res.usedResource.level.title|escape('js') }}", 
+					'title': "{{ res.usedResource.resource.title|escape('js') }}", 
+					'description': "{{ res.usedResource.resource.description|escape('js') }}", 
 					'creation': "{{ res.usedResource.resource.dateCreate|date('d/m/y') }}", 
 					'update': "{{ res.usedResource.resource.dateUpdate|date('d/m/y') }}", 
 					'duration': {{ res.getDuration|default(11) }},
