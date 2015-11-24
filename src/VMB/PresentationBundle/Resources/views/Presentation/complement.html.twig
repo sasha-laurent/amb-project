@@ -73,7 +73,7 @@
 				</tr>
 				<tr>
 					<th width="120px">{{ 'table.description'|trans }}</th>
-					<td>{{ entity.description[:300] }} <span data-prototype="{{entity.description[300:]}}" class="showAll collapsed">...</span></td>
+					<td>{{ entity.description[:300] }} <span data-prototype="{{entity.description[300:]|escape('js')}}" class="showAll collapsed">...</span></td>
 				</tr>
 				<tr>
 					<th>{{ 'table.creation'|trans }}</th>

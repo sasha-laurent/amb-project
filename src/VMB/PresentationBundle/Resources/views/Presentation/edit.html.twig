@@ -214,11 +214,11 @@
 		{% for usedRes in matrix.resources %}
 			{{ usedRes.id }}: {
 				'path': "{{ usedRes.resource.path }}", 
-				'title': "{{ usedRes.resource.title }}", 
-				'shortTitle': "{{ usedRes.resource.title|shortenText(18, '...') }}", 
+				'title': "{{ usedRes.resource.title|escape('js') }}", 
+				'shortTitle': "{{ usedRes.resource.title|shortenText(18, '...')|escape('js') }}", 
 				'thumbs': "{{ asset(usedRes.resource.getThumbsPath) }}",
-				'description': "{{ usedRes.resource.description }}", 
-				'shortDesc': "{{ usedRes.resource.description|shortenText(140, "...") }}", 
+				'description': "{{ usedRes.resource.description|escape('js') }}", 
+				'shortDesc': "{{ usedRes.resource.description|shortenText(140, "...")|escape('js') }}", 
 				'creation': "{{ usedRes.resource.dateCreate|date('d/m/y') }}", 
 				'update': "{{ usedRes.resource.dateUpdate|date('d/m/y') }}", 
 				'duration': {{ usedRes.resource.duration|default(11) }},

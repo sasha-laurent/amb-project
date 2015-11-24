@@ -153,15 +153,15 @@
 		{% for key, subArrResources in resources %}
 			{% for elt in subArrResources %}
 				{{ elt.id }}: {
-					'title': "{{ elt.title }}", 
-					'shortTitle': "{{ elt.title|shortenText(18, '...') }}", 
-					'description': "{{ elt.description }}", 
+					'title': "{{ elt.title|escape('js') }}", 
+					'shortTitle': "{{ elt.title|shortenText(18, '...')|escape('js') }}", 
+					'description': "{{ elt.description|escape('js') }}", 
 					'creation': "{{ elt.dateCreate|date('d/m/y') }}", 
 					'update': "{{ elt.dateUpdate|date('d/m/y') }}", 
 					'duration': {{ elt.duration|default(0) }},
 					'duration_str': "{{ "%02d"|format(elt.duration // 60) }}:{{ "%02d"|format(elt.duration % 60) }}",
 					'src': "{{ asset(elt.getResourcePath) }}",
-					'type': "{{ elt.type }}",
+					'type': "{{ elt.type|escape('js') }}",
 					'thumbs': "{{ asset(elt.getThumbsPath) }}",
 				},
 			{% endfor %}
