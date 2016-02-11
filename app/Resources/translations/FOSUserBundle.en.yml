@@ -21,7 +21,7 @@ registration:
         message: 'Follow the link to complete your registration.'
         subject: 'Activate your AMB Account'
 
-    existing_username: 'Username is taken.'
+    existing_username: 'Username or Email is already taken.'
     register: 'Sign up'
     submit: 'Sign me up'
 
@@ -39,5 +39,5 @@ security:
     login:
         password: Password
         remember_me: 'Keep me logged in'
-        submit: 'Log In!'
+        submit: 'Log In'
         username: Username
