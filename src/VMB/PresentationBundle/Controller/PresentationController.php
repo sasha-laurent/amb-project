@@ -14,6 +14,7 @@ use VMB\PresentationBundle\Entity\Pov;
 use VMB\PresentationBundle\Entity\UsedResource;
 use VMB\PresentationBundle\Entity\CheckedResource;
 use VMB\PresentationBundle\Form\PresentationType;
+use VMB\PresentationBundle\Entity\Topic;
 
 /**
  * Presentation controller.
@@ -92,9 +93,19 @@ class PresentationController extends Controller
 		$mainTitle = $this->get('translator')->trans('presentation.browse');
 		if($topic != null) {
 			$topic = $em->getRepository('VMBPresentationBundle:Topic')->find($topic);
-			$mainTitle = $topic->getTitle().' - '.$this->get('translator')->trans('menu.presentations');
+                        $mainTitle = $topic->getTitle().' - '.$this->get('translator')->trans('menu.presentations');
 		}
-		
+		$usr = $this->getUser();
+                $themes=$em->getRepository('VMBPresentationBundle:Topic')->findAll();
+                $totalVisible=0;
+                foreach($themes as $theme){
+                    $res = $em->getRepository('VMBPresentationBundle:Topic')->getVisiblePresentationsCounts($theme,$usr);
+                    $counts[$theme->getTitle()] = $res[0];
+                    $totalVisible+=$res[1];
+                    $parentcounts[$theme->getTitle()] = $em->getRepository('VMBPresentationBundle:Topic')->getParentPresentationsCounts($theme,$usr);
+                    
+                }
+                $totalPresentations = $em->getRepository('VMBPresentationBundle:Presentation')->getNumberPresentations();
 		$request = $this->get('request');
 		$official = ($request->query->get('official') == 1) ? true : 'all';
 		$default = ($request->query->get('default') == 1) ? true : 'all';
@@ -137,7 +148,12 @@ class PresentationController extends Controller
             'search' 	=> $search,
             'pathWithoutKeyword' => $pathWithoutKeyword,
 			'nbPages'  	=> $nbPages,
-			'page'     	=> $page
+			'page'     	=> $page,
+            'counts'    => $counts,
+            'parentcounts'              => $parentcounts,
+            'totalPresentations'        => $totalPresentations,
+            'totalVisible'              => $totalVisible
+            
         ));
     }
     
