@@ -64,6 +64,12 @@ class ResourceController extends Controller
 				unset($advancedSearch[$key]);
 			}
 		}
+                $usr = $this->getUser();
+                $themes=$em->getRepository('VMBPresentationBundle:Topic')->findAll();
+                $total=$em->getRepository('VMBResourceBundle:Resource')->getNumberResources();
+                foreach($themes as $theme){
+                    $counts[$theme->getTitle()] = $em->getRepository('VMBResourceBundle:Resource')->getVisibleResourcesCounts($theme,$usr);                       
+                }
 			
 		$official = ($request->query->get('official') == 1) ? true : 'all';
 		$personal = ($request->query->get('personal') == 1);
@@ -93,7 +99,9 @@ class ResourceController extends Controller
             'entities' 	=> $entities,
             'nbPerPage' => $nbPerPage,
 			'nbPages'  	=> $nbPages,
-			'page'     	=> $page
+			'page'     	=> $page,
+            'counts'    => $counts,
+            'total'     =>$total
         ));
     }
     /**
