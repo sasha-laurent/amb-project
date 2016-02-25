@@ -19,10 +19,12 @@
 				{% else %}
 					<span class="glyphicon glyphicon-minus"></span>
 				{% endif %}
-				<a href="{{ path("vmb_presentation_browse_topic", app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'topic': link.id })) }}" title="{{ link.title }}">
-					{{ link.title }} 
+				<a href="{{ path("vmb_presentation_browse_topic", app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'topic': link.id })) }}" title="{{ link.title }} [{{counts[link.title]}}] ({{attribute(link, 'totalIncludedPresentations')}})">
+                                        {{ link.title }}
 					{% if attribute(link, 'totalIncludedPresentations') is defined %} 
-						({{attribute(link, 'totalIncludedPresentations')}}) 
+{#                                            <div class="est-parent">{{parentcounts[link.title]}} / </div>#}
+                                            <div class="accessible"> [{{counts[link.title]}}]</div>
+                                            <div class="total"> ({{attribute(link, 'totalIncludedPresentations')}})</div>
 					{% else %} 
 						{#dump(link)#}
 					{% endif %}
