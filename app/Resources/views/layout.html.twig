@@ -12,9 +12,9 @@
 
 		{# icons & favicons (for more: http://www.jonathantneal.com/blog/understand-the-favicon/)  #}
 		<link rel="apple-touch-icon" href="{{ asset('apple-icon-touch.png') }}">
-{#		<link rel="icon" href="{{ asset('img/amb_favicon_rubix.png') }}">#}
+		<link rel="icon" href="{{ asset('img/amb_favicon.png') }}">
 		<!--[if IE]>
-			<link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+			<link rel="shortcut icon" href="{{ asset('img/favicon.ico') }}">
 		<![endif]-->
 		
         <title>{% block title %}AMB{% endblock %}</title>
@@ -27,6 +27,8 @@
 			<link rel='stylesheet' id='stylesheet-css'  href='{{ asset('css/flag-icon-css-master/css/flag-icon.min.css') }}' type='text/css' media='all' />
 			<link rel="stylesheet" href="https://cdn.plyr.io/1.1.5/plyr.css">
         {% endblock %}
+        
+        
     </head>
     <body itemscope itemtype="http://schema.org/WebPage">
 		<header>
@@ -259,6 +261,11 @@
   ga('send', 'pageview');
 
 </script>
+
+
+
+
+
 
 
 </body>
