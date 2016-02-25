@@ -25,7 +25,8 @@
 				{% else %}
 					<a href="{{ path("vmb_resource_browse_topic", app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({'topic': link.id })) }}" title="{{ link.title }}">
 				{% endif %}
-						{{ link.title }} {#({{ link.__children|length }})#}
+						{{ link.title }}
+                                                 <div class="accessible"> [{{counts[link.title]}}]</div>{#({{ link.__children|length }})#}
 					</a>
 			</div>
 		</div>
