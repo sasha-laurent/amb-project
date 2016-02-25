@@ -58,7 +58,7 @@ browse:
     mutliple_indexation: 'Indexation multiple'
     no_presentation: 'Aucune présentation publique dans cet espace pour ces paramètres de recherche'
     official: Officielles
-    official_only: browse.official_only
+    official_only: Officielles
     parameters_title: 'Affiner par'
     personal_presentation: 'Présentations personnelles'
     personal_resources: 'Ressources personnelles'
