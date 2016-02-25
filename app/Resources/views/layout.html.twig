@@ -12,7 +12,7 @@
 
 		{# icons & favicons (for more: http://www.jonathantneal.com/blog/understand-the-favicon/)  #}
 		<link rel="apple-touch-icon" href="{{ asset('apple-icon-touch.png') }}">
-		<link rel="icon" href="{{ asset('favicon.png') }}">
+{#		<link rel="icon" href="{{ asset('img/amb_favicon_rubix.png') }}">#}
 		<!--[if IE]>
 			<link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
 		<![endif]-->
@@ -62,7 +62,7 @@
 								{% for locale in ['en', 'fr'] %}
 									{% if app.request.getLocale != locale %}
 										<li>
-											<a href="{{ path(app.request.get('_route'), app.request.get('_route_params')|merge({'_locale' : locale})) }}">
+											<a href="{{ path(app.request.get('_route'), app.request.query.all|merge({'_locale' : locale})) }}">
 												<span class="flag flag-icon flag-icon-{% if locale == 'en' %}gb{% else %}fr{% endif %}"></span> {% if locale == 'en' %}English{% else %}Français{% endif %}
 											</a>
 										</li>
@@ -82,7 +82,7 @@
 						</div>
 					</div>
 				</div>
-				<h3><a href="{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}{{ path('vmb_presentation_browse') }}{% else %}{{path('_welcome')}}{% endif %}"><img height="43px" width="50px" src="{{ asset('img/amb.jpg') }}" alt="AMB" title="{{ "menu.homepage"|trans}}" /></a></h3>
+				<h3><a href="{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}{{ path('vmb_presentation_browse') }}{% else %}{{path('_welcome')}}{% endif %}"><img height="70px" src="{{ asset('img/amb.jpg') }}" alt="AMB" title="{{ "menu.homepage"|trans}}" /></a></h3>
 				
 				
 				{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
@@ -152,7 +152,7 @@
 			{% block body %}{% endblock %}
 		</div>
 		<footer class="footer">
-			<div class="container">&copy; AMB 2015</div>
+                            <div class="container">&copy; AMB 2016</div>
 		</footer>
 		
 	<!-- Modal -->
@@ -243,5 +243,23 @@
 	</script>
 {% endif %}
 {% endblock %}
+
+<script>
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-74035140-1', 'auto');
+
+  ga('send', 'pageview');
+
+</script>
+
+
 </body>
 </html>
