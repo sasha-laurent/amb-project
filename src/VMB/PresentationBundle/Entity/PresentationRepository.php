@@ -135,4 +135,19 @@ class PresentationRepository extends EntityRepository
 		->getQuery()
 		->getSingleResult();
 	}
+        
+        public function getNumberPresentations(){
+        $count = 0;
+        $query_res = 0;
+        try{
+            $presentation_repo = $this->getEntityManager()->getRepository('VMBPresentationBundle:Presentation');
+            $qb = $presentation_repo->createQueryBuilder('p')->select('count(p.id)');
+            $query_res = $qb->getQuery()->getSingleScalarResult();	
+            $count += $query_res;
+            
+        } catch (Exception $ex) {
+            echo $ex;
+        }
+        return $count;
+    }
 }
