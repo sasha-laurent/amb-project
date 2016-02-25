@@ -146,4 +146,50 @@ class ResourceRepository extends EntityRepository
 
 		return $builder->getQuery()->getResult();
 	}
+        
+        public function getVisibleResourcesCounts($topic,$user)
+	{
+		$count = 0;
+		$query_res = 0;
+		if($topic != null)
+		{
+			try{ // Calculate ressources count
+				$presentation_repo = $this->getEntityManager()->getRepository('VMBResourceBundle:Resource');
+				$qb = $presentation_repo->createQueryBuilder('r')->select('count(r.id)')
+                                ->innerJoin('r.topic', 'tr')
+                                ->where('tr.id=:trId')->setParameter('trId', $topic);
+                                //->andWhere('r.owner = :user')->setParameter('user', $user);
+				$query_res = $qb->getQuery()->getSingleScalarResult();	
+				$count += $query_res;
+
+			} catch (\Doctrine\ORM\NonUniqueResultException $e)
+			{
+				echo $e;
+			}
+
+            // Calculate topic's children presentations count
+			$children = $topic->getChildren();
+            foreach($children as $c){
+            	$query_res = $this->getVisibleResourcesCounts($c,$user);
+            	$count += $query_res;
+       		}
+    	}
+    	// Return total presentations count
+		return $count;
+	}
+        
+    public function getNumberResources(){
+        $count = 0;
+        $query_res = 0;
+        try{
+            $presentation_repo = $this->getEntityManager()->getRepository('VMBResourceBundle:Resource');
+            $qb = $presentation_repo->createQueryBuilder('r')->select('count(r.id)');
+            $query_res = $qb->getQuery()->getSingleScalarResult();	
+            $count += $query_res;
+            
+        } catch (Exception $ex) {
+            echo $ex;
+        }
+        return $count;
+    }
 }
