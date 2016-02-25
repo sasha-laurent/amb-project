@@ -65,10 +65,17 @@
 							{% endif %}
 						</a>
 					</div>
-				</div>
+                                </div>                                            
 				
 				<h4>{{ 'table.topic'|trans }}</h4>
+                                <div class="affichageNombreTotal">{{ 'menu.presentations'|trans }}
+                                    <div class="accessible"> [{{totalVisible}}]
+                                    </div>
+                                    <div class="total"> ({{totalPresentations}})
+                                    </div>  
+                                </div>
 				{% include "VMBPresentationBundle:Presentation:topicLink.html.twig" with {'links': topics, 'current': topic.id|default(null)} %}
+                                
 			</div>
 		</div>
 		<div class="col-md-9">
