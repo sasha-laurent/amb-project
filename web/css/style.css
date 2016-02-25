@@ -610,6 +610,13 @@ select[multiple="multiple"] {
 .browse-topics [class^="col-"] {
 	padding: 0px;
 	font-size: 12px;
+        margin-right:4px;
+        word-wrap:break-word;
+        overflow:hidden;
+        white-space:nowrap;
+        text-overflow:ellipsis;
+        display: block;
+        max-width:100px;
 }
 
 .browse-topics .panel-collapse, #browse_file .panel-collapse			{ border-left: 0px; }
@@ -919,4 +926,29 @@ li.list-group-item.row .form-control {
 	left: 50%;
 	margin-left:-1px;
 	margin-top:-1px;
+}
+
+.affichageNombreTotal{
+    display: inline-block;
+    color:#16344f; 
+
+}
+
+.total {
+    opacity: 0.4;
+    display: inline; 
+}
+
+.accessible {
+    font-weight: bold;
+    display: inline; 
+}
+
+.est-parent {
+    display: inline;
+}
+
+.explication {
+    display :inline;
+    font-size: xx-small;
 }
