@@ -63,11 +63,12 @@
 							<ul class="dropdown-menu" role="menu">
 								{% for locale in ['en', 'fr'] %}
 									{% if app.request.getLocale != locale %}
-										<li>    {% if app.request.attributes.get('id') is defined and app.request.attributes.get('id') is not null %}
+										<li>    {#{% if app.request.attributes.get('id') is defined and app.request.attributes.get('id') is not null %}
                                                                                             <a href="{{ path(app.request.get('_route'), app.request.get('_route_params')|merge({'_locale' : locale})) }}">
                                                                                         {% else %}
                                                                                             <a href="{{ path(app.request.get('_route'), app.request.query.all|merge({'_locale' : locale})) }}">
-                                                                                        {% endif %}
+                                                                                        {% endif %}#}
+                                                                                                <a href="{{ path(app.request.get('_route'), app.request.get('_route_params')|merge({'_locale' : locale})) }}">
 												<span class="flag flag-icon flag-icon-{% if locale == 'en' %}gb{% else %}fr{% endif %}"></span> {% if locale == 'en' %}English{% else %}Français{% endif %}
 											</a>
 										</li>
