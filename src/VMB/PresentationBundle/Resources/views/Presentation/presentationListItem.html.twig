@@ -1,7 +1,7 @@
 {% spaceless %}
 {#	<ul class="list-group" id="sortable"> {% for entity in entities %}#}
 <li class="list-group-item row">
-    <div class="col-md-4"><a href="/presentation/show/{id}" title="{{"resource.show"|trans}}">{title}</a></div>
+    <div class="col-md-4"><a href="/presentation/show/{id}" title={titleLong}>{title}</a></div>
     <div class="col-md-1 text-center">{duration}</div>
     <div class="col-md-2 text-center">				
 		<div class="btn-group" role="group" aria-label="...">
