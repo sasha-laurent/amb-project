@@ -85,6 +85,9 @@ fos_user:
     registration:
         form:
             type: vmb_user_registration
+    from_email:
+        address:        ambwebmaster@ambplateform.com
+        sender_name:    AMB Webmaster
 
 # Stof\DoctrineExtensionBundle configuration
 stof_doctrine_extensions:
