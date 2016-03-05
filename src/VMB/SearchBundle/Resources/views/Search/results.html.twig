@@ -117,7 +117,8 @@
 	{% for p in presentations %}
 		{
 			id: "{{p.id}}",
-			title : "{{ p.title | shortenText(60, "...") }}",
+			title : "{{ p.title | shortenText(40, "...")}}",
+                        titleLong: "{{ p.title |replace(' ', '_')}}",
 			duration : "{{p.durationToString}}",
 			author : "",
 			matrix : "",
@@ -127,7 +128,7 @@
 		{% for r in resources %}
 		{ 
 			id : "{{r.id}}", 
-			title : "{{ r.title | shortenText(60, "...") }}",
+			title : "{{ r.title | shortenText(40, "...") }}",
 			description : "{{ r.description | shortenText(160, "...")  }}",
 			glyphicon : "{{r.getGlyphicon}}",   
 			thumbPath: "{{ asset(r.getThumbsPath) }}", 
