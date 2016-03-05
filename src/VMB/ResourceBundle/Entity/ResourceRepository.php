@@ -137,12 +137,12 @@ class ResourceRepository extends EntityRepository
 		if($query !== null) {
 			$builder->andWhere('r.title LIKE :q OR r.keywords LIKE :q')->setParameter('q', '%'.$query.'%');
 		}
-		// Mine or Mine & Public
-		if($user !== null) {
-			$builder->andWhere('r.owner = :user')->setParameter('user', $user);
-		} else {
-			$builder->andWhere('r.owner=NULL');
-		}
+//		// Mine or Mine & Public
+//		if($user !== null) {
+//			$builder->andWhere('r.owner = :user')->setParameter('user', $user);
+//		} else {
+//			$builder->andWhere('r.owner=NULL');
+//		}
 
 		return $builder->getQuery()->getResult();
 	}
