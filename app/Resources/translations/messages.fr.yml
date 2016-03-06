@@ -283,7 +283,7 @@ resource:
     shared: Partagées
     show: 'Examiner la ressource'
     type_error: 'Type de ressource non reconnu.'
-    upload_error: 'Echec lors de l''import. Veuillez ré-essayer.'
+    upload_error: 'Echec lors de l''import. Veuillez ré-essayer. Si c''était une vidéo essayez avec un mp4, si c''était un fichier audio, essayez avec un mp3.'
 
 role:
     prof: Professeur
