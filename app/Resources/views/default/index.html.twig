@@ -32,10 +32,12 @@
 	<p>{{"homepage.presentation_paragraph_4"|trans}}</p>
 	<p>{{"homepage.presentation_paragraph_5"|trans}}</p>
 </div>
+{% if not is_granted("IS_AUTHENTICATED_REMEMBERED") %}
 <p class="text-center">
 	<a class='btn btn-success btn-lg' href="{{path("fos_user_registration_register")}}">{{"homepage.sign_up"|trans}}
 	</a>	
 </p>
+{% endif %}
 
     	
 {% endblock %}
