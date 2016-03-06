@@ -283,7 +283,7 @@ resource:
     shared: Shared
     show: 'Examine resource'
     type_error: 'Unrecognized resource type.'
-    upload_error: 'Upload failed. Please try again.'
+    upload_error: 'Upload failed. Please try again. If it was a video please use .mp4, if it was an audio file please use mp3.'
 
 role:
     prof: Teacher
