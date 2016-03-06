@@ -31,9 +31,17 @@ resetting:
         request_reset: 'Forgot your password?'
         submit: 'Reset password'
         username: Username
-
     reset:
         submit: Reset
+    email:
+        subject: Reset Password
+        message: |
+            Hello %username%!
+
+            To reset your password - please visit %confirmationUrl%
+
+            Regards,
+            AMB Webmaster
 
 security:
     login:
