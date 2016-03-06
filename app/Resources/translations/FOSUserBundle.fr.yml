@@ -34,6 +34,15 @@ resetting:
 
     reset:
         submit: Ré-initialiser
+    email:
+        subject: Réinitialisation de votre mot de passe
+        message: |
+            Bonjour %username% !
+
+            Pour réinitialiser votre mot de passe, merci de vous rendre sur %confirmationUrl%
+
+            Cordialement,
+            Webmaster AMB
 
 security:
     login:
