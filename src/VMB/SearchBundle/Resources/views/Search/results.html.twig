@@ -129,6 +129,7 @@
 		{ 
 			id : "{{r.id}}", 
 			title : "{{ r.title | shortenText(40, "...") }}",
+                        titleLongResource: "{{ r.title |replace(' ', '_')}}",
 			description : "{{ r.description | shortenText(160, "...")  }}",
 			glyphicon : "{{r.getGlyphicon}}",   
 			thumbPath: "{{ asset(r.getThumbsPath) }}", 
