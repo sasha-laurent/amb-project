@@ -11,6 +11,9 @@ group:
 profile:
     edit:
         submit: 'Edit profile'
+    show:
+        username: "Username: "
+        email: "Email: "
 
 registration:
     back: 'Go back'
