@@ -11,6 +11,9 @@ group:
 profile:
     edit:
         submit: 'Modifier le profil'
+    show:
+        username: "Nom d'utilisateur : "
+        email: "Adresse e-mail : "
 
 registration:
     back: 'Aller en arrière'
