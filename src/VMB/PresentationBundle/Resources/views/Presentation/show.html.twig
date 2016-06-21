@@ -321,7 +321,7 @@
 			if(type == 'image') {
 				$('.image_player img').attr('src', '');
 			}
-			else if(type == 'application' || newType == 'text') {
+			else if(type == 'application' || type == 'text') {
 				$('.file_player iframe').attr('src', '');
 				type = 'file';
 			}
