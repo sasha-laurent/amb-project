@@ -321,7 +321,7 @@
 			if(type == 'image') {
 				$('.image_player img').attr('src', '');
 			}
-			else if(type == 'application' || type == 'text') {
+			else if(type == 'application' || type == 'text' || type == 'pdf') {
 				$('.file_player iframe').attr('src', '');
 				type = 'file';
 			}
@@ -331,10 +331,14 @@
 	
 	// Method that shows a player
 	Player.prototype.show = function(type) {
-		if(type == 'application' || type == 'text') {
+		if(type == 'application' || type == 'text' || type == 'pdf') {
 			type = 'file';
+			$('#annotations_container').css('pointer-events', 'none'); // allow to interact with underlying elements
 		}
+		else { $('#annotations_container').css('pointer-events', 'initial'); }
 		$('.' + type + '_player').show();
+		console.log("showing " + type);
+		console.log($('.' + type + '_player').length);
 	}
 	
 	// Method that plays the current resource
@@ -423,7 +427,7 @@
 				$('.image_player img').css('height', cadreH + 'px');
 			}
 		}
-		else if(this.resource.type == 'application' || this.resource.type == 'text') {
+		else if(this.resource.type == 'application' || this.resource.type == 'text' || this.resource.type == 'pdf') {
 			cadreW = $('#presentation_player').width();
 			cadreH = $('#presentation_player').height();
 			$('.file_player iframe').css('width', cadreW + 'px');
