@@ -952,3 +952,9 @@ li.list-group-item.row .form-control {
     display :inline;
     font-size: xx-small;
 }
+// /!\ CETTE REGLE N'EST PAS CONVENABLE! /!\ Je l'ai donc commentée.
+
+/*img{
+    width:100%;
+    max-width:600px;
+}*/
