@@ -92,6 +92,8 @@
 	</div>
 	<hr/>
 	{% if firstResource != null %}
+    <div id="quiz">
+    </div>
 	<div id="additional-infos">
 		<h3 class="view-more-title"><a data-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">{{ 'show.resource_details'|trans }} <span class="glyphicon glyphicon-chevron-down"></span></a></h3>
 		<div class="collapse" id="collapseDescription">
@@ -185,7 +187,7 @@
 	/* ************************************************ */
 	/* ******************DEFINING TIMER**************** */
 	/* ************************************************ */
-	
+	var quizIsLoaded = false;
 	// Timer object so that we can stop and resume anytime we need it
 	function Timer(callback, delay, autoStart) {
 		autoStart = typeof autoStart !== 'undefined' ? autoStart : true;
@@ -283,7 +285,8 @@
 		this.timer = null; // needed if we're not using a media player with an ending event
 		
 		this.isPlaying	   = function()	{ return this.playing; };
-		this.resourceEnded = function() { this.presentation.nextAuto(); };
+		this.resourceEnded = function() { 
+                                        this.presentation.nextAuto(); };
 		$(this.mediaPlayer['video'].media).bind('ended',   function(){ this.resourceEnded(); }.bind(this));
 		$(this.mediaPlayer['video'].media).bind('seeking',   function(){ this.presentation.resetAnnotations(); }.bind(this));
 		$(this.mediaPlayer['audio'].media).bind('ended',   function(){ this.resourceEnded(); }.bind(this));
@@ -321,7 +324,7 @@
 			if(type == 'image') {
 				$('.image_player img').attr('src', '');
 			}
-			else if(type == 'application' || type == 'text' || type == 'pdf') {
+			else if(type == 'application' || newType == 'text') {
 				$('.file_player iframe').attr('src', '');
 				type = 'file';
 			}
@@ -331,14 +334,10 @@
 	
 	// Method that shows a player
 	Player.prototype.show = function(type) {
-		if(type == 'application' || type == 'text' || type == 'pdf') {
+		if(type == 'application' || type == 'text') {
 			type = 'file';
-			$('#annotations_container').css('pointer-events', 'none'); // allow to interact with underlying elements
 		}
-		else { $('#annotations_container').css('pointer-events', 'initial'); }
 		$('.' + type + '_player').show();
-		console.log("showing " + type);
-		console.log($('.' + type + '_player').length);
 	}
 	
 	// Method that plays the current resource
@@ -427,7 +426,7 @@
 				$('.image_player img').css('height', cadreH + 'px');
 			}
 		}
-		else if(this.resource.type == 'application' || this.resource.type == 'text' || this.resource.type == 'pdf') {
+		else if(this.resource.type == 'application' || this.resource.type == 'text') {
 			cadreW = $('#presentation_player').width();
 			cadreH = $('#presentation_player').height();
 			$('.file_player iframe').css('width', cadreW + 'px');
@@ -536,6 +535,7 @@
 	
 	// Method that shows a resource (hides other player and shows the right one) if it exists
 	Presentation.prototype.setResource = function(index, manual)  { 
+        quizIsLoaded = false;
 		manual = typeof manual !== 'undefined' ? manual : true;
 		
 		if(index >= 0 && index < this.order.length) {
@@ -572,9 +572,107 @@
 		else { 
 			togglePlay(); 
 		}
+        $quiz = $("#quiz");
+        $quiz.empty();
+        $quiz.append("<button id=\"load_questions\" class=\"btn btn-default\">Répondre au questionnaire</button><br/><span id=\"loader\" style=\"display: none;\"><img src=\"loader.gif\" alt=\"loading\" /></span>");
+        $(document).ready(function(){    
+            var $showHintLink = $('<a href="#" id="show_hints" class="btn btn-default">Montrer les indices</a><br/>');
+            var $correctAnswers = $('<a href="#" id="correct_answers" class="btn btn-default">Corriger les réponses</a><br/>');
+
+            $("#load_questions").click(function(e){
+                var lq = $(this);
+                e.preventDefault();
+                if(lq.data('requestRunning')) {
+                    return;
+                }
+                lq.data('requestRunning',true);
+                $.get(
+                    '{{path("vmb_quiz_load")}}',
+                    { id : resourcesOrder[index]}, 
+                    function($questions){
+                        if($($questions).find("#no_quiz").length)
+                        {
+                            $("#load_questions").remove();
+                            $("#quiz").append($questions); 
+                            boolean = true;
+                            return;
+                        }
+                        $("#load_questions").remove();
+                        $("#quiz").append($questions);
+                        $("#quiz").append($showHintLink);
+                        $("#quiz").append($correctAnswers);
+                        quizIsLoaded = true;
+                    }, 
+                    'html' 
+                ).always(function() {
+                    lq.data('requestRunning', false) }
+                    );
+                
+            });
+            
+            $showHintLink.click(function(e){
+                var sh = $(this);
+                e.preventDefault();
+                if(sh.data('requestRunning')) {
+                    return;
+                }
+                sh.data('requestRunning',true);
+                $.get(
+                    '{{path("vmb_quiz_load")}}',
+                    'false',
+                    function(allHints){
+                    $("#show_hints").remove();
+                    var $blockQuestions = $("#vmb_quizbundle_questions");
+                    var $questions = $blockQuestions.children("div");
+                    var $hints = $(allHints).children();
+                    $questions.each(function(index) {
+                        $(this).append($hints[index]);
+                    });
+                    },
+                    'html'
+                ).always(function() {
+                    sh.data('requestRunning', false) }
+                    );
+            });
+            
+            $correctAnswers.click(function(e){
+                var ca = $(this);
+                e.preventDefault();
+                if(ca.data('requestRunning'))
+                {
+                    return;
+                }
+                ca.data('requestRunning',true);
+                var $answers = $("form[name='vmb_quizbundle_questions']").serializeArray();
+                $.post(
+                    '{{path("vmb_quiz_load")}}',
+                    $answers,
+                    function(correction){
+                    $("#correct_answers").remove();
+                    $("#show_hints").remove();
+                    var $blockQuestions = $("#vmb_quizbundle_questions");
+                    var $questions = $blockQuestions.children("div");
+                    var $correction = $(correction).children();
+                    $questions.each(function(index) {
+                        $(this).append($($correction[index]).text());
+                    });
+                    },
+                    'html' 
+                ).always(function() {
+                    ca.data('requestRunning', false) }
+                    );
+            });
+            
+        });
 	};
 	
-	Presentation.prototype.nextAuto = function() { this.setResource(this.index + 1, false); }
+	Presentation.prototype.nextAuto = function() { if(!quizIsLoaded){
+                                                    this.setResource(this.index + 1, false);
+                                                    return;
+                                                    }
+                                                    togglePlay();
+                                                    return;
+                                                    }
 	Presentation.prototype.next = function() { this.setResource(this.index + 1); }
 	Presentation.prototype.prev = function() { this.setResource(this.index - 1); }
 	

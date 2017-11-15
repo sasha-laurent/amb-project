@@ -32,12 +32,21 @@ class SearchController extends Controller
 
     	$ress_repo = $em->getRepository('VMBResourceBundle:Resource');
     	$ress_results = $ress_repo->searchWithQuery($query, $usr);
+        
+        $disc_repo = $em->getRepository('VMBForumBundle:discussion');
+    	$disc_results = $disc_repo->searchWithQuery($query);
+        
+        $comm_repo = $em->getRepository('VMBForumBundle:Comment');
+    	$comm_results = $comm_repo->searchWithQuery($query);        
 
         $render_opts = array(
         	'query' => $query,
         	'backButtonUrl' => $this->get('vmb_presentation.previous_url')->getPreviousUrl($request),
         	'presentations' => $pres_results,
-        	'resources' => $ress_results);
+        	'resources' => $ress_results,
+            'discussions' => $disc_results,
+            'comments' => $comm_results);
+            
         return $this->render('VMBSearchBundle:Search:results.html.twig', 
         			$render_opts);
     }

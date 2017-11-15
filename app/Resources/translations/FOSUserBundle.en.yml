@@ -11,9 +11,10 @@ group:
 profile:
     edit:
         submit: 'Edit profile'
+
     show:
-        username: "Username: "
-        email: "Email: "
+        email: 'Email: '
+        username: 'Username: '
 
 registration:
     back: 'Go back'
@@ -29,22 +30,18 @@ registration:
     submit: 'Sign me up'
 
 resetting:
+    email:
+        message: "Hello %username%!\n\nTo reset your password - please visit %confirmationUrl%\n\nRegards,\nAMB Webmaster\n"
+        subject: 'Reset Password'
+
     request:
         invalid_username: 'Username is invalid'
         request_reset: 'Forgot your password?'
         submit: 'Reset password'
         username: Username
+
     reset:
         submit: Reset
-    email:
-        subject: Reset Password
-        message: |
-            Hello %username%!
-
-            To reset your password - please visit %confirmationUrl%
-
-            Regards,
-            AMB Webmaster
 
 security:
     login:

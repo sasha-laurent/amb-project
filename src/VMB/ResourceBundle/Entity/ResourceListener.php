@@ -98,7 +98,7 @@ class ResourceListener
      * upload
      */
     public function postPersist(Resource $resource, LifecycleEventArgs $args)
-    {
+    {   
         if (null === $resource->file 
             && null === $resource->customAudioArt){
             return;
@@ -139,7 +139,6 @@ class ResourceListener
             // on crée la miniature
             // http://php.net/manual/en/function.imagecreate.php
             if($extension =="jpg" || $extension =="jpeg" ){
-
                 $uploadedfile = $resource->getUploadRootDir($resource->getType()).$resource->getFilename().'.'.$resource->getExtension();
                 $src = imagecreatefromjpeg($uploadedfile);
             }

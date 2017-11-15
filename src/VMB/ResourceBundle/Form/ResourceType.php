@@ -2,6 +2,7 @@
 
 namespace VMB\ResourceBundle\Form;
 
+use VMB\QuizBundle\Form\QuizType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -12,6 +13,14 @@ class ResourceType extends AbstractType
      * @param FormBuilderInterface $builder
      * @param array $options
      */
+     
+    private $isTeacher = false;
+    
+    public function __construct($isTeacher)
+    {
+        $this->isTeacher = $isTeacher;
+    }
+    
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $resource = $builder->getData();
@@ -24,7 +33,7 @@ class ResourceType extends AbstractType
 			'label' => 'form.label.topic',
 			'multiple' => true,
 			'class' => 'VMBPresentationBundle:Topic',
-			 'query_builder' => function(\Gedmo\Tree\Entity\Repository\NestedTreeRepository $repo) {
+			'query_builder' => function(\Gedmo\Tree\Entity\Repository\NestedTreeRepository $repo) {
 				return $repo->getNodesHierarchyQueryBuilder();
 			  }
 		));
@@ -34,7 +43,9 @@ class ResourceType extends AbstractType
 		}
         // Optional thumbnail for audio file (must be initialized as hidden)
 		$builder->add('customAudioArt', 'file', array('label' => 'form.label.thumbnail', 'required' => false));
-		$builder->add('save', 'submit', array('label' => 'actions.save'));
+		if($this->isTeacher)
+            $builder->add('quiz', new QuizType(), array('label' => 'quiz'));
+        $builder->add('save', 'submit', array('label' => 'actions.save'));
     }
     
     /**

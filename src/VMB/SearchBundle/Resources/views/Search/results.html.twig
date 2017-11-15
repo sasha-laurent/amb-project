@@ -26,12 +26,17 @@
 
 			{% set res_style = resources is empty ? 
 				'default" disabled' : "default btn-primary" %}
+            {% set forum_style = discussions is empty ? 
+				'default" disabled' : "default btn-primary" %}
 
 			<button type="button" id="pres_select" class="btn btn-{{pres_style}}" >
 				{{"menu.presentations"|trans}} <span class="badge">{{presentations|length}}</span>
 			</button>
 			<button type="button" id="res_select" class="btn btn-{{res_style}}">
 				{{"menu.resources"|trans}} <span class="badge">{{resources|length}}</span>
+			</button>
+            <button type="button" id="forum_select" class="btn btn-{{forum_style}}" >
+				{{"menu.forum"|trans}} <span class="badge">{{discussions|length+comments|length}}</span>
 			</button>
 		</div>
 		{# View transformation selection #}
@@ -77,7 +82,48 @@
 </div>
 <div id="presentations_container">{% for p in presentations %}{% include "VMBPresentationBundle:Presentation:presentationVignette.html.twig" with {'entity' : p, 'nbPerPage' : 12, 'page':1} %}{% endfor %}
 </div>
-{% if presentations is empty and resources is empty %}
+
+<div id="forum_container">
+
+	   
+			
+				<div class="row">
+	        	</div>
+
+<ul class="list-group" id="sortable">
+{% for d in discussions %}
+<li class="list-group-item row">
+<div>
+                
+                <div class="col-md-8"><a href="{{ path('discussion_show', { 'id' : d.id })}}" title="">
+                {% if d.state == 1 %}
+                [{{'forum.resolved'|trans }}]
+                [{{d.topic}}]{{ d.title|truncate(45) }}
+                {% else %}
+                [{{d.topic}}]{{ d.title|truncate(45) }}
+                {% endif %}
+                </a></div>
+
+				<div class="col-md-2">{{ d.getUser.toString }}</div>
+				<div class="col-md-2">{{ d.date|date('d/m/y') }}</div>
+                
+                </div>
+</li>
+{% endfor %}</ul>
+<ul class="list-group" id="sortable">
+{% for c in comments %}
+<li class="list-group-item row">
+<div>
+                
+                <div class="col-md-8"><a href="{{ path('discussion_show', { 'id' : c.discussion.id })}}" >{{ c.discussion.title }}</a></div>
+				<div class="col-md-2">{{ c.getUser.toString }}</div>
+				<div class="col-md-2">{{ c.date|date('d/m/y') }}</div>
+                
+                </div></li>
+{% endfor %}</ul>
+</div>
+
+{% if presentations is empty and resources is empty and discussions is empty and comments is empty%}
 <div class="col-md-12 text-center">
 	<h1><em>{{ 'search.no_results'|trans }}</em>
 	</h1>
@@ -117,8 +163,7 @@
 	{% for p in presentations %}
 		{
 			id: "{{p.id}}",
-			title : "{{ p.title | shortenText(40, "...")}}",
-                        titleLong: "{{ p.title |replace(' ', '_')}}",
+			title : "{{ p.title | shortenText(60, "...") }}",
 			duration : "{{p.durationToString}}",
 			author : "",
 			matrix : "",
@@ -128,8 +173,7 @@
 		{% for r in resources %}
 		{ 
 			id : "{{r.id}}", 
-			title : "{{ r.title | shortenText(40, "...") }}",
-                        titleLongResource: "{{ r.title |replace(' ', '_')}}",
+			title : "{{ r.title | shortenText(60, "...") }}",
 			description : "{{ r.description | shortenText(160, "...")  }}",
 			glyphicon : "{{r.getGlyphicon}}",   
 			thumbPath: "{{ asset(r.getThumbsPath) }}", 
@@ -148,6 +192,14 @@
 						{% endif %}}
 				{% endfor %} ]
 				}
+			},
+{% endfor %} ]
+    resources_container : [
+		{% for d in discussions %}
+		{ 
+			id : "{{d.id}}", 
+			title : "{{ d.title | shortenText(60, "...") }}",
+			description : "{{ d.description | shortenText(160, "...")  }}",
 			},
 {% endfor %} ]
 	};
@@ -210,7 +262,7 @@
 
 	function switchTyp(to)
 	{
-		var bt_selectors = ["#res_select", "#pres_select"];
+		var bt_selectors = ["#res_select", "#pres_select", "#forum_select"];
 		$(bt_selectors[to]).addClass("btn-primary");
 		$(bt_selectors[1-to]).removeClass("btn-primary");
 

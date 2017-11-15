@@ -171,6 +171,11 @@ class Resource
      * will always fail).
      */
     private $customArtPath = null; 
+        
+    /**
+    * @ORM\OneToOne(targetEntity="VMB\QuizBundle\Entity\Quiz", cascade={"persist"})
+    */
+    private $quiz;
 
     /*
     * Variable de mime
@@ -188,7 +193,7 @@ class Resource
      * Constructor
      */
     public function __construct()
-    {
+    { 
         $this->topic = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
@@ -924,5 +929,28 @@ class Resource
     public function getKeywords()
     {
         return $this->keywords;
+    }
+    
+    /**
+     * Set quiz
+     *
+     * @param \VMB\QuizBundle\Entity\Quiz $quiz
+     * @return Resource
+     */
+    public function setQuiz(\VMB\QuizBundle\Entity\Quiz $quiz = null)
+    {
+        $this->quiz = $quiz;
+
+        return $this;
+    }
+
+    /**
+     * Get quiz
+     *
+     * @return \VMB\QuizBundle\Entity\Quiz 
+     */
+    public function getQuiz()
+    {
+        return $this->quiz;
     }
 }

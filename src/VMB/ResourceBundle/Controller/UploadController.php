@@ -38,17 +38,57 @@ class UploadController extends Controller
     protected function renderForm($resource, $is_modal_dialog = false)
     {
         $request = $this->get('request');
+        $isTeacher = $this->get('security.authorization_checker')->isGranted('ROLE_TEACHER');
         $form = $this
             ->get('form.factory')
-            ->create(new ResourceType(), $resource);
+            ->create(new ResourceType($isTeacher), $resource);
         // Record whether Resource.id is already set
         $is_new = ($resource->getId() == null);
             
         if ($request->isMethod('POST')) 
-        {
+        {  
             $form->handleRequest($request);
+            
             if ($form->isValid()) 
             {
+                // if the resource has a quiz, then we create the questions.
+                if(null !== $resource->getQuiz()){
+                    foreach($resource->getQuiz()->getMultichoices() as $multichoice)
+                    {
+                        $multichoice->setQuiz($resource->getQuiz());
+                        if ($multichoice->getHint() == null);
+                        {
+                            $multichoice->setHint("Pas d'indice");
+                        }
+                        foreach($multichoice->getPropositions() as $proposition)
+                        {
+                            $proposition->setMultichoice($multichoice);
+                        }
+                    }
+                    foreach($resource->getQuiz()->getSinglechoices() as $singlechoice)
+                    {
+                        $singlechoice->setQuiz($resource->getQuiz());
+                        if ($singlechoice->getHint() == null)
+                            $singlechoice->setHint("Pas d'indice");
+                        foreach($singlechoice->getPropositions() as $proposition)
+                        {
+                            $proposition->setSinglechoice($singlechoice);
+                        }
+                    }
+                    foreach($resource->getQuiz()->getTextareas() as $textarea)
+                    {
+                        $textarea->setQuiz($resource->getQuiz());
+
+                        if ($textarea->getHint() == null)
+                            $textarea->setHint("Pas d'indice");
+                    }
+                    foreach($resource->getQuiz()->getNumericalvalues() as $numericalvalue)
+                    {
+                        $numericalvalue->setQuiz($resource->getQuiz());
+                        if($numericalvalue->getHint() == null)
+                            $numericalvalue->setHint("Pas d'indice");
+                    }
+                }
                 $keepThumbs = $request->request->get('keepThumbs');
                 if(isset($keepThumbs) 
                     && intval($keepThumbs) == 0)

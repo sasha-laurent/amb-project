@@ -3,20 +3,20 @@ namespace VMB\PresentationBundle\PreviousUrl;
 
 class VMBPreviousUrl
 {
-	private $router;
-	
-	public function __construct(\Symfony\Bundle\FrameworkBundle\Routing\Router $router)
-	{
-		$this->router = $router;
-	}
-        /*
-        How to memorize more than One Previous Url?
-                Solution would be to have a 'navigation history stack' which gets popped or stacked on with each page change (kernel listener implementation required), bind it to the user's session and profit from infinite "back" button click
-        - Always pass and check CSRF token? Prevents most CSRF attacks
-        */ 
-	public function getPreviousUrl($request, $default = '/')
-	{
-		$pos = null;
+    private $router;
+
+    public function __construct(\Symfony\Bundle\FrameworkBundle\Routing\Router $router)
+    {
+            $this->router = $router;
+    }
+    /*
+    How to memorize more than One Previous Url?
+            Solution would be to have a 'navigation history stack' which gets popped or stacked on with each page change (kernel listener implementation required), bind it to the user's session and profit from infinite "back" button click
+    - Always pass and check CSRF token? Prevents most CSRF attacks
+    */ 
+    public function getPreviousUrl($request, $default = '/')
+    {
+        $pos = null;
 
 		// Referer as passed by the header (unsafe - can be modified)
         $referer = $request->headers->get('referer');
@@ -32,19 +32,19 @@ class VMBPreviousUrl
 		// Can be empty if user set it to empty or browser is set not to forward referers.
         if(empty($referer)) 
         {
-        	return $default;
+            return $default;
         } else {
-        	// Checking if it's an internal URL
-        	$pos = strpos($referer, $vmb_path);
-                $local_srv = strpos($referer, $localhost);
-        	if($pos === false && $local_srv === false) 
-                // Referer doesn't begin with our defined VMB Path
-                // and isn't running on localhost
-        	{
-        		return $default;
-        	} else { // Return relative path 
-        		return $referer;
-        	}
+            // Checking if it's an internal URL
+            $pos = strpos($referer, $vmb_path);
+            $local_srv = strpos($referer, $localhost);
+            if($pos === false && $local_srv === false) 
+            // Referer doesn't begin with our defined VMB Path
+            // and isn't running on localhost
+            {
+                    return $default;
+            } else { // Return relative path 
+                    return $referer;
+            }
         }
-	}
+    }
 }

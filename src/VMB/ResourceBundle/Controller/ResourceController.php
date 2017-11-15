@@ -39,7 +39,7 @@ class ResourceController extends Controller
     public function browseAction($page, $topic=null)
     {		
 		$mainTitle = $this->get('translator')->trans('resource.browse');
-		
+		$counts = [];
 		if ($page < 1) {
 			throw $this->createNotFoundException("La page ".$page." n'existe pas.");
 		}

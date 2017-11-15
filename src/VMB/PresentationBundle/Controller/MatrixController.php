@@ -290,21 +290,22 @@ class MatrixController extends Controller
 			$form->handleRequest($request);
 			if ($form->isValid()) 
 			{
+                            // TODO: surround by a try/catch or allow matrix to 
+                            // be created without a topic.
+                            $em = $this->getDoctrine()->getManager();
+                            $matrix->setOwner($this->getUser());
+                            $em->persist($matrix);
+                            $em->flush();
 
-				$em = $this->getDoctrine()->getManager();
-				$matrix->setOwner($this->getUser());
-				$em->persist($matrix);
-				$em->flush();
-
-				if($request->isXMLHttpRequest())
-				{
-					return new JsonResponse($translator->trans('matrix.modified'));
-				} else {
-					$flashMessage = !$matrix->toString() ? 
-					$translator->trans('matrix.added') : $translator->trans('matrix.modified');
-					$request->getSession()->getFlashBag()->add('success', $flashMessage);
-					return $this->redirect($this->generateUrl('matrix_show', array('id' => $matrix->getId())));
-				}
+                            if($request->isXMLHttpRequest())
+                            {
+                                    return new JsonResponse($translator->trans('matrix.modified'));
+                            } else {
+                                    $flashMessage = !$matrix->toString() ? 
+                                    $translator->trans('matrix.added') : $translator->trans('matrix.modified');
+                                    $request->getSession()->getFlashBag()->add('success', $flashMessage);
+                                    return $this->redirect($this->generateUrl('matrix_show', array('id' => $matrix->getId())));
+                            }
 
 			} else { // if a form is not submitted (submit button pressed) it is considered invalid
                 if($request->isXmlHttpRequest()){ 

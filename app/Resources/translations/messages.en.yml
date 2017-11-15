@@ -84,6 +84,7 @@ form:
         title: Title
         topic: Topic
         video: Video
+        submit: Submit
 
 help: help
 help.add: 'Add help'
@@ -156,6 +157,9 @@ menu:
     presentations: Presentations
     resources: Resources
     tools: Tools
+    forum: Forum
+    my_discussions: My discussions
+    my_comments: My comments
     topics: Topics
     translation: Translation
     users_management: 'User management'
@@ -210,6 +214,15 @@ ontology:
 player:
     new_tab: 'Show this file in a new tab.'
 
+forum:
+    browse: 'Browse forum'
+    comment: Comment
+    comments: Comments
+    add: New discussion
+    add_discussion: Add a new discussion
+    all: All
+    resolved: Resolved    
+    
 presentation:
     add: 'Add a presentation'
     added: 'Presentation was added'
@@ -317,6 +330,7 @@ table:
     routes: Routes
     size: Size
     title: Title
+    discussion: Discussion
     topic: Topic
     type: Type
     update: 'Updated on'

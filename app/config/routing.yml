@@ -1,8 +1,12 @@
+vmb_forum:
+    resource: "@VMBForumBundle/Resources/config/routing.yml"
+    prefix:   /
+
 _welcome:
     path:     /
     defaults: 
         _controller: FrameworkBundle:Template:template
-        template: views/default/index.html.twig
+        template: default/index.html.twig
 
 vmb_contextual_help:
     resource: "@VMBContextualHelpBundle/Resources/config/routing.yml"
@@ -47,3 +51,8 @@ JMSTranslationBundle_ui:
     resource: @JMSTranslationBundle/Controller/
     type:     annotation
     prefix:   /_trans
+    
+vmb_quiz:
+    resource: "@VMBQuizBundle/Resources/config/routing.yml"
+    prefix:   /
+

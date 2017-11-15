@@ -51,7 +51,7 @@ class TopicRepository extends NestedTreeRepository
 	public function getVisiblePresentationsCounts($topic,$user)
 	{
 		$count = 0;
-                $total =0;
+        $total =0;
 		$query_res = 0;
 		if($topic != null)
 		{

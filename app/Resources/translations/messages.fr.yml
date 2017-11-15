@@ -84,6 +84,7 @@ form:
         title: Titre
         topic: Thématique
         video: Vidéo
+        submit: Envoyer
 
 help: help
 help.add: 'Ajouter une aide'
@@ -156,6 +157,9 @@ menu:
     presentations: Présentations
     resources: Ressources
     tools: Outils
+    forum: Forum
+    my_discussions: Mes discussions
+    my_comments: Mes commentaires
     topics: Thématiques
     translation: Traduction
     users_management: 'Gestion des utilisateurs'
@@ -210,6 +214,15 @@ ontology:
 player:
     new_tab: 'Afficher dans un nouvel onglet.'
 
+forum:
+    browse: 'Parcourir le forum'
+    comment: Commenter
+    comments: Réponses
+    add: Nouveau sujet de discussion
+    add_discussion: Ajouter une discussion
+    all: Tout
+    resolved: Résolu    
+    
 presentation:
     add: 'Création d''une nouvelle présentation'
     added: 'Présentation ajoutée'
@@ -307,7 +320,7 @@ tab:
 
 table:
     action: Action
-    author: table.author
+    author: Auteur
     created: Créé
     creation: 'Date de création'
     description: Description
@@ -317,6 +330,7 @@ table:
     routes: Routes
     size: Taille
     title: Titre
+    discussion: Discussion
     topic: Thématique
     type: Type
     update: 'Mise à jour'

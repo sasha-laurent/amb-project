@@ -28,7 +28,7 @@ class RegistrationFormType extends AbstractType
         $builder->add('save', 'submit', array('label' => 'actions.add'));
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(array(
             'is_admin'));

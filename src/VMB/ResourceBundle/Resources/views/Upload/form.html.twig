@@ -54,6 +54,13 @@
 					</div>
 			</div>
 		{% endif %}
+         {% if is_granted('ROLE_TEACHER') %}
+        <div class="form-group">{{form_label(form.quiz.multichoices, null, {'label_attr': {'id': 'quiz_label'}})}}
+        <div class="col-sm-12">{{form_widget(form.quiz.multichoices)}}</div></div>
+		<div class="form-group">{{form_label(form.quiz.singlechoices, null, {'label_attr': {'id': 'quiz_label'}})}}<div class="col-sm-12">{{form_widget(form.quiz.singlechoices)}}</div></div>
+		<div class="form-group">{{form_label(form.quiz.textareas, null, {'label_attr': {'id': 'quiz_label'}})}}<div class="col-sm-12">{{form_widget(form.quiz.textareas)}}</div></div>
+		<div class="form-group">{{form_label(form.quiz.numericalvalues, null, {'label_attr': {'id': 'quiz_label'}})}}<div class="col-sm-12">{{form_widget(form.quiz.numericalvalues)}}</div></div>
+        {% endif %}
 	</div>
 {% if resource.hasCustomArt %}
 	<input type="hidden" name="keepThumbs" id="keepThumbs" value="1"/>
@@ -206,6 +213,517 @@ var thumbnail_form = $("#vmb_resourcebundle_resource_customAudioArt").parentsUnt
 		{
 			$(thumbnail_form).hide();
 		}
+        {% if is_granted('ROLE_TEACHER') %}
+        $("label#quiz_label").removeClass("col-sm-2");
+        $("label#quiz_label").addClass("col-sm-12");
+        $("label#quiz_label").css("margin-left","9px");
+        $("label#quiz_label").css("text-align", "left");
+        $containerMC = $("div#vmb_resourcebundle_resource_quiz_multichoices");
+        $containerMC.children().children(":first-child").remove();
+        $containerMC.children().children(":first-child").removeClass("col-sm-10");
+        $containerMC.children().children(":first-child").addClass("col-sm-12");
+		//alert($containerMC.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").prev().text());	
+		$containerMC.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":first-child").children(":first-child").remove();
+        $containerMC.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":first-child").children(":first-child").removeClass("col-sm-10");
+        $containerMC.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":first-child").children(":first-child").addClass("col-sm-12");
+        $containerMC.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":last-child").children(":first-child").remove();
+        console.log($containerMC.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":last-child").children(":first-child"));
+        $containerMC.children().children(":first-child").removeClass("col-sm-10");
+        $containerMC.children().children(":first-child").addClass("col-sm-12");
+		
+		$containerSC = $("div#vmb_resourcebundle_resource_quiz_singlechoices");
+        $containerSC.children().children(":first-child").remove();
+        $containerSC.children().children(":first-child").removeClass("col-sm-10");
+        $containerSC.children().children(":first-child").addClass("col-sm-12");
+        $containerSC.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":first-child").children(":first-child").remove();
+        $containerSC.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":first-child").children(":first-child").removeClass("col-sm-10");
+        $containerSC.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":first-child").children(":first-child").addClass("col-sm-12");
+        $containerSC.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":last-child").children(":first-child").remove()
+        console.log($containerSC.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":last-child").children(":first-child"));
+        $containerSC.children().children(":first-child").removeClass("col-sm-10");
+        $containerSC.children().children(":first-child").addClass("col-sm-12");
+		
+		$containerTX = $("div#vmb_resourcebundle_resource_quiz_textareas");
+        $containerTX.children().children(":first-child").remove();
+        $containerTX.children().children(":first-child").removeClass("col-sm-10");
+        $containerTX.children().children(":first-child").addClass("col-sm-12");
+        $containerTX.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":first-child").children(":first-child").removeClass("col-sm-10");
+        $containerTX.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":first-child").children(":first-child").addClass("col-sm-12");
+        $containerTX.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":last-child").children(":first-child").remove()
+        console.log($containerTX.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":last-child").children(":first-child"));
+        $containerTX.children().children(":first-child").removeClass("col-sm-10");
+        $containerTX.children().children(":first-child").addClass("col-sm-12");
+		
+		$containerNM = $("div#vmb_resourcebundle_resource_quiz_numericalvalues");
+        $containerNM.children().children(":first-child").remove();
+        $containerNM.children().children(":first-child").removeClass("col-sm-10");
+        $containerNM.children().children(":first-child").addClass("col-sm-12");
+        $containerNM.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":first-child").children(":first-child").removeClass("col-sm-10");
+        $containerNM.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":first-child").children(":first-child").addClass("col-sm-12");
+        $containerNM.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":last-child").children(":first-child").remove()
+        console.log($containerNM.children().children(":last-child").children(":last-child").children(":last-child").children(":last-child").children(":first-child").children().children(":last-child").children(":last-child").children(":last-child").children(":first-child"));
+        $containerNM.children().children(":first-child").removeClass("col-sm-10");
+        $containerNM.children().children(":first-child").addClass("col-sm-12");
+        
+		var $addPropsMCLink = [];
+		var $addPropsSCLink = [];
+        var bool = true;
+        var $deletePropsMCLink = [];
+		var $deletePropsSCLink = [];
+        var nb_MC = $containerMC.children('div').length;
+		var nb_SC = $containerSC.children('div').length;
+		var nb_TX = $containerTX.children('div').length;
+		var nb_NM = $containerNM.children('div').length;
+
+        addMC($containerMC);
+        addSC($containerSC);
+        addTX($containerTX);
+        addNM($containerNM);
+				if (nb_MC>0){
+			nb_MCA=nb_MC-1;
+			for (var i=0;i<=nb_MCA;i++){
+				$quest=$("#vmb_resourcebundle_resource_quiz_multichoices_"+i);
+                $($quest.children().children(":first-child")[0]).html("Question "+(i+1));
+				num_prop=$quest.children('div').eq(1).children('div').children('div').children().length-1;
+				for (var j=0;j<=num_prop;j++){
+					//alert($quest.children('div').eq(1).children('div').children('div').children('div').eq(j).children('label').html());
+					st=$quest.children('div').eq(1).children('div').children('div').children('div').eq(j).children('label').text();
+					index_new=parseInt(st)+1;
+					$quest.children('div').eq(1).children('div').children('div').children('div').eq(j).children('label').text(index_new);
+				}
+				$prototypeMCA=$quest;
+				addPropsMCM($prototypeMCA);				
+			}
+
+		}
+		
+		if (nb_SC>0){
+			nb_SCA=nb_SC-1;
+			for (var i=0;i<=nb_SCA;i++){
+				$quest=$("#vmb_resourcebundle_resource_quiz_singlechoices_"+i);
+                $($quest.children().children(":first-child")[0]).html("Question "+(i+1));
+				num_prop=$quest.children('div').eq(1).children('div').children('div').children().length-1;
+				for (var j=0;j<=num_prop;j++){
+					//alert($quest.children('div').eq(1).children('div').children('div').children('div').eq(j).children('label').html());
+					st=$quest.children('div').eq(1).children('div').children('div').children('div').eq(j).children('label').text();
+					index_new=parseInt(st)+1;
+					$quest.children('div').eq(1).children('div').children('div').children('div').eq(j).children('label').text(index_new);
+				}				
+				$prototypeSCA=$quest;
+				addPropsSCM($prototypeSCA);				
+			}
+
+		}
+
+		if (nb_TX>0){
+			nb_TXA=nb_TX-1;
+			for (var i=0;i<=nb_TXA;i++){
+				$quest=$("#vmb_resourcebundle_resource_quiz_textareas_"+i);
+                $($quest.children().children(":first-child")[0]).html("Question "+(i+1));		
+			}
+
+		}
+		
+		if (nb_NM>0){
+			nb_NMA=nb_NM-1;
+			for (var i=0;i<=nb_NMA;i++){
+				$quest=$("#vmb_resourcebundle_resource_quiz_numericalvalues_"+i);
+                $($quest.children().children(":first-child")[0]).html("Question "+(i+1));		
+			}
+
+		}
+		
+		function addPropsMCM($prototypeMC)
+        {	
+			$deletePropsMCLink.push([]);
+            $addPropsMCLink.push($('<button type="button" href="#" id="add_proposition" class="btn btn-default glyphicon glyphicon-plus-sign">'));
+			index= $addPropsMCLink.length-1;			
+			var $containerPropsMC = $('#vmb_resourcebundle_resource_quiz_multichoices_'+index+'_propositions');	            
+			$gride=$('<div class="col-sm-9"></div>');
+			$prototypeMC.append($gride);
+			$containerPropsMC.parent().append($gride);
+			$containerPropsMC.parent().append($addPropsMCLink[$addPropsMCLink.length-1]);
+			$deletepropMCM_button=$('<button type="button" id="deletepropMCM_button" class="btn btn-danger glyphicon glyphicon-remove-sign">');			
+			$deletepropMCM_button.click(function(e) {
+				num=$(this).parent().children('div').children('div').length-1;
+				$(this).parent().children('div').children('div').eq(num).remove();
+			});
+			$containerPropsMC.parent().append($deletepropMCM_button);
+            $addPropsMCLink[$addPropsMCLink.length-1].on("click", {index: $addPropsMCLink.length-1},(function(e) {
+				addPropMCM($prototypeMC,e.data.index);
+                e.preventDefault();
+				$prototypeMC.find('#delete_propositionA').remove();
+                return false;
+            }));
+            
+        }
+        
+        function addPropMCM($prototypeMC, index)
+        {  
+            var $containerPropsMC = $('#vmb_resourcebundle_resource_quiz_multichoices_'+index+'_propositions');
+            if($containerPropsMC.children('div').length > 0)
+            {
+                $($($containerPropsMC.children(":last-child")).find("#delete_proposition_"+($containerPropsMC.children('div').length))).detach();
+            }
+			var $prototypePropMC = $($containerPropsMC.attr('data-prototype').replace(/__name__label__/,($containerPropsMC.children('div').length+1)).replace(/__name__/g,$containerPropsMC.children('div').length));
+            //alert($prototypePropMC.children('div').children('div').children('div').children('label').html());
+			$prototypePropMC.children('div').children('div').children('div').children('label').next().attr("class","col-sm-12");
+			$prototypePropMC.children('div').children('div').children('div').children('label').remove();
+			$prototypePropMC.children('div').children('div').children('div').next().children('div').eq(0).remove();
+			$containerPropsMC.append($prototypePropMC);
+            return false;
+        }
+		
+
+		
+		function addPropsSCM($prototypeSC)
+        {	
+			$deletePropsSCLink.push([]);
+            $addPropsSCLink.push($('<button type="button" href="#" id="add_proposition" class="btn btn-default glyphicon glyphicon-plus-sign">'));
+			index= $addPropsSCLink.length-1;
+			var $containerPropsSC = $('#vmb_resourcebundle_resource_quiz_singlechoices_'+index+'_propositions');           
+			
+			$gride=$('<div class="col-sm-9"></div>');
+			$prototypeSC.append($gride);
+			$containerPropsSC.parent().append($gride);
+			$containerPropsSC.parent().append($addPropsSCLink[$addPropsSCLink.length-1]);	
+			$deletepropSCM_button=$('<button type="button" id="deletepropSCM_button" class="btn btn-danger glyphicon glyphicon-remove-sign">');			
+			$deletepropSCM_button.click(function(e) {
+				num=$(this).parent().children('div').children('div').length-1;
+				$(this).parent().children('div').children('div').eq(num).remove();
+			
+			});
+			$containerPropsSC.parent().append($deletepropSCM_button);
+            $addPropsSCLink[$addPropsSCLink.length-1].on("click", {index: $addPropsSCLink.length-1},(function(e) {
+				addPropSCM($prototypeSC,e.data.index);
+                e.preventDefault();
+				$prototypeSC.find('#delete_propositionA').remove();
+                return false;
+            }));
+            
+        }
+        
+        function addPropSCM($prototypeSC, index)
+        {  
+            var $containerPropsSC = $('#vmb_resourcebundle_resource_quiz_singlechoices_'+index+'_propositions');
+            if($containerPropsSC.children('div').length > 0)
+            {
+                $($($containerPropsSC.children(":last-child")).find("#delete_proposition_"+($containerPropsSC.children('div').length))).detach();
+            }
+			var $prototypePropSC = $($containerPropsSC.attr('data-prototype').replace(/__name__label__/,($containerPropsSC.children('div').length+1)).replace(/__name__/g,$containerPropsSC.children('div').length));
+			$prototypePropSC.children('div').children('div').children('div').children('label').next().attr("class","col-sm-12");
+			$prototypePropSC.children('div').children('div').children('div').children('label').remove();
+			$prototypePropSC.children('div').children('div').children('div').next().children('div').eq(0).remove();            
+			$containerPropsSC.append($prototypePropSC);
+            return false;
+        }
+		
+        function addMC($containerMC)
+        {
+            $addMCLink = $('<button id="add_MC" type="button" class="btn btn-default glyphicon glyphicon-plus">');
+            $deleteMCLink = $('<button id="delete_MC" type="button" class="btn btn-danger glyphicon glyphicon-remove">');
+            $containerMC.append($addMCLink);
+            $containerMC.append($deleteMCLink);		
+            $containerMC.addClass("well well-sm");
+            $containerMC.css({"background-color":"#A4A4A4"});
+            $addMCLink.click(function(e) {
+				var $prototypeMC2 = $($containerMC.attr('data-prototype').replace(/__name__label__/,(nb_MC+1)).replace(/multichoices___name__/g,'multichoices_'+nb_MC).replace(/\[multichoices\]\[__name__\]/g,'[multichoices]['+nb_MC+']'));
+				var $prototypeMC = $($prototypeMC2.find("#vmb_resourcebundle_resource_quiz_multichoices_"+nb_MC));
+				$containerMC.find('#add_MC').remove();
+				$containerMC.find('#delete_MC').remove();
+				addPropsMC($prototypeMC);
+				nb=nb_MC+1;
+				$prototypeMC.parent().parent().children("label").remove();
+				$prototypeMC.children("div").children("label").eq(0).html("Question "+nb);
+				$containerMC.append($prototypeMC2);
+                $prototypeMC2.children(":first-child").removeClass("col-sm-10");
+                $prototypeMC2.children(":first-child").addClass("col-sm-12");
+				addMC($containerMC);
+				nb_MC++;
+                e.preventDefault();
+                return false;
+            });   
+            $deleteMCLink.click(function(e) {
+				if (nb_MC>0){flag_MC=confirm("Vous voulez supprimer cette question?");}
+				else {flag_MC=false}
+
+				if (flag_MC)
+                {
+					$addMCLink = $('<button id="add_MC" type="button" class="glyphicon glyphicon-plus">');
+					$deleteMCLink = $('<button id="delete_MC" type="button" class="btn btn-danger glyphicon glyphicon-remove">');
+					nb_MCA=nb_MC-1;
+					$("#vmb_resourcebundle_resource_quiz_multichoices_"+nb_MCA).parent().parent().remove();
+					if(nb_MC>0){
+						nb_MC--;
+						$addPropsMCLink.pop();
+					}
+				}
+                e.preventDefault();
+                return false;
+            });   
+        }
+        
+        function addPropsMC($prototypeMC)
+        {
+            $deletePropsMCLink.push([]);
+            $addPropsMCLink.push($('<button type="button" href="#" id="add_proposition" class="btn btn-default glyphicon glyphicon-plus-sign">'));
+			$gride=$('<div class="col-sm-9"></div>');
+			$prototypeMC.append($gride);
+            $prototypeMC.append($addPropsMCLink[$addPropsMCLink.length-1]);
+            $addPropsMCLink[$addPropsMCLink.length-1].on("click", {index: $addPropsMCLink.length-1},(function(e) {
+				addPropMC($prototypeMC,e.data.index);
+                e.preventDefault();
+                return false;
+            }));
+            
+        }
+        
+        function addPropMC($prototypeMC, index)
+        {   
+            var $containerPropsMC = $('#vmb_resourcebundle_resource_quiz_multichoices_'+index+'_propositions');
+            if($containerPropsMC.children().length > 0)
+            {
+                $($($containerPropsMC.children(":last-child")).find("#delete_proposition_"+($containerPropsMC.children().length))).detach();
+            }
+            var $prototypePropMC = $($containerPropsMC.attr('data-prototype').replace(/__name__label__/,($containerPropsMC.children().length+1)).replace(/__name__/g,$containerPropsMC.children().length));
+            
+            $prototypePropMC.children(":last-child").removeClass("col-sm-10");
+            $prototypePropMC.children(":last-child").addClass("col-sm-12");
+            $containerPropsMC.append($prototypePropMC);
+			$prototypePropMC.children("label").remove();
+			nb_p=$containerPropsMC.children().length;
+			$prototypePropMC.children("div").children("div").children("div").children("label").html(nb_p);
+			if($containerPropsMC.children().length > 0)
+            {
+				$prototypeMC.parent().find("#delete_proposition_"+($containerPropsMC.children().length-1)).detach();
+            }
+            deletePropMC($prototypeMC,$containerPropsMC, index);
+            return false;
+        }
+        
+        function deletePropMC($prototypeMC,$containerPropsMC, index)
+        {
+            $deletePropsMCLink[index].push($('<button type="button" href="#" id="delete_proposition_'+$containerPropsMC.children().length+'" class="btn btn-danger glyphicon glyphicon-remove-sign">'));
+            $prototypeMC.append($deletePropsMCLink[index][$containerPropsMC.children().length-1]);
+			//$($containerPropsMC.children(":last-child")).append($deletePropsMCLink[index][$containerPropsMC.children().length-1]);
+            $deletePropsMCLink[index][$containerPropsMC.children().length-1].click(function(e) {  
+                deleteLastPropMC($prototypeMC,$containerPropsMC, index);
+                e.preventDefault();
+                return false;
+            });
+            return false;
+        }
+        
+        function deleteLastPropMC($prototypeMC, $containerPropsMC, index)
+        {
+            var $containerPropsMC = $('#vmb_resourcebundle_resource_quiz_multichoices_'+index+'_propositions');
+            $deletePropsMCLink[index].splice($deletePropsMCLink[index].length-1,1);
+			$prototypeMC.find("#delete_proposition_"+$containerPropsMC.children().length).detach();
+            //$($containerPropsMC.find("#delete_proposition_"+$containerPropsMC.children().length)).detach();
+            $($containerPropsMC.children(":last-child")).remove();
+            if($containerPropsMC.children().length>0)
+				$prototypeMC.append($deletePropsMCLink[index][$containerPropsMC.children().length-1]);
+                //$($containerPropsMC.children(":last-child")).append($deletePropsMCLink[index][$containerPropsMC.children().length-1]);
+        }
+	
+
+		function addSC($containerSC)
+        {
+            $addSCLink = $('<button id="add_SC" type="button" class="btn btn-default glyphicon glyphicon-plus">');
+            $deleteSCLink = $('<button id="delete_SC" type="button" class="btn btn-danger glyphicon glyphicon-remove">');
+
+            $containerSC.append($addSCLink);
+            $containerSC.append($deleteSCLink);
+            $containerSC.addClass("well well-sm");
+            $containerSC.css({"background-color":"#F6CED8"});			
+            $addSCLink.click(function(e) {
+				var $prototypeSC2 = $($containerSC.attr('data-prototype').replace(/__name__label__/,(nb_SC+1)).replace(/singlechoices___name__/g,'singlechoices_'+nb_SC).replace(/\[singlechoices\]\[__name__\]/g,'[singlechoices]['+nb_SC+']'));
+				var $prototypeSC = $($prototypeSC2.find("#vmb_resourcebundle_resource_quiz_singlechoices_"+nb_SC));
+				$containerSC.find('#add_SC').remove();
+				$containerSC.find('#delete_SC').remove();
+				addPropsSC($prototypeSC);
+				$containerSC.append($prototypeSC2);
+                console.log($prototypeSC2.children(":last-child"));
+                $prototypeSC2.children(":last-child").removeClass("col-sm-10");
+                $prototypeSC2.children(":last-child").addClass("col-sm-12");
+			    nb_SC++;
+				nb=nb_SC;
+				$prototypeSC.parent().parent().children("label").remove();
+				$prototypeSC.children("div").children("label").eq(0).html("Question "+nb);
+				addSC($containerSC);
+                e.preventDefault();
+                return false;
+            });   
+            $deleteSCLink.click(function(e) {
+				if (nb_SC>0){flag_SC=confirm("Vous voulez supprimer cette question?");}
+				else {flag_SC=false}
+				if (flag_SC)
+                {
+					$addSCLink = $('<button id="add_SC" type="button" class="btn btn-default glyphicon glyphicon-plus">');
+					$deleteSCLink = $('<button id="delete_SC" type="button" class="btn btn-danger glyphicon glyphicon-remove">');
+					nb_SCA=nb_SC-1;
+					$("#vmb_resourcebundle_resource_quiz_singlechoices_"+nb_SCA).parent().parent().remove();
+					if(nb_SC>0){
+						nb_SC--;
+						$addPropsSCLink.pop();
+					}
+				}
+                e.preventDefault();
+                return false;
+            });   
+        }
+        
+        function addPropsSC($prototypeSC)
+        {
+            $deletePropsSCLink.push([]);
+            $addPropsSCLink.push($('<button type="button" href="#" id="add_proposition" class="btn btn-default glyphicon glyphicon-plus-sign">'));
+			$gride=$('<div class="col-sm-9"></div>');
+			$prototypeSC.append($gride);
+            $prototypeSC.append($addPropsSCLink[$addPropsSCLink.length-1]);
+            $addPropsSCLink[$addPropsSCLink.length-1].on("click", {index: $addPropsSCLink.length-1},(function(e) {
+                addPropSC($prototypeSC,e.data.index);
+                e.preventDefault();
+                return false;
+            }));
+            
+        }
+        
+        function addPropSC($prototypeSC, index)
+        {   
+            var $containerPropsSC = $('#vmb_resourcebundle_resource_quiz_singlechoices_'+index+'_propositions');
+            if($containerPropsSC.children().length > 0)
+            {
+                $($($containerPropsSC.children(":last-child")).find("#delete_proposition_"+($containerPropsSC.children().length))).detach();
+            }
+            var $prototypePropSC = $($containerPropsSC.attr('data-prototype').replace(/__name__label__/,($containerPropsSC.children().length+1)).replace(/__name__/g,$containerPropsSC.children().length));
+            $prototypePropSC.children(":last-child").removeClass("col-sm-10");
+            $prototypePropSC.children(":last-child").addClass("col-sm-12");
+            nb_p=$containerPropsSC.children().length+1;
+			$prototypePropSC.children("label").remove();
+			$prototypePropSC.children("div").children("div").children("div").children("label").html(nb_p);
+			if($containerPropsSC.children().length > 0)
+            {	//alert($prototypeSC.parent().html())
+				//alert($prototypeSC.parent().find("#delete_proposition_"+($containerPropsSC.children().length)).html());
+				//alert($prototypeSC.parent().find("#delete_proposition_"+($containerPropsSC.children().length)).html()+"lala"+$containerPropsSC.children().length-1);
+				$prototypeSC.parent().find("#delete_proposition_"+($containerPropsSC.children().length)).detach();
+            }
+			$containerPropsSC.append($prototypePropSC);
+            deletePropSC($prototypeSC,$containerPropsSC, index);
+            return false;
+        }
+        
+        function deletePropSC($prototypeSC,$containerPropsSC, index)
+        {
+            $deletePropsSCLink[index].push($('<button type="button" href="#" id="delete_proposition_'+$containerPropsSC.children().length+'" class="btn btn-danger glyphicon glyphicon-remove-sign">'));
+            $prototypeSC.append($deletePropsSCLink[index][$containerPropsSC.children().length-1]);
+			//$($containerPropsSC.children(":last-child")).append($deletePropsSCLink[index][$containerPropsSC.children().length-1]);
+            $deletePropsSCLink[index][$containerPropsSC.children().length-1].click(function(e) {  
+                deleteLastPropSC($prototypeSC,$containerPropsSC, index);
+                e.preventDefault();
+                return false;
+            });
+            return false;
+        }
+        
+        function deleteLastPropSC($prototypeSC, $containerPropsSC, index)
+        {
+            var $containerPropsSC = $('#vmb_resourcebundle_resource_quiz_singlechoices_'+index+'_propositions');
+            $deletePropsSCLink[index].splice($deletePropsSCLink[index].length-1,1);
+			$prototypeSC.find("#delete_proposition_"+$containerPropsSC.children().length).detach();
+            //$($containerPropsSC.find("#delete_proposition_"+$containerPropsSC.children().length)).detach();
+            $($containerPropsSC.children(":last-child")).remove();
+            if($containerPropsSC.children().length>0)
+                $prototypeSC.append($deletePropsSCLink[index][$containerPropsSC.children().length-1]);
+				//$($containerPropsSC.children(":last-child")).append($deletePropsSCLink[index][$containerPropsSC.children().length-1]);
+        }
+        
+        function addTX($containerTX)
+        {
+            $addTXLink = $('<button id="add_TX" type="button" class="btn btn-default glyphicon glyphicon-plus">');
+            $deleteTXLink = $('<button id="delete_TX" type="button" class="btn btn-danger glyphicon glyphicon-remove">');
+            $containerTX.addClass("well well-sm");
+            $containerTX.css({"background-color":"#E2A9F3"});			
+            $containerTX.append($addTXLink);
+            $containerTX.append($deleteTXLink);
+            
+			
+            $addTXLink.click(function(e) {
+				var $prototypeTX2 = $($containerTX.attr('data-prototype').replace(/__name__label__/,(nb_TX+1)).replace(/textareas___name__/g,'textareas_'+nb_TX).replace(/\[textareas\]\[__name__\]/g,'[textareas]['+nb_TX+']'));
+				var $prototypeTX = $($prototypeTX2.find("#vmb_resourcebundle_resource_quiz_textareas_"+nb_TX));
+				$containerTX.find('#add_TX').remove();
+				$containerTX.find('#delete_TX').remove();
+				$containerTX.append($prototypeTX2);
+                $prototypeTX2.children(":last-child").removeClass("col-sm-10");
+                $prototypeTX2.children(":last-child").addClass("col-sm-12");
+				nb_TX++;
+				nb=nb_TX;
+				$prototypeTX.parent().parent().children("label").remove();
+				$prototypeTX.children("div").children("label").eq(0).html("Question "+nb);
+				addTX($containerTX);
+				
+                e.preventDefault();
+                return false;
+            });   
+            $deleteTXLink.click(function(e) {
+				if (nb_TX>0){flag_TX=confirm("Vous voulez supprimer cette question?");}
+				else {flag_TX=false}
+				if (flag_TX)
+                {
+					$addTXLink = $('<button id="add_TX" type="button" class="btn btn-default glyphicon glyphicon-plus">');
+					$deleteTXLink = $('<button id="delete_TX" type="button" class="btn btn-danger glyphicon glyphicon-remove">');
+					nb_TXA=nb_TX-1;
+					$("#vmb_resourcebundle_resource_quiz_textareas_"+nb_TXA).parent().parent().remove();
+					if(nb_TX>0){
+						nb_TX--;
+					}
+				}
+                e.preventDefault();
+                return false;
+            });   
+        }
+        
+        function addNM($containerNM)
+        {
+            $addNMLink = $('<button id="add_NM" type="button" class="btn btn-default glyphicon glyphicon-plus">');
+            $deleteNMLink = $('<button id="delete_NM" type="button" class="btn btn-danger glyphicon glyphicon-remove">');
+            $containerNM.addClass("well well-sm");
+            $containerNM.css({"background-color":"#A9E2F3"});			
+            $containerNM.append($addNMLink);
+            $containerNM.append($deleteNMLink);
+            $addNMLink.click(function(e) {
+				var $prototypeNM2 = $($containerNM.attr('data-prototype').replace(/__name__label__/,(nb_NM+1)).replace(/numericalvalues___name__/g,'numericalvalues_'+nb_NM).replace(/\[numericalvalues\]\[__name__\]/g,'[numericalvalues]['+nb_NM+']'));
+				var $prototypeNM = $($prototypeNM2.find("#vmb_resourcebundle_resource_quiz_numericalvalues_"+nb_NM));
+				$containerNM.find('#add_NM').remove();
+				$containerNM.find('#delete_NM').remove();
+				$containerNM.append($prototypeNM2);
+                $prototypeNM2.children(":last-child").removeClass("col-sm-10");
+                $prototypeNM2.children(":last-child").addClass("col-sm-12");
+				nb_NM++;
+				nb=nb_NM;
+				$prototypeNM.parent().parent().children("label").remove();
+				$prototypeNM.children("div").children("label").eq(0).html("Question "+nb);
+                addNM($containerNM);
+                e.preventDefault();
+                return false;
+            });   
+            $deleteNMLink.click(function(e) {
+				if (nb_NM>0){flag_NM=confirm("Vous voulez supprimer cette question?");}
+				else {flag_NM=false}
+				if (flag_NM)
+                {
+					$addNMLink = $('<button id="add_NM" type="button" class="btn btn-default glyphicon glyphicon-plus">');
+					$deleteNMLink = $('<button id="delete_NM" type="button" class="btn btn-danger glyphicon glyphicon-remove">');
+					nb_NMA=nb_NM-1;
+					$("#vmb_resourcebundle_resource_quiz_numericalvalues_"+nb_NMA).parent().parent().remove();
+					if(nb_NM>0){
+						nb_NM--;
+					}
+				}
+                e.preventDefault();
+                return false;
+            });   
+        }	
+        {% endif %}
 	});
 </script>
 {% endblock %}

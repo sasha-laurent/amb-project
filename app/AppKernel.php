@@ -22,11 +22,14 @@ class AppKernel extends Kernel
             new VMB\PresentationBundle\VMBPresentationBundle(),
             new FOS\UserBundle\FOSUserBundle(),
             new VMB\ResourceBundle\VMBResourceBundle(),
+            new VMB\QuizBundle\VMBQuizBundle(),
             new VMB\ContextualHelpBundle\VMBContextualHelpBundle(),
             new JMS\TranslationBundle\JMSTranslationBundle(),
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
 			new JMS\AopBundle\JMSAopBundle(),
             new VMB\SearchBundle\VMBSearchBundle(),
+            new VMB\ForumBundle\VMBForumBundle(),
+            //new Stfalcon\Bundle\TinymceBundle\StfalconTinymceBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

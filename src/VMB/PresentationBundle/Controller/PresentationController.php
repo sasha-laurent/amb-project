@@ -95,20 +95,19 @@ class PresentationController extends Controller
 			$topic = $em->getRepository('VMBPresentationBundle:Topic')->find($topic);
                         $mainTitle = $topic->getTitle().' - '.$this->get('translator')->trans('menu.presentations');
 		}
-		
-		$counts = array();
-		$parentcounts = array();
 		$usr = $this->getUser();
-		$themes=$em->getRepository('VMBPresentationBundle:Topic')->findAll();
-		$totalVisible=0;
-		foreach($themes as $theme){
-			$res = $em->getRepository('VMBPresentationBundle:Topic')->getVisiblePresentationsCounts($theme,$usr);
-			$counts[$theme->getTitle()] = $res[0];
-			$totalVisible+=$res[1];
-			$parentcounts[$theme->getTitle()] = $em->getRepository('VMBPresentationBundle:Topic')->getParentPresentationsCounts($theme,$usr);
-			
-		}
-		$totalPresentations = $em->getRepository('VMBPresentationBundle:Presentation')->getNumberPresentations();
+                $themes=$em->getRepository('VMBPresentationBundle:Topic')->findAll();
+                $totalVisible=0;
+                $counts = [];
+                $parentcounts = [];
+                foreach($themes as $theme){
+                    $res = $em->getRepository('VMBPresentationBundle:Topic')->getVisiblePresentationsCounts($theme,$usr);
+                    $counts[$theme->getTitle()] = $res[0];
+                    $totalVisible+=$res[1];
+                    $parentcounts[$theme->getTitle()] = $em->getRepository('VMBPresentationBundle:Topic')->getParentPresentationsCounts($theme,$usr);
+                    
+                }
+                $totalPresentations = $em->getRepository('VMBPresentationBundle:Presentation')->getNumberPresentations();
 		$request = $this->get('request');
 		$official = ($request->query->get('official') == 1) ? true : 'all';
 		$default = ($request->query->get('default') == 1) ? true : 'all';
@@ -463,10 +462,9 @@ class PresentationController extends Controller
 			}
 		}
 		$user = $this->getUser();
-	
 		$args = array(
             'mainTitle' => $entity->getTitle(),
-            'backButtonUrl' => $this->container->get('vmb_presentation.previous_url')->getPreviousUrl($request),
+            'backButtonUrl' => $this->generateUrl('vmb_presentation_browse'),
             'saveToCaddy' => 'presentation',
             'inCaddy' => $user->presentationIsInCaddy($entity),
             'hasPlaybackFunction' => true,

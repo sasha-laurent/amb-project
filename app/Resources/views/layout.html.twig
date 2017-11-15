@@ -20,12 +20,14 @@
         <title>{% block title %}AMB{% endblock %}</title>
         {% block stylesheets %}
 			<!-- Latest compiled and minified CSS -->
-			<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,700' rel='stylesheet' type='text/css'>
-			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-			<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+			
+			<link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+			<link rel="stylesheet" href="{{ asset('css/jquery-ui.css') }}">
+			<link rel="stylesheet" href="{{ asset('css/openSans.css') }}">
+			<link rel="stylesheet" href="{{ asset('css/plyr.css') }}">
 			<link rel='stylesheet' id='stylesheet-css'  href='{{ asset('css/style.css') }}' type='text/css' media='all' />
 			<link rel='stylesheet' id='stylesheet-css'  href='{{ asset('css/flag-icon-css-master/css/flag-icon.min.css') }}' type='text/css' media='all' />
-			<link rel="stylesheet" href="https://cdn.plyr.io/1.1.5/plyr.css">
+			
         {% endblock %}
         
         
@@ -98,6 +100,12 @@
                         <ul class="dropdown-menu">
                             <li><a href="{{ path('vmb_presentation_browse') }}">{{ "menu.presentations"|trans}}</a></li>
                             <li><a href="{{ path('vmb_resource_browse') }}">{{ "menu.resources"|trans}}</a></li>
+                            <li><a href="{{ path('vmb_forum_homepage') }}">{{ "menu.forum"|trans}}</a>
+                            	<ul>
+                            		<li><a href="{{ path('vmb_forum_my_discussions') }}">{{ "menu.my_discussions"|trans}}</a></li>
+                            		<li><a href="{{ path('vmb_forum_my_comments') }}">{{ "menu.my_comments"|trans}}</a></li>
+                            	</ul>	
+                            </li>
                         </ul>
 					</li>
 					<li class="dropdown header-nav-item">
@@ -175,10 +183,10 @@
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 {% block script %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-<script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+<script src="{{asset('bundles/vmbforum/ckeditor/ckeditor.js')}}"></script>
+<script src="{{asset('js/jquery.min.js')}}"></script>
+<script src="{{asset('js/jquery-ui.js')}}"></script>
+<script src="{{asset('js/bootstrap.min.js')}}"></script>
 {% if hasPlaybackFunction is defined %}			
 <script>
 	// Plyr utilities
@@ -266,7 +274,13 @@
 
 </script>
 
-
+<script>
+    
+    /* setting current and previous URLs as cookies */
+    var url = document.URL;
+    document.cookie = "currentURL="+url;
+    
+</script>
 
 
 
