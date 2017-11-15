@@ -40,3 +40,6 @@
 
 # Backups
 /backup/
+
+/composer.lock
+/nbproject
