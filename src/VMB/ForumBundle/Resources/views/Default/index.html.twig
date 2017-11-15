@@ -1,0 +1,91 @@
+{% extends '::layout.html.twig' %}
+
+	
+{% block h1_title %}
+	<div class="row">
+		<div class="col-md-9">
+			{{ mainTitle }}
+		</div>
+        
+		<div class="col-md-3 text-right">
+			<a class="btn btn-default" href="{{ path('vmb_forum_add') }}" title="{{'forum.add'|trans }}">
+				<span class="left glyphicon glyphicon-plus" aria-hidden="true"></span>
+			</a>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% if page == 1 and (nbPages == 0 or nbPages == 1) %}
+	{% set skipPagination = true %}
+{% endif %}
+
+	{% block body %}
+	<div class="col-md-3">  
+	<div class="browse-topics">
+	<h3>{{ 'browse.parameters_title'|trans }}</h3>
+	<hr/>
+	<h4>{{ 'browse.filters'|trans }}</h4>
+	<div class="row filter">
+		<div class="col-md-10"><a href="{{ path('vmb_forum_my_discussions') }}">{{ 'menu.my_discussions'|trans }}</a> </div>
+	</div>
+	
+
+		<div class="row filter">
+			<div class="col-md-10"><a href="{{ path('vmb_forum_my_comments') }}">{{ 'menu.my_comments'|trans }}</a></div>
+
+		</div>
+
+		
+	<h4>{{ 'menu.topics'|trans }}</h4>
+    <div class="row filter">
+    <div class="col-md-10"><span class="glyphicon glyphicon-minus"></span><a href="{{ path('vmb_forum_homepage',{'topic':'all'}) }}">{{'forum.all'|trans}}</a> </div>
+    </div>
+    {% for entity in topics %}
+    <div class="row filter">
+		<div class="col-md-10"><span class="glyphicon glyphicon-minus"></span><a href="{{ path('vmb_forum_homepage',{'topic':entity.title}) }}">{{entity.title }} ({{counts[loop.index0].nbDiscussions}})</a> </div>
+	</div>
+    {% endfor %}
+
+	</div></div>
+
+  
+	    <div class="panel panel-default">
+			<div class="panel-heading">
+                <h4><b>
+				<div class="row">			
+					<div class="col-md-6">{{ 'table.discussion'|trans }}</div>	
+					<div class="col-md-1">{{ 'table.author'|trans }}</div>	
+					<div class="col-md-2">{{ 'forum.comments'|trans }}</div>	
+				
+                    
+                
+                {% for entity in entities %}
+                
+                
+                <div class="col-md-6"><a href="{{ path('discussion_show', { 'id' : entity.discussion.getId })}}" >
+                {% if entity.discussion.state == 1 %}
+                [{{'forum.resolved'|trans }}]
+                [{{entity.discussion.topic}}]{{ entity.discussion.getTitle|truncate(25) }}
+                {% else %}
+                [{{entity.discussion.topic}}]{{ entity.discussion.getTitle|truncate(30) }}
+                
+                {% endif %}
+                </a></div>
+				<div class="col-md-1">{{ entity.discussion.getUser.toString}}</div>
+                <div class="col-md-2">{{ entity.nbComments }}</div>
+				
+
+                
+                {% endfor %}
+			{% if skipPagination is not defined %}
+			{% include '::pagination.html.twig' %}
+			{% endif %}
+	        	</div>
+        </b></h4>
+			 </div>
+
+		</div>
+            
+   
+{% endblock %}

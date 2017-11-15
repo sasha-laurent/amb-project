@@ -1,0 +1,33 @@
+vmb_forum_homepage:
+    path:     /forum/topic/{topic}/{page}
+    defaults: { _controller: "VMBForumBundle:Default:index", topic:'all' ,page:1}
+    requirements:
+        page: \d*
+
+vmb_resource_discussion:
+    resource: "@VMBForumBundle/Resources/config/routing/discussion.yml"
+    prefix:   /forum
+    
+vmb_forum_my_discussions:
+    path:     /forum/mydiscussions/{page}
+    defaults: { _controller: "VMBForumBundle:Discussion:index", page: 1 }
+    requirements:
+        page: \d*
+    
+vmb_forum_discussion:
+    path:     /forum/discussion/{page}
+    defaults: { _controller: VMBForumBundle:Default:index }
+
+vmb_forum_my_comments:
+    path:     /forum/mycomments/{page}
+    defaults: { _controller: "VMBForumBundle:Comment:index", page: 1 }
+    requirements:
+        page: \d*
+        
+vmb_forum_add:
+    path:     /forum/add
+    defaults: { _controller: VMBForumBundle:Discussion:add }
+    
+vmb_forum_validate:
+    path:     /forum/validate
+    defaults: { _controller: "VMBForumBundle:Discussion:validate"}

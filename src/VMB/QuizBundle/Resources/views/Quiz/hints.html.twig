@@ -1,0 +1,5 @@
+<div id="hints">
+{% for hint in hints %}
+    <div class="alert alert-info" id="hint_{{loop.index0}}">{{hint.hint}}</div>
+{% endfor %}
+</div>

@@ -1,0 +1,39 @@
+{% extends '::Backend/subPage.html.twig' %}
+
+{% block body %}
+	
+		<div class="container forum-mainbody">
+		<div class="col-md-9 ">				
+			<form class="top-search-form" accept-charset="UTF-8" action="{{path('vmb_search_action')}}" method="get">
+						<input class="form-control search-input" name="query" placeholder="{{ "forum.add"|trans }}" type="text" {% if app.request.query.get('query') is defined %} value="{{app.request.query.get('query')}}"{% endif %}>
+			</form>
+		</div>
+		</div>
+	
+	    <div class="panel panel-default">
+			<div class="panel-heading">
+				<div class="row">			
+					<div class="col-md-1">{{ 'table.discussion'|trans }}</div>
+					<div class="col-md-5">{{ 'table.description'|trans }}</div>	
+					<div class="col-md-2">{{ 'table.author'|trans }}</div>				
+					<div class="col-md-2">{{ 'table.creation'|trans }}</div>				
+								
+	        	</div>
+			</div>
+        </div>
+            <ul class="list-group" id="sortable">
+              {% for discussion in listDiscussions %}
+              <li class="list-group-item row">
+                <div>
+                
+                <div class="col-md-3"><a href="{{ path('discussion_show', { 'id' : discussion.id })}}" >{{ discussion.title }}</a></div>
+				<div class="col-md-5">{{ discussion.description |truncate(50)|raw}}</div>
+				<div class="col-md-2">{{ discussion.getUser.toString }}</div>
+				<div class="col-md-2">{{ discussion.date|date('Y-m-d H:i:s') }}</div>
+                
+                </div>
+                </li>
+              {% endfor %}</ul>
+
+   
+{% endblock %}

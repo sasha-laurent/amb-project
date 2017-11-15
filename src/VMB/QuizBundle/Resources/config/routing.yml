@@ -1,0 +1,5 @@
+vmb_quiz_load:
+    path:     /load_quiz
+    defaults: { _controller: VMBQuizBundle:Quiz:loadQuestions }
+    
+    

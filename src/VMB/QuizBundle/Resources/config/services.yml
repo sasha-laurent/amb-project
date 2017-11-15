@@ -1,0 +1,4 @@
+services:
+#    vmb_quiz.example:
+#        class: VMB\QuizBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]

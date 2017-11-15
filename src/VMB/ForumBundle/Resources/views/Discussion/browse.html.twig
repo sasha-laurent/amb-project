@@ -1,0 +1,64 @@
+{% extends '::layout.html.twig' %}
+
+{% block h1_title %}
+	<div class="row">
+		<div class="col-md-9">
+			{{ mainTitle }}
+		</div>
+        
+		<div class="col-md-3 text-right">
+			<a class="btn btn-default" href="{{ path('vmb_forum_add') }}" title="{{'forum.add'|trans }}">
+				<span class="left glyphicon glyphicon-plus" aria-hidden="true"></span>
+			</a>
+		</div>
+	</div>
+{% endblock %}
+
+{% if page == 1 and (nbPages == 0 or nbPages == 1) %}
+	{% set skipPagination = true %}
+{% endif %}
+
+{% block body %}
+    <div class="panel panel-default">
+			<div class="panel-heading">
+				<div class="row">			
+					<div class="col-md-8">{{ 'table.discussion'|trans }}</div>
+					<div class="col-md-1">{{ 'table.author'|trans }}</div>				
+					<div class="col-md-2">{{ 'table.creation'|trans }}</div>				
+								
+	        	</div>
+			</div>
+        </div>
+	<div class="row">
+		<ul class="list-group" id="sortable">
+              {% for discussion in entities %}
+              <li class="list-group-item row">
+                <div>
+                
+                <div class="col-md-8"><a href="{{ path('discussion_show', { 'id' : discussion.id })}}" >
+                {% if discussion.state == 1 %}
+                [{{'forum.resolved'|trans }}]
+                [{{discussion.topic}}]
+                {{ discussion.title|truncate(45) }}
+                {% else %}
+                [{{discussion.topic}}]
+                {{ discussion.title|truncate(45) }}
+                {% endif %}
+                </a></div>
+				<div class="col-md-1">{{ discussion.getUser.toString |truncate(8)}}</div>
+				<div class="col-md-2">{{ discussion.date|date('d/m/y H:i:s')}}</div>
+            {% if discussion.state == 0 %}
+            <a class="btn btn-default" href="{{ path('vmb_forum_validate' ,{'id' : discussion.id }) }}" title="{{'forum.resolved'|trans }}">
+			<span class="left glyphicon glyphicon-ok" aria-hidden="true"></span>
+			</a>
+            {% endif %}
+                </div>
+                </li>
+              {% endfor %}</ul>
+			{% if skipPagination is not defined %}
+			{% include '::pagination.html.twig' %}
+			{% endif %}
+    </div>  
+    <br/>
+{% endblock %}
+

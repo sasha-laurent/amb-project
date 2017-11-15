@@ -1,0 +1,42 @@
+{% extends '::layout.html.twig' %}
+{% block h1_title %}
+	<div class="row">
+		<div class="col-md-9">
+			{{ 'forum.browse'|trans }}
+		</div>
+        
+		<div class="col-md-3 text-right">
+			<a class="btn btn-default" href="{{ path('vmb_forum_add') }}" title="{{'forum.add'|trans }}">
+				<span class="left glyphicon glyphicon-plus" aria-hidden="true"></span>
+			</a>
+		</div>
+	</div>
+{% endblock %}
+{% block body -%}
+      
+    <div>
+{% if page == 1 and (nbPages == 0 or nbPages == 1) %}
+	{% set skipPagination = true %}
+{% endif %}
+    <ul>          
+    <ul class="list-group" id="sortable">
+             <li class="list-group-item row">
+        {% for c in entities %}
+        <li class="list-group-item row">
+            <font size="4"><div>{{ c.description|raw}}</div></font>
+            <div class="text-right">
+            <i>Dans la discussion <a href="{{ path('discussion_show',{'id': c.discussion.id}) }}">{{ c.discussion.getTitle|truncate(25) }}</a>, crée par <a href="{{ path('discussion_profile',{'id': c.discussion.id}) }}">{{ c.getUser.toString }}</a></i>
+            </div>
+            </li>
+        
+        
+{% endfor %}</li></ul></ul>
+            {% if skipPagination is not defined %}
+			{% include '::pagination.html.twig' %}
+			{% endif %}
+        </div>
+	<br/>
+   
+{% endblock %}
+
+

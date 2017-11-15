@@ -1,0 +1,41 @@
+{% extends '::layout.html.twig' %}
+
+{% block body -%}
+        <ul class="list-group" id="sortable">
+              <li class="list-group-item row">
+              <font size="5"><div>{{ entity.title}}</div></font>
+              <i>par <a href="{{ path('discussion_profile',{'id': entity.user.getId()}) }}">{{entity.user}}</a>, {{ entity.date|date('l d F Y, H:i') }}</i>
+              </li>
+              <li class="list-group-item row">
+              <font size="4"><div>{{ entity.description|raw}}</div></font>
+              </li>
+              </ul> 
+        <div>
+
+  {% if page == 1 and (nbPages == 0 or nbPages == 1) %}
+	{% set skipPagination = true %}
+{% endif %}      
+    <ul class="list-group" id="sortable">
+             <li class="list-group-item row"><div> 
+        {% for c in listComments %}
+
+		  
+            <li class="list-group-item row">
+            <font size="4"><div>{{ c.description|raw}}</div></font>
+            <div class="text-right">
+            <i>Répondu par <a href="{{ path('discussion_profile',{'id': entity.user.getId()}) }}">{{c.user}}</a>, {{ c.date|date('d F Y, H:i') }}</i>
+            </div>
+            </li>
+                
+    {% endfor %}</div></li></ul>
+
+            {% if skipPagination is not defined %}
+			{% include '::pagination.html.twig' %}
+			{% endif %}
+
+    
+	<div class="well">
+    {{ form(form) }}
+    </div>
+{% endblock %}
+

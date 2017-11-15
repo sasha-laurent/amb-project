@@ -1,0 +1,23 @@
+discussion:
+    path:     /
+    defaults: { _controller: "VMBForumBundle:Discussion:index" }
+
+discussion_show:
+    path:     /show/{id}/{page}
+    defaults: { _controller: "VMBForumBundle:Discussion:show", page: 1 }
+    requirements:
+        id: \d{1,}
+        page: \d*
+
+discussion_profile:
+    path:     /profile/{id}/{page}
+    defaults: { _controller: "VMBForumBundle:Discussion:profile", page: 1 }
+    requirements:
+        id: \d{1,}
+        page: \d*
+        
+discussion_search:
+    path:     /search
+    defaults: { _controller: "VMBForumBundle:Discussion:search" }
+    requirements:
+        _method: POST
