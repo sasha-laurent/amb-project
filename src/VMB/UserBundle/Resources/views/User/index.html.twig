@@ -21,22 +21,22 @@
 						{% if entity.hasRole('ROLE_ADMIN') %}
 							<a type="button" href="#"><span class="label label-primary">admin</span></a>
 							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_TEACHER"><span class="label label-default">teacher</span></a>
-							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_STUDENT"><span class="label label-default">user</span></a>
+							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_STUDENT"><span class="label label-default">student</span></a>
 							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=''"><span class="label label-default">blocked</span></a>
 						{% elseif entity.hasRole('ROLE_TEACHER') %}
 							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_ADMIN"><span class="label label-default">admin</span></a>
 							<a type="button" href="#"><span class="label label-primary">teacher</span></a>
-							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_STUDENT"><span class="label label-default">user</span></a>
+							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_STUDENT"><span class="label label-default">student</span></a>
 							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=''"><span class="label label-default">blocked</span></a>
 						{% elseif entity.hasRole('ROLE_STUDENT') %}
 							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_ADMIN"><span class="label label-default">admin</span></a>
 							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_TEACHER"><span class="label label-default">teacher</span></a>
-							<a type="button" href="#"><span class="label label-primary">user</span></a>
+							<a type="button" href="#"><span class="label label-primary">student</span></a>
 							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=''"><span class="label label-default">blocked</span></a>
 						{% else %}
 							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_ADMIN"><span class="label label-default">admin</span></a>
 							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_TEACHER"><span class="label label-default">teacher</span></a>
-							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_STUDENT"><span class="label label-default">user</span></a>
+							<a type="button" href="{{path('admin_user')}}?id={{ entity.id }}&amp;role=ROLE_STUDENT"><span class="label label-default">student</span></a>
 							<a type="button" href="#"><span class="label label-primary">blocked</span></a>
 						{% endif %}
 					{% endif %}
