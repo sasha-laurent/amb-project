@@ -1,24 +1,32 @@
 # AMB PROJECT
 
 
-
 ## About the project
 
 This is a 2018 update on the amb-project state.
 AMB is now built and running on the Symfony 2.8 version.
 
-This README2018 will give instructions (again) on how to execute and take on the project. It will also describe the project's architecture (files of the project) as well as describe briefly every bundle.
+This README2018 will give instructions (again) on how to execute and take on the project. It will then give informations about AMB,  It will also describe the project's structure (files of the project) as well as describe briefly every bundle.
+
+## SUMMARY
+
+1. Instructions to run the project
+2. About the AMB platform
+    2.1 Generalities
+    2.2 Roles and Functionalities/Accesses
+    2.3 Features
+3. Repository's Structure
+4. Bundles
+    4.1 PresentationBundle
+    4.2 ResourceBundle
+    4.3 UserBundle 
+    4.4 QuizBundle
+    4.5 ForumBundle
+    4.6 SearchBundle
+    4.7 ContextualHelpBundle
 
 
-
-## Authors
-
-Names: Sasha Laurent - Clara Lecroisey
-Email address: sasha.laurent@imt-atlantique.net - clara.lecroisey@imt-atlantique.net
-
-
-
-## Instructions to run the project
+## 1. Instructions to run the project
 
 1. Download the project from a source (git, zip,...).
 
@@ -46,19 +54,32 @@ To do so, sign in, then change your ROLE (table "User", column "roles") from s:1
 
 5. To use the Symfony console, you need to set the timezone on the server's php.ini.
 
-6. Finally, to see the website, start your XAMP/MAMP server and visit localhost/amb-project/web/ (change acording to your own path) !
+6. Finally, to see the website, start your XAMP/MAMP server and visit localhost/amb-project/web/ (change acording to your own path) !  
 
 
-## Adaptative Media Builder
+## 2. About the AMB Platform
 
-### Roles and Functionalities/Accesses
+### 2.1 Generalities
 
-- Student
-- Teacher
-- Admin
+The AMB (Adaptive Mediation Builder) is a platform with a educative and cultural mediation purpose. Its aim is to give mediators tools to create unlimitedly personalizable presentations to suit their public, the style they want to convey, their intent,...
+The platform is made for mediators (professors, museum curators,...) who would like to create content (MOOCs, lectures, museum visits, communications operations, etc...) for a specific public (general public, students, visitors,...).
+
+The AMB enables its author to creator multiple presentations with several objectives by relying on a key element of the platform: a matrix. The matrix, as an "organised data base", lets the mediator store his/her resources (pictures, videos,...) depending on view points (= different aspects of the content's subject) and levels (= content difficulty), creating a table with rows as view points and columns as levels. When creating his/her presentation, a mediator will only have to "pick" the relevant resources from the right cells to adjust it to its aimed public and viewpoints he/she wants to develop particularly.
+
+The AMB was developed in IMT Atlantique's Computer Science department (formerly Telecom Bretagne) and has been the subject of several projects and thesis since then. 
+
+
+
+### 2.2 Roles and Functionalities/Accesses
+
+The platform can be used by several profiles. An user can be:
+
+- Student (public)
+- Teacher (mediators)
+- Admin (platform administrator)
 - Blocked
 
-#### Student 
+#### 2.2.1 Student 
 
 The Student is the User by default when signing up.
 He has access to the following functions by default:
@@ -68,25 +89,26 @@ He has access to the following functions by default:
 - Create his/her own presentations from his/her own matrixes or those shared by other users
 
 
-#### Teacher 
+#### 2.2.2 Teacher 
 
 The Teacher has access to the same pages as the student.
-Moreover, they have access to 
+Moreover, they can access several pages: Multiple Indexation, Ontology, Contextual Help.
+They can also add a quiz for each resource they add with questions being able to have several formats: 
 
 
-#### Admin 
+#### 2.2.3 Admin 
 
-The Admin has access to
+The Admin has access to every page a user and a teacher have. 
+Furthermore, he/she can access the "User Management" page where he/she can see the list of all registered users and their roles. He/She then can modify the set role for each user or delete them.
 
 
+### 2.3 Features
 
-### Features
-
-#### Switching languages
+#### 2.3.1 Switching languages
 
 The platform is available in two languages: French and English. There is a dropdown list in the navigation bar to select the language. (In the code, use of filter |trans)
 
-#### Browsing with filters
+#### 2.3.2 Browsing with filters
 
 By default, when no filters are selected, all public presentations or resources shared by all users are visible.
 
@@ -98,12 +120,12 @@ All official presentations or resources are visible.
 - Personal filter
 All personal presentations or resources, public or private (the former ones will appear grey), are visible.
 
-#### Browsing with topics
+#### 2.3.3 Browsing with topics
 
 While browsing presentations and resources, you can select a topic to see the presentations and resources attached to it.
 
 
-#### On presentations and resources
+#### 2.3.4 On presentations and resources
 
 While managing your presentations you can:
 - Choose to make them public or private ie share with others or not
@@ -112,7 +134,7 @@ While managing your presentations you can:
 
 
 
-## Repository's Architecture
+## 3. Repository's Structure
 
 
 amb-project  
@@ -178,7 +200,7 @@ amb-project
 
 
 
-## Bundles
+## 4. Bundles
 
 We will describe each bundle from the most to the least important one.
 1. PresentationBundle
@@ -190,14 +212,14 @@ We will describe each bundle from the most to the least important one.
 7. ContextualHelpBundle
 
 
-### 1. PresentationBundle
+### 4.1 PresentationBundle
 
-#### Description
+#### 4.1.1 Description
 
 This core bundle manages matrixes, presentations, annotations, topics, ontologies,... everything central in the application.
 
 
-#### Files
+#### 4.1.2 Files
 
 ├── ContextualHelpBundle  
 │   ├── Controller  
@@ -280,41 +302,46 @@ This core bundle manages matrixes, presentations, annotations, topics, ontologie
 │   └── VMBPresentationBundle.php  
 │   
 
-### 2. ResourceBundle
+### 4.2 ResourceBundle
 
-#### Description
+#### 4.2.1 Description
 
 This core bundle manages matrixes, presentations, annotations, topics, ontologies,... everything central in the application.
 
 
-### 3. UserBundle 
+### 4.3 UserBundle 
 
-#### Description
-
-
-### 4. QuizBundle
-
-#### Description
-
-### 5. ForumBundle
-
-#### Description
+#### 4.3.1 Description
 
 
-### 6. SearchBundle
+### 4.4 QuizBundle
 
-#### Description
+#### 4.4.1 Description
+
+### 4.5 ForumBundle
+
+#### 4.5.1 Description
+  
+
+### 4.6 SearchBundle
+
+#### 4.6.1 Description
+
+This bundle controls the search feature which is the feature available for the user to be redirected to the page he/she is looking for. It is available as a search text box on the navigation bar on the top of the page.
+This bundle is not fully implemented yet.
+
+  
+### 4.7 ContextualHelpBundle
+
+#### 4.7.1 Description
 
 This bundle controls the contextual help which is the help given when the user on the platform clicks on the question mark button at the top of the navigation bar.
 This bundle is not fully implemented yet.
 
+  
 
+## Authors
 
-### 7. ContextualHelpBundle
-
-#### Description
-
-This bundle controls the contextual help which is the help given when the user on the platform clicks on the question mark button at the top of the navigation bar.
-This bundle is not fully implemented yet.
-
+Names: Sasha Laurent - Clara Lecroisey
+Email address: sasha.laurent@imt-atlantique.net - clara.lecroisey@imt-atlantique.net
 
