@@ -14,18 +14,19 @@ This README2018 will give instructions (again) on how to execute and take on the
 1. Instructions to run the project
 2. About the AMB platform
     2.1 Generalities  
-    2.2 Roles and Functionalities/Accesses  
-    2.3 Features  
-3. The repository's Structure
-4. Bundles
+    2.2 Architecture  
+    2.3 Roles and Functionalities/Accesses  
+    2.4 Features  
+3. The repository's Structure  
+4. Bundles  
     4.1 PresentationBundle  
     4.2 ResourceBundle  
     4.3 QuizBundle  
     4.4 UserBundle  
     4.5 ForumBundle  
     4.6 SearchBundle  
-    4.7 ContextualHelpBundle  
-5. Deployment and automatic updates
+    4.7 ContextualHelpBundle    
+5. Deployment and automatic updates  
 
 ## 1. Instructions to run the project
 
@@ -70,8 +71,22 @@ The AMB enables its author to creator multiple presentations with different obje
 The AMB was developed in IMT Atlantique's Computer Science department (formerly Telecom Bretagne) and has been the subject of several projects and thesis since then. 
 
 
+### 2.2 Architecture
 
-### 2.2 Roles and Functionalities/Accesses
+The project is based on Symfony2, a "MVC" framework. If you are not an expert of the framework, here are a few indications to keep in mind:
+
+The source code (/src) is separed in bundles. Each bundle, called '<Name>Bundle' is created so that it implements one part/aspect of the application and can be reused independently from other bundles. Ex: A quiz bundle, a forum bundle,...
+Each bundle has a specific structure:
+- Controllers: They constitute the logic of the bundle and make links between the views/templates, the entities, the forms, etc by retrieving data from entities and calling views with those data. They are the coordinators of the bundle.
+- Views: (html.twig): they create the user interface of the application. Being twig files (/html), they can easily display data given from the controller files.
+- Entities: They are objects that form the Model part of the architecture. They are simple objects with attributes and methods which attributes are fields in a database table.
+- Routing file: It indicates to the kernel which controller and view template to call according to the url the user is browsing
+
+The app contains the main routing file, the console which lets you use useful commands to automate some manipulations, the configuration file, the translations files (messages.en.yml and messages.fr.yml).
+
+
+
+### 2.3 Roles and Functionalities/Accesses
 
 The platform can be used by several profiles. An user can be:
 
@@ -80,7 +95,7 @@ The platform can be used by several profiles. An user can be:
 - Admin (platform administrator)
 - Blocked
 
-#### 2.2.1 Student 
+#### 2.3.1 Student 
 
 The Student is the User by default when signing up.
 He has access to the following functions by default:
@@ -90,26 +105,26 @@ He has access to the following functions by default:
 - Create his/her own presentations from his/her own matrixes or those shared by other users
 
 
-#### 2.2.2 Teacher 
+#### 2.3.2 Teacher 
 
 The Teacher has access to the same pages as the student.
 Moreover, they can access several pages: Multiple Indexation, Ontology, Contextual Help.
 They can also add a quiz for each resource they add with questions being able to have several formats: multiple choice, numerical answer, text box. 
 
 
-#### 2.2.3 Admin 
+#### 2.3.3 Admin 
 
 The Admin has access to every page a user and a teacher have. 
 Furthermore, he/she can access the "User Management" page where he/she can see the list of all registered users and their roles. He/She then can modify the set role for each user or delete them.
 
 
-### 2.3 Features
+### 2.4 Features
 
-#### 2.3.1 Switching languages
+#### 2.4.1 Switching languages
 
 The platform is available in two languages: French and English. There is a dropdown list in the navigation bar to select the language. (In the code, use of filter |trans)
 
-#### 2.3.2 Browsing with filters
+#### 2.4.2 Browsing with filters
 
 By default, when no filters are selected, all public presentations or resources shared by all users are visible.
 
@@ -121,12 +136,12 @@ All official presentations or resources are visible.
 - Personal filter
 All personal presentations or resources, public or private (the former ones will appear grey), are visible.
 
-#### 2.3.3 Browsing with topics
+#### 2.4.3 Browsing with topics
 
 While browsing presentations and resources, you can select a topic to see the presentations and resources attached to it.
 
 
-#### 2.3.4 On presentations and resources
+#### 2.4.4 On presentations and resources
 
 While managing your presentations you can:
 - Choose to make them public or private ie share with others or not
@@ -361,6 +376,8 @@ These are the steps to follow before deploying this Symfony2 project:
 - the extention JSON is active
 - the extention Ctype is active
 - the timezone parameter is set in the server's php.ini
+- we can use a php console 
+
 
 To deploy the project, use the deployment script.
 What the deployment script does:
