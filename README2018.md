@@ -6,7 +6,7 @@
 This is a 2018 update on the amb-project state.
 AMB is now built and running on the Symfony 2.8 version.
 
-This README2018 will give instructions (again) on how to execute and take on the project. It will then give informations about AMB,  It will also describe the project's structure (files of the project) as well as describe briefly every bundle.
+This README2018 will give instructions (again) on how to execute and take on the project. It will then give informations about the AMB platform. It will also describe the project's structure (files of the project) as well as describe briefly every bundle.
 
 
 ## SUMMARY
@@ -369,8 +369,10 @@ This bundle is not fully implemented yet.
 ## 5. Deployment and automatic updates
 
 These are the steps to follow before deploying this Symfony2 project:
+
 1. Modify the web/config.php file so that the "if" condition looping on the localhost ip address is removed.
-2. Make sure the server is running on:
+
+2. Make sure on the server:
 - a PHP version >= 5.3.3
 - the extention SQLite 3 is active
 - the extention JSON is active
@@ -390,6 +392,6 @@ What the deployment script does:
 
 ## Authors
 
-Names: Sasha Laurent - Clara Lecroisey
-Email address: sasha.laurent@imt-atlantique.net - clara.lecroisey@imt-atlantique.net
+Clara Lecroisey - clara.lecroisey@imt-atlantique.net  
+Sasha Laurent - sasha.laurent@imt-atlantique.net 
 
