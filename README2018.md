@@ -13,18 +13,18 @@ This README2018 will give instructions (again) on how to execute and take on the
 
 1. Instructions to run the project
 2. About the AMB platform
-    2.1 Generalities
-    2.2 Roles and Functionalities/Accesses
-    2.3 Features
+    2.1 Generalities  
+    2.2 Roles and Functionalities/Accesses  
+    2.3 Features  
 3. The repository's Structure
 4. Bundles
-    4.1 PresentationBundle
-    4.2 ResourceBundle
-    4.3 QuizBundle
-    4.4 UserBundle 
-    4.5 ForumBundle
-    4.6 SearchBundle
-    4.7 ContextualHelpBundle
+    4.1 PresentationBundle  
+    4.2 ResourceBundle  
+    4.3 QuizBundle  
+    4.4 UserBundle  
+    4.5 ForumBundle  
+    4.6 SearchBundle  
+    4.7 ContextualHelpBundle  
 5. Deployment and automatic updates
 
 ## 1. Instructions to run the project
@@ -311,7 +311,7 @@ This core bundle manages matrixes, presentations, annotations, topics, ontologie
 
 #### 4.2.1 Description
 
-This core bundle manages matrixes, presentations, annotations, topics, ontologies,... everything central in the application.
+This bundle manages resources: their creation, modification, deletion,...
 
 
 ### 4.3 QuizBundle  
