@@ -4,6 +4,7 @@ if (!isset($_SERVER['HTTP_HOST'])) {
     exit('This script cannot be run from the CLI. Run it from a browser.');
 }
 
+//Delete this condition when deploying on server
 if (!in_array(@$_SERVER['REMOTE_ADDR'], array(
     '127.0.0.1',
     '::1',

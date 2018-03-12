@@ -8,6 +8,7 @@ AMB is now built and running on the Symfony 2.8 version.
 
 This README2018 will give instructions (again) on how to execute and take on the project. It will then give informations about AMB,  It will also describe the project's structure (files of the project) as well as describe briefly every bundle.
 
+
 ## SUMMARY
 
 1. Instructions to run the project
@@ -15,16 +16,16 @@ This README2018 will give instructions (again) on how to execute and take on the
     2.1 Generalities
     2.2 Roles and Functionalities/Accesses
     2.3 Features
-3. Repository's Structure
+3. The repository's Structure
 4. Bundles
     4.1 PresentationBundle
     4.2 ResourceBundle
-    4.3 UserBundle 
-    4.4 QuizBundle
+    4.3 QuizBundle
+    4.4 UserBundle 
     4.5 ForumBundle
     4.6 SearchBundle
     4.7 ContextualHelpBundle
-
+5. Deployment and automatic updates
 
 ## 1. Instructions to run the project
 
@@ -64,7 +65,7 @@ To do so, sign in, then change your ROLE (table "User", column "roles") from s:1
 The AMB (Adaptive Mediation Builder) is a platform with a educative and cultural mediation purpose. Its aim is to give mediators tools to create unlimitedly personalizable presentations to suit their public, the style they want to convey, their intent,...
 The platform is made for mediators (professors, museum curators,...) who would like to create content (MOOCs, lectures, museum visits, communications operations, etc...) for a specific public (general public, students, visitors,...).
 
-The AMB enables its author to creator multiple presentations with several objectives by relying on a key element of the platform: a matrix. The matrix, as an "organised data base", lets the mediator store his/her resources (pictures, videos,...) depending on view points (= different aspects of the content's subject) and levels (= content difficulty), creating a table with rows as view points and columns as levels. When creating his/her presentation, a mediator will only have to "pick" the relevant resources from the right cells to adjust it to its aimed public and viewpoints he/she wants to develop particularly.
+The AMB enables its author to creator multiple presentations with different objectives by relying on a key element of the platform: a matrix. The matrix, as an "organised data base", lets the mediator store his/her resources (pictures, videos,...) depending on view points (= different aspects of the content's subject) and levels (= content difficulty), creating a table with rows as view points and columns as levels. Thus, When creating his/her presentation, a mediator will only have to "pick" the relevant resources from the right cells to adjust it to its aimed public and to develop particularly some points.
 
 The AMB was developed in IMT Atlantique's Computer Science department (formerly Telecom Bretagne) and has been the subject of several projects and thesis since then. 
 
@@ -93,7 +94,7 @@ He has access to the following functions by default:
 
 The Teacher has access to the same pages as the student.
 Moreover, they can access several pages: Multiple Indexation, Ontology, Contextual Help.
-They can also add a quiz for each resource they add with questions being able to have several formats: 
+They can also add a quiz for each resource they add with questions being able to have several formats: multiple choice, numerical answer, text box. 
 
 
 #### 2.2.3 Admin 
@@ -134,7 +135,7 @@ While managing your presentations you can:
 
 
 
-## 3. Repository's Structure
+## 3. The repository's Structure
 
 
 amb-project  
@@ -152,7 +153,11 @@ amb-project
 ├── weekly_backup.sh  
 │  
 ├── app  
-│   └── ...  
+│   ├── ...  
+│   ├── Resources  
+│   │   ├── translations  
+│   │   │   ├── messages.en.yml  
+│   │   │   ├── messages.fr.yml  
 ├── bin  
 │   └── ...  
 ├── docs  
@@ -205,8 +210,8 @@ amb-project
 We will describe each bundle from the most to the least important one.
 1. PresentationBundle
 2. ResourceBundle
-3. UserBundle 
-4. QuizBundle
+3. QuizBundle
+4. UserBundle 
 5. ForumBundle
 6. SearchBundle
 7. ContextualHelpBundle
@@ -309,18 +314,25 @@ This core bundle manages matrixes, presentations, annotations, topics, ontologie
 This core bundle manages matrixes, presentations, annotations, topics, ontologies,... everything central in the application.
 
 
-### 4.3 UserBundle 
+### 4.3 QuizBundle  
 
 #### 4.3.1 Description
 
+This bundle implements quizzes that are attached to resources when they are added by a teacher or an administrator. 
+It can be 
 
-### 4.4 QuizBundle
+### 4.4 UserBundle 
 
 #### 4.4.1 Description
+
+This bundle is exclusively for administrator users. It is accessible from the "User Management" tab in the navigation bar if you are logged in as an administrator.
+It enables administrators to create users, change their roles or delete them.
 
 ### 4.5 ForumBundle
 
 #### 4.5.1 Description
+
+This bundle is the bundle that manages the users' forum.
   
 
 ### 4.6 SearchBundle
@@ -335,10 +347,29 @@ This bundle is not fully implemented yet.
 
 #### 4.7.1 Description
 
-This bundle controls the contextual help which is the help given when the user on the platform clicks on the question mark button at the top of the navigation bar.
+This bundle controls the contextual help which is the help given when the user on the platform clicks on the question mark button at the top of the navigation bar and which gives information about the current page.
 This bundle is not fully implemented yet.
 
-  
+
+## 5. Deployment and automatic updates
+
+These are the steps to follow before deploying this Symfony2 project:
+1. Modify the web/config.php file so that the "if" condition looping on the localhost ip address is removed.
+2. Make sure the server is running on:
+- a PHP version >= 5.3.3
+- the extention SQLite 3 is active
+- the extention JSON is active
+- the extention Ctype is active
+- the timezone parameter is set in the server's php.ini
+
+To deploy the project, use the deployment script.
+What the deployment script does:
+1. Clean the cache
+2. Install dependencies with Composer
+3. Create the database and fill it accordingly
+4. Give the rights to the server to write in a few folders (ex: app/logs, app/cache)
+5. Regenerate translations
+
 
 ## Authors
 
