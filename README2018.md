@@ -75,15 +75,17 @@ The AMB was developed in IMT Atlantique's Computer Science department (formerly 
 
 The project is based on Symfony2, a "MVC" framework. If you are not an expert of the framework, here are a few indications to keep in mind:
 
-The source code (/src) is separed in bundles. Each bundle, called '<Name>Bundle' is created so that it implements one part/aspect of the application and can be reused independently from other bundles. Ex: A quiz bundle, a forum bundle,...
+The source code (/src) is separed in bundles. Each bundle, called '<Name>Bundle' is created so that it implements one part/aspect of the application and can be reused independently from other bundles. Ex: A quiz bundle, a forum bundle, etc.
 Each bundle has a specific structure:
 - Controllers: They constitute the logic of the bundle and make links between the views/templates, the entities, the forms, etc by retrieving data from entities and calling views with those data. They are the coordinators of the bundle.
-- Views: (html.twig): they create the user interface of the application. Being twig files (/html), they can easily display data given from the controller files.
-- Entities: They are objects that form the Model part of the architecture. They are simple objects with attributes and methods which attributes are fields in a database table.
-- Routing file: It indicates to the kernel which controller and view template to call according to the url the user is browsing
+- Views: (html.twig): They create the user interface of the application. Being twig files (/html), they can easily display data given from the controller files.
+- Entities: They are objects that form the Model part of the architecture. They are simple objects with attributes and methods whose attributes are fields in a database table.
+- Forms: They fill in entities. They are often used as forms so that the program can receive the user's input data, pass it to entities which automatically generate database queries.
+- Routing file: It indicates to the kernel which controller and view template to call according to the url the user is browsing.
 
 The app contains the main routing file, the console which lets you use useful commands to automate some manipulations, the configuration file, the translations files (messages.en.yml and messages.fr.yml).
 
+The vendor contains libraries used in the application/Symfony2.
 
 
 ### 2.3 Roles and Functionalities/Accesses
