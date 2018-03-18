@@ -374,7 +374,7 @@ Before the deployment, get in touch with the person who maintains the server in 
 
 Then follow these steps:
 
-### 1. Connection:
+### 1. Connection
 - Connect to the right network so that you can connect via ssh to the server.
 - Connect via ssh to the server:
 ssh <yourAccountName>@<serverName>, you will land on the server at /home/{yourAccount}.
@@ -442,6 +442,9 @@ chmod -R 775 app/cache
 chmod -R 775 app/logs
 chown -R www-data:www-data web/upload/
 chmod -R 775 web/upload/
+
+### 4. Check out the platform!
+Go on the website url and see if it works :)
 
 
 ### Or, you can use the deployment script.
