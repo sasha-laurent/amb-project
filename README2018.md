@@ -377,7 +377,7 @@ Then follow these steps:
 ### 1. Connection
 - Connect to the right network so that you can connect via ssh to the server.
 - Connect via ssh to the server:
-ssh {yourAccountName}@{serverName}, you will land on the server at /home/{yourAccount}.
+<pre><code>ssh {yourAccountName}@{serverName}</code></pre>, you will land on the server at /home/{yourAccount}.
 
 ### 2. Backup
 To make sure not to loose anything, we need to backup the current version. Use the sudo prefix in following commands when required.
@@ -388,17 +388,17 @@ To make sure not to loose anything, we need to backup the current version. Use t
 
 - Copy/Move the current/old-to-be amb project (./edu) to another directory (ex: /var/www-old)
 command (from the ssh connection): 
-mv -r /initial/project/path /your/backup/directory
+<pre><code>mv -r /initial/project/path /your/backup/directory</code></pre>
 (something like mv -r ./edu ../www-old)
 
 - Create an empty sql file you will dump your database into and store it for example in your backup directory.
 command (from the ssh connection): 
-touch {yourEmptyDumpSqlFileName}.sql
-chmod 666 {yourEmptyDumpSqlFileName}.sql (give it the write permission)
+<pre><code>touch {yourEmptyDumpSqlFileName}.sql
+chmod 666 {yourEmptyDumpSqlFileName}.sql</code></pre> (give it the write permission)
 
 - Dump your database into the created file
 command (from the ssh connection): 
-mysqldump -u root -p {databaseName} > /backup/directory/{yourEmptyDumpSqlFile}
+<pre><code>mysqldump -u root -p {databaseName} > /backup/directory/{yourEmptyDumpSqlFile}</code></pre>
 * {databaseName} and the password that will be requested can be found in the old project in the app/config/parameters.yml file
 
 ### 3. Import your own version
@@ -407,41 +407,41 @@ Now that the current/old version is backed up, you can import your own version o
 - Take all your files of your project except the vendor file (which will be re generated) as well as your composer.phar file and compress the new directory into an .tar.gz archive. 
 
 - Send this archive on the server (from your own machine's terminal, not through your ssh connection)
-scp /your/local/path/to/archive.tar.gz {yourAccountName}@{serverName}:/home/{yourAccountName}
+<pre><code>scp /your/local/path/to/archive.tar.gz {yourAccountName}@{serverName}:/home/{yourAccountName}</code></pre>
 
 - Connect via ssh to your server, then uncompress it in the /var/www directory. Make sure your archive/new project directory is called the same name as the old project's name (here "edu").
 command (from the ssh connection):
-tar -xvzf your/path/to/archive.tgz /var/www
+<pre><code>tar -xvzf your/path/to/archive.tgz /var/www</code></pre>
 
 ### 3. Installation
 Once your uncompressed project is in /var/www, we will install it! Make sure you use "--env=prod" in all the following commands.
 All the following commands are to execute through your ssh connection.
 
 - We will install dependencies and external libraries with the Composer.
-php composer install --no-dev --env=prod
+<pre><code>php composer install --no-dev --env=prod</code></pre>
 
 - Try the command that should display all the available commands:
-php app/console --env=prod
+<pre><code>php app/console --env=prod</code></pre>
 
 - We will update the Doctrine schema to add some new links. First, observe the newly generated queries by doing:
-php app/console doctrine:schema:update --dump-sql --env=prod
+<pre><code>php app/console doctrine:schema:update --dump-sql --env=prod</code></pre>
 Observe if there aren't any queries that could endanger the project by triggering data loss such as "delete from", "drop table", etc...
 
 - If none of the generated queries look risky, you can execute the update by doing:
-php app/console doctrine:schema:update --force --env=prod
+<pre><code>php app/console doctrine:schema:update --force --env=prod</code></pre>
 
 - Go to the web directory of your old project (ex /var/www-old/edu/web) and copy the "upload" directory to your own project (ex /var/www/edu/web). This directory contains all the links to resources that were uploaded by users.
 
 - Don't forget to empty the cache in the production environment (from /var/www):
-php app/console cache:clear --env=prod
+<pre><code>php app/console cache:clear --env=prod</code></pre>
 
 - Give permissions to write in the logs and cache directories, as well as in the web/upload one.
-chown -R www-data:www-data app/cache/
+<pre><code>chown -R www-data:www-data app/cache/
 chown -R www-data:www-data app/logs/
 chmod -R 775 app/cache
 chmod -R 775 app/logs
 chown -R www-data:www-data web/upload/
-chmod -R 775 web/upload/
+chmod -R 775 web/upload/</code></pre>
 
 ### 4. Check out the platform!
 Go on the website url and see if it works :)
