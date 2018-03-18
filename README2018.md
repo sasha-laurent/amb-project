@@ -377,7 +377,7 @@ Then follow these steps:
 ### 1. Connection
 - Connect to the right network so that you can connect via ssh to the server.
 - Connect via ssh to the server:
-ssh <yourAccountName>@<serverName>, you will land on the server at /home/{yourAccount}.
+ssh {yourAccountName}@{serverName}, you will land on the server at /home/{yourAccount}.
 
 ### 2. Backup
 To make sure not to loose anything, we need to backup the current version. Use the sudo prefix in following commands when required.
@@ -393,13 +393,13 @@ mv -r /initial/project/path /your/backup/directory
 
 - Create an empty sql file you will dump your database into and store it for example in your backup directory.
 command (from the ssh connection): 
-touch <yourEmptyDumpSqlFileName>.sql
-chmod 666 <yourEmptyDumpSqlFileName>.sql (give it the write permission)
+touch {yourEmptyDumpSqlFileName}.sql
+chmod 666 {yourEmptyDumpSqlFileName}.sql (give it the write permission)
 
 - Dump your database into the created file
 command (from the ssh connection): 
-mysqldump -u root -p <databaseName> > /backup/directory/<yourEmptyDumpSqlFile>
-* <databaseName> and the password that will be requested can be found in the old project in the app/config/parameters.yml file
+mysqldump -u root -p {databaseName} > /backup/directory/{yourEmptyDumpSqlFile}
+* {databaseName} and the password that will be requested can be found in the old project in the app/config/parameters.yml file
 
 ### 3. Import your own version
 Now that the current/old version is backed up, you can import your own version on the server
@@ -407,7 +407,7 @@ Now that the current/old version is backed up, you can import your own version o
 - Take all your files of your project except the vendor file (which will be re generated) as well as your composer.phar file and compress the new directory into an .tar.gz archive. 
 
 - Send this archive on the server (from your own machine's terminal, not through your ssh connection)
-scp /your/local/path/to/archive.tar.gz <yourAccountName>@<serverName>:/home/<yourAccountName>
+scp /your/local/path/to/archive.tar.gz {yourAccountName}@{serverName}:/home/{yourAccountName}
 
 - Connect via ssh to your server, then uncompress it in the /var/www directory. Make sure your archive/new project directory is called the same name as the old project's name (here "edu").
 command (from the ssh connection):
