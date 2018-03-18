@@ -370,27 +370,86 @@ This bundle is not fully implemented yet.
 
 ## 5. Deployment and automatic updates
 
-These are the steps to follow before deploying this Symfony2 project:
+Before the deployment, get in touch with the person who maintains the server in order to get the server's name and create your account on the server. /home/{yourAccount}
 
-1. Modify the web/config.php file so that the "if" condition looping on the localhost ip address is removed.
+Then follow these steps:
 
-2. Make sure on the server:
-- a PHP version >= 5.3.3
-- the extention SQLite 3 is active
-- the extention JSON is active
-- the extention Ctype is active
-- the timezone parameter is set in the server's php.ini
-- we can use a php console 
+### 1. Connection:
+- Connect to the right network so that you can connect via ssh to the server.
+- Connect via ssh to the server:
+ssh <yourAccountName>@<serverName>, you will land on the server at /home/{yourAccount}.
+
+### 2. Backup
+To make sure not to loose anything, we need to backup the current version. Use the sudo prefix in following commands when required.
+
+- Create your backup directory where you will store the current/old-to-be version of the project. (ex: /var/www-old)
+
+- Go to /var/www, the directory that stores your web project.
+
+- Copy/Move the current/old-to-be amb project (./edu) to another directory (ex: /var/www-old)
+command (from the ssh connection): 
+mv -r /initial/project/path /your/backup/directory
+(something like mv -r ./edu ../www-old)
+
+- Create an empty sql file you will dump your database into and store it for example in your backup directory.
+command (from the ssh connection): 
+touch <yourEmptyDumpSqlFileName>.sql
+chmod 666 <yourEmptyDumpSqlFileName>.sql (give it the write permission)
+
+- Dump your database into the created file
+command (from the ssh connection): 
+mysqldump -u root -p <databaseName> > /backup/directory/<yourEmptyDumpSqlFile>
+* <databaseName> and the password that will be requested can be found in the old project in the app/config/parameters.yml file
+
+### 3. Import your own version
+Now that the current/old version is backed up, you can import your own version on the server
+
+- Take all your files of your project except the vendor file (which will be re generated) as well as your composer.phar file and compress the new directory into an .tar.gz archive. 
+
+- Send this archive on the server (from your own machine's terminal, not through your ssh connection)
+scp /your/local/path/to/archive.tar.gz <yourAccountName>@<serverName>:/home/<yourAccountName>
+
+- Connect via ssh to your server, then uncompress it in the /var/www directory. Make sure your archive/new project directory is called the same name as the old project's name (here "edu").
+command (from the ssh connection):
+tar -xvzf your/path/to/archive.tgz /var/www
+
+### 3. Installation
+Once your uncompressed project is in /var/www, we will install it! Make sure you use "--env=prod" in all the following commands.
+All the following commands are to execute through your ssh connection.
+
+- We will install dependencies and external libraries with the Composer.
+php composer install --no-dev --env=prod
+
+- Try the command that should display all the available commands:
+php app/console --env=prod
+
+- We will update the Doctrine schema to add some new links. First, observe the newly generated queries by doing:
+php app/console doctrine:schema:update --dump-sql --env=prod
+Observe if there aren't any queries that could endanger the project by triggering data loss such as "delete from", "drop table", etc...
+
+- If none of the generated queries look risky, you can execute the update by doing:
+php app/console doctrine:schema:update --force --env=prod
+
+- Go to the web directory of your old project (ex /var/www-old/edu/web) and copy the "upload" directory to your own project (ex /var/www/edu/web). This directory contains all the links to resources that were uploaded by users.
+
+- Don't forget to empty the cache in the production environment (from /var/www):
+php app/console cache:clear --env=prod
+
+- Give permissions to write in the logs and cache directories, as well as in the web/upload one.
+chown -R www-data:www-data app/cache/
+chown -R www-data:www-data app/logs/
+chmod -R 775 app/cache
+chmod -R 775 app/logs
+chown -R www-data:www-data web/upload/
+chmod -R 775 web/upload/
 
 
-To deploy the project, use the deployment script.
+### Or, you can use the deployment script.
 What the deployment script does:
-1. Clean the cache
-2. Install dependencies with Composer
-3. Create the database and fill it accordingly
-4. Give the rights to the server to write in a few folders (ex: app/logs, app/cache)
-5. Regenerate translations
-
+1. Install dependencies with Composer
+2. Create the database and fill it accordingly
+3. Give the rights to the server to write in a few folders (ex: app/logs, app/cache)
+4. Clean the cache
 
 ## Authors
 
